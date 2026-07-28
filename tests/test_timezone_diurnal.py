@@ -13,6 +13,8 @@ from ecopulse_ca.qc.timezone import (
     best_lag,
     detect_offset_change,
     diurnal_composite,
+    lag_identifiability,
+    peak_alignment,
     q6_timezone,
     reference_composite,
 )
@@ -91,6 +93,54 @@ class TestQ6:
         f = q6_timezone(diurnal_composite(s), ref, "s1", len(s))
         assert f.verdict in {"reject", "flag"}
         assert f.n_flagged > 0
+
+
+class TestLagIdentifiability:
+    """Regression: a bimodal diurnal cycle makes a 12h shift indistinguishable from none.
+
+    Found on live data. Both Khujand sensors were rejected for an apparent +12h shift, but
+    the regional reference self-correlates at r=+0.69 under a 12h rotation -- because
+    Central Asian urban PM2.5 has a morning and an evening peak roughly 12 hours apart.
+    The physical features agreed with alignment (min offset +1h, max offset +2h). Q6 was
+    about to delete an entire city from a benchmark that has only seven.
+    """
+
+    def test_reference_is_ambiguous_at_12h(self):
+        ref = _reference()
+        assert lag_identifiability(ref, 12) > 0.5, (
+            "the synthetic bimodal cycle should reproduce the real 12h ambiguity"
+        )
+
+    def test_reference_is_identifiable_at_small_lags(self):
+        ref = _reference()
+        assert lag_identifiability(ref, 3) < lag_identifiability(ref, 12)
+
+    def test_apparent_12h_shift_is_flagged_not_rejected(self):
+        ref = _reference()
+        s = synthetic_pm25(seed=99, shift_hours=12)
+        f = q6_timezone(diurnal_composite(s), ref, "s1", len(s))
+        assert f.verdict == "flag", "an unidentifiable lag must never reject a station"
+        assert "NOT IDENTIFIABLE" in f.detail
+        assert f.n_flagged == 0  # flagged for inspection, no data removed
+
+    def test_genuine_small_shift_still_rejected(self):
+        # The guard must not disarm Q6 for lags the reference CAN distinguish.
+        ref = _reference()
+        s = synthetic_pm25(seed=99, shift_hours=4)
+        f = q6_timezone(diurnal_composite(s), ref, "s1", len(s))
+        assert f.verdict == "reject"
+
+    def test_peak_alignment_detects_agreement(self):
+        ref = _reference()
+        comp = diurnal_composite(synthetic_pm25(seed=99))
+        dmin, dmax = peak_alignment(comp, ref)
+        assert abs(dmin) <= 1 and abs(dmax) <= 1
+
+    def test_peak_alignment_wraps_into_plus_minus_12(self):
+        ref = _reference()
+        comp = diurnal_composite(synthetic_pm25(seed=99, shift_hours=23))
+        dmin, dmax = peak_alignment(comp, ref)
+        assert -12 <= dmin <= 12 and -12 <= dmax <= 12
 
 
 class TestOffsetChangeDetection:

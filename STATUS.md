@@ -67,7 +67,8 @@ Recorded here so that "not done" is never confused with "forgotten".
 | 0 — Literature review | **complete (1st pass), G0 passed** | `research/LITERATURE.md`, `research/GAP.md` |
 | 1a — Ingestion + QC (fixtures) | **complete — 82 tests pass, no credentials needed** | `src/ecopulse_ca/{ingest,qc}`, `tests/` |
 | 1b — Live census | **complete — F3 RESOLVED, 7 cities, leave-city-out is viable** | `data/MANIFEST.md`, `data/DECISIONS.md`, `data/interim/station_census.csv` |
-| 1c — Measurement ingestion + QC on real series | **next** | `data/DECISIONS.md` n-effects |
+| 1c — Measurement ingestion + QC on real series | **complete — 10 feeds / 8 instruments / 6 cities** | `data/interim/panel.parquet`, `panel_provenance.csv`, `qc_findings.csv` |
+| 2 — Benchmark construction (freeze splits) | **next** | `benchmark/splits/` |
 | 2 — Benchmark construction | not started | `benchmark/splits/`, `benchmark/README.md` |
 | 3 — Credential-free baseline ladder | not started | `paper/tables/` |
 | 4 — Predictors + full ladder | deferred to increment 2 | — |

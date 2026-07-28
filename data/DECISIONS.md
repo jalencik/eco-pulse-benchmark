@@ -124,3 +124,48 @@ forgotten. Related: `STATUS.md` risk R3.
   `pandas.read_csv` parses the string `"N/A"` back as `NaN`. The bug was only visible in
   the raw cached API response. **Diagnose data-quality faults at the source, not after a
   round-trip through a format with its own null conventions.**
+
+### D-005 — QC applied to the live hourly panel
+- **Date:** 2026-07-29
+- **Decision:** ran pre-registered rules Q1–Q7 over the 11 census-eligible feeds.
+- **Reason:** rules declared before data inspection; flatline policy MASK_WINDOW (D-002).
+- **Effect on n:** feeds **11 → 10** (1 station rejected); observations
+  **450,817 → 341,321** (24.5% masked by row-level rules Q1–Q3).
+  Distinct instruments after Q5b merge: **8**. Distinct cities: **6**.
+- **The single rejection:** Astana (AirNow, `7094`) — span 6.60 y but completeness
+  **42.8%**, below the pre-registered 60% floor. Its fetch was verified complete
+  (`fetch_complete=True`), so this is a genuine property of the record, not a pipeline
+  artifact. **Kazakhstan therefore contributes one city (Almaty), not two.**
+- **Alternative considered:** lowering the Q7 completeness floor to retain Astana.
+  Rejected — Q7 was pre-registered precisely so it could not be relaxed to improve a count,
+  and 42.8% would leave a blocked-temporal split with too little on one side of a purge gap.
+- **Direction of bias if wrong:** losing Astana removes the only continental-climate
+  Kazakh city and the northernmost site, so the benchmark under-represents severe winter
+  inversion conditions.
+
+### D-006 — Q6 downgraded from reject to flag when a lag is not identifiable
+- **Date:** 2026-07-29
+- **Decision:** Q6 now computes `lag_identifiability` — the reference's correlation with
+  itself under the candidate rotation — plus a physical cross-check on the positions of the
+  daily minimum and maximum. When the lag is unidentifiable, or the physical features
+  contradict it, the station is **flagged, not rejected**.
+- **Reason:** **the original rule produced a false positive that would have deleted a
+  city.** Both Khujand sensors were rejected for an apparent +12 h shift. But Central Asian
+  urban PM2.5 is bimodal — a morning traffic peak and an evening traffic/heating peak
+  roughly 12 h apart — so the regional reference **self-correlates at r = +0.71 under a
+  12 h rotation**. Khujand "won" at lag 12 by a margin of only +0.15 on a signal that
+  cannot distinguish the two hypotheses at all. The physical features agreed with
+  alignment: reference minimum at hour 10 vs Khujand 11, maximum at 15 vs 17.
+- **Effect on n:** stations rejected by Q6: **2 → 0**. Cities: **5 → 6** (Khujand restored).
+- **Alternative considered:** raising `min_corr`. Rejected — it does not address the cause;
+  a near-symmetric signal is ambiguous at any correlation threshold.
+- **Direction of bias if wrong:** if a station *is* genuinely 12 h offset, it now survives
+  as a flag rather than being removed, so a real timezone fault could enter the benchmark.
+  Mitigated by requiring the flag to be resolved manually before splits are frozen.
+- **Known limitation, recorded now:** 6 of 10 surviving feeds carry a Q6 flag, three of them
+  for *shape disagreement* with the regional reference (r = 0.31–0.34), not for any shift.
+  That is evidence the "regional reference composite" premise is weak here — cities
+  hundreds of kilometres apart, with different source mixes (coal heating, basin inversion,
+  desert dust), do not share one diurnal shape. **With only 6 cities the median reference is
+  dominated by whichever happen to resemble each other.** Q6 should probably become a
+  per-city or per-climate-zone check before splits are frozen.
