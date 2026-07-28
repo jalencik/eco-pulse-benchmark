@@ -59,4 +59,68 @@ forgotten. Related: `STATUS.md` risk R3.
 
 ## Decisions
 
-*(none yet — Phase 1 not started)*
+### D-001 — Station census scope and the F3 verdict
+- **Date:** 2026-07-28
+- **Decision:** census all OpenAQ v3 locations in UZ/KZ/KG/TJ/TM; treat a station as
+  span-eligible if it has ≥1 PM2.5 sensor, is not mobile, and spans ≥2 years.
+- **Reason:** F3 (too few cities for leave-city-out) decides whether the headline protocol
+  exists. `/v3/locations` carries `datetimeFirst`/`datetimeLast`, so span is established
+  without downloading any measurements.
+- **Effect on n:** 317 locations → **11 span-eligible feeds → 9 distinct instruments →
+  7 distinct cities** (Almaty, Ashgabat, Astana, Bishkek, Dushanbe, Khujand, Tashkent).
+- **Alternative considered:** relaxing the 2-year rule to admit more stations. Rejected —
+  Q7 was pre-registered before data inspection precisely so it could not be loosened to
+  improve a count.
+- **Direction of bias if wrong:** the 306 excluded stations are AirGradient (173) and
+  Clarity (133) low-cost units with median span 0.59 y, earliest deployment 2023-07. If
+  their `datetimeFirst` reflects OpenAQ ingestion rather than sensor deployment, the true
+  spans are longer and the benchmark is smaller than it needs to be. **Unverified.**
+
+### D-002 — Flatline policy: MASK_WINDOW
+- **Date:** 2026-07-28
+- **Decision:** on detecting a flatline (Q2), mask the stuck hours and retain the station.
+- **Reason:** user decision. Least destructive option that still removes values known to
+  be wrong.
+- **Effect on n:** row-level only; no station lost. Exact n-effect reported per station
+  once measurements are ingested.
+- **Alternative considered:** REJECT_STATION and KEEP_AND_FLAG (see `FlatlinePolicy` in
+  `qc/rules.py`). Both remain unimplemented and raise rather than silently defaulting.
+- **Direction of bias if wrong:** a sensor that sticks repeatedly stays in the benchmark
+  with its good periods intact, so its apparent reliability is overstated. Given only 9
+  distinct instruments exist, rejecting stations would cost whole cities.
+
+### D-003 — Q5b co-location threshold: 150 m, distance-based
+- **Date:** 2026-07-28
+- **Decision:** treat two location_ids within 150 m as one physical instrument, using
+  haversine distance with single-link clustering. Replaces exact-coordinate matching.
+- **Reason:** **the original rule missed a real duplicate.** The US Embassy monitors are
+  published twice, under both StateAir and AirNow, as separate `location_id`s:
+  Bishkek 57 m apart, Ashgabat 40 m apart. Under leave-station-out the "held-out" station
+  would be the same device as one in training — total leakage.
+- **Effect on n:** eligible feeds 11 → **9 distinct instruments**. Two Q5b findings.
+- **Alternative considered:** matching on provider name. Rejected — it happens to work for
+  StateAir/AirNow and would fail for any other republication.
+- **Direction of bias if wrong:** too large a radius merges genuinely distinct urban
+  stations, shrinking the benchmark. Margin is wide: the two real Dushanbe sites are
+  **6.06 km** apart, ~40× the threshold.
+
+### D-004 — City labels derived heuristically (interim)
+- **Date:** 2026-07-28
+- **Decision:** city = `locality` when genuinely present, else the station name with
+  programme branding stripped. Sentinel strings are treated as missing.
+- **Reason:** `locality` is null for 308/317 stations and the **literal string `"N/A"`**
+  for 5 more, leaving 4 real values. The `"N/A"` five are the AirNow feeds — precisely the
+  ones carrying **Almaty and Astana**. Accepting `"N/A"` as a city name collapsed two
+  distinct Kazakh cities into one bogus city and understated the F3 count as 5 instead of 7.
+- **Effect on n:** distinct cities 5 (wrong) → **7 (correct)**.
+- **Alternative considered:** spatial clustering of coordinates into urban agglomerations,
+  as AQ-Bench does at 50 km. **This is the correct approach and is deferred to Phase 2**,
+  where the city definition becomes part of the frozen split and must be reproducible from
+  the manifest. Phase 2 must not inherit this heuristic silently.
+- **Direction of bias if wrong:** a name-derived label could split one city across two
+  spellings (inflating the city count) or merge distinct towns sharing a name. Both change
+  leave-city-out fold membership.
+- **Diagnostic note worth keeping:** a CSV round-trip masked the cause, because
+  `pandas.read_csv` parses the string `"N/A"` back as `NaN`. The bug was only visible in
+  the raw cached API response. **Diagnose data-quality faults at the source, not after a
+  round-trip through a format with its own null conventions.**

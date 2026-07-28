@@ -90,6 +90,51 @@ def _dt(node: Any) -> str | None:
     return node if isinstance(node, str) else None
 
 
+#: Provider name prefixes that decorate a station name with programme branding rather than
+#: place. Observed in the live data: "US Diplomatic Post: Bishkek".
+_NAME_PREFIXES = ("US Diplomatic Post:", "US Embassy", "US Consulate", "StateAir")
+
+#: Strings that mean "missing" but are not null. OpenAQ returns the literal string "N/A"
+#: for the AirNow-sourced stations -- and those are precisely the feeds carrying Almaty and
+#: Astana. Treating "N/A" as a valid locality collapsed two distinct Kazakh cities into one
+#: bogus city called "N/A", which understated the F3 count. A CSV round-trip then hid the
+#: cause, because pandas silently parses "N/A" back as NaN.
+_MISSING_SENTINELS = {"n/a", "na", "n.a.", "none", "null", "nil", "unknown", "-", "--", "?"}
+
+
+def _is_missing(value: Any) -> bool:
+    """True for null, blank, or a string sentinel that means 'no value'."""
+    if value is None or not isinstance(value, str):
+        return True
+    return value.strip().lower() in _MISSING_SENTINELS or not value.strip()
+
+
+def derive_city(locality: Any, name: Any) -> str | None:
+    """Best-effort city label for a station.
+
+    `locality` is the correct field and is used whenever genuinely present -- but in the
+    live Central Asia census it is null for 308 of 317 locations and the sentinel string
+    "N/A" for 5 more, leaving only 4 real values. A locality-based city count is therefore
+    nearly meaningless here, so this falls back to the station name with programme branding
+    stripped ("US Diplomatic Post: Bishkek" -> "Bishkek").
+
+    This is a heuristic and is labelled as one. The principled version -- spatial
+    clustering of coordinates into urban agglomerations, in the manner of AQ-Bench's 50 km
+    threshold -- belongs in Phase 2, where the city definition becomes part of the frozen
+    leave-city-out split and must be reproducible from the manifest. Until then this
+    supports the F3 count only, and Phase 2 must not inherit it silently.
+    """
+    if not _is_missing(locality):
+        return str(locality).strip()
+    if _is_missing(name):
+        return None
+    label = str(name).strip()
+    for prefix in _NAME_PREFIXES:
+        if label.lower().startswith(prefix.lower()):
+            label = label[len(prefix):].lstrip(": ").strip()
+    return None if _is_missing(label) else label
+
+
 def census_frame(locations: list[dict], country: str) -> pd.DataFrame:
     rows = []
     for loc in locations:
@@ -116,6 +161,8 @@ def census_frame(locations: list[dict], country: str) -> pd.DataFrame:
     df = pd.DataFrame(rows)
     if df.empty:
         return df
+
+    df["city"] = [derive_city(loc, nm) for loc, nm in zip(df["locality"], df["name"], strict=True)]
 
     for col in ("datetime_first", "datetime_last"):
         df[col] = pd.to_datetime(df[col], utc=True, errors="coerce")
@@ -169,11 +216,11 @@ def summarise_census(df: pd.DataFrame) -> pd.DataFrame:
         .join(
             eligible.groupby("country").agg(
                 span_eligible=("location_id", "count"),
-                distinct_localities=("locality", "nunique"),
+                distinct_cities=("city", "nunique"),
             )
         )
-        .fillna({"span_eligible": 0, "distinct_localities": 0})
-        .astype({"span_eligible": int, "distinct_localities": int})
+        .fillna({"span_eligible": 0, "distinct_cities": 0})
+        .astype({"span_eligible": int, "distinct_cities": int})
         .reset_index()
     )
 
@@ -200,9 +247,13 @@ def main(argv: list[str] | None = None) -> int:
     print(f"\n{len(df)} locations -> {args.out}\n")
     print(summary.to_string(index=False))
 
-    cities = df.loc[df["q7_span_ok_upper_bound"], "locality"].dropna().nunique()
-    print(f"\nF3 check: {cities} distinct localities pass the >=2yr span pre-filter.")
-    print("  (upper bound -- Q7 completeness not yet applied)")
+    eligible = df[df["q7_span_ok_upper_bound"]]
+    cities = eligible["city"].dropna().nunique()
+    print(f"\nF3 check: {cities} distinct cities pass the >=2yr span pre-filter "
+          f"({len(eligible)} feeds).")
+    print("  (upper bound -- Q7 completeness and Q5b de-duplication not yet applied)")
+    if not eligible.empty:
+        print("  cities: " + ", ".join(sorted(eligible["city"].dropna().unique())))
     if SETTINGS.use_fixtures:
         print("  FIXTURE DATA -- not a finding. Paste OPENAQ_API_KEY into .env for real counts.")
     elif cities < 4:

@@ -16,7 +16,7 @@ Falsifiers were declared in `PAPER_CLAIM.md` before searching.
 |---|---|---|---|
 | **F1** | An existing open station-level Central Asia AQ benchmark with published splits | **NOT TRIGGERED** | Nothing found. AQ-Bench is ozone, long-term metrics, and excludes Central Asia. The Bishkek Zenodo deposit is an emissions inventory with monitoring data attached — CC-BY and genuinely useful, but it defines no task and no splits. |
 | **F2** | A published leave-city-out PM2.5 transfer evaluation covering these countries | **NOT TRIGGERED** | The closest work (Gupta et al., ECML-PKDD 2024) evaluates on 10 target sensors against eastern-US source data. No Central Asia, no reusable regional protocol. |
-| **F3** | Ground-truth coverage too thin to support leave-city-out (< ~4 usable cities) | **⚠ PARTIALLY TRIGGERED — UNRESOLVED** | See §3. This is the live threat. |
+| **F3** | Ground-truth coverage too thin to support leave-city-out (< ~4 usable cities) | **RESOLVED 2026-07-28 — NOT TRIGGERED (7 cities)** | Live census: 317 locations → 11 span-eligible feeds → **9 distinct instruments → 7 cities**. See §3. |
 | **F4** | Russian-language or regional literature already establishes the benchmark | **PROVISIONALLY NOT TRIGGERED** | Russian search surfaced monitoring portals and news, not research. **Not yet closed** — CyberLeninka / eLIBRARY.RU unsearched. |
 
 ---
@@ -93,6 +93,54 @@ as F3 specifies.
 **This is the first question Phase 1 answers**, because it determines whether the headline
 result exists at all. It is a data-availability question, not a modelling question, and it
 is cheap to settle.
+
+### F3 — RESOLVED, 2026-07-28
+
+The live census settles it. **Leave-city-out is viable: 7 cities**, above the threshold of 4.
+
+| | |
+|---|---|
+| OpenAQ locations in UZ/KZ/KG/TJ/TM | 317 |
+| ≥1 PM2.5 sensor, not mobile, ≥2 y span | 11 feeds |
+| After Q5b de-duplication | **9 distinct instruments** |
+| **Distinct cities** | **7** — Almaty, Ashgabat, Astana, Bishkek, Dushanbe, Khujand, Tashkent |
+
+Three caveats, each material:
+
+1. **Two "stations" were the same instrument.** The US Embassy monitors are published
+   twice, under StateAir *and* AirNow, as separate `location_id`s — Bishkek 57 m apart,
+   Ashgabat 40 m apart. The original exact-coordinate duplicate check missed both. Under
+   leave-station-out, the held-out station would have been the same physical device as one
+   in training. Fixed (D-003); the threshold has a wide margin, since the two genuinely
+   distinct Dushanbe sites are 6.06 km apart.
+2. **Only Khujand is non-reference.** Six of seven cities rest on a single reference-grade
+   instrument each. There is no redundancy: lose one station, lose one city.
+3. **Q7 completeness is not yet applied.** 7 is an upper bound. The count can only fall.
+
+### The finding that changes the benchmark's shape — R9
+
+**The US State Department terminated its global embassy air quality monitoring programme in
+March 2025**, citing funding. Six of nine reference monitors stop at exactly `2025-03-04`,
+and the programme's closure is independently documented (CNN, Democracy Now, CBS, NBC,
+March 2025; ~34 countries affected).
+
+This project designated the embassy network as the benchmark's spine — correctly, since it
+is the only consistent multi-country reference in the region and the sole route into
+Ashgabat. **That spine is now a historical archive, not a live feed.**
+
+Consequences that must be settled in Phase 2, not assumed:
+
+- "Test on the most recent full year" cannot mean 2025 or 2026 for reference-grade data.
+  **The last full year with embassy coverage is 2024.**
+- A forecasting service deployed today cannot be validated against reference monitors on
+  current data. This is a genuine limitation of the deployment claim, not a modelling gap.
+- Some AirNow feeds extend past the shutdown (Almaty → 2025-11, Ashgabat → 2025-09,
+  Dushanbe → 2026-07). **Cause unverified** — partial resumption, a different pipeline, or
+  backfill. Must be established before those months are used.
+
+This strengthens rather than weakens the case for C1: the region's best reference record is
+now finite and closed. Curating it into a frozen, documented benchmark is more valuable
+after the programme's end than it would have been during it.
 
 An additional consequence already fixed: **Kazakhstan's geo-restriction is a
 reproducibility hazard.** A benchmark a third party cannot reconstruct from outside

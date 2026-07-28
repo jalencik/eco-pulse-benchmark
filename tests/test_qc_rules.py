@@ -11,6 +11,7 @@ import pandas as pd
 import pytest
 
 from ecopulse_ca.qc.rules import (
+    haversine_m,
     QCReport,
     q1_physical_range,
     q2_flatline,
@@ -121,6 +122,52 @@ class TestQ5DuplicateStations:
             {"location_id": 2, "latitude": 43.24, "longitude": 76.945},
         ])
         assert q5_duplicate_stations(census) == []
+
+    def test_catches_the_real_embassy_duplicate_57m_apart(self):
+        """Regression test from live data.
+
+        The StateAir and AirNow feeds of the Bishkek US Embassy monitor are 57 m apart --
+        one physical instrument, two location_ids. Exact-coordinate matching missed this,
+        and under leave-station-out it would leak the held-out station into training.
+        """
+        census = pd.DataFrame([
+            {"location_id": 4001, "latitude": 42.85600, "longitude": 74.60100,
+             "provider": "StateAir Bishkek"},
+            {"location_id": 4002, "latitude": 42.85651, "longitude": 74.60123,
+             "provider": "AirNow"},
+        ])
+        findings = q5_duplicate_stations(census)
+        assert [f.rule for f in findings] == ["Q5b"]
+        assert "probably one instrument" in findings[0].detail
+
+    def test_genuinely_distinct_sites_6km_apart_not_flagged(self):
+        """The two Dushanbe sites are 6.06 km apart and are genuinely different stations.
+
+        Pairs with the test above: the threshold must separate 57 m from 6 km.
+        """
+        census = pd.DataFrame([
+            {"location_id": 5001, "latitude": 38.5730, "longitude": 68.7860,
+             "provider": "StateAir Dushanbe"},
+            {"location_id": 5002, "latitude": 38.5590, "longitude": 68.7250,
+             "provider": "AirNow"},
+        ])
+        assert q5_duplicate_stations(census) == []
+
+    def test_haversine_matches_known_distance(self):
+        # ~111.19 km per degree of latitude at the equator.
+        d = haversine_m(0.0, 0.0, 1.0, 0.0)
+        assert 111_000 < d < 111_400
+
+    def test_colocation_clusters_transitively(self):
+        # A~B and B~C means all three are one site, even if A and C exceed the radius.
+        census = pd.DataFrame([
+            {"location_id": 1, "latitude": 42.8560, "longitude": 74.6010},
+            {"location_id": 2, "latitude": 42.8570, "longitude": 74.6010},
+            {"location_id": 3, "latitude": 42.8580, "longitude": 74.6010},
+        ])
+        findings = q5_duplicate_stations(census)
+        assert len(findings) == 1
+        assert findings[0].station_id.count(",") == 2  # all three in one cluster
 
 
 class TestQ7Completeness:

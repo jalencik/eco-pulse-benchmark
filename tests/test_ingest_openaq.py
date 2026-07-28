@@ -13,6 +13,7 @@ from ecopulse_ca.config import Settings, _resolve_fixtures
 from ecopulse_ca.ingest.openaq import (
     OpenAQClient,
     census_frame,
+    derive_city,
     run_census,
     summarise_census,
 )
@@ -113,16 +114,63 @@ class TestCensusRollup:
         summary = summarise_census(run_census(fixture_settings))
         assert (summary["reference_monitors"] >= 1).all()
 
-    def test_summary_reports_distinct_localities(self, fixture_settings):
+    def test_summary_reports_distinct_cities(self, fixture_settings):
         summary = summarise_census(run_census(fixture_settings))
-        assert "distinct_localities" in summary.columns
-        assert summary["distinct_localities"].sum() >= 1
+        assert "distinct_cities" in summary.columns
+        assert summary["distinct_cities"].sum() >= 1
 
     def test_f3_city_count_is_computable(self, fixture_settings):
         """The census must yield the one number that decides the headline protocol."""
         df = run_census(fixture_settings)
-        cities = df.loc[df["q7_span_ok_upper_bound"], "locality"].dropna().nunique()
+        cities = df.loc[df["q7_span_ok_upper_bound"], "city"].dropna().nunique()
         assert isinstance(int(cities), int)
+
+
+class TestDeriveCity:
+    """`locality` is null for 98.7% of live Central Asia stations, so it cannot be the
+    sole basis for the city count that decides F3."""
+
+    def test_locality_used_when_present(self):
+        assert derive_city("Tashkent", "some sensor name") == "Tashkent"
+
+    def test_falls_back_to_name_when_locality_null(self):
+        assert derive_city(None, "Bishkek") == "Bishkek"
+        assert derive_city(float("nan"), "Almaty") == "Almaty"
+
+    def test_strips_programme_branding_from_name(self):
+        # Live data: "US Diplomatic Post: Bishkek" and a plain AirNow "Bishkek" are the
+        # same city and must not count twice.
+        assert derive_city(None, "US Diplomatic Post: Bishkek") == "Bishkek"
+        assert derive_city(None, "US Diplomatic Post: Ashgabat") == "Ashgabat"
+
+    def test_branded_and_plain_names_agree(self):
+        assert derive_city(None, "US Diplomatic Post: Dushanbe") == derive_city(None, "Dushanbe")
+
+    def test_blank_input_returns_none(self):
+        assert derive_city(None, None) is None
+        assert derive_city("   ", "  ") is None
+
+    def test_na_sentinel_is_treated_as_missing(self):
+        """Regression from live data.
+
+        OpenAQ returns the literal string "N/A" as `locality` for the AirNow feeds --
+        exactly the ones carrying Almaty and Astana. Accepting it as a city name collapsed
+        two distinct Kazakh cities into one bogus city, understating the F3 count.
+        """
+        assert derive_city("N/A", "Almaty") == "Almaty"
+        assert derive_city("N/A", "Astana") == "Astana"
+
+    @pytest.mark.parametrize("sentinel", ["N/A", "n/a", "NULL", "none", "-", "unknown", "?"])
+    def test_other_sentinels_also_rejected(self, sentinel):
+        assert derive_city(sentinel, "Bishkek") == "Bishkek"
+
+    def test_sentinel_in_name_yields_none_not_a_fake_city(self):
+        assert derive_city(None, "N/A") is None
+
+    def test_census_frame_populates_city(self, fixture_settings):
+        with OpenAQClient(fixture_settings) as c:
+            df = census_frame(c.locations("UZ"), "UZ")
+        assert df["city"].notna().all()
 
 
 def test_empty_locations_returns_empty_frame():

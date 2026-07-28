@@ -160,49 +160,95 @@ def q4_unit_sanity(s: pd.Series, station_id: str) -> QCFinding:
     )
 
 
-def q5_duplicate_stations(census: pd.DataFrame, tol: float = 1e-4) -> list[QCFinding]:
+#: Two feeds closer than this are treated as the same physical instrument.
+#: Set from observed data, not guessed: in the live Central Asia census the StateAir and
+#: AirNow feeds of the US Embassy monitors sit 57 m apart (Bishkek) and 40 m apart
+#: (Ashgabat) -- the same device published by two programmes. Exact-coordinate matching
+#: misses both. Meanwhile the two genuinely distinct Dushanbe sites are 6.06 km apart, so
+#: there is a wide margin between "same instrument" and "different site".
+COLOCATION_METRES = 150.0
+
+
+def haversine_m(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    """Great-circle distance in metres."""
+    r = 6_371_000.0
+    p1, p2 = np.radians(lat1), np.radians(lat2)
+    dphi = p2 - p1
+    dlam = np.radians(lon2 - lon1)
+    a = np.sin(dphi / 2) ** 2 + np.cos(p1) * np.cos(p2) * np.sin(dlam / 2) ** 2
+    return float(2 * r * np.arcsin(np.sqrt(a)))
+
+
+def q5_duplicate_stations(
+    census: pd.DataFrame, colocation_m: float = COLOCATION_METRES
+) -> list[QCFinding]:
     """Detect ID/coordinate inconsistencies that silently corrupt spatial splits.
 
-    Two distinct failures, both present in OpenAQ:
-      (a) one location_id at more than one coordinate -- a moved or re-used station;
-      (b) several location_ids at the same coordinate -- co-located duplicates that would
-          leak between train and test under leave-station-out.
+    Two distinct failures, both present in the live OpenAQ data for this region:
+
+    (a) one ``location_id`` at more than one coordinate -- a moved or re-used station;
+    (b) several ``location_id``s at effectively the same place -- co-located duplicates
+        that leak between train and test under leave-station-out.
+
+    Case (b) is distance-based, not exact-match. The failure this exists to catch is the
+    US Embassy instruments republished under both StateAir and AirNow: two ``location_id``s,
+    two providers, coordinates differing in the fourth decimal place, one physical device.
+    Holding one out while training on the other is not a spatial split at all.
     """
     out: list[QCFinding] = []
-    if census.empty:
+    if census.empty or not {"latitude", "longitude"}.issubset(census.columns):
         return out
 
     for loc_id, grp in census.groupby("location_id"):
-        coords = grp[["latitude", "longitude"]].round(int(-np.log10(tol))).drop_duplicates()
-        if len(coords) > 1:
-            out.append(
-                QCFinding(
-                    rule="Q5a",
-                    scope="station",
-                    station_id=str(loc_id),
-                    n_total=len(grp),
-                    n_flagged=len(grp),
-                    verdict="reject",
-                    detail=f"one location_id at {len(coords)} distinct coordinates",
-                )
+        pts = grp[["latitude", "longitude"]].dropna().drop_duplicates()
+        if len(pts) > 1:
+            spread = max(
+                haversine_m(*pts.iloc[i], *pts.iloc[j])
+                for i in range(len(pts))
+                for j in range(i + 1, len(pts))
             )
+            if spread > colocation_m:
+                out.append(
+                    QCFinding(
+                        rule="Q5a", scope="station", station_id=str(loc_id),
+                        n_total=len(grp), n_flagged=len(grp), verdict="reject",
+                        detail=f"one location_id spans {spread:.0f} m across "
+                               f"{len(pts)} coordinates",
+                    )
+                )
 
-    rounded = census.assign(
-        _lat=census["latitude"].round(int(-np.log10(tol))),
-        _lon=census["longitude"].round(int(-np.log10(tol))),
-    )
-    for (lat, lon), grp in rounded.groupby(["_lat", "_lon"], dropna=True):
+    # Single-link clustering over the colocation radius: A~B and B~C puts all three in one
+    # cluster, which is what "same site" means physically.
+    pts = census.dropna(subset=["latitude", "longitude"]).reset_index(drop=True)
+    parent = list(range(len(pts)))
+
+    def find(i: int) -> int:
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+
+    for i in range(len(pts)):
+        for j in range(i + 1, len(pts)):
+            d = haversine_m(
+                pts.at[i, "latitude"], pts.at[i, "longitude"],
+                pts.at[j, "latitude"], pts.at[j, "longitude"],
+            )
+            if d <= colocation_m:
+                parent[find(i)] = find(j)
+
+    for _, idxs in pd.Series(range(len(pts))).groupby([find(i) for i in range(len(pts))]):
+        grp = pts.loc[list(idxs)]
         ids = sorted({str(i) for i in grp["location_id"]})
         if len(ids) > 1:
+            providers = sorted({str(p) for p in grp.get("provider", pd.Series(dtype=str))})
             out.append(
                 QCFinding(
-                    rule="Q5b",
-                    scope="station",
-                    station_id=",".join(ids),
-                    n_total=len(grp),
-                    n_flagged=len(grp),
-                    verdict="flag",
-                    detail=f"{len(ids)} location_ids co-located at ({lat}, {lon})",
+                    rule="Q5b", scope="station", station_id=",".join(ids),
+                    n_total=len(grp), n_flagged=len(grp), verdict="flag",
+                    detail=f"{len(ids)} location_ids within {colocation_m:.0f} m "
+                           f"-- probably one instrument"
+                           + (f", providers: {', '.join(providers)}" if providers else ""),
                 )
             )
     return out

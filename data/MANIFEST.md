@@ -20,12 +20,31 @@ extract, n records.**
 | Endpoint | `https://api.openaq.org/v3/` |
 | Auth | `X-API-Key` header — see `REGISTRATION.md` |
 | Spatial extent | UZ, KZ, KG, TJ, TM (+ data-rich training pool, TBD) |
-| Temporal extent | *pending* |
+| Temporal extent | Station spans 2018-07-27 → 2026-07-28 (census level); measurements not yet retrieved |
 | Variables | `pm25` (µg/m³), station metadata, coordinates |
-| Licence | *to be recorded verbatim at access time* |
-| Access date | *not yet accessed* |
-| Checksum | *pending* |
-| n records | *pending* |
+| Licence | Per-location `licenses[]` block; recorded per station in the census. **Not yet transcribed verbatim** |
+| Access date | **2026-07-28** (locations endpoint) |
+| Checksum | See `data/raw/cache/` — every response cached and hashed; census digest recorded at commit |
+| n records | **317 locations** (UZ 5, KZ 206, KG 97, TJ 7, TM 2) |
+
+**Census result (locations endpoint only — no measurements retrieved):**
+
+| Filter | n |
+|---|---|
+| Locations returned | 317 |
+| With ≥1 PM2.5 sensor | 317 |
+| Mobile (excluded from spatial splits) | 0 |
+| Span ≥ 2 years | 11 |
+| **Distinct instruments after Q5b de-duplication** | **9** |
+| **Distinct cities** | **7** — Almaty, Ashgabat, Astana, Bishkek, Dushanbe, Khujand, Tashkent |
+
+Providers: AirGradient 173, Clarity 135, AirNow 5, StateAir 4. The 306 stations excluded
+for short span are low-cost units with median span 0.59 y and earliest deployment 2023-07 —
+a genuine recent rollout, valuable for future work but not for a multi-year split (risk R10).
+
+**Reference monitors end March 2025.** Six of nine stop at exactly `2025-03-04`: the US
+State Department terminated its global embassy air quality programme that month. See risk
+R9 and `research/GAP.md`. The last full year with reference coverage is **2024**.
 
 ### GT-2 — US Embassy / State Department reference monitors
 

@@ -66,7 +66,8 @@ Recorded here so that "not done" is never confused with "forgotten".
 |---|---|---|
 | 0 — Literature review | **complete (1st pass), G0 passed** | `research/LITERATURE.md`, `research/GAP.md` |
 | 1a — Ingestion + QC (fixtures) | **complete — 82 tests pass, no credentials needed** | `src/ecopulse_ca/{ingest,qc}`, `tests/` |
-| 1b — Live census + real ground truth | **blocked on `OPENAQ_API_KEY`** | `data/MANIFEST.md`, `data/DECISIONS.md` |
+| 1b — Live census | **complete — F3 RESOLVED, 7 cities, leave-city-out is viable** | `data/MANIFEST.md`, `data/DECISIONS.md`, `data/interim/station_census.csv` |
+| 1c — Measurement ingestion + QC on real series | **next** | `data/DECISIONS.md` n-effects |
 | 2 — Benchmark construction | not started | `benchmark/splits/`, `benchmark/README.md` |
 | 3 — Credential-free baseline ladder | not started | `paper/tables/` |
 | 4 — Predictors + full ladder | deferred to increment 2 | — |
@@ -92,3 +93,5 @@ Recorded here so that "not done" is never confused with "forgotten".
 | R6 | **Kazakhstan shares AQ data only inside its borders** — a benchmark a third party cannot reconstruct is not open | Kazakh stations enter only via an independently retrievable path (OpenAQ mirror / US Embassy); per-station provenance recorded in `MANIFEST.md` |
 | R7 | **MAIAC missingness is correlated with the target** — retrievals fail during dust storms, snow and heavy cloud, i.e. exactly the extreme-PM2.5 episodes | Missingness modelled as an informative feature and reported as an error-analysis stratum. **Never drop missing-AOD rows** — doing so conditions on "retrieval succeeded" and biases results toward calm, clear, low-concentration days |
 | R8 | Turkmenistan has no national monitoring; Ashgabat can enter only via the US Embassy monitor | Recorded as a benchmark coverage property, not worked around |
+| **R9** | **The US State Department terminated its global embassy air quality programme in March 2025 (funding).** 6 of 9 reference monitors stop at exactly 2025-03-04. The benchmark's designated spine is now a historical archive, not a live feed. | The temporal test block cannot be "the most recent full year" for reference-grade data — the last full year with embassy coverage is **2024**. Forces an explicit split design decision in Phase 2. Some AirNow feeds run later (Almaty→2025-11, Ashgabat→2025-09, Dushanbe→2026-07); **cause unverified** — partial resumption or a different pipeline. |
+| R10 | 306 of 317 stations excluded for <2 y span are AirGradient/Clarity low-cost units, median span 0.59 y. If `datetimeFirst` reflects OpenAQ ingestion rather than deployment, true spans are longer and the benchmark is smaller than necessary. | Verify against provider metadata before freezing splits. Logged as D-001. |
