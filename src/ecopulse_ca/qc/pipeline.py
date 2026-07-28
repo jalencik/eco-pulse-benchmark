@@ -26,6 +26,7 @@ from dataclasses import dataclass, field
 import pandas as pd
 
 from ecopulse_ca.qc.rules import (
+    FlatlinePolicy,
     QCFinding,
     QCReport,
     q1_physical_range,
@@ -72,11 +73,43 @@ class QCOutcome:
         )
 
 
+def apply_flatline_policy(
+    series: pd.Series,
+    flatline_mask: pd.Series,
+    station_id: str,
+    policy: FlatlinePolicy,
+) -> tuple[pd.Series, str | None]:
+    """Decide what a detected flatline does to a station.
+
+    Returns `(series, rejection_reason)`. A non-None reason drops the station entirely.
+
+    Only MASK_WINDOW is implemented. The other two branches are deliberately left open
+    because the choice is a scientific judgement, not a default:
+
+    - REJECT_STATION: drop the series once flatlining exceeds some share of the record.
+      Cleanest data, but it preferentially removes low-cost sensors -- and in this region
+      that means removing whole cities, which tightens F3 (see research/GAP.md section 3).
+      Needs a threshold: what share of a record being stuck makes the station untrustworthy?
+    - KEEP_AND_FLAG: retain every value and expose the mask as a feature. Most information
+      retained, but a downstream model can learn the artefact rather than the signal.
+
+    See FlatlinePolicy in qc/rules.py for the full trade-off.
+    """
+    if policy is FlatlinePolicy.MASK_WINDOW:
+        return series.mask(flatline_mask), None
+
+    raise NotImplementedError(
+        f"FlatlinePolicy.{policy.name} is not implemented. This is an open scientific "
+        "decision, not an oversight -- see the docstring above before choosing."
+    )
+
+
 def run_qc(
     panel: dict[str, pd.Series],
     census: pd.DataFrame | None = None,
     *,
     timezones: dict[str, str] | None = None,
+    flatline_policy: FlatlinePolicy = FlatlinePolicy.MASK_WINDOW,
 ) -> QCOutcome:
     """Run the full pre-registered QC suite over a panel of station series.
 
@@ -133,8 +166,13 @@ def run_qc(
             q2_flatline(series, sid),
             q3_zero_run(series, sid),
         )
-        mask = report.row_mask(sid, series.index)
-        kept[sid] = series.mask(mask)
+        masked, reason = apply_flatline_policy(
+            series, report.row_mask(sid, series.index), sid, flatline_policy
+        )
+        if reason is not None:
+            rejected[sid] = reason
+        else:
+            kept[sid] = masked
 
     return QCOutcome(report=report, kept=kept, rejected=rejected)
 

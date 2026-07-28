@@ -65,13 +65,20 @@ Recorded here so that "not done" is never confused with "forgotten".
 | Phase | State | Artifact |
 |---|---|---|
 | 0 — Literature review | **complete (1st pass), G0 passed** | `research/LITERATURE.md`, `research/GAP.md` |
-| 1 — Data (ground truth only) | **next — starts with station census** | `data/MANIFEST.md`, `data/DECISIONS.md` |
+| 1a — Ingestion + QC (fixtures) | **complete — 82 tests pass, no credentials needed** | `src/ecopulse_ca/{ingest,qc}`, `tests/` |
+| 1b — Live census + real ground truth | **blocked on `OPENAQ_API_KEY`** | `data/MANIFEST.md`, `data/DECISIONS.md` |
 | 2 — Benchmark construction | not started | `benchmark/splits/`, `benchmark/README.md` |
 | 3 — Credential-free baseline ladder | not started | `paper/tables/` |
 | 4 — Predictors + full ladder | deferred to increment 2 | — |
 | 5 — Interrogation | deferred | — |
 | 6 — Deployment | deferred | — |
 | 7 — Paper artifacts | deferred | — |
+
+## Open decisions awaiting the user
+
+| # | Decision | Where | Current default |
+|---|---|---|---|
+| D1 | **Flatline policy** — mask the stuck window, reject the whole station, or keep-and-flag. Rejecting stations preferentially removes low-cost sensors, which in this region means removing whole cities, which tightens F3. | `apply_flatline_policy` in `src/ecopulse_ca/qc/pipeline.py` | `MASK_WINDOW` — least destructive option that still removes values known to be wrong. The other two branches raise `NotImplementedError` rather than silently doing something. |
 
 ## Open risks
 
