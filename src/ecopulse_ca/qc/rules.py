@@ -228,13 +228,11 @@ def q5_duplicate_stations(
             i = parent[i]
         return i
 
+    lats = pts["latitude"].to_numpy(dtype=float)
+    lons = pts["longitude"].to_numpy(dtype=float)
     for i in range(len(pts)):
         for j in range(i + 1, len(pts)):
-            d = haversine_m(
-                pts.at[i, "latitude"], pts.at[i, "longitude"],
-                pts.at[j, "latitude"], pts.at[j, "longitude"],
-            )
-            if d <= colocation_m:
+            if haversine_m(lats[i], lons[i], lats[j], lons[j]) <= colocation_m:
                 parent[find(i)] = find(j)
 
     for _, idxs in pd.Series(range(len(pts))).groupby([find(i) for i in range(len(pts))]):

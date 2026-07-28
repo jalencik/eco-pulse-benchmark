@@ -11,8 +11,8 @@ import pandas as pd
 import pytest
 
 from ecopulse_ca.qc.rules import (
-    haversine_m,
     QCReport,
+    haversine_m,
     q1_physical_range,
     q2_flatline,
     q3_zero_run,
