@@ -4,7 +4,22 @@ Last updated: 2026-07-28
 
 ## Current phase
 
-**Phase 0 — adversarial literature review.** In progress.
+**Phase 0 — adversarial literature review. COMPLETE (first pass).** Gate G0 passed: the gap
+is real. See `research/GAP.md`.
+
+Outcome: F1 and F2 did not trigger — no open station-level Central Asia PM2.5 benchmark
+exists, and no leave-city-out transfer evaluation covers these countries. Two intended
+framings were found to be already claimed and have been struck from `PAPER_CLAIM.md`.
+**F3 is unresolved and is the live threat to the headline result.**
+
+Phase 0 debt (does not block Phase 1, must close before submission):
+- 4 sources at FULL depth; the master spec asks 15–25 with full extraction. Four key
+  papers returned HTTP 403 from ScienceDirect and need institutional access.
+- Russian-language search covered general web only; CyberLeninka / eLIBRARY.RU outstanding,
+  so the F4 verdict stays provisional.
+
+**Next: Phase 1, beginning with the station census** — because F3 determines whether the
+leave-city-out headline setting exists at all, and it is cheap to settle.
 
 ## Increment scope
 
@@ -49,8 +64,8 @@ Recorded here so that "not done" is never confused with "forgotten".
 
 | Phase | State | Artifact |
 |---|---|---|
-| 0 — Literature review | **in progress** | `research/LITERATURE.md`, `research/GAP.md` |
-| 1 — Data (ground truth only) | not started | `data/MANIFEST.md`, `data/DECISIONS.md` |
+| 0 — Literature review | **complete (1st pass), G0 passed** | `research/LITERATURE.md`, `research/GAP.md` |
+| 1 — Data (ground truth only) | **next — starts with station census** | `data/MANIFEST.md`, `data/DECISIONS.md` |
 | 2 — Benchmark construction | not started | `benchmark/splits/`, `benchmark/README.md` |
 | 3 — Credential-free baseline ladder | not started | `paper/tables/` |
 | 4 — Predictors + full ladder | deferred to increment 2 | — |
@@ -67,3 +82,6 @@ Recorded here so that "not done" is never confused with "forgotten".
 | R3 | Kazakhstan UTC offset changed mid-record (~Mar 2024) | Timezone QC validates against diurnal shape, not metadata — see `data/DECISIONS.md` |
 | R4 | Frozen splits include cities with poor later satellite coverage | Coverage reported as a benchmark property; splits are **never** re-frozen (`tests/test_splits_immutable.py`) |
 | R5 | 14 GB free disk on dev machine | Server-side reduction only; no raster ever lands on disk |
+| R6 | **Kazakhstan shares AQ data only inside its borders** — a benchmark a third party cannot reconstruct is not open | Kazakh stations enter only via an independently retrievable path (OpenAQ mirror / US Embassy); per-station provenance recorded in `MANIFEST.md` |
+| R7 | **MAIAC missingness is correlated with the target** — retrievals fail during dust storms, snow and heavy cloud, i.e. exactly the extreme-PM2.5 episodes | Missingness modelled as an informative feature and reported as an error-analysis stratum. **Never drop missing-AOD rows** — doing so conditions on "retrieval succeeded" and biases results toward calm, clear, low-concentration days |
+| R8 | Turkmenistan has no national monitoring; Ashgabat can enter only via the US Embassy monitor | Recorded as a benchmark coverage property, not worked around |

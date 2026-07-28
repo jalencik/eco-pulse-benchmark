@@ -1,10 +1,12 @@
 # Paper Claim
 
-> **STATUS: PROVISIONAL — Phase 0 gated.**
-> This claim was written before the literature review completed, as an anchor against
-> drift. It is falsifiable. Section 3 lists the specific findings that would force it to
-> change. Do not treat it as settled until `research/GAP.md` exists and this banner is
-> removed.
+> **STATUS: Phase 0 complete. Claim survives, amended. One falsifier still open.**
+> The literature review (`research/LITERATURE.md`, `research/GAP.md`) tested falsifiers
+> F1–F4. F1 and F2 did not trigger — the benchmark gap is real. **F3 is unresolved and is
+> the live threat**: Turkmenistan has no national monitoring, Kazakhstan geo-restricts its
+> data, and Tajikistan only began sharing in 2024, so the number of cities usable for
+> leave-city-out is not yet known. F4 is provisionally clear pending a CyberLeninka /
+> eLIBRARY.RU search. Amendments from Phase 0 are in §2 and §5.
 
 ---
 
@@ -29,6 +31,9 @@ listed so that no one — including future me — quietly upgrades the claim mid
 | "Deep/graph models beat gradient boosting" | Unknown, and quite possibly false at this data volume. If LightGBM wins, that is the reported result. |
 | "Accurate air quality prediction for Central Asia" | "Accurate" is unfalsifiable. The paper reports errors against a baseline ladder, per regime. |
 | "Our method generalises to data-sparse regions" | We test five countries. Generalisation beyond the tested domain is not evidenced. |
+| "We introduce transfer learning for PM2.5 in data-poor regions" | **Taken.** Gupta et al., ECML-PKDD 2024, propose exactly this (Latent Dependency Factor, eastern-US source → 10 target sensors). C2 is reframed below. |
+| "First ML prediction of PM2.5 in Tashkent" | **Taken.** Claimed by an ECAS 2025 paper using ten automated stations. |
+| Any comparison against the Xinjiang R² of 0.73–0.81 — or any random-CV number — as a target to beat | Those are **random 10-fold CV** results with no spatial stratification. Comparing a leave-city-out number to a random-CV number is the like-for-like violation this project forbids. Cite them as *protocol examples*, never as baselines. |
 
 ## 3. Falsifiers — findings that force this claim to change
 
@@ -64,3 +69,20 @@ clause comes out of the sentence.
 | Date | Change | Trigger |
 |---|---|---|
 | 2026-07-28 | Initial provisional claim written. | Project start, pre-Phase-0. |
+| 2026-07-28 | Three claims added to the "do not make" list: transfer-learning-for-data-poor-regions, first-ML-in-Tashkent, and comparison against random-CV numbers. | Phase 0 found each already claimed or methodologically invalid. |
+| 2026-07-28 | **C2 reframed** (see §6). Novelty moves from *the idea of spatial transfer* to *how far transfer carries into an unlike aerosol regime, under a protocol the region has never had*. | Gupta et al. (ECML-PKDD 2024) holds the original framing. |
+| 2026-07-28 | F3 escalated from hypothetical to **live unresolved risk**. | OpenAQ 2024 landscape report: Turkmenistan unmonitored, Kazakhstan geo-restricted, Tajikistan sharing only since 2024. |
+
+## 6. C2 — reframed after Phase 0
+
+The original framing ("a transfer/domain-adaptation approach for data-sparse regions") is
+prior art. What remains genuinely open:
+
+> **How far does spatial transfer of PM2.5 estimation carry into an aerosol regime unlike
+> anything in the source domain — Aralkum salt dust peaking in spring, loess dust, winter
+> coal-combustion peaks that official inventories under-attribute, and strong basin
+> inversions — when measured under leave-city-out evaluation with zero local labels?**
+
+A negative result is publishable here. "Transfer degrades sharply under regime shift, and
+here is the decomposition showing which regime breaks it" is a real finding, and is the
+kind of result the benchmark exists to make reportable.
