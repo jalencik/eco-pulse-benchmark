@@ -1,0 +1,38 @@
+# Secrets — never commit
+.env
+*.pem
+*.key
+credentials.json
+service-account*.json
+
+# Data — raw and interim are reproducible from MANIFEST, never versioned
+data/raw/**
+data/interim/**
+data/processed/**
+!data/**/.gitkeep
+!data/**/*.md
+
+# BUT: the frozen benchmark splits ARE the deliverable and MUST be committed.
+!benchmark/splits/**
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# Experiment logs — the SQLite DB is a local cache; the CSV export is committed
+runs/*.sqlite
+runs/*.sqlite-journal
+!runs/runs_export.csv
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
