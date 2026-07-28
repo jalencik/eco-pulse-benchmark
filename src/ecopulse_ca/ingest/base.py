@@ -68,6 +68,8 @@ class HttpSource:
         self.use_fixtures = use_fixtures
         self.cache_dir = cache_dir
         self.timeout = timeout
+        #: True when the most recent paginate() returned an incomplete result set.
+        self.last_pagination_partial = False
         self._client: httpx.Client | None = None
 
     # -- to be provided by subclasses ---------------------------------------------------
@@ -135,24 +137,53 @@ class HttpSource:
         cached.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
         return payload
 
-    def paginate(self, path: str, params: dict[str, Any] | None = None) -> list[dict]:
-        """Walk every page of a paginated endpoint.
+    def paginate(
+        self,
+        path: str,
+        params: dict[str, Any] | None = None,
+        *,
+        max_pages: int | None = None,
+    ) -> list[dict]:
+        """Walk pages of a paginated endpoint, returning whatever was successfully fetched.
 
         `meta.found` is not trusted as a stopping condition: OpenAQ returns it as a string
         such as ">1000" when the true count is unknown. Termination is driven by short
         pages instead, which is correct regardless of how `found` is expressed.
+
+        **A failure on page N returns pages 1..N-1 rather than raising.** This is not
+        defensive politeness -- an earlier version raised, and the caller's `except:
+        continue` then discarded ~9,000 already-retrieved records per failed year. Because
+        deep pagination is what times out, that destroyed data *in proportion to how long a
+        station's record was*, silently deleting exactly the stations the benchmark needs.
+        Partial results are marked via `last_pagination_partial` so callers can record the
+        gap instead of mistaking it for absent data.
+
+        `max_pages` bounds the walk when the caller knows the expected record count -- e.g.
+        an hourly endpoint over H hours needs at most ceil(H/limit) pages. Requesting one
+        page beyond the data is what triggered the 408s in the first place.
         """
         params = dict(params or {})
         params.setdefault("limit", self.page_limit)
+        limit = int(params["limit"])
+        hard_cap = max_pages if max_pages is not None else 1000
+
         page, out = 1, []
-        while True:
+        self.last_pagination_partial = False
+        while page <= hard_cap:
             params["page"] = page
-            payload = self.get(path, params)
+            try:
+                payload = self.get(path, params)
+            except (IngestError, httpx.HTTPError) as exc:
+                # Keep what we have; the caller decides whether a partial year is usable.
+                log.warning("pagination stopped at page %d of %s: %s", page, path, exc)
+                self.last_pagination_partial = True
+                break
             results = payload.get("results") or []
             out.extend(results)
-            if len(results) < int(params["limit"]) or self.use_fixtures:
+            if len(results) < limit or self.use_fixtures:
                 break
             page += 1
-            if page > 1000:  # pathological-loop guard
-                raise IngestError(f"pagination exceeded 1000 pages on {path}")
+        else:
+            self.last_pagination_partial = True
+            log.warning("pagination hit max_pages=%s on %s", hard_cap, path)
         return out

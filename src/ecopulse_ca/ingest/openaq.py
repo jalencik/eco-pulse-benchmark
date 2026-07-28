@@ -59,16 +59,20 @@ class OpenAQClient(HttpSource):
         """All monitoring locations for one ISO-3166 alpha-2 country code."""
         return self.paginate("/locations", {"iso": iso})
 
-    def sensor_hours(self, sensor_id: int, date_from: str, date_to: str) -> list[dict]:
+    def sensor_hours(self, sensor_id: int, datetime_from: str, datetime_to: str) -> list[dict]:
         """Hourly aggregates for one sensor.
 
         The `/hours` endpoint returns a `coverage` block (expectedCount, observedCount,
         percentComplete) alongside each value. That is exactly the quantity QC rule Q7
         needs, reported by the provider rather than inferred by us.
+
+        The parameter names are `datetime_from`/`datetime_to` and nothing else -- OpenAQ v3
+        silently ignores unrecognised filters and returns the start of the record instead
+        of an error. See `ingest/measurements.py` for the full account.
         """
         return self.paginate(
             f"/sensors/{sensor_id}/hours",
-            {"date_from": date_from, "date_to": date_to},
+            {"datetime_from": datetime_from, "datetime_to": datetime_to},
         )
 
 

@@ -23,9 +23,21 @@ import logging
 
 import pandas as pd
 
+from ecopulse_ca.ingest.base import IngestError
 from ecopulse_ca.ingest.openaq import OpenAQClient
 
 log = logging.getLogger(__name__)
+
+#: The ONLY query-parameter names OpenAQ v3 honours for time filtering.
+#:
+#: This is a named constant rather than an inline string because getting it wrong is
+#: silent and catastrophic. OpenAQ returns HTTP 200 and well-formed records for an
+#: unrecognised parameter, simply ignoring the filter -- so every request "succeeds" while
+#: returning data from the start of the sensor's record. Two complete pipeline runs passed
+#: with `date_from`/`date_to` before an arithmetic check (10,000 records inside an
+#: 8,760-hour year) exposed it. `tests/test_ingest_openaq.py` pins these names.
+DATETIME_FROM = "datetime_from"
+DATETIME_TO = "datetime_to"
 
 
 def _period_start(record: dict) -> str | None:
@@ -75,39 +87,91 @@ def fetch_sensor_series(
     sensor_id: int,
     date_from: pd.Timestamp,
     date_to: pd.Timestamp,
-) -> tuple[pd.Series, pd.Series]:
-    """Hourly series for one sensor, pulled year by year."""
-    values, coverage = [], []
+) -> tuple[pd.Series, pd.Series, list[int]]:
+    """Hourly series for one sensor, pulled year by year.
+
+    Returns `(values, coverage, partial_years)`.
+
+    Two properties exist because of a bug that destroyed data in proportion to record
+    length -- deep pagination is what times out, so the longest and most valuable series
+    failed hardest:
+
+    - **A year that fetches incompletely contributes what it retrieved.** It is never
+      dropped wholesale, and it is reported in `partial_years` so the gap is recorded
+      rather than mistaken for a station that simply had no data.
+    - **Pagination is bounded by the expected record count.** An hourly endpoint over H
+      hours needs at most ceil(H/limit) pages; requesting one page past the end is what
+      produced the 408s. A small margin is allowed for duplicate or overlapping records.
+    """
+    values, coverage, partial_years = [], [], []
+
     for year in range(date_from.year, date_to.year + 1):
         lo = max(date_from, pd.Timestamp(f"{year}-01-01", tz="UTC"))
         hi = min(date_to, pd.Timestamp(f"{year}-12-31 23:59:59", tz="UTC"))
         if lo > hi:
             continue
+
+        expected_hours = int((hi - lo).total_seconds() // 3600) + 1
+        max_pages = max(1, -(-expected_hours // client.page_limit) + 1)  # ceil + margin
+
         try:
             records = client.paginate(
                 f"/sensors/{sensor_id}/hours",
                 {
-                    "date_from": lo.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                    "date_to": hi.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    # MUST be datetime_from / datetime_to. OpenAQ v3 silently IGNORES
+                    # unknown query parameters rather than returning 400, so the wrong
+                    # name yields HTTP 200 with well-formed records from the start of the
+                    # sensor's history. Verified empirically against the live API:
+                    # date_from/date_to and dateFrom/dateTo are both ignored.
+                    DATETIME_FROM: lo.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    DATETIME_TO: hi.strftime("%Y-%m-%dT%H:%M:%SZ"),
                 },
+                max_pages=max_pages,
             )
         except Exception as exc:  # noqa: BLE001 - one bad year must not lose the others
-            log.warning("sensor %s year %s failed: %s", sensor_id, year, exc)
+            log.warning("sensor %s year %s failed outright: %s", sensor_id, year, exc)
+            partial_years.append(year)
             continue
+
+        # Arithmetic impossibility check. A window of H hours cannot contain more than H
+        # hourly records; materially more means the time filter was not applied and the
+        # response is data from elsewhere in the record. This catches an ignored filter
+        # from ANY cause -- a renamed parameter, an API change, a typo -- rather than only
+        # the specific mistake already made. It raises rather than warns, because the
+        # alternative is a plausible-looking series built from the wrong period.
+        if len(records) > expected_hours * 1.05 + 1:
+            raise IngestError(
+                f"sensor {sensor_id} {year}: got {len(records)} records for a window of "
+                f"{expected_hours} hours. The time filter was not applied -- check that "
+                f"the query parameters are still {DATETIME_FROM}/{DATETIME_TO}. OpenAQ "
+                f"silently ignores unrecognised parameters and returns HTTP 200."
+            )
+
+        if client.last_pagination_partial:
+            partial_years.append(year)
+
         v, c = records_to_series(records)
-        log.info("sensor %s %s: %d records", sensor_id, year, len(v))
-        values.append(v)
-        coverage.append(c)
+        log.info(
+            "sensor %s %s: %d records%s",
+            sensor_id, year, len(v), " (PARTIAL)" if client.last_pagination_partial else "",
+        )
+        if not v.empty:
+            values.append(v)
+            coverage.append(c)
 
     if not values:
         empty_idx = pd.DatetimeIndex([], tz="UTC")
-        return pd.Series(dtype=float, index=empty_idx), pd.Series(dtype=float, index=empty_idx)
+        return (
+            pd.Series(dtype=float, index=empty_idx),
+            pd.Series(dtype=float, index=empty_idx),
+            partial_years,
+        )
 
     vals = pd.concat(values).sort_index()
     cov = pd.concat(coverage).sort_index()
     vals = vals[~vals.index.duplicated(keep="first")]
     cov = cov[~cov.index.duplicated(keep="first")]
-    return reindex_hourly(vals), cov
+    return reindex_hourly(vals), cov, partial_years
 
 
 def build_panel(
@@ -140,10 +204,11 @@ def build_panel(
         # that no device ever measured.
         best: pd.Series | None = None
         best_sensor = None
+        best_partial: list[int] = []
         for sensor_id in sensor_ids:
-            series, _cov = fetch_sensor_series(client, sensor_id, lo, hi)
+            series, _cov, partial = fetch_sensor_series(client, sensor_id, lo, hi)
             if best is None or series.notna().sum() > best.notna().sum():
-                best, best_sensor = series, sensor_id
+                best, best_sensor, best_partial = series, sensor_id, partial
 
         if best is None or best.empty:
             log.warning("no data for station %s", sid)
@@ -164,6 +229,11 @@ def build_panel(
                 "n_hours_in_span": len(best),
                 "n_observed": int(best.notna().sum()),
                 "completeness": round(float(best.notna().mean()), 4),
+                # Years whose fetch was incomplete. A completeness figure for a station
+                # with partial years understates the station, not the sensor -- the
+                # distinction must survive into the manifest.
+                "partial_fetch_years": ",".join(str(y) for y in best_partial),
+                "fetch_complete": not best_partial,
             }
         )
 

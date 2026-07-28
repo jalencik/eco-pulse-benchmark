@@ -46,6 +46,28 @@ a genuine recent rollout, valuable for future work but not for a multi-year spli
 State Department terminated its global embassy air quality programme that month. See risk
 R9 and `research/GAP.md`. The last full year with reference coverage is **2024**.
 
+### Archival urgency — the source record has been deleted
+
+The programme was not merely suspended. Reporting on the shutdown states that **17 years of
+data were removed from airnow.gov**, and no resumption is evidenced as of 2026-07-29.
+
+This changes the status of the cached responses under `data/raw/cache/`. They are no longer
+a convenience cache that could be refetched on demand — for the embassy record they are
+**a copy of an archive that may no longer exist at source**, obtained through OpenAQ's
+mirror. Three consequences:
+
+1. **The cache must be checksummed and preserved**, not treated as regenerable. A future
+   `make reproduce` cannot assume the upstream API will still serve these years.
+2. **Provenance must distinguish "retrieved from OpenAQ's mirror" from "retrieved from the
+   originating programme."** They are no longer the same claim, and only the former is
+   currently possible.
+3. **Completeness cannot be verified against the original publisher.** If OpenAQ's mirror
+   is itself partial, that gap is now unmeasurable. This is a real limitation of the
+   benchmark and belongs in the paper's limitations section, not in a footnote.
+
+It also sharpens the case for C1. A benchmark curating a finite, closed, partially-deleted
+reference record is more valuable than one curating a live feed anyone could re-pull.
+
 ### GT-2 — US Embassy / State Department reference monitors
 
 | Field | Value |
