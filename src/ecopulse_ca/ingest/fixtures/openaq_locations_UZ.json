@@ -1,0 +1,279 @@
+{
+  "meta": {
+    "name": "openaq-api",
+    "website": "/",
+    "page": 1,
+    "limit": 1000,
+    "found": 4
+  },
+  "results": [
+    {
+      "id": 1001,
+      "name": "Tashkent US Embassy",
+      "locality": "Tashkent",
+      "timezone": "Asia/Tashkent",
+      "country": {
+        "id": 1,
+        "code": "UZ",
+        "name": "Uzbekistan"
+      },
+      "owner": {
+        "id": 1,
+        "name": "Unknown"
+      },
+      "provider": {
+        "id": 1,
+        "name": "US Dept. of State"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Reference monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 9001,
+          "name": "pm25 ug/m3",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "ug/m3",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 41.3255,
+        "longitude": 69.2947
+      },
+      "licenses": [
+        {
+          "attribution": {
+            "name": "US Dept. of State"
+          },
+          "dateFrom": "2019-01-01",
+          "dateTo": null
+        }
+      ],
+      "bounds": [
+        69.2847,
+        41.3155,
+        69.30470000000001,
+        41.335499999999996
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2019-01-01T00:00:00Z",
+        "local": "2019-01-01T05:00:00+05:00"
+      },
+      "datetimeLast": {
+        "utc": "2026-06-30T00:00:00Z",
+        "local": "2026-06-30T05:00:00+05:00"
+      }
+    },
+    {
+      "id": 1002,
+      "name": "Tashkent Yunusobod",
+      "locality": "Tashkent",
+      "timezone": "Asia/Tashkent",
+      "country": {
+        "id": 1,
+        "code": "UZ",
+        "name": "Uzbekistan"
+      },
+      "owner": {
+        "id": 1,
+        "name": "Unknown"
+      },
+      "provider": {
+        "id": 1,
+        "name": "Clarity"
+      },
+      "isMobile": false,
+      "isMonitor": false,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Low-cost sensor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 9002,
+          "name": "pm25 ug/m3",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "ug/m3",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 41.36,
+        "longitude": 69.289
+      },
+      "licenses": [
+        {
+          "attribution": {
+            "name": "Clarity"
+          },
+          "dateFrom": "2021-03-01",
+          "dateTo": null
+        }
+      ],
+      "bounds": [
+        69.279,
+        41.35,
+        69.299,
+        41.37
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2021-03-01T00:00:00Z",
+        "local": "2021-03-01T05:00:00+05:00"
+      },
+      "datetimeLast": {
+        "utc": "2026-06-30T00:00:00Z",
+        "local": "2026-06-30T05:00:00+05:00"
+      }
+    },
+    {
+      "id": 1003,
+      "name": "Tashkent Yunusobod (dup)",
+      "locality": "Tashkent",
+      "timezone": "Asia/Tashkent",
+      "country": {
+        "id": 1,
+        "code": "UZ",
+        "name": "Uzbekistan"
+      },
+      "owner": {
+        "id": 1,
+        "name": "Unknown"
+      },
+      "provider": {
+        "id": 1,
+        "name": "Clarity"
+      },
+      "isMobile": false,
+      "isMonitor": false,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Low-cost sensor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 9003,
+          "name": "pm25 ug/m3",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "ug/m3",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 41.36,
+        "longitude": 69.289
+      },
+      "licenses": [
+        {
+          "attribution": {
+            "name": "Clarity"
+          },
+          "dateFrom": "2021-03-01",
+          "dateTo": null
+        }
+      ],
+      "bounds": [
+        69.279,
+        41.35,
+        69.299,
+        41.37
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2021-03-01T00:00:00Z",
+        "local": "2021-03-01T05:00:00+05:00"
+      },
+      "datetimeLast": {
+        "utc": "2026-06-30T00:00:00Z",
+        "local": "2026-06-30T05:00:00+05:00"
+      }
+    },
+    {
+      "id": 1004,
+      "name": "Samarkand",
+      "locality": "Samarkand",
+      "timezone": "Asia/Samarkand",
+      "country": {
+        "id": 1,
+        "code": "UZ",
+        "name": "Uzbekistan"
+      },
+      "owner": {
+        "id": 1,
+        "name": "Unknown"
+      },
+      "provider": {
+        "id": 1,
+        "name": "Clarity"
+      },
+      "isMobile": false,
+      "isMonitor": false,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Low-cost sensor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 9004,
+          "name": "pm25 ug/m3",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "ug/m3",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 39.6542,
+        "longitude": 66.9597
+      },
+      "licenses": [
+        {
+          "attribution": {
+            "name": "Clarity"
+          },
+          "dateFrom": "2022-01-01",
+          "dateTo": null
+        }
+      ],
+      "bounds": [
+        66.94969999999999,
+        39.644200000000005,
+        66.9697,
+        39.6642
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2022-01-01T00:00:00Z",
+        "local": "2022-01-01T05:00:00+05:00"
+      },
+      "datetimeLast": {
+        "utc": "2026-06-30T00:00:00Z",
+        "local": "2026-06-30T05:00:00+05:00"
+      }
+    }
+  ]
+}

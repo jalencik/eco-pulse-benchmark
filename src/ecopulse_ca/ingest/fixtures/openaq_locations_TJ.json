@@ -1,0 +1,145 @@
+{
+  "meta": {
+    "name": "openaq-api",
+    "website": "/",
+    "page": 1,
+    "limit": 1000,
+    "found": 2
+  },
+  "results": [
+    {
+      "id": 4001,
+      "name": "Dushanbe US Embassy",
+      "locality": "Dushanbe",
+      "timezone": "Asia/Dushanbe",
+      "country": {
+        "id": 1,
+        "code": "TJ",
+        "name": "Tajikistan"
+      },
+      "owner": {
+        "id": 1,
+        "name": "Unknown"
+      },
+      "provider": {
+        "id": 1,
+        "name": "US Dept. of State"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Reference monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 9301,
+          "name": "pm25 ug/m3",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "ug/m3",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 38.573,
+        "longitude": 68.786
+      },
+      "licenses": [
+        {
+          "attribution": {
+            "name": "US Dept. of State"
+          },
+          "dateFrom": "2019-06-01",
+          "dateTo": null
+        }
+      ],
+      "bounds": [
+        68.776,
+        38.563,
+        68.796,
+        38.583
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2019-06-01T00:00:00Z",
+        "local": "2019-06-01T05:00:00+05:00"
+      },
+      "datetimeLast": {
+        "utc": "2026-06-30T00:00:00Z",
+        "local": "2026-06-30T05:00:00+05:00"
+      }
+    },
+    {
+      "id": 4002,
+      "name": "Dushanbe Hydromet",
+      "locality": "Dushanbe",
+      "timezone": "Asia/Dushanbe",
+      "country": {
+        "id": 1,
+        "code": "TJ",
+        "name": "Tajikistan"
+      },
+      "owner": {
+        "id": 1,
+        "name": "Unknown"
+      },
+      "provider": {
+        "id": 1,
+        "name": "Tajikhydromet"
+      },
+      "isMobile": false,
+      "isMonitor": false,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Low-cost sensor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 9302,
+          "name": "pm25 ug/m3",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "ug/m3",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 38.56,
+        "longitude": 68.78
+      },
+      "licenses": [
+        {
+          "attribution": {
+            "name": "Tajikhydromet"
+          },
+          "dateFrom": "2024-09-01",
+          "dateTo": null
+        }
+      ],
+      "bounds": [
+        68.77,
+        38.550000000000004,
+        68.79,
+        38.57
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-09-01T00:00:00Z",
+        "local": "2024-09-01T05:00:00+05:00"
+      },
+      "datetimeLast": {
+        "utc": "2026-06-30T00:00:00Z",
+        "local": "2026-06-30T05:00:00+05:00"
+      }
+    }
+  ]
+}

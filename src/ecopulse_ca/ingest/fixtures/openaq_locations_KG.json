@@ -1,0 +1,145 @@
+{
+  "meta": {
+    "name": "openaq-api",
+    "website": "/",
+    "page": 1,
+    "limit": 1000,
+    "found": 2
+  },
+  "results": [
+    {
+      "id": 3001,
+      "name": "Bishkek US Embassy",
+      "locality": "Bishkek",
+      "timezone": "Asia/Bishkek",
+      "country": {
+        "id": 1,
+        "code": "KG",
+        "name": "Kyrgyzstan"
+      },
+      "owner": {
+        "id": 1,
+        "name": "Unknown"
+      },
+      "provider": {
+        "id": 1,
+        "name": "US Dept. of State"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Reference monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 9201,
+          "name": "pm25 ug/m3",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "ug/m3",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 42.856,
+        "longitude": 74.601
+      },
+      "licenses": [
+        {
+          "attribution": {
+            "name": "US Dept. of State"
+          },
+          "dateFrom": "2019-01-01",
+          "dateTo": null
+        }
+      ],
+      "bounds": [
+        74.591,
+        42.846000000000004,
+        74.611,
+        42.866
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2019-01-01T00:00:00Z",
+        "local": "2019-01-01T05:00:00+05:00"
+      },
+      "datetimeLast": {
+        "utc": "2026-06-30T00:00:00Z",
+        "local": "2026-06-30T05:00:00+05:00"
+      }
+    },
+    {
+      "id": 3002,
+      "name": "Bishkek Tunguch",
+      "locality": "Bishkek",
+      "timezone": "Asia/Bishkek",
+      "country": {
+        "id": 1,
+        "code": "KG",
+        "name": "Kyrgyzstan"
+      },
+      "owner": {
+        "id": 1,
+        "name": "Unknown"
+      },
+      "provider": {
+        "id": 1,
+        "name": "AQ Central Asia"
+      },
+      "isMobile": false,
+      "isMonitor": false,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Low-cost sensor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 9202,
+          "name": "pm25 ug/m3",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "ug/m3",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 42.889,
+        "longitude": 74.612
+      },
+      "licenses": [
+        {
+          "attribution": {
+            "name": "AQ Central Asia"
+          },
+          "dateFrom": "2021-01-01",
+          "dateTo": null
+        }
+      ],
+      "bounds": [
+        74.60199999999999,
+        42.879000000000005,
+        74.622,
+        42.899
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2021-01-01T00:00:00Z",
+        "local": "2021-01-01T05:00:00+05:00"
+      },
+      "datetimeLast": {
+        "utc": "2026-06-30T00:00:00Z",
+        "local": "2026-06-30T05:00:00+05:00"
+      }
+    }
+  ]
+}

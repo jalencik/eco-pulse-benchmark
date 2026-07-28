@@ -1,0 +1,78 @@
+{
+  "meta": {
+    "name": "openaq-api",
+    "website": "/",
+    "page": 1,
+    "limit": 1000,
+    "found": 1
+  },
+  "results": [
+    {
+      "id": 5001,
+      "name": "Ashgabat US Embassy",
+      "locality": "Ashgabat",
+      "timezone": "Asia/Ashgabat",
+      "country": {
+        "id": 1,
+        "code": "TM",
+        "name": "Turkmenistan"
+      },
+      "owner": {
+        "id": 1,
+        "name": "Unknown"
+      },
+      "provider": {
+        "id": 1,
+        "name": "US Dept. of State"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Reference monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 9401,
+          "name": "pm25 ug/m3",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "ug/m3",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 37.934,
+        "longitude": 58.386
+      },
+      "licenses": [
+        {
+          "attribution": {
+            "name": "US Dept. of State"
+          },
+          "dateFrom": "2019-01-01",
+          "dateTo": null
+        }
+      ],
+      "bounds": [
+        58.376000000000005,
+        37.924,
+        58.396,
+        37.943999999999996
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2019-01-01T00:00:00Z",
+        "local": "2019-01-01T05:00:00+05:00"
+      },
+      "datetimeLast": {
+        "utc": "2026-06-30T00:00:00Z",
+        "local": "2026-06-30T05:00:00+05:00"
+      }
+    }
+  ]
+}
