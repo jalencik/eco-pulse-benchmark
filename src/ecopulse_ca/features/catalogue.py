@@ -193,11 +193,27 @@ SATELLITE = (
         source=Source.GEE_VIIRS,
         description="VIIRS active fire detections within the buffer -- biomass burning",
         units="count",
-        available_at_runtime=True,
-        latency_hours=4.0,
+        available_at_runtime=False,
+        latency_hours=None,
         reduction=Reduction(50_000, Statistic.COUNT),
         native_resolution="375 m",
-        verified=False,
+        caveat="ORACLE ONLY. VERIFIED 2026-07-29 -- and the worst mis-claim in this "
+               "catalogue. The originally mapped NOAA/VIIRS/001/VNP14A1 has a measured "
+               "latency of 774 DAYS against a claimed 4 h (wrong by ~4,600x) and is "
+               "flagged deprecated by Earth Engine. Far worse, its final asset is "
+               "2024-06-16 -- dead centre of the frozen test block: 161 images in "
+               "Jan-Jun 2024, ZERO in Jul-Dec. That would give fire signal for half the "
+               "test year and structurally none for the other half, producing a spurious "
+               "regime change on 1 July that invites a meteorological explanation for a "
+               "data artefact. Now mapped to NASA/VIIRS/002/VNP14A1 (2012-2026, 46 h "
+               "latency, 347/365 days in 2024). 46 h exceeds the 24 h horizon, so this "
+               "is oracle-only. "
+               "The deployable NRT counterparts (NASA/LANCE/NOAA20_VIIRS/C2 and "
+               "SNPP_VIIRS/C2) reach 22 h AND reduce server-side, but begin only "
+               "2023-09/2023-10 -- after the train block opens in 2018 -- so they cannot "
+               "be trained on. Same train/serve gap as MAIAC, and here the NRT product "
+               "has no training data at all.",
+        verified=True,
     ),
 )
 

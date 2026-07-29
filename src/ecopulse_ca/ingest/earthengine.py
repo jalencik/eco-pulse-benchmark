@@ -47,7 +47,9 @@ COLLECTION_FOR_FEATURE: dict[str, str] = {
     "s5p_no2_tropospheric": "COPERNICUS/S5P/OFFL/L3_NO2",
     "s5p_so2": "COPERNICUS/S5P/OFFL/L3_SO2",
     "s5p_co": "COPERNICUS/S5P/OFFL/L3_CO",
-    "viirs_active_fire_count": "NOAA/VIIRS/001/VNP14A1",
+    # v002, NOT the deprecated NOAA/VIIRS/001/VNP14A1. See COLLECTION_COVERAGE below:
+    # v001 stopped at 2024-06-16, dead centre of the frozen test block.
+    "viirs_active_fire_count": "NASA/VIIRS/002/VNP14A1",
     "ghsl_population_density": "JRC/GHSL/P2023A/GHS_POP",
     "viirs_nighttime_lights": "NOAA/VIIRS/DNB/MONTHLY_V1/VCMSLCFG",
     "elevation": "USGS/SRTMGL1_003",
@@ -72,6 +74,47 @@ BAND_FOR_FEATURE: dict[str, str] = {
 #: MAIAC AOD is stored scaled; the raw integer must be multiplied to get optical depth.
 SCALE_FACTOR_FOR_FEATURE: dict[str, float] = {
     "maiac_aod_055": 0.001,
+}
+
+#: Measured coverage per collection: (first asset, last asset, measurement date).
+#:
+#: Recorded because a latency check alone is not sufficient. `NOAA/VIIRS/001/VNP14A1` was
+#: originally mapped here with a claimed 4 h latency; measurement showed **774 days**, and
+#: -- far worse -- its final asset is **2024-06-16**, dead centre of the frozen 2024 test
+#: block: 161 images in Jan-Jun, **zero** in Jul-Dec. A model trained on it would see fire
+#: signal for half the test year and structurally none for the other half, producing a
+#: spurious regime change on 1 July that invites a meteorological explanation for a data
+#: artefact. Earth Engine also flags v001 as deprecated in favour of v002.
+#:
+#: `tests/test_collection_coverage.py` asserts every mapped collection spans the frozen
+#: test block, so a collection that dies mid-block fails the build offline.
+COLLECTION_COVERAGE: dict[str, tuple[str, str, str]] = {
+    "MODIS/061/MCD19A2_GRANULES": ("2000-02-24", "2026-07-21", "2026-07-29"),
+    "COPERNICUS/S5P/OFFL/L3_AER_AI": ("2018-07-04", "2026-07-26", "2026-07-29"),
+    "COPERNICUS/S5P/NRTI/L3_AER_AI": ("2018-07-10", "2026-07-29", "2026-07-29"),
+    "COPERNICUS/S5P/OFFL/L3_NO2": ("2018-06-28", "2026-07-26", "2026-07-29"),
+    "COPERNICUS/S5P/OFFL/L3_SO2": ("2018-07-10", "2026-07-26", "2026-07-29"),
+    "COPERNICUS/S5P/OFFL/L3_CO": ("2018-06-28", "2026-07-26", "2026-07-29"),
+    "NASA/VIIRS/002/VNP14A1": ("2012-01-19", "2026-07-28", "2026-07-29"),
+    # Last OBSERVED epoch, not last asset. The collection also carries 2025 and 2030
+    # epochs, but those are PROJECTIONS -- modelled future population. Recording 2030 here
+    # would assert coverage the data does not have, and the bookkeeping test caught it.
+    "JRC/GHSL/P2023A/GHS_POP": ("1975-01-01", "2020-01-01", "2026-07-29"),
+    "NOAA/VIIRS/DNB/MONTHLY_V1/VCMSLCFG": ("2014-01-01", "2026-04-01", "2026-07-29"),
+    "USGS/SRTMGL1_003": ("2000-02-11", "2000-02-22", "2026-07-29"),  # static DEM
+}
+
+#: Collections Earth Engine reports as deprecated. Mapping one is a build failure: a
+#: deprecated collection is frozen, so it silently stops covering recent periods.
+DEPRECATED_COLLECTIONS: frozenset[str] = frozenset({
+    "NOAA/VIIRS/001/VNP14A1",  # superseded by NASA/VIIRS/002/VNP14A1; last asset 2024-06-16
+})
+
+#: Collections exempt from the test-block coverage check, with the reason.
+#: Static products have no time dimension, so "coverage" is not meaningful for them.
+COVERAGE_EXEMPT: dict[str, str] = {
+    "USGS/SRTMGL1_003": "single-epoch DEM; terrain is time-invariant",
+    "JRC/GHSL/P2023A/GHS_POP": "5-year epochs, selected not date-filtered",
 }
 
 
