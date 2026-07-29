@@ -168,4 +168,90 @@ forgotten. Related: `STATUS.md` risk R3.
   hundreds of kilometres apart, with different source mixes (coal heating, basin inversion,
   desert dust), do not share one diurnal shape. **With only 6 cities the median reference is
   dominated by whichever happen to resemble each other.** Q6 should probably become a
-  per-city or per-climate-zone check before splits are frozen.
+  per-city or per-climate-zone check before splits are frozen. → resolved in D-007.
+
+### D-007 — Q6 rebuilt per city (**POST-HOC rule change**)
+- **Date:** 2026-07-29
+- **Status:** **This rule was changed AFTER data inspection.** Q1–Q7 were pre-registered;
+  this revision was not. It is recorded as post-hoc so a reader can discount it accordingly.
+  The change makes Q6 strictly *less* able to reject, so it cannot have been motivated by
+  improving a headline number.
+- **Decision:** replace the single regional-reference comparison with
+  (a) **within-city agreement**, which can reject, and
+  (b) **cross-city regime labelling**, which is informational and can never reject.
+- **Reason:** the evidence says cities genuinely differ. Local-time diurnal minima across
+  the 11 feeds ranged 3–16 h; only 6 of 11 had the textbook afternoon minimum. A single
+  regional median therefore flags stations in the minority regime *for being correct*. A
+  hardcoded physical window ("minimum must be in the afternoon") fails identically — it
+  would reject Bishkek and Ashgabat, whose pre-dawn minimum is the expected signature of
+  evening residential heating decaying overnight.
+- **Effect on n:** Q6 rejections **2 → 0**; cities **5 → 6**. No station lost.
+- **Alternative considered:** per-climate-zone reference. Rejected for now — with 6 cities
+  the zones would each hold 2–3 stations, which is no better constrained than per-city.
+- **Direction of bias if wrong:** a genuine constant offset now survives as a flag rather
+  than a rejection, so a real timezone fault could enter the benchmark.
+- **Honest limitation — the check is only half-substantive.** Of 8 stations, only **4 were
+  genuinely compared against city peers** (Dushanbe ×2, Khujand ×2; all agreed at lag +0 h,
+  r = 0.99–1.00, min/max offsets 0 h). The other four cities hold a single instrument each,
+  so no within-city check is possible. **A constant, lifelong offset at Almaty, Tashkent,
+  Bishkek or Ashgabat is undetectable by any check in this suite**, and is reported as such
+  rather than left implicit.
+- **Regime finding worth carrying into the paper:** the informational labels split the
+  region into more than one regime — Dushanbe, Khujand and Tashkent are dilution-driven
+  (afternoon minimum); Bishkek and Ashgabat are evening-source-driven (pre-dawn minimum,
+  20:00 maximum). **Almaty fits neither**: pre-dawn minimum but a 13:00 *maximum*. The
+  classifier labels it with Bishkek/Ashgabat on the minimum alone, which is misleading.
+  Treat Almaty as its own regime in the error analysis.
+
+### D-008 — Co-located feeds merged in Bishkek and Ashgabat
+- **Date:** 2026-07-29
+- **Decision:** merge each Q5b pair into one series per city by **precedence and gap-fill**,
+  never averaging. Primary = the feed with more observations; the other fills gaps only.
+  Per-hour provenance retained in `panel_sources.parquet`.
+- **Reason:** user decision; the pairs are one physical instrument (57 m and 40 m apart)
+  published twice. Averaging two copies of one measurement reduces no noise and, where the
+  copies disagree, fabricates a third value no device produced.
+- **Effect on n:** Bishkek 39,629 + 37,170 → **44,804** merged (primary `8225`);
+  Ashgabat 32,125 + 33,827 → **37,163** merged (primary `8870`). Stations 10 → 8.
+- **Agreement, and a serious caveat.** Ashgabat is a clean duplicate: **99.5%** of
+  overlapping hours identical, 100% in every year except 2023. **Bishkek is not.** The
+  feeds are identical through 2020 and then diverge:
+
+  | year | Bishkek % exact | Ashgabat % exact |
+  |---|---:|---:|
+  | 2019 | 100.0 | 100.0 |
+  | 2020 | 100.0 | 100.0 |
+  | 2021 | 28.4 | 100.0 |
+  | 2022 | 50.1 | 100.0 |
+  | 2023 | 61.2 | 93.8 |
+  | **2024** | **11.1** | 100.0 |
+  | 2025 | 6.2 | 100.0 |
+
+  **2024 is the temporal test block (D-009), and it is Bishkek's worst year** — 11.1%
+  agreement, p95 disagreement 33.6 µg/m³, max 479 µg/m³. The p95 alone is more than twice
+  the WHO 2021 24-hour guideline of 15 µg/m³. Bishkek's 2024 test labels therefore depend
+  on which publisher is chosen, and no model can see through that. **This is a property of
+  the ground truth and must appear in the paper's limitations, not be absorbed silently.**
+- **Direction of bias if wrong:** if the non-primary publisher is the more accurate one,
+  every Bishkek 2024 error metric is biased by an unknown amount up to the p95 above.
+  Mitigated by retaining per-hour provenance so results can be recomputed against either
+  publisher and the spread reported.
+- **Secondary cost of merging:** it removes the redundancy that made a within-city timing
+  check possible. Bishkek and Ashgabat were checked *before* merging (minima agreed within
+  1 h: 6 vs 7 and 3 vs 4) and the evidence is preserved in `merge_report.md`, but the check
+  cannot be repeated post-merge.
+
+### D-009 — Temporal test block = 2024
+- **Date:** 2026-07-29
+- **Decision:** the held-out temporal block is calendar year 2024.
+- **Reason:** user decision. It is the last full year with reference-grade coverage before
+  the US embassy programme ended on 2025-03-04 (risk R9).
+- **Effect on n:** all 8 stations and all 6 cities have 2024 data; per-station completeness
+  in 2024 ranges **0.722 – 0.946**.
+- **Alternative considered:** a post-shutdown block (2025–2026). Rejected — only Dushanbe
+  (AirNow) and the two Khujand low-cost sensors report meaningfully after the shutdown, so
+  the held-out block would cover 2 cities instead of 6 and could not support leave-city-out.
+- **Direction of bias if wrong:** testing on 2024 means the benchmark cannot demonstrate
+  performance on *current* data, and any deployment claim for ECO Pulse is extrapolation
+  beyond the evaluated period. That constraint is external and permanent — the reference
+  network no longer exists.
