@@ -11,9 +11,8 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from ecopulse_ca.ingest.base import HttpSource, IngestError
-
 from ecopulse_ca.config import Settings, _resolve_fixtures
+from ecopulse_ca.ingest.base import HttpSource, IngestError
 from ecopulse_ca.ingest.measurements import DATETIME_FROM, DATETIME_TO, fetch_sensor_series
 from ecopulse_ca.ingest.openaq import (
     OpenAQClient,

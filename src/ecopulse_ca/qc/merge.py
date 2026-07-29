@@ -103,10 +103,7 @@ def merge_colocated(
     s = secondary.reindex(idx)
 
     both = pd.concat([p, s], axis=1).dropna()
-    if both.empty:
-        diff = pd.Series(dtype=float)
-    else:
-        diff = (both.iloc[:, 0] - both.iloc[:, 1]).abs()
+    diff = pd.Series(dtype=float) if both.empty else (both.iloc[:, 0] - both.iloc[:, 1]).abs()
 
     values = p.where(p.notna(), s)
     source = pd.Series(np.where(p.notna(), primary_id, np.where(s.notna(), secondary_id, "")),
