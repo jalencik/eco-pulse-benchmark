@@ -20,6 +20,7 @@ import pytest
 
 from ecopulse_ca.features.catalogue import (
     ALL_FEATURES,
+    BENCHMARK_RETROSPECTIVE,
     DEPLOYABLE,
     FEATURE_SETS,
     MET_FORECAST,
@@ -165,10 +166,34 @@ class TestServerSideReductionByConstruction:
         "f", [f for f in ALL_FEATURES if f.source is not Source.DERIVED],
         ids=lambda f: f.name,
     )
-    def test_every_gridded_feature_declares_a_reduction(self, f: FeatureSpec):
-        assert f.reduction is not None, (
-            f"{f.name} has no Reduction -- it would have to be downloaded as a raster"
+    def test_gridded_features_either_reduce_or_declare_raster_download(self, f: FeatureSpec):
+        """No feature may quietly imply a raster download.
+
+        LANCE NRT genuinely cannot be server-side reduced -- it serves HDF granules. That
+        is a fact about the provider, not a defect, so the invariant is not "everything
+        reduces" but "anything that does not reduce says so out loud".
+        """
+        assert f.reduction is not None or f.requires_raster_download, (
+            f"{f.name} has neither a Reduction nor requires_raster_download=True"
         )
+
+    def test_locally_reproducible_sets_download_no_rasters(self):
+        """The guarantee that actually protects the 8.6 GB dev machine."""
+        for fset in (BENCHMARK_RETROSPECTIVE, REANALYSIS_ORACLE, STATIC_ONLY):
+            assert fset.locally_reproducible, (
+                f"{fset.name} contains raster-download features "
+                f"{[f.name for f in fset.raster_features()]} and cannot be rebuilt locally"
+            )
+
+    def test_deployable_set_is_explicitly_not_locally_reproducible(self):
+        """Stated, not discovered: live deployment needs LANCE, which is raster-based."""
+        assert not DEPLOYABLE.locally_reproducible
+        assert [f.name for f in DEPLOYABLE.raster_features()] == ["maiac_aod_055_nrt"]
+
+    def test_construction_rejects_a_silent_raster_feature(self):
+        with pytest.raises(ValueError, match="downloaded as a raster"):
+            FeatureSpec("sneaky", Source.GEE_MODIS, "d", "u",
+                        available_at_runtime=True, latency_hours=1.0)
 
     @pytest.mark.parametrize(
         "f", [f for f in ALL_FEATURES if f.reduction is not None], ids=lambda f: f.name

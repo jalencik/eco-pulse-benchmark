@@ -1,0 +1,1988 @@
+{
+ "features": [
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-01",
+    "mean": 0.00011030379127823069,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-01",
+    "mean": 0.00011172552564259974,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-01",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-01",
+    "mean": 5.850815504060297e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-01",
+    "mean": 4.5314249569937416e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-01",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-01",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-01",
+    "mean": 9.65229316831827e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-02",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-02",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-02",
+    "mean": 0.00010916499237170501,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-02",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-02",
+    "mean": 6.854309337729138e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-02",
+    "mean": 9.32817420263612e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-02",
+    "mean": 4.7093967292433744e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-02",
+    "mean": 7.23808482385001e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-03",
+    "mean": 0.00011728670886219721,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-03",
+    "mean": 8.317583976092569e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-03",
+    "mean": 0.00010710498478050102,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-03",
+    "mean": 0.00010300225918685839,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-03",
+    "mean": 4.040248451937143e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-03",
+    "mean": 9.28660560050841e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-03",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-03",
+    "mean": 6.246538061501796e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-04",
+    "mean": 6.553590679153134e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-04",
+    "mean": 0.0001076181044406118,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-04",
+    "mean": 4.6188473257877154e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-04",
+    "mean": 4.1186532002735636e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-04",
+    "mean": 6.608538607880623e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-04",
+    "mean": 7.36833528436124e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-04",
+    "mean": 0.00011387861198494475,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-04",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-05",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-05",
+    "mean": 8.126811772252045e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-05",
+    "mean": 8.53491072050012e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-05",
+    "mean": 0.00011222778184806378,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-05",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-05",
+    "mean": 4.7214713127324796e-05,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-05",
+    "mean": 9.328033514847741e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-05",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-06",
+    "mean": 7.655815759042338e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-06",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-06",
+    "mean": 0.00011638212064176337,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-06",
+    "mean": 6.891366342008275e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-06",
+    "mean": 0.00010258426922227629,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-06",
+    "mean": 0.00011457402346622223,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-06",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-06",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-07",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-07",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-07",
+    "mean": 4.047348583655168e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-07",
+    "mean": 7.010059940748247e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-07",
+    "mean": 5.454444269147273e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-07",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-07",
+    "mean": 7.35157695646128e-05,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-07",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-08",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-08",
+    "mean": 7.186023244088022e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-08",
+    "mean": 8.937127000100095e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-08",
+    "mean": 6.464858205947925e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-08",
+    "mean": 0.000112195394219869,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-08",
+    "mean": 9.318216977623779e-05,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-08",
+    "mean": 9.424351297720455e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-08",
+    "mean": 5.132696930230154e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-09",
+    "mean": 4.5441169918539255e-05,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-09",
+    "mean": 6.132335139819088e-05,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-09",
+    "mean": 7.035817732539567e-05,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-09",
+    "mean": 0.00010408229261917112,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-09",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-09",
+    "mean": 7.85629888045098e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-09",
+    "mean": 7.30104079788527e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-09",
+    "mean": 4.943151283889434e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-10",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-10",
+    "mean": 4.157963997728158e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-10",
+    "mean": 6.485126536397859e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-10",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-10",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-10",
+    "mean": 0.00010505432137351439,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-10",
+    "mean": 7.490777494627426e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-10",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-11",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-11",
+    "mean": 6.120652088176289e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-11",
+    "mean": 9.545272573414386e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-11",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-11",
+    "mean": 9.62836233178843e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-11",
+    "mean": 0.00011976432638750027,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-11",
+    "mean": 0.00010398432149338423,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-11",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-12",
+    "mean": 7.33838549914114e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-12",
+    "mean": 4.392265052427658e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-12",
+    "mean": 9.324589386971138e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-12",
+    "mean": 4.477468247725452e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-12",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-12",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-12",
+    "mean": 5.376008070489809e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-12",
+    "mean": 4.5576319534709034e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-13",
+    "mean": 5.211783333298176e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-13",
+    "mean": 8.385774219398095e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-13",
+    "mean": 6.747143530800643e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-13",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-13",
+    "mean": 8.87183480821302e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-13",
+    "mean": 0.00010220163097431314,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-13",
+    "mean": 4.88327236001009e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-13",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-14",
+    "mean": 7.460633701885531e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-14",
+    "mean": 0.00011205652106147804,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-14",
+    "mean": 7.328051427598576e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-14",
+    "mean": 0.00010205246450898479,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-14",
+    "mean": 7.005428721328769e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-14",
+    "mean": 4.632629358632892e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-14",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-14",
+    "mean": 8.432531957467766e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-15",
+    "mean": 5.236821580671259e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-15",
+    "mean": 9.165236866310706e-05,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-15",
+    "mean": 9.411446218625714e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-15",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-15",
+    "mean": 5.542559435621577e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-15",
+    "mean": 4.741777330391035e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-15",
+    "mean": 8.366210618964279e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-15",
+    "mean": 8.836055796323416e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-16",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-16",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-16",
+    "mean": 9.688326327259454e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-16",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-16",
+    "mean": 6.790948273484188e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-16",
+    "mean": 9.034085477590462e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-16",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-16",
+    "mean": 4.9328810944519164e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-17",
+    "mean": 0.00010740866305991383,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-17",
+    "mean": 0.00011682592892901081,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-17",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-17",
+    "mean": 6.35854314836517e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-17",
+    "mean": 6.235233859420286e-05,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-17",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-17",
+    "mean": 9.913041650017854e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-17",
+    "mean": 0.00011018529412399848,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-18",
+    "mean": 4.24887169152913e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-18",
+    "mean": 4.0813363316350146e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-18",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-18",
+    "mean": 9.828238422964481e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-18",
+    "mean": 9.350005636729237e-05,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-18",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-18",
+    "mean": 4.856184108657576e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-18",
+    "mean": 5.714477980042675e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-19",
+    "mean": 6.150192303466508e-05,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-19",
+    "mean": 0.00010342758431500949,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-19",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-19",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-19",
+    "mean": 5.19221239851261e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-19",
+    "mean": 0.00011538883728061523,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-19",
+    "mean": 6.146901005288694e-05,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-19",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-20",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-20",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-20",
+    "mean": 9.124834597812576e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-20",
+    "mean": 0.0001146231618044193,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-20",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-20",
+    "mean": 0.0001052508785244388,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-20",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-20",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-21",
+    "mean": 6.12374252924551e-05,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-21",
+    "mean": 6.591050784233955e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-21",
+    "mean": 0.00010652613767196948,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-21",
+    "mean": 9.192843142158581e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-21",
+    "mean": 7.169568738927104e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-21",
+    "mean": 7.611001191736846e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-21",
+    "mean": 7.922242363868593e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-21",
+    "mean": 0.00011988420949733165,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-22",
+    "mean": 6.168776086735056e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-22",
+    "mean": 4.991356299166229e-05,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-22",
+    "mean": 4.409784147842708e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-22",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-22",
+    "mean": 5.44582597627403e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-22",
+    "mean": 7.824903082263244e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-22",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-22",
+    "mean": 6.887900108537754e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-23",
+    "mean": 5.552671404230964e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-23",
+    "mean": 0.00010588307019524032,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-23",
+    "mean": 5.426290354361988e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-23",
+    "mean": 9.666705236485482e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-23",
+    "mean": 8.40884785318603e-05,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-23",
+    "mean": 0.00010343366357236424,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-23",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-23",
+    "mean": 7.463594810785902e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-24",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-24",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-24",
+    "mean": 5.621205083926968e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-24",
+    "mean": 4.5510877141919376e-05,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-24",
+    "mean": 4.108538191407882e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-24",
+    "mean": 8.32296721120992e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-24",
+    "mean": 9.813018581161914e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-24",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-25",
+    "mean": 7.317667730149209e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-25",
+    "mean": 4.731909178550371e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-25",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-25",
+    "mean": 8.55679070930263e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-25",
+    "mean": 5.2547906433881306e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-25",
+    "mean": 6.102102270033488e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-25",
+    "mean": 5.9988630464935706e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-25",
+    "mean": 9.209364858172952e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-26",
+    "mean": 8.998361558046796e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-26",
+    "mean": 5.127932506935198e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-26",
+    "mean": 4.55043860923369e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-26",
+    "mean": 6.48920641065782e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-26",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-26",
+    "mean": 9.91836937540938e-05,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-26",
+    "mean": 8.741497969614763e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-26",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-27",
+    "mean": 5.287918308713866e-05,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-27",
+    "mean": 0.00010143314611640588,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-27",
+    "mean": 9.90951583715053e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-27",
+    "mean": 9.645003539473795e-05,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-27",
+    "mean": 0.00010969937393075349,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-27",
+    "mean": 4.8019652904608676e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-27",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-27",
+    "mean": 0.00010658536415486972,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-28",
+    "mean": 8.047098032961665e-05,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-28",
+    "mean": 8.165336830069785e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-28",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-28",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-28",
+    "mean": 0.00011555613596850661,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-28",
+    "mean": 7.787315135058372e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-28",
+    "mean": 7.462464318326572e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-28",
+    "mean": 9.631817421419619e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-29",
+    "mean": 7.620607677520393e-05,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-29",
+    "mean": 5.276018283679935e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-29",
+    "mean": 0.00011191973691051457,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-29",
+    "mean": 7.096070059323742e-05,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-29",
+    "mean": 9.537134455274082e-05,
+    "count": 40
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-29",
+    "mean": 9.575212603311191e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-29",
+    "mean": 9.504034947952207e-05,
+    "count": 120
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-29",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-30",
+    "mean": 8.610563815808604e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-30",
+    "mean": 4.914283226528219e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-30",
+    "mean": 0.00010533399397611641,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-30",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-30",
+    "mean": 4.6912305216984486e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-30",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-30",
+    "mean": 0.00010516930743758497,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-30",
+    "mean": 5.6015503464283974e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8876",
+    "date": "2024-01-31",
+    "mean": 6.568405302608875e-05,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Ashgabat",
+    "date": "2024-01-31",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "Bishkek",
+    "date": "2024-01-31",
+    "mean": null,
+    "count": 0
+   }
+  },
+  {
+   "properties": {
+    "station_id": "9769",
+    "date": "2024-01-31",
+    "mean": 0.00011227135786856822,
+    "count": 300
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8684",
+    "date": "2024-01-31",
+    "mean": 8.541608651552861e-05,
+    "count": 3
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1894632",
+    "date": "2024-01-31",
+    "mean": 7.575674879933647e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "1924313",
+    "date": "2024-01-31",
+    "mean": 8.243598506162669e-05,
+    "count": 5
+   }
+  },
+  {
+   "properties": {
+    "station_id": "8881",
+    "date": "2024-01-31",
+    "mean": null,
+    "count": 0
+   }
+  }
+ ]
+}

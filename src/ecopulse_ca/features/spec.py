@@ -45,6 +45,8 @@ class Source(StrEnum):
     ADS_CAMS_REANALYSIS = "ads_cams_reanalysis"
     ADS_CAMS_FORECAST = "ads_cams_forecast"
     EARTHDATA_MERRA2 = "earthdata_merra2"
+    #: NASA LANCE near-real-time. Raster granules, NOT server-side reducible.
+    LANCE_NRT = "lance_nrt"
     DERIVED = "derived"
 
 
@@ -59,6 +61,7 @@ CREDENTIAL_FOR: dict[Source, str] = {
     Source.ADS_CAMS_REANALYSIS: "ADS_API_KEY",
     Source.ADS_CAMS_FORECAST: "ADS_API_KEY",
     Source.EARTHDATA_MERRA2: "EARTHDATA_USERNAME",
+    Source.LANCE_NRT: "EARTHDATA_USERNAME",
     Source.DERIVED: "",
 }
 
@@ -112,6 +115,11 @@ class FeatureSpec:
     #: Set when the latency or availability figure still needs checking against the
     #: provider's documentation rather than being taken from memory.
     verified: bool = False
+    #: True when obtaining this feature means downloading raster granules -- no server-side
+    #: reduction is possible. Such features CANNOT run on the dev machine (8.6 GB free) and
+    #: belong only to server-side deployment. NASA LANCE NRT is the case that forced this
+    #: field to exist: it is the only low-latency AOD source, and it is raster-only.
+    requires_raster_download: bool = False
 
     def __post_init__(self) -> None:
         if self.available_at_runtime and self.latency_hours is None:
@@ -123,6 +131,15 @@ class FeatureSpec:
             raise ValueError(
                 f"{self.name}: latency_hours is meaningless when the feature is not "
                 "available at runtime. Set it to None."
+            )
+        gridded_without_reduction = (
+            self.reduction is None and self.source is not Source.DERIVED
+        )
+        if gridded_without_reduction and not self.requires_raster_download:
+            raise ValueError(
+                f"{self.name}: a gridded feature with no Reduction would have to be "
+                "downloaded as a raster. Either declare a Reduction (server-side) or "
+                "set requires_raster_download=True to state that explicitly."
             )
 
     @property
@@ -159,6 +176,19 @@ class FeatureSet:
 
     def credentials_required(self) -> tuple[str, ...]:
         return tuple(sorted({f.credential for f in self.features if f.credential}))
+
+    @property
+    def locally_reproducible(self) -> bool:
+        """True when every member can be built on the dev machine without raster downloads.
+
+        The disk budget is 8.6 GB. A set containing a raster-download feature cannot be
+        reproduced here at all, which matters for `make reproduce` and for any reviewer
+        trying to rebuild the benchmark.
+        """
+        return not any(f.requires_raster_download for f in self.features)
+
+    def raster_features(self) -> tuple[FeatureSpec, ...]:
+        return tuple(f for f in self.features if f.requires_raster_download)
 
     def validate(self) -> list[str]:
         """Return reasons this set is inconsistent with its own deployment claim."""

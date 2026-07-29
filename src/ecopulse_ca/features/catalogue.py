@@ -40,19 +40,52 @@ SATELLITE = (
     FeatureSpec(
         name="maiac_aod_055",
         source=Source.GEE_MODIS,
-        description="MAIAC aerosol optical depth at 550 nm (MCD19A2), the primary "
-                    "column-aerosol predictor",
+        description="MAIAC aerosol optical depth at 550 nm (MCD19A2.061 via Earth "
+                    "Engine) -- the primary column-aerosol predictor for the retrospective "
+                    "benchmark",
         units="dimensionless",
-        available_at_runtime=True,
-        latency_hours=6.0,  # NRT MODIS; standard collection is far slower
+        available_at_runtime=False,
+        latency_hours=None,
         missingness_informative=True,
         reduction=Reduction(BUF_AOD, Statistic.MEAN),
         native_resolution="1 km",
-        caveat="Retrievals fail during dust storms, snow and heavy cloud -- exactly the "
-               "extreme-PM2.5 episodes of interest (risk R7). Accuracy is also lower over "
-               "bright arid surfaces, and lofted dust causes underestimation. Missing rows "
-               "must be modelled, never dropped.",
-        verified=False,
+        caveat="ORACLE ONLY for deployment purposes -- but the correct choice for the "
+               "retrospective benchmark. VERIFIED 2026-07-29: the Earth Engine catalogue "
+               "reports MCD19A2.061 coverage ending 2026-07-21 against a query date of "
+               "2026-07-29, i.e. an observed latency of ~8 DAYS (192 h), not the 6 h "
+               "originally claimed. That exceeds the shortest forecast horizon, so this "
+               "product cannot inform a live t+24 forecast. The deployable counterpart is "
+               "maiac_aod_055_nrt. "
+               "Separately (risk R7): retrievals fail during dust storms, snow and heavy "
+               "cloud -- exactly the extreme-PM2.5 episodes of interest -- and accuracy is "
+               "lower over bright arid surfaces, with lofted dust causing underestimation. "
+               "Missing rows must be modelled, never dropped.",
+        verified=True,
+    ),
+    FeatureSpec(
+        name="maiac_aod_055_nrt",
+        source=Source.LANCE_NRT,
+        description="MAIAC AOD 550 nm from the NASA LANCE near-real-time stream "
+                    "(MCD19A2N) -- the deployable counterpart to the Earth Engine product",
+        units="dimensionless",
+        available_at_runtime=True,
+        latency_hours=2.1,  # LANCE publishes within 60-125 minutes of observation
+        missingness_informative=True,
+        reduction=None,
+        native_resolution="1 km",
+        caveat="TRAIN/SERVE SKEW -- the most important caveat in this catalogue. A model "
+               "trained on the fully-reprocessed standard MCD19A2 would be SERVED the NRT "
+               "MCD19A2N, which is a different product: not reprocessed, using predicted "
+               "rather than definitive geolocation and ancillary inputs. Retrospective "
+               "metrics cannot see this gap. Any deployment claim must either quantify the "
+               "standard-vs-NRT difference on overlapping dates or state the skew as an "
+               "unquantified risk. "
+               "ARCHITECTURAL CONFLICT: LANCE serves HDF granules, so there is no "
+               "server-side reduction -- this feature requires raster download and does "
+               "NOT fit the 8.6 GB dev machine. It is a server-side deployment concern, "
+               "not something reproducible locally.",
+        verified=True,
+        requires_raster_download=True,
     ),
     FeatureSpec(
         name="maiac_valid_pixel_fraction",
@@ -60,15 +93,16 @@ SATELLITE = (
         description="Share of buffer pixels with a successful MAIAC retrieval -- the "
                     "informative-missingness signal itself, promoted to a feature",
         units="fraction",
-        available_at_runtime=True,
-        latency_hours=6.0,
+        available_at_runtime=False,
+        latency_hours=None,
         missingness_informative=False,
         reduction=Reduction(BUF_AOD, Statistic.COUNT),
         native_resolution="1 km",
-        caveat="Deliberately a feature, not just diagnostics. Retrieval failure carries "
+        caveat="ORACLE ONLY: shares the ~8-day Earth Engine latency of its parent product. "
+               "Deliberately a feature, not just diagnostics -- retrieval failure carries "
                "information about the atmosphere (dust/cloud/snow) and discarding it "
                "throws away signal precisely when concentrations are extreme.",
-        verified=False,
+        verified=True,
     ),
     FeatureSpec(
         name="s5p_absorbing_aerosol_index",
@@ -294,25 +328,56 @@ STATIC = (
     ),
 )
 
+#: Everything served by Earth Engine. Server-side reducible, but subject to Earth Engine's
+#: ingestion lag -- which measurement showed is ~8 days for MAIAC, not hours.
+SATELLITE_GEE = tuple(f for f in SATELLITE if f.source is not Source.LANCE_NRT)
+#: Near-real-time streams. Deployable, but raster-based and not server-side reducible.
+SATELLITE_NRT = tuple(f for f in SATELLITE if f.source is Source.LANCE_NRT)
+
 ALL_FEATURES: tuple[FeatureSpec, ...] = SATELLITE + MET_REANALYSIS + MET_FORECAST + STATIC
 
 
 # ------------------------------------------------------------------------ feature sets
+#
+# The split below exists because of a measurement, not a preference.
+#
+# Verifying the MAIAC latency claim (2026-07-29) showed Earth Engine's MCD19A2.061 runs
+# ~8 days behind, not the 6 hours originally assumed. Latency is irrelevant to the
+# RETROSPECTIVE benchmark -- evaluating 2024 with 2026 data, the fully-reprocessed standard
+# product is strictly the better choice. Latency constrains only the DEPLOYMENT claim.
+#
+# Conflating those two questions is what produced the wrong number, so they are now
+# separate sets with separate names.
+
+BENCHMARK_RETROSPECTIVE = FeatureSet(
+    name="benchmark_retrospective",
+    features=SATELLITE_GEE + MET_FORECAST + STATIC,
+    deployable=False,
+    purpose="What the benchmark is built and evaluated on. Uses Earth Engine's standard, "
+            "fully-reprocessed products -- correct for retrospective evaluation, and "
+            "server-side reducible so it fits the disk budget. NOT a deployment claim: "
+            "the Earth Engine latency is days, so this set is marked non-deployable.",
+)
+
 DEPLOYABLE = FeatureSet(
     name="deployable",
-    features=SATELLITE + MET_FORECAST + STATIC,
+    features=SATELLITE_NRT + MET_FORECAST + STATIC,
     deployable=True,
-    purpose="Everything a live ECO Pulse service can actually obtain at prediction time. "
-            "Headline results come from this set.",
+    purpose="What a live ECO Pulse service can actually obtain at prediction time: LANCE "
+            "near-real-time AOD (~2 h) plus CAMS forecast and static layers. "
+            "DELIBERATELY MINIMAL. Sentinel-5P and VIIRS are excluded because their Earth "
+            "Engine latencies remain UNVERIFIED -- the one latency claim that was checked "
+            "turned out wrong by a factor of ~32, so the others are not assumed correct. "
+            "They move here individually as each is verified against provider docs.",
 )
 
 REANALYSIS_ORACLE = FeatureSet(
     name="reanalysis_oracle",
-    features=SATELLITE + MET_REANALYSIS + MET_FORECAST + STATIC,
+    features=SATELLITE_GEE + MET_REANALYSIS + MET_FORECAST + STATIC,
     deployable=False,
-    purpose="Adds ERA5 and CAMS reanalysis. Quantifies the cost of operational "
-            "constraints by measuring what perfect meteorology would buy. Reported ONLY "
-            "as a clearly-labelled ablation, never as a deployed number.",
+    purpose="Adds ERA5 and CAMS reanalysis on top of the retrospective set. Quantifies "
+            "the cost of operational constraints by measuring what perfect meteorology "
+            "would buy. Reported ONLY as a labelled ablation, never as a deployed number.",
 )
 
 STATIC_ONLY = FeatureSet(
@@ -320,7 +385,9 @@ STATIC_ONLY = FeatureSet(
     features=STATIC,
     deployable=True,
     purpose="Ablation floor: how much of the leave-city-out signal is explained by "
-            "geography alone, with no time-varying input?",
+            "geography alone, with no time-varying input? Given that Phase 3 found no "
+            "credential-free nowcaster beats a trivial always-exceed predictor, this floor "
+            "matters more than it looks.",
 )
 
-FEATURE_SETS = (DEPLOYABLE, REANALYSIS_ORACLE, STATIC_ONLY)
+FEATURE_SETS = (BENCHMARK_RETROSPECTIVE, DEPLOYABLE, REANALYSIS_ORACLE, STATIC_ONLY)
