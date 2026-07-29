@@ -296,7 +296,13 @@ STATIC = (
         latency_hours=0.0,
         reduction=Reduction(BUF_STATIC, Statistic.MEAN),
         native_resolution="100 m",
-        verified=False,
+        caveat="UNITS: the GHS_POP band `population_count` is people per 100 m CELL, not "
+               "per km^2 (verified: nominalScale=100 m). The extractor multiplies by 100. "
+               "Without that Almaty reads 183.8 instead of 18,379 people/km^2 -- a model "
+               "trains identically on either and only the units claim is false. "
+               "Epoch 2020 is used: the catalogue also offers 2025 and 2030, but those are "
+               "PROJECTIONS and would inject a forecast of the future into a static feature.",
+        verified=True,
     ),
     FeatureSpec(
         name="viirs_nighttime_lights",
@@ -321,17 +327,61 @@ STATIC = (
         verified=False,
     ),
     FeatureSpec(
-        name="terrain_basin_index",
+        name="terrain_basin_index_25km",
         source=Source.DERIVED,
-        description="Station elevation minus the mean elevation of a 25 km annulus -- "
+        description="Station elevation minus the mean elevation of a 5-25 km annulus; "
                     "negative values indicate a basin that traps inversions",
         units="m",
         available_at_runtime=True,
         latency_hours=0.0,
-        native_resolution="derived from DEM",
-        caveat="Motivated by the regime split found in Phase 2: Tashkent and Almaty sit in "
-               "basins; the diurnal analysis showed Almaty behaving unlike any other city.",
-        verified=False,
+        native_resolution="derived from SRTM 30 m",
+        caveat="EMITTED AT THREE RADII BECAUSE THE ANSWER DEPENDS ON THE RADIUS. Measured "
+               "on Tashkent: -1 m at 25 km, -83 m at 50 km, -327 m at 100 km. A single "
+               "radius measures 'is this a basin at radius R', not 'is this a basin'. "
+               "This one is too small to reach the Tian Shan from Tashkent. "
+               "Do NOT claim basin depth explains Almaty's anomalous 13:00-maximum "
+               "regime: at 25 km Almaty is the deepest station (-466 m vs -241/-207 m "
+               "group means), but at 100 km it is not (-762 m vs -799 m for the "
+               "dilution group). The conclusion flips with the radius.",
+        verified=True,
+    ),
+    FeatureSpec(
+        name="terrain_basin_index_50km",
+        source=Source.DERIVED,
+        description="Station elevation minus the mean elevation of a 5-50 km annulus; "
+                    "negative values indicate a basin that traps inversions",
+        units="m",
+        available_at_runtime=True,
+        latency_hours=0.0,
+        native_resolution="derived from SRTM 30 m",
+        caveat="EMITTED AT THREE RADII BECAUSE THE ANSWER DEPENDS ON THE RADIUS. Measured "
+               "on Tashkent: -1 m at 25 km, -83 m at 50 km, -327 m at 100 km. A single "
+               "radius measures 'is this a basin at radius R', not 'is this a basin'. "
+               "This one is intermediate. "
+               "Do NOT claim basin depth explains Almaty's anomalous 13:00-maximum "
+               "regime: at 25 km Almaty is the deepest station (-466 m vs -241/-207 m "
+               "group means), but at 100 km it is not (-762 m vs -799 m for the "
+               "dilution group). The conclusion flips with the radius.",
+        verified=True,
+    ),
+    FeatureSpec(
+        name="terrain_basin_index_100km",
+        source=Source.DERIVED,
+        description="Station elevation minus the mean elevation of a 5-100 km annulus; "
+                    "negative values indicate a basin that traps inversions",
+        units="m",
+        available_at_runtime=True,
+        latency_hours=0.0,
+        native_resolution="derived from SRTM 30 m",
+        caveat="EMITTED AT THREE RADII BECAUSE THE ANSWER DEPENDS ON THE RADIUS. Measured "
+               "on Tashkent: -1 m at 25 km, -83 m at 50 km, -327 m at 100 km. A single "
+               "radius measures 'is this a basin at radius R', not 'is this a basin'. "
+               "This one is captures regional orography; non-monotonic at Almaty, where the Kazakh steppe partly offsets the Tian Shan. "
+               "Do NOT claim basin depth explains Almaty's anomalous 13:00-maximum "
+               "regime: at 25 km Almaty is the deepest station (-466 m vs -241/-207 m "
+               "group means), but at 100 km it is not (-762 m vs -799 m for the "
+               "dilution group). The conclusion flips with the radius.",
+        verified=True,
     ),
     FeatureSpec(
         name="distance_to_aralkum",
