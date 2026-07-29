@@ -114,9 +114,23 @@ SATELLITE = (
         missingness_informative=True,
         reduction=Reduction(BUF_S5P, Statistic.MEAN),
         native_resolution="~7 km",
-        caveat="The key dust discriminator: unlike AOD, the UV AAI is available over "
-               "bright surfaces and responds to absorbing aerosol, so it should separate "
-               "Aralkum/loess dust from combustion aerosol. VERIFIED 2026-07-29 by catalogue end-date: the OFFL collection's latest asset was 2026-07-26T19:10Z against a 2026-07-29 query, i.e. ~72 h latency, not the 5 h originally claimed (wrong by ~13x). That exceeds the 24 h horizon, so OFFL is ORACLE ONLY. The NRTI collection is same-day (<24 h) and is the deployable counterpart -- and unlike MAIAC, BOTH S5P variants live in Earth Engine, so both are server-side reducible. NRTI's cost is smaller per-orbit coverage, which increases retrieval gaps in a feature whose missingness is already informative.",
+        caveat="The key dust discriminator, and MEASURED 2026-07-30 to work as intended. "
+               "CORRECTION: an earlier version of this caveat said TROPOMI products are "
+               "cloud-screened so missingness tracks cloud. True for NO2/SO2/CO, WRONG "
+               "for AAI -- the UV index is derived from reflectance ratios and works OVER "
+               "cloud and bright surfaces. Measured missingness is 0.19% (34/17,816), flat "
+               "at 99.5-100% in every month. "
+               "COMPLEMENTARITY: AOD+AAI both present on 65.4% of station-days; AAI alone "
+               "covers a further 34.4%; neither on 0.1%. Usable satellite coverage rises "
+               "65.4% -> 99.8%, and AAI specifically covers MAIAC's winter blindness on "
+               "high-PM2.5 days. Its own missingness is NOT target-correlated (p=0.48). "
+               "SIGN CARRIES THE REGIME: Spearman(AAI, daily PM2.5) is POSITIVE in "
+               "Ashgabat (+0.122) and Dushanbe (+0.114) -- dust-dominated, absorbing -- and "
+               "NEGATIVE in Almaty (-0.114), Bishkek (-0.171), Tashkent (-0.165), Khujand "
+               "(-0.178) -- combustion-dominated, scattering. POOLED ACROSS CITIES IT LOOKS "
+               "USELESS (rho=-0.010, p=0.31), so it must interact with city or regime and "
+               "must NOT enter as a global linear term. This axis is ORTHOGONAL to the "
+               "diurnal regime split. Not cleanly explained by Aralkum distance alone. VERIFIED 2026-07-29 by catalogue end-date: the OFFL collection's latest asset was 2026-07-26T19:10Z against a 2026-07-29 query, i.e. ~72 h latency, not the 5 h originally claimed (wrong by ~13x). That exceeds the 24 h horizon, so OFFL is ORACLE ONLY. The NRTI collection is same-day (<24 h) and is the deployable counterpart -- and unlike MAIAC, BOTH S5P variants live in Earth Engine, so both are server-side reducible. NRTI's cost is smaller per-orbit coverage, which increases retrieval gaps in a feature whose missingness is already informative.",
         verified=True,
     ),
     FeatureSpec(
