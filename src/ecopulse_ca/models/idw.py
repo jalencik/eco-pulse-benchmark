@@ -16,50 +16,77 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from ecopulse_ca.models.base import Nowcaster, StationMeta, haversine_km
+from ecopulse_ca.models.base import Nowcaster, StationMeta, haversine_km_array
 
 #: Distances below this are treated as co-located, to avoid a 1/0 weight.
 MIN_DISTANCE_KM = 1e-6
 
 
 class _SpatialBase(Nowcaster):
-    """Shared fit/neighbour logic for the distance-based nowcasters."""
+    """Shared fit/neighbour logic for the distance-based nowcasters.
+
+    Station geometry is fixed once at `fit`, and distances to a given target are cached,
+    because the target does not move between timestamps. Only the *values* change hour to
+    hour. Recomputing the geometry 788k times was the dominant cost of evaluating the
+    ladder and produced identical numbers every time.
+    """
 
     is_deterministic = True
 
     def __init__(self, seed: int = 0) -> None:
         super().__init__(seed=seed)
         self._meta: dict[str, StationMeta] = {}
+        self._ids: list[str] = []
+        self._lats: np.ndarray = np.empty(0)
+        self._lons: np.ndarray = np.empty(0)
+        self._dist_cache: dict[str, np.ndarray] = {}
 
     def fit(self, panel: pd.DataFrame, meta: dict[str, StationMeta]) -> _SpatialBase:
         # Only stations present in the training panel are usable neighbours. Keeping meta
         # for stations absent from the panel would let a prediction reference a station
         # that contributed no training data.
-        self._meta = {sid: m for sid, m in meta.items() if sid in panel.columns}
+        cols = {str(c) for c in panel.columns}
+        self._meta = {sid: m for sid, m in meta.items() if sid in cols}
+        self._ids = sorted(self._meta)
+        self._lats = np.array([self._meta[s].latitude for s in self._ids], dtype=float)
+        self._lons = np.array([self._meta[s].longitude for s in self._ids], dtype=float)
+        self._dist_cache = {}
         self._fitted = True
         return self
 
-    def _neighbours(self, observed: pd.Series, target: StationMeta) -> pd.DataFrame:
-        """Usable neighbours with distances, nearest first.
+    def _distances_to(self, target: StationMeta) -> np.ndarray:
+        cached = self._dist_cache.get(target.station_id)
+        if cached is None:
+            cached = haversine_km_array(
+                target.latitude, target.longitude, self._lats, self._lons
+            )
+            self._dist_cache[target.station_id] = cached
+        return cached
+
+    def _neighbours(
+        self, observed: pd.Series, target: StationMeta
+    ) -> tuple[np.ndarray, np.ndarray, list[str]]:
+        """`(values, distances_km, ids)` for usable neighbours, nearest first.
 
         Excludes the target station, NaN readings, and any station without metadata.
         """
-        rows = []
-        for sid, value in observed.items():
-            sid = str(sid)
-            if sid == target.station_id:
-                continue  # defensive: the held-out station must never inform itself
-            if value is None or not np.isfinite(value):
-                continue
-            m = self._meta.get(sid)
-            if m is None:
-                continue
-            d = haversine_km(target.latitude, target.longitude, m.latitude, m.longitude)
-            rows.append({"station_id": sid, "value": float(value), "distance_km": d})
+        if not self._ids:
+            return np.empty(0), np.empty(0), []
 
-        if not rows:
-            return pd.DataFrame(columns=["station_id", "value", "distance_km"])
-        return pd.DataFrame(rows).sort_values("distance_km").reset_index(drop=True)
+        values = observed.reindex(self._ids).to_numpy(dtype=float)
+        dists = self._distances_to(target)
+
+        usable = np.isfinite(values)
+        for i, sid in enumerate(self._ids):
+            if sid == target.station_id:
+                usable[i] = False  # the held-out station must never inform itself
+        if not usable.any():
+            return np.empty(0), np.empty(0), []
+
+        v, d = values[usable], dists[usable]
+        ids = [s for s, ok in zip(self._ids, usable, strict=True) if ok]
+        order = np.argsort(d, kind="stable")
+        return v[order], d[order], [ids[i] for i in order]
 
 
 class NearestMonitor(_SpatialBase):
@@ -75,10 +102,10 @@ class NearestMonitor(_SpatialBase):
 
     def predict(self, observed: pd.Series, target: StationMeta) -> float:
         self._require_fitted()
-        neighbours = self._neighbours(observed, target)
-        if neighbours.empty:
+        values, _dists, _ids = self._neighbours(observed, target)
+        if values.size == 0:
             return np.nan
-        return float(neighbours.iloc[0]["value"])
+        return float(values[0])
 
 
 class IDW(_SpatialBase):
@@ -103,12 +130,10 @@ class IDW(_SpatialBase):
 
     def predict(self, observed: pd.Series, target: StationMeta) -> float:
         self._require_fitted()
-        neighbours = self._neighbours(observed, target).head(self.k)
-        if neighbours.empty:
+        values, dists, _ids = self._neighbours(observed, target)
+        if values.size == 0:
             return np.nan
-
-        d = neighbours["distance_km"].to_numpy(dtype=float)
-        v = neighbours["value"].to_numpy(dtype=float)
+        v, d = values[: self.k], dists[: self.k]
 
         # A co-located station is the answer; weighting it would divide by zero.
         exact = d <= MIN_DISTANCE_KM

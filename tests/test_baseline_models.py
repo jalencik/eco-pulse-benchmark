@@ -287,3 +287,32 @@ def test_haversine_matches_known_city_distance():
     # Tashkent -> Almaty is ~664 km great-circle (road distance is longer, ~770 km).
     d = haversine_km(41.3255, 69.2947, 43.2380, 76.9450)
     assert 640 < d < 690
+
+
+class TestVectorisedHaversineMatchesScalar:
+    """The array form is an optimisation; it must not drift from the scalar definition."""
+
+    def test_agrees_on_the_benchmark_geometry(self):
+        import numpy as np
+
+        from ecopulse_ca.models.base import haversine_km_array
+
+        lats = np.array([m.latitude for m in META.values()])
+        lons = np.array([m.longitude for m in META.values()])
+        origin = META["tashkent"]
+        vec = haversine_km_array(origin.latitude, origin.longitude, lats, lons)
+        scalar = [
+            haversine_km(origin.latitude, origin.longitude, m.latitude, m.longitude)
+            for m in META.values()
+        ]
+        assert vec == pytest.approx(scalar, rel=1e-12)
+
+    def test_zero_distance_to_self(self):
+        import numpy as np
+
+        from ecopulse_ca.models.base import haversine_km_array
+
+        m = META["almaty"]
+        d = haversine_km_array(m.latitude, m.longitude, np.array([m.latitude]),
+                               np.array([m.longitude]))
+        assert d[0] == pytest.approx(0.0, abs=1e-9)

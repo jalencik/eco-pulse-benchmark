@@ -121,3 +121,22 @@ def haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     dlam = np.radians(lon2 - lon1)
     a = np.sin(dphi / 2) ** 2 + np.cos(p1) * np.cos(p2) * np.sin(dlam / 2) ** 2
     return float(2 * r * np.arcsin(np.sqrt(a)))
+
+
+def haversine_km_array(
+    lat: float, lon: float, lats: np.ndarray, lons: np.ndarray
+) -> np.ndarray:
+    """Distances from one point to many, in kilometres.
+
+    Same formula as `haversine_km`, vectorised. Evaluating the ladder makes ~788k
+    nowcasting predictions; doing the geometry one pair at a time through pandas dominated
+    the runtime. `tests/` asserts the two agree, so the optimisation cannot silently drift
+    from the scalar definition.
+    """
+    r = 6371.0088
+    p1 = np.radians(lat)
+    p2 = np.radians(lats)
+    dphi = p2 - p1
+    dlam = np.radians(lons - lon)
+    a = np.sin(dphi / 2) ** 2 + np.cos(p1) * np.cos(p2) * np.sin(dlam / 2) ** 2
+    return 2 * r * np.arcsin(np.sqrt(a))

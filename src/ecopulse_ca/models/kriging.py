@@ -28,7 +28,12 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import least_squares
 
-from ecopulse_ca.models.base import Nowcaster, StationMeta, haversine_km
+from ecopulse_ca.models.base import (
+    Nowcaster,
+    StationMeta,
+    haversine_km,
+    haversine_km_array,
+)
 from ecopulse_ca.models.idw import IDW
 
 #: Above this condition number the kriging system is treated as unsolvable.
@@ -55,6 +60,7 @@ class OrdinaryKriging(Nowcaster):
         self._fallback = IDW(k=fallback_k, p=2.0, seed=seed)
         self._n_predictions = 0
         self._n_fallbacks = 0
+        self._weight_cache: dict[tuple[tuple[str, ...], str], np.ndarray | None] = {}
 
     @property
     def name(self) -> str:
@@ -74,6 +80,7 @@ class OrdinaryKriging(Nowcaster):
         self._meta = {sid: m for sid, m in meta.items() if sid in panel.columns}
         self._fallback.fit(panel, meta)
         self._n_predictions = self._n_fallbacks = 0
+        self._weight_cache = {}
 
         stations = [s for s in panel.columns if str(s) in self._meta]
         if len(stations) < 3:
@@ -135,6 +142,49 @@ class OrdinaryKriging(Nowcaster):
             out.append((sid, float(value)))
         return out
 
+    def _solve_weights(self, ids: tuple[str, ...], target: StationMeta) -> np.ndarray | None:
+        """Kriging weights for a given set of reporting stations.
+
+        Memoised on `(ids, target)`. The kriging system depends only on **geometry**, which
+        is fixed, not on the values, which change every hour. Across a year of hourly
+        predictions only a handful of distinct availability patterns occur, so this turns
+        ~8,760 linear solves per fold into a few. It changes no result -- the same system is
+        solved, just once per distinct pattern.
+        """
+        cache_key = (ids, target.station_id)
+        if cache_key in self._weight_cache:
+            return self._weight_cache[cache_key]
+
+        assert self._params is not None
+        nugget, sill, rng = self._params
+        coords = [self._meta[s] for s in ids]
+        n = len(ids)
+
+        lats = np.array([c.latitude for c in coords])
+        lons = np.array([c.longitude for c in coords])
+
+        a = np.ones((n + 1, n + 1), dtype=float)
+        a[n, n] = 0.0
+        for i in range(n):
+            d_row = haversine_km_array(lats[i], lons[i], lats, lons)
+            a[i, :n] = exponential_variogram(d_row, nugget, sill, rng)
+
+        b = np.ones(n + 1, dtype=float)
+        b[:n] = exponential_variogram(
+            haversine_km_array(target.latitude, target.longitude, lats, lons),
+            nugget, sill, rng,
+        )
+
+        try:
+            if np.linalg.cond(a) > MAX_CONDITION:
+                raise np.linalg.LinAlgError("ill-conditioned kriging system")
+            weights = np.linalg.solve(a, b)[:n]
+        except np.linalg.LinAlgError:
+            weights = None
+
+        self._weight_cache[cache_key] = weights
+        return weights
+
     def predict(self, observed: pd.Series, target: StationMeta) -> float:
         self._require_fitted()
         self._n_predictions += 1
@@ -146,34 +196,11 @@ class OrdinaryKriging(Nowcaster):
             self._n_fallbacks += 1
             return self._fallback.predict(observed, target)
 
-        nugget, sill, rng = self._params
-        n = len(usable)
-        coords = [self._meta[sid] for sid, _ in usable]
+        ids = tuple(sid for sid, _ in usable)
         values = np.array([v for _, v in usable], dtype=float)
 
-        # Ordinary kriging system with the Lagrange multiplier enforcing unbiasedness.
-        a = np.ones((n + 1, n + 1), dtype=float)
-        a[n, n] = 0.0
-        for i in range(n):
-            for j in range(n):
-                d = haversine_km(
-                    coords[i].latitude, coords[i].longitude,
-                    coords[j].latitude, coords[j].longitude,
-                )
-                a[i, j] = exponential_variogram(np.array([d]), nugget, sill, rng)[0]
-
-        b = np.ones(n + 1, dtype=float)
-        for i in range(n):
-            d = haversine_km(
-                target.latitude, target.longitude, coords[i].latitude, coords[i].longitude
-            )
-            b[i] = exponential_variogram(np.array([d]), nugget, sill, rng)[0]
-
-        try:
-            if np.linalg.cond(a) > MAX_CONDITION:
-                raise np.linalg.LinAlgError("ill-conditioned kriging system")
-            weights = np.linalg.solve(a, b)[:n]
-        except np.linalg.LinAlgError:
+        weights = self._solve_weights(ids, target)
+        if weights is None:
             self._n_fallbacks += 1
             return self._fallback.predict(observed, target)
 
