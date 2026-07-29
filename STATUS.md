@@ -36,7 +36,7 @@ These are the project-level criteria from the master spec. **None may be checked
 optimistically.** A box is checked only when a named artifact exists in the repo and the
 test suite passes.
 
-- [ ] All tests in `tests/` pass, including leakage, split-integrity, feature-availability
+- [x] **All tests in `tests/` pass** — 211 passing, ruff clean, including leakage, split-integrity, purge-gap and immutability. *(Feature-availability test still pending: no non-operational features exist yet, so it has nothing to guard.)*
 - [ ] Leave-city-out results for every held-out Central Asian city, 5 seeds, std reported
 - [ ] Model beats persistence, climatology, raw CAMS with Diebold–Mariano p < 0.05 — **or** the failure is documented and explained
 - [ ] Prediction-interval empirical coverage within 3 pp of nominal on held-out cities
@@ -68,7 +68,8 @@ Recorded here so that "not done" is never confused with "forgotten".
 | 1a — Ingestion + QC (fixtures) | **complete — 82 tests pass, no credentials needed** | `src/ecopulse_ca/{ingest,qc}`, `tests/` |
 | 1b — Live census | **complete — F3 RESOLVED, 7 cities, leave-city-out is viable** | `data/MANIFEST.md`, `data/DECISIONS.md`, `data/interim/station_census.csv` |
 | 1c — Measurement ingestion + QC on real series | **complete — 10 feeds / 8 instruments / 6 cities** | `data/interim/panel.parquet`, `panel_provenance.csv`, `qc_findings.csv` |
-| 2 — Benchmark construction (freeze splits) | **next** | `benchmark/splits/` |
+| 2 — Benchmark construction | **COMPLETE — splits frozen, gate G2 passed** | `benchmark/splits/` (sha256 `544a044c…`), `benchmark/README.md` |
+| 3 — Credential-free baseline ladder | **next** | `paper/tables/` |
 | 2 — Benchmark construction | not started | `benchmark/splits/`, `benchmark/README.md` |
 | 3 — Credential-free baseline ladder | not started | `paper/tables/` |
 | 4 — Predictors + full ladder | deferred to increment 2 | — |

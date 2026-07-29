@@ -34,7 +34,7 @@ class TestPurgeIsDerived:
         assert PURGE_HOURS == MAX_LAG_HOURS + MAX_HORIZON_HOURS
 
     def test_max_horizon_covers_every_declared_horizon(self):
-        assert MAX_HORIZON_HOURS >= max(HORIZONS)
+        assert max(HORIZONS) <= MAX_HORIZON_HOURS
 
     def test_max_lag_covers_the_longest_feature_window(self):
         """SameHourMean(n_days=7) reaches back 7*24 = 168 h. Any longer window must
@@ -42,7 +42,7 @@ class TestPurgeIsDerived:
         from ecopulse_ca.models.persistence import SameHourMean
 
         longest_days = SameHourMean().n_days
-        assert MAX_LAG_HOURS >= longest_days * 24
+        assert longest_days * 24 <= MAX_LAG_HOURS
 
     def test_climatology_uses_no_window_beyond_its_fold(self):
         # Climatology fits on whatever fit() receives, so it adds no lag requirement --
