@@ -255,3 +255,45 @@ forgotten. Related: `STATUS.md` risk R3.
   performance on *current* data, and any deployment claim for ECO Pulse is extrapolation
   beyond the evaluated period. That constraint is external and permanent — the reference
   network no longer exists.
+
+### D-010 — MAIAC AOD extracted; informative missingness QUANTIFIED
+- **Date:** 2026-07-30
+- **Decision:** extract daily MAIAC AOD (MCD19A2.061, band `Optical_Depth_055`) for all 8
+  benchmark stations over 2018-11-27..2024-12-31, retaining every station-day including
+  days with no retrieval.
+- **Effect on n:** **17,816 / 17,816 station-days returned** (exact match), 0 failed and 0
+  incomplete chunks. **6,148 rows (34.5%) have null AOD and are RETAINED.**
+- **Reason:** risk R7. Dropping null-AOD rows is the standard convenience and it is not
+  safe here. Measured against ground-truth PM2.5:
+
+  | | days WITH AOD | days WITHOUT |
+  |---|---:|---:|
+  | n | 7,116 | 3,875 |
+  | median PM2.5 | 25.4 | **30.7** |
+  | mean PM2.5 | 34.2 | **47.1** |
+
+  Mann-Whitney **p = 1.4e-35**. **On the top PM2.5 decile (>=81 ug/m3) retrieval is only
+  45.2%, against 64.7% overall** -- the satellite goes blind on the days that matter most
+  for health. Dropping nulls would remove 34.5% of station-days and preferentially remove
+  the extreme tail the benchmark exists to evaluate.
+- **Mechanism is identifiable, not assumed:** retrieval swings 34.2% (January) to 93.7%
+  (July), and 5 of 6 cities show dirtier missing days. **Ashgabat is the exception (-1.2
+  ug/m3) and has the HIGHEST retrieval (72%)** -- if bright-desert failure dominated,
+  the desert station would be worst, not best. So the dominant mechanism is **winter cloud
+  and snow, coinciding with the coal-heating peak**, not the bright-surface problem the
+  MAIAC literature emphasises. Retrieval by city: Almaty 53.6%, Bishkek 57.2%,
+  Dushanbe 67.4%, Tashkent 68.5%, Khujand 68.9%, Ashgabat 72.0%.
+- **Alternative considered:** gap-filling AOD by interpolation. Rejected for now --
+  interpolating across a systematically-missing extreme tail invents the values that
+  matter most. `maiac_valid_pixel_fraction` is carried as a feature instead so the model
+  can condition on retrieval quality.
+- **Direction of bias if wrong:** if missingness were in fact random, retaining nulls
+  costs only statistical power. The measured association means the opposite error --
+  dropping them -- would inflate every satellite result while making the benchmark blind
+  to exactly the episodes it should evaluate.
+- **Extraction note:** `MCD19A2_GRANULES` yields **68-220 granules per day** over a single
+  point (Terra+Aqua, per-tile per-orbit). Granules are composited to one image per day
+  **inside Earth Engine** before reduction. The generic extractor's element budget
+  (`stations x days`) understated the true count by ~80x and would have declared an
+  over-ceiling request safe. Compositing also avoids weighting each day by how many orbits
+  happened to cover it.
