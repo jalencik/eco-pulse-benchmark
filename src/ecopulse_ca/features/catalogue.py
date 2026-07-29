@@ -109,31 +109,31 @@ SATELLITE = (
         source=Source.GEE_SENTINEL5P,
         description="Sentinel-5P TROPOMI UV absorbing aerosol index",
         units="dimensionless",
-        available_at_runtime=True,
-        latency_hours=5.0,
+        available_at_runtime=False,
+        latency_hours=None,
         missingness_informative=True,
         reduction=Reduction(BUF_S5P, Statistic.MEAN),
         native_resolution="~7 km",
         caveat="The key dust discriminator: unlike AOD, the UV AAI is available over "
                "bright surfaces and responds to absorbing aerosol, so it should separate "
-               "Aralkum/loess dust from combustion aerosol.",
-        verified=False,
+               "Aralkum/loess dust from combustion aerosol. VERIFIED 2026-07-29 by catalogue end-date: the OFFL collection's latest asset was 2026-07-26T19:10Z against a 2026-07-29 query, i.e. ~72 h latency, not the 5 h originally claimed (wrong by ~13x). That exceeds the 24 h horizon, so OFFL is ORACLE ONLY. The NRTI collection is same-day (<24 h) and is the deployable counterpart -- and unlike MAIAC, BOTH S5P variants live in Earth Engine, so both are server-side reducible. NRTI's cost is smaller per-orbit coverage, which increases retrieval gaps in a feature whose missingness is already informative.",
+        verified=True,
     ),
     FeatureSpec(
         name="s5p_no2_tropospheric",
         source=Source.GEE_SENTINEL5P,
         description="TROPOMI tropospheric NO2 column -- combustion/traffic proxy",
         units="mol/m^2",
-        available_at_runtime=True,
-        latency_hours=5.0,
+        available_at_runtime=False,
+        latency_hours=None,
         missingness_informative=True,
         reduction=Reduction(BUF_S5P, Statistic.MEAN),
         native_resolution="~5.5 x 3.5 km",
         caveat="TROPOMI products are cloud-screened, so missingness tracks cloud cover -- "
                "which itself covaries with washout, frontal passage and boundary-layer "
                "depth. Dropping missing rows conditions on clear skies and removes exactly "
-               "the meteorological variability the model should learn.",
-        verified=False,
+               "the meteorological variability the model should learn. VERIFIED 2026-07-29 by catalogue end-date: the OFFL collection's latest asset was 2026-07-26T19:10Z against a 2026-07-29 query, i.e. ~72 h latency, not the 5 h originally claimed (wrong by ~13x). That exceeds the 24 h horizon, so OFFL is ORACLE ONLY. The NRTI collection is same-day (<24 h) and is the deployable counterpart -- and unlike MAIAC, BOTH S5P variants live in Earth Engine, so both are server-side reducible. NRTI's cost is smaller per-orbit coverage, which increases retrieval gaps in a feature whose missingness is already informative.",
+        verified=True,
     ),
     FeatureSpec(
         name="s5p_so2",
@@ -141,31 +141,52 @@ SATELLITE = (
         description="TROPOMI SO2 column -- coal combustion proxy, relevant to the winter "
                     "heating regime in Bishkek and Ashgabat",
         units="mol/m^2",
-        available_at_runtime=True,
-        latency_hours=5.0,
+        available_at_runtime=False,
+        latency_hours=None,
         missingness_informative=True,
         reduction=Reduction(BUF_S5P, Statistic.MEAN),
         native_resolution="~7 km",
         caveat="Cloud-screened like all TROPOMI products, and additionally noisy at the "
                "low column amounts typical away from large point sources. Winter -- when "
                "the coal signal is strongest -- is also the cloudiest season here, so "
-               "missingness is worst precisely when the feature would be most useful.",
-        verified=False,
+               "missingness is worst precisely when the feature would be most useful. VERIFIED 2026-07-29 by catalogue end-date: the OFFL collection's latest asset was 2026-07-26T19:10Z against a 2026-07-29 query, i.e. ~72 h latency, not the 5 h originally claimed (wrong by ~13x). That exceeds the 24 h horizon, so OFFL is ORACLE ONLY. The NRTI collection is same-day (<24 h) and is the deployable counterpart -- and unlike MAIAC, BOTH S5P variants live in Earth Engine, so both are server-side reducible. NRTI's cost is smaller per-orbit coverage, which increases retrieval gaps in a feature whose missingness is already informative.",
+        verified=True,
     ),
     FeatureSpec(
         name="s5p_co",
         source=Source.GEE_SENTINEL5P,
         description="TROPOMI CO column -- incomplete combustion and biomass burning",
         units="mol/m^2",
-        available_at_runtime=True,
-        latency_hours=5.0,
+        available_at_runtime=False,
+        latency_hours=None,
         missingness_informative=True,
         reduction=Reduction(BUF_S5P, Statistic.MEAN),
         native_resolution="~7 km",
         caveat="Cloud-screened. CO has a long atmospheric lifetime (weeks), so the column "
                "reflects regional accumulation rather than local emission -- useful for "
-               "transport, weak for local attribution.",
-        verified=False,
+               "transport, weak for local attribution. VERIFIED 2026-07-29 by catalogue end-date: the OFFL collection's latest asset was 2026-07-26T19:10Z against a 2026-07-29 query, i.e. ~72 h latency, not the 5 h originally claimed (wrong by ~13x). That exceeds the 24 h horizon, so OFFL is ORACLE ONLY. The NRTI collection is same-day (<24 h) and is the deployable counterpart -- and unlike MAIAC, BOTH S5P variants live in Earth Engine, so both are server-side reducible. NRTI's cost is smaller per-orbit coverage, which increases retrieval gaps in a feature whose missingness is already informative.",
+        verified=True,
+    ),
+    FeatureSpec(
+        name="s5p_absorbing_aerosol_index_nrt",
+        source=Source.GEE_SENTINEL5P,
+        description="TROPOMI UV absorbing aerosol index from the NRTI collection -- the "
+                    "deployable dust discriminator",
+        units="dimensionless",
+        available_at_runtime=True,
+        latency_hours=20.0,
+        missingness_informative=True,
+        reduction=Reduction(BUF_S5P, Statistic.MEAN),
+        native_resolution="~7 km",
+        caveat="VERIFIED 2026-07-29: COPERNICUS/S5P/NRTI/L3_AER_AI had assets dated "
+               "2026-07-29 -- the query date -- so latency is under 24 h. 20 h is a "
+               "conservative bound, not a documented figure. "
+               "Unlike the MAIAC case there is NO reduction-vs-latency conflict: NRTI is "
+               "in Earth Engine and reduces server-side. The trade-off is coverage -- NRTI "
+               "assets span a smaller area per orbit than OFFL, so retrieval gaps are more "
+               "frequent in a feature whose missingness is already informative. Compare "
+               "against s5p_absorbing_aerosol_index (OFFL) before trusting it.",
+        verified=True,
     ),
     FeatureSpec(
         name="viirs_active_fire_count",

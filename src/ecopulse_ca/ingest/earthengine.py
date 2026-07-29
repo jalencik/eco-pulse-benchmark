@@ -43,6 +43,7 @@ COLLECTION_FOR_FEATURE: dict[str, str] = {
     "maiac_aod_055": "MODIS/061/MCD19A2_GRANULES",
     "maiac_valid_pixel_fraction": "MODIS/061/MCD19A2_GRANULES",
     "s5p_absorbing_aerosol_index": "COPERNICUS/S5P/OFFL/L3_AER_AI",
+    "s5p_absorbing_aerosol_index_nrt": "COPERNICUS/S5P/NRTI/L3_AER_AI",
     "s5p_no2_tropospheric": "COPERNICUS/S5P/OFFL/L3_NO2",
     "s5p_so2": "COPERNICUS/S5P/OFFL/L3_SO2",
     "s5p_co": "COPERNICUS/S5P/OFFL/L3_CO",
@@ -58,6 +59,7 @@ BAND_FOR_FEATURE: dict[str, str] = {
     "maiac_aod_055": "Optical_Depth_055",
     "maiac_valid_pixel_fraction": "Optical_Depth_055",  # counted, not averaged
     "s5p_absorbing_aerosol_index": "absorbing_aerosol_index",
+    "s5p_absorbing_aerosol_index_nrt": "absorbing_aerosol_index",
     "s5p_no2_tropospheric": "tropospheric_NO2_column_number_density",
     "s5p_so2": "SO2_column_number_density",
     "s5p_co": "CO_column_number_density",
