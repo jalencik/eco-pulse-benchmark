@@ -1,0 +1,13 @@
+# Hashed artifacts must survive checkout byte-for-byte.
+#
+# This repo is developed on Windows with core.autocrlf enabled, so git would otherwise
+# rewrite LF to CRLF on checkout. For the frozen splits that is fatal: the bytes would
+# change, `sha256sum -c splits.sha256` would fail on a fresh clone, and the benchmark would
+# appear tampered with. `-text` disables all newline translation for these paths.
+benchmark/splits/** -text
+
+# Fixtures are compared byte-wise by the test suite for the same reason.
+src/ecopulse_ca/ingest/fixtures/*.json -text
+
+# Everything else may follow the platform default.
+* text=auto

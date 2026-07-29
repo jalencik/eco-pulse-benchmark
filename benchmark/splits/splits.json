@@ -1,0 +1,263 @@
+{
+  "benchmark_version": "1.0.0",
+  "combined_headline": {
+    "description": "unseen city x unseen period: leave_city_out folds evaluated only on the test block",
+    "spatial": "leave_city_out",
+    "temporal": "test"
+  },
+  "config": {
+    "max_horizon_hours": 72,
+    "max_lag_hours": 168,
+    "purge_hours": 240,
+    "purge_rule": "purge_hours == max_lag_hours + max_horizon_hours",
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "test_year": 2024
+  },
+  "leave_city_out": [
+    {
+      "fold": 0,
+      "held_out_city": "Almaty",
+      "held_out_stations": [
+        "8876"
+      ],
+      "n_train_cities": 5,
+      "train_stations": [
+        "1894632",
+        "1924313",
+        "8684",
+        "8881",
+        "9769",
+        "Ashgabat",
+        "Bishkek"
+      ]
+    },
+    {
+      "fold": 1,
+      "held_out_city": "Ashgabat",
+      "held_out_stations": [
+        "Ashgabat"
+      ],
+      "n_train_cities": 5,
+      "train_stations": [
+        "1894632",
+        "1924313",
+        "8684",
+        "8876",
+        "8881",
+        "9769",
+        "Bishkek"
+      ]
+    },
+    {
+      "fold": 2,
+      "held_out_city": "Bishkek",
+      "held_out_stations": [
+        "Bishkek"
+      ],
+      "n_train_cities": 5,
+      "train_stations": [
+        "1894632",
+        "1924313",
+        "8684",
+        "8876",
+        "8881",
+        "9769",
+        "Ashgabat"
+      ]
+    },
+    {
+      "fold": 3,
+      "held_out_city": "Dushanbe",
+      "held_out_stations": [
+        "8684",
+        "9769"
+      ],
+      "n_train_cities": 5,
+      "train_stations": [
+        "1894632",
+        "1924313",
+        "8876",
+        "8881",
+        "Ashgabat",
+        "Bishkek"
+      ]
+    },
+    {
+      "fold": 4,
+      "held_out_city": "Khujand",
+      "held_out_stations": [
+        "1894632",
+        "1924313"
+      ],
+      "n_train_cities": 5,
+      "train_stations": [
+        "8684",
+        "8876",
+        "8881",
+        "9769",
+        "Ashgabat",
+        "Bishkek"
+      ]
+    },
+    {
+      "fold": 5,
+      "held_out_city": "Tashkent",
+      "held_out_stations": [
+        "8881"
+      ],
+      "n_train_cities": 5,
+      "train_stations": [
+        "1894632",
+        "1924313",
+        "8684",
+        "8876",
+        "9769",
+        "Ashgabat",
+        "Bishkek"
+      ]
+    }
+  ],
+  "leave_station_out": {
+    "folds": [
+      {
+        "city": "Dushanbe",
+        "fold": 0,
+        "held_out_station": "8684",
+        "train_stations": [
+          "9769"
+        ]
+      },
+      {
+        "city": "Dushanbe",
+        "fold": 1,
+        "held_out_station": "9769",
+        "train_stations": [
+          "8684"
+        ]
+      },
+      {
+        "city": "Khujand",
+        "fold": 2,
+        "held_out_station": "1894632",
+        "train_stations": [
+          "1924313"
+        ]
+      },
+      {
+        "city": "Khujand",
+        "fold": 3,
+        "held_out_station": "1924313",
+        "train_stations": [
+          "1894632"
+        ]
+      }
+    ],
+    "ineligible_cities": [
+      "Almaty",
+      "Ashgabat",
+      "Bishkek",
+      "Tashkent"
+    ]
+  },
+  "notes": [
+    "Post-test data is reserved and unused: it cannot train (lookahead vs the 2024 test block) and cannot test (only 4 stations report after 2025-03-04).",
+    "leave_station_out covers 2 of 6 cities; the rest hold a single instrument.",
+    "Bishkek and Ashgabat are merged feeds -- see data/DECISIONS.md D-008. Bishkek's two publishers agree on only 11.1% of overlapping hours in the 2024 test block."
+  ],
+  "stations": [
+    {
+      "city": "Almaty",
+      "latitude": 43.252855,
+      "longitude": 76.93118,
+      "n_observations": 37750,
+      "station_id": "8876"
+    },
+    {
+      "city": "Ashgabat",
+      "latitude": 37.9415,
+      "longitude": 58.3879,
+      "n_observations": 37163,
+      "station_id": "Ashgabat"
+    },
+    {
+      "city": "Bishkek",
+      "latitude": 42.827626,
+      "longitude": 74.58384,
+      "n_observations": 44804,
+      "station_id": "Bishkek"
+    },
+    {
+      "city": "Dushanbe",
+      "latitude": 38.557671,
+      "longitude": 68.775917,
+      "n_observations": 49305,
+      "station_id": "8684"
+    },
+    {
+      "city": "Dushanbe",
+      "latitude": 38.579708,
+      "longitude": 68.712176,
+      "n_observations": 36243,
+      "station_id": "9769"
+    },
+    {
+      "city": "Khujand",
+      "latitude": 40.30317,
+      "longitude": 69.63906,
+      "n_observations": 14525,
+      "station_id": "1894632"
+    },
+    {
+      "city": "Khujand",
+      "latitude": 40.26804,
+      "longitude": 69.80165,
+      "n_observations": 16674,
+      "station_id": "1924313"
+    },
+    {
+      "city": "Tashkent",
+      "latitude": 41.3672,
+      "longitude": 69.2725,
+      "n_observations": 44073,
+      "station_id": "8881"
+    }
+  ],
+  "temporal_blocks": [
+    {
+      "end": "2022-12-31T23:00:00Z",
+      "name": "train",
+      "start": "2018-11-27T22:00:00Z"
+    },
+    {
+      "end": "2023-01-10T23:00:00Z",
+      "name": "purge_train_val",
+      "start": "2023-01-01T00:00:00Z"
+    },
+    {
+      "end": "2023-12-21T23:00:00Z",
+      "name": "val",
+      "start": "2023-01-11T00:00:00Z"
+    },
+    {
+      "end": "2023-12-31T23:00:00Z",
+      "name": "purge_val_test",
+      "start": "2023-12-22T00:00:00Z"
+    },
+    {
+      "end": "2024-12-31T23:00:00Z",
+      "name": "test",
+      "start": "2024-01-01T00:00:00Z"
+    },
+    {
+      "end": "2026-07-28T18:00:00Z",
+      "name": "reserved_post_test",
+      "start": "2025-01-01T00:00:00Z"
+    }
+  ]
+}

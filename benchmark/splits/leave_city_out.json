@@ -1,0 +1,106 @@
+{
+  "leave_city_out": [
+    {
+      "fold": 0,
+      "held_out_city": "Almaty",
+      "held_out_stations": [
+        "8876"
+      ],
+      "n_train_cities": 5,
+      "train_stations": [
+        "1894632",
+        "1924313",
+        "8684",
+        "8881",
+        "9769",
+        "Ashgabat",
+        "Bishkek"
+      ]
+    },
+    {
+      "fold": 1,
+      "held_out_city": "Ashgabat",
+      "held_out_stations": [
+        "Ashgabat"
+      ],
+      "n_train_cities": 5,
+      "train_stations": [
+        "1894632",
+        "1924313",
+        "8684",
+        "8876",
+        "8881",
+        "9769",
+        "Bishkek"
+      ]
+    },
+    {
+      "fold": 2,
+      "held_out_city": "Bishkek",
+      "held_out_stations": [
+        "Bishkek"
+      ],
+      "n_train_cities": 5,
+      "train_stations": [
+        "1894632",
+        "1924313",
+        "8684",
+        "8876",
+        "8881",
+        "9769",
+        "Ashgabat"
+      ]
+    },
+    {
+      "fold": 3,
+      "held_out_city": "Dushanbe",
+      "held_out_stations": [
+        "8684",
+        "9769"
+      ],
+      "n_train_cities": 5,
+      "train_stations": [
+        "1894632",
+        "1924313",
+        "8876",
+        "8881",
+        "Ashgabat",
+        "Bishkek"
+      ]
+    },
+    {
+      "fold": 4,
+      "held_out_city": "Khujand",
+      "held_out_stations": [
+        "1894632",
+        "1924313"
+      ],
+      "n_train_cities": 5,
+      "train_stations": [
+        "8684",
+        "8876",
+        "8881",
+        "9769",
+        "Ashgabat",
+        "Bishkek"
+      ]
+    },
+    {
+      "fold": 5,
+      "held_out_city": "Tashkent",
+      "held_out_stations": [
+        "8881"
+      ],
+      "n_train_cities": 5,
+      "train_stations": [
+        "1894632",
+        "1924313",
+        "8684",
+        "8876",
+        "9769",
+        "Ashgabat",
+        "Bishkek"
+      ]
+    }
+  ]
+}
