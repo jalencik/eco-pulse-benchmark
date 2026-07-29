@@ -163,7 +163,7 @@ def extract_static(
     )
 
     df = elev
-    for km, ring in rings.items():
+    for ring in rings.values():
         df = df.merge(ring, on="station_id")
     df = df.merge(pop, on="station_id").merge(lights, on="station_id")
 
