@@ -75,22 +75,23 @@ Each fold holds out one city entirely; the held-out city contributes no training
 
 ### Pooled across folds
 
-| model            |   rmse |    mae |   bias |     r2 |   f1_exceed |     n |
-|:-----------------|-------:|-------:|-------:|-------:|------------:|------:|
-| ordinary_kriging | 40.916 | 24.54  | -3.495 | -0.14  |       0.728 | 59635 |
-| idw_k5_p2        | 43.653 | 26.07  | -0.209 | -0.317 |       0.762 | 59635 |
-| nearest_monitor  | 48.027 | 27.528 | -3.429 | -0.711 |       0.737 | 59635 |
+| model              |   rmse |    mae |   bias |     r2 |   f1_exceed |     n |
+|:-------------------|-------:|-------:|-------:|-------:|------------:|------:|
+| ordinary_kriging   | 40.916 | 24.54  | -3.495 | -0.14  |       0.728 | 59635 |
+| training_pool_mean | 43.091 | 30.665 |  6.028 | -0.271 |       0.764 | 59676 |
+| idw_k5_p2          | 43.653 | 26.07  | -0.209 | -0.317 |       0.762 | 59635 |
+| nearest_monitor    | 48.027 | 27.528 | -3.429 | -0.711 |       0.737 | 59635 |
 
 ### RMSE by held-out city (µg/m³)
 
-| held_out_city   |   idw_k5_p2 |   nearest_monitor |   ordinary_kriging |
-|:----------------|------------:|------------------:|-------------------:|
-| Almaty          |       29.65 |             35.44 |              27.68 |
-| Ashgabat        |       45.29 |             62.04 |              36.21 |
-| Bishkek         |       35.14 |             34.63 |              38.16 |
-| Dushanbe        |       55.44 |             57.06 |              54.36 |
-| Khujand         |       43.51 |             46.89 |              40.04 |
-| Tashkent        |       41.23 |             44.21 |              36.49 |
+| held_out_city   |   idw_k5_p2 |   nearest_monitor |   ordinary_kriging |   training_pool_mean |
+|:----------------|------------:|------------------:|-------------------:|---------------------:|
+| Almaty          |       29.65 |             35.44 |              27.68 |                33.9  |
+| Ashgabat        |       45.29 |             62.04 |              36.21 |                34.3  |
+| Bishkek         |       35.14 |             34.63 |              38.16 |                40.61 |
+| Dushanbe        |       55.44 |             57.06 |              54.36 |                54.32 |
+| Khujand         |       43.51 |             46.89 |              40.04 |                43.3  |
+| Tashkent        |       41.23 |             44.21 |              36.49 |                40.68 |
 
 ### Kriging fallback rate
 
@@ -128,17 +129,20 @@ Newey–West HAC variance with truncation lag h−1, plus the Harvey–Leybourne
 
 Newey–West HAC variance with truncation lag h−1, plus the Harvey–Leybourne–Newbold small-sample correction. A lower RMSE with p ≥ 0.05 is **not** an improvement.
 
-- comparisons: **24**
-- significant at p < 0.05: **20** (83%)
+- comparisons: **48**
+- significant at p < 0.05: **32** (67%)
 - exact ties (identical forecasts): **0**
 
 ### By model pair
 
-|    | model_a         | model_b          |   n_comparisons |   n_significant |   median_p |
-|---:|:----------------|:-----------------|----------------:|----------------:|-----------:|
-|  0 | idw_k5_p2       | nearest_monitor  |               8 |               7 |     0.0004 |
-|  1 | idw_k5_p2       | ordinary_kriging |               8 |               5 |     0.0038 |
-|  2 | nearest_monitor | ordinary_kriging |               8 |               8 |     0.0002 |
+|    | model_a          | model_b            |   n_comparisons |   n_significant |   median_p |
+|---:|:-----------------|:-------------------|----------------:|----------------:|-----------:|
+|  0 | idw_k5_p2        | nearest_monitor    |               8 |               7 |     0.0004 |
+|  1 | idw_k5_p2        | ordinary_kriging   |               8 |               5 |     0.0038 |
+|  2 | idw_k5_p2        | training_pool_mean |               8 |               3 |     0.1738 |
+|  3 | nearest_monitor  | ordinary_kriging   |               8 |               8 |     0.0002 |
+|  4 | nearest_monitor  | training_pool_mean |               8 |               5 |     0.0399 |
+|  5 | ordinary_kriging | training_pool_mean |               8 |               4 |     0.0573 |
 
 ## Known caveats that travel with these numbers
 

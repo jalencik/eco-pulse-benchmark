@@ -44,6 +44,23 @@ class RegressionMetrics:
 
 @dataclass
 class ExceedanceMetrics:
+    """Exceedance skill, with the base-rate corrections F1 alone does not provide.
+
+    **F1 is not a discriminating metric on this benchmark and must never be reported
+    alone.** 64.8% of test-block days exceed the WHO 15 ug/m3 guideline, so a predictor
+    that simply says "exceeded" every day scores F1 = 0.764 -- and *no model on the
+    credential-free ladder beats that*. The base rate also varies enormously by city
+    (Bishkek 23.4%, Dushanbe 88.3%), so a pooled F1 largely measures which cities are
+    dirtiest rather than which model is better.
+
+    Two additions make the number interpretable:
+
+    - `f1_trivial_always`: what the always-exceed predictor scores on the same days. Any
+      F1 at or below this is worthless, however large it looks.
+    - `peirce_skill`: TPR - FPR (Peirce / Youden's J). **Base-rate independent**, zero for
+      any constant prediction, so it cannot be inflated by a dirty city.
+    """
+
     n_days: int
     n_exceed_obs: int
     n_exceed_pred: int
@@ -54,13 +71,24 @@ class ExceedanceMetrics:
     precision: float
     recall: float
     f1: float
+    base_rate: float
+    f1_trivial_always: float
+    peirce_skill: float
+
+    @property
+    def beats_trivial(self) -> bool:
+        """Whether the model's F1 exceeds the always-exceed predictor's."""
+        return bool(self.f1 > self.f1_trivial_always)
 
     def as_dict(self) -> dict[str, float]:
         return {
             "n_days": self.n_days, "n_exceed_obs": self.n_exceed_obs,
             "n_exceed_pred": self.n_exceed_pred, "tp": self.tp, "fp": self.fp,
             "fn": self.fn, "tn": self.tn, "precision": self.precision,
-            "recall": self.recall, "f1": self.f1,
+            "recall": self.recall, "f1": self.f1, "base_rate": self.base_rate,
+            "f1_trivial_always": self.f1_trivial_always,
+            "peirce_skill": self.peirce_skill,
+            "beats_trivial": self.beats_trivial,
         }
 
 
@@ -123,8 +151,9 @@ def exceedance_metrics(
     o = to_daily_mean(obs, tz)
     p = to_daily_mean(pred, tz)
     both = pd.concat([o.rename("obs"), p.rename("pred")], axis=1).dropna()
+    nan = float("nan")
     if both.empty:
-        return ExceedanceMetrics(0, 0, 0, 0, 0, 0, 0, float("nan"), float("nan"), float("nan"))
+        return ExceedanceMetrics(0, 0, 0, 0, 0, 0, 0, nan, nan, nan, nan, nan, nan)
 
     oe = both["obs"].to_numpy() > threshold
     pe = both["pred"].to_numpy() > threshold
@@ -133,17 +162,30 @@ def exceedance_metrics(
     fn = int(np.sum(oe & ~pe))
     tn = int(np.sum(~oe & ~pe))
 
-    precision = tp / (tp + fp) if (tp + fp) else float("nan")
-    recall = tp / (tp + fn) if (tp + fn) else float("nan")
-    if np.isnan(precision) or np.isnan(recall) or (precision + recall) == 0:
-        f1 = 0.0 if (tp + fp + fn) > 0 else float("nan")
-    else:
-        f1 = 2 * precision * recall / (precision + recall)
+    def _f1(precision: float, recall: float) -> float:
+        if np.isnan(precision) or np.isnan(recall) or (precision + recall) == 0:
+            return 0.0
+        return 2 * precision * recall / (precision + recall)
+
+    precision = tp / (tp + fp) if (tp + fp) else nan
+    recall = tp / (tp + fn) if (tp + fn) else nan
+    f1 = _f1(precision, recall) if (tp + fp + fn) > 0 else nan
+
+    # The always-exceed predictor on these same days: precision = base rate, recall = 1.
+    base_rate = float(oe.mean())
+    f1_trivial = _f1(base_rate, 1.0) if base_rate > 0 else 0.0
+
+    # Peirce skill = TPR - FPR. Zero for any constant prediction, and independent of the
+    # base rate, so it cannot be inflated by evaluating on a dirtier city.
+    tpr = tp / (tp + fn) if (tp + fn) else nan
+    fpr = fp / (fp + tn) if (fp + tn) else nan
+    pss = float(tpr - fpr) if not (np.isnan(tpr) or np.isnan(fpr)) else nan
 
     return ExceedanceMetrics(
         n_days=len(both), n_exceed_obs=int(oe.sum()), n_exceed_pred=int(pe.sum()),
         tp=tp, fp=fp, fn=fn, tn=tn,
         precision=precision, recall=recall, f1=f1,
+        base_rate=base_rate, f1_trivial_always=f1_trivial, peirce_skill=pss,
     )
 
 

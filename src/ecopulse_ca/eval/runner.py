@@ -37,6 +37,7 @@ from ecopulse_ca.models.climatology import Climatology
 from ecopulse_ca.models.idw import IDW, NearestMonitor
 from ecopulse_ca.models.kriging import OrdinaryKriging
 from ecopulse_ca.models.persistence import DiurnalPersistence, Persistence, SameHourMean
+from ecopulse_ca.models.pool_mean import TrainingPoolMean
 
 ROOT = Path(__file__).resolve().parents[3]
 SPLITS = ROOT / "benchmark" / "splits" / "splits.json"
@@ -122,15 +123,21 @@ def run_task_f(panel: pd.DataFrame, blocks: Blocks, tz_of: dict[str, str]) -> pd
                 exc = exceedance_metrics(obs, pred, WHO_2021_PM25_24H, tz_of.get(sid))
                 rows.append({
                     "task": "F", "station_id": sid, "horizon_h": horizon, "model": name,
-                    **reg.as_dict(), "f1_exceed": exc.f1, "precision": exc.precision,
-                    "recall": exc.recall, "n_days": exc.n_days,
-                    "n_exceed_obs": exc.n_exceed_obs,
+                    **reg.as_dict(), "f1_exceed": exc.f1,
+                    "f1_trivial_always": exc.f1_trivial_always,
+                    "beats_trivial": exc.beats_trivial,
+                    "peirce_skill": exc.peirce_skill, "base_rate": exc.base_rate,
+                    "precision": exc.precision, "recall": exc.recall,
+                    "n_days": exc.n_days, "n_exceed_obs": exc.n_exceed_obs,
                 })
     return pd.DataFrame(rows)
 
 
 # --------------------------------------------------------------------------- Task N
 NOWCASTERS = {
+    # Rung 0: the achievable constant. Any model claiming to have learned something
+    # about an unmonitored city must beat this. See models/pool_mean.py.
+    "training_pool_mean": TrainingPoolMean,
     "nearest_monitor": NearestMonitor,
     "idw_k5_p2": lambda seed: IDW(k=5, p=2.0, seed=seed),
     "ordinary_kriging": OrdinaryKriging,
@@ -180,9 +187,12 @@ def run_task_n(
                 row = {
                     "task": "N", "fold": fold["fold"], "held_out_city": fold["held_out_city"],
                     "station_id": held, "model": name, "seed": seed,
-                    **reg.as_dict(), "f1_exceed": exc.f1, "precision": exc.precision,
-                    "recall": exc.recall, "n_days": exc.n_days,
-                    "n_exceed_obs": exc.n_exceed_obs,
+                    **reg.as_dict(), "f1_exceed": exc.f1,
+                    "f1_trivial_always": exc.f1_trivial_always,
+                    "beats_trivial": exc.beats_trivial,
+                    "peirce_skill": exc.peirce_skill, "base_rate": exc.base_rate,
+                    "precision": exc.precision, "recall": exc.recall,
+                    "n_days": exc.n_days, "n_exceed_obs": exc.n_exceed_obs,
                 }
                 if name == "ordinary_kriging":
                     row["kriging_fallback_rate"] = round(model.fallback_rate, 4)
