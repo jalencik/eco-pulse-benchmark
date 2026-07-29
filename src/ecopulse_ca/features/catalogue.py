@@ -212,9 +212,13 @@ MET_REANALYSIS = (
         latency_hours=None,
         reduction=Reduction(BUF_MET, Statistic.MEAN),
         native_resolution="~31 km",
-        caveat="ERA5 lags roughly five days. ORACLE ONLY. Results using this must be "
-               "labelled a reanalysis-oracle ablation and never presented as deployable.",
-        verified=False,
+        caveat="ORACLE ONLY. Results using this must be labelled a reanalysis-oracle "
+               "ablation and never presented as deployable. "
+               "VERIFIED 2026-07-29 against the CDS API: reanalysis-era5-pressure-levels "
+               "end_datetime was 2026-07-23T00:00Z, a MEASURED latency of 6 days (163 h) "
+               "rather than the recalled 'roughly five days'. That is ~7x the shortest "
+               "forecast horizon, confirming the oracle classification.",
+        verified=True,
     ),
     FeatureSpec(
         name="era5_inversion_strength_reanalysis",
@@ -226,8 +230,9 @@ MET_REANALYSIS = (
         latency_hours=None,
         reduction=Reduction(BUF_MET, Statistic.MEAN),
         native_resolution="~31 km",
-        caveat="ORACLE ONLY, same reason as ERA5 BLH.",
-        verified=False,
+        caveat="ORACLE ONLY, same reason as ERA5 BLH -- VERIFIED 2026-07-29: measured "
+               "CDS latency 6 days (163 h), ~7x the shortest forecast horizon.",
+        verified=True,
     ),
     FeatureSpec(
         name="cams_pm25_reanalysis",
@@ -258,8 +263,20 @@ MET_FORECAST = (
         reduction=Reduction(BUF_MET, Statistic.MEAN),
         native_resolution="~40 km",
         caveat="This is what a deployed ECO Pulse can actually consume. Any comparison "
-               "against cams_pm25_reanalysis must state which was used.",
-        verified=False,
+               "against cams_pm25_reanalysis must state which was used. "
+               "VERIFIED 2026-07-29 against the ADS API: collection end_datetime was "
+               "2026-07-29T00:00Z at 18:48Z -- the 00 UTC cycle published, the 12 UTC "
+               "cycle not yet -- matching the documented schedule (00 UTC by 10:00 UTC, "
+               "12 UTC by 22:00 UTC, ~10 h delay). The declared 12 h is a conservative "
+               "bound above that, so this feature is genuinely deployable. "
+               "DELIVERY RISK, which a latency figure alone hides: ECMWF states delivery "
+               "times vary due to the non-operational nature of the ADS service, that "
+               "earlier availability is without guarantee, and that time-critical users "
+               "should use ECMWF SFTP or paid Dissemination. Deployable in principle over "
+               "a channel documented as best-effort -- a production service must either "
+               "source CAMS from SFTP/Dissemination or degrade gracefully when a cycle "
+               "is late.",
+        verified=True,
     ),
     FeatureSpec(
         name="cams_forecast_blh",
@@ -270,7 +287,10 @@ MET_FORECAST = (
         latency_hours=12.0,
         reduction=Reduction(BUF_MET, Statistic.MEAN),
         native_resolution="~40 km",
-        verified=False,
+        caveat="Same ADS cycle as cams_pm25_forecast: verified ~10 h documented delay, "
+               "12 h declared as a conservative bound. Carries the same best-effort "
+               "delivery risk -- see cams_pm25_forecast.",
+        verified=True,
     ),
     FeatureSpec(
         name="cams_forecast_wind_speed_10m",
@@ -281,7 +301,10 @@ MET_FORECAST = (
         latency_hours=12.0,
         reduction=Reduction(BUF_MET, Statistic.MEAN),
         native_resolution="~40 km",
-        verified=False,
+        caveat="Same ADS cycle as cams_pm25_forecast: verified ~10 h documented delay, "
+               "12 h declared as a conservative bound. Carries the same best-effort "
+               "delivery risk -- see cams_pm25_forecast.",
+        verified=True,
     ),
 )
 
