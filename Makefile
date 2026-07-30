@@ -1,50 +1,51 @@
 # Canonical task runner. `make` is what a reviewer will type.
 #
-# NOTE for the Windows dev machine: `make` is not installed there. A no-dependency shim
-# exists — `python tasks.py <target>` runs the same commands. See README.md.
+# Every target delegates to tasks.py, which holds the single definition of what each one
+# runs. The two used to repeat each other and drifted: the `paper` target gained producer
+# scripts on one side only. Delegation makes that class of bug impossible rather than
+# merely tested for.
+#
+# `make` is not installed on the Windows dev machine. The same targets run there with
+# `python tasks.py <target>` — identical commands, since both go through the same table.
 
 .PHONY: help setup lint typecheck test test-fast reproduce clean splits baselines paper
 
 PY := python
-PKG := src/ecopulse_ca
 
 help:
-	@echo "setup      - create pinned venv and install (uv preferred)"
+	@echo "setup      - create the pinned 3.12 venv and install (works with or without uv)"
 	@echo "lint       - ruff check + format check"
 	@echo "typecheck  - mypy"
 	@echo "test       - full pytest suite"
 	@echo "test-fast  - pytest excluding network + slow"
 	@echo "splits     - build and freeze benchmark splits"
 	@echo "baselines  - run credential-free baseline ladder (5 seeds)"
-	@echo "paper      - regenerate all figures and tables"
+	@echo "paper      - regenerate every table and re-render the manuscript"
 	@echo "reproduce  - clean-checkout end-to-end regeneration of every reported number"
 
 setup:
-	uv venv --python 3.12 && uv pip install -e ".[dev]"
+	$(PY) tasks.py setup
 
 lint:
-	ruff check . && ruff format --check .
+	$(PY) tasks.py lint
 
 typecheck:
-	mypy $(PKG)
+	$(PY) tasks.py typecheck
 
 test:
-	pytest
+	$(PY) tasks.py test
 
 test-fast:
-	pytest -m "not network and not slow"
+	$(PY) tasks.py test-fast
 
 splits:
-	$(PY) -m ecopulse_ca.splits.builder --freeze
+	$(PY) tasks.py splits
 
 baselines:
-	$(PY) -m ecopulse_ca.tasks.forecasting --all-seeds
-	$(PY) -m ecopulse_ca.tasks.nowcasting  --all-seeds
+	$(PY) tasks.py baselines
 
 paper:
-	$(PY) scripts/build_r7_tables.py
-	$(PY) scripts/build_merge_divergence.py
-	$(PY) paper/scripts/build_all.py
+	$(PY) tasks.py paper
 
 # The single command that must regenerate every number in the paper from a clean checkout.
 # Order matters: splits are frozen and hash-verified BEFORE any model sees data.

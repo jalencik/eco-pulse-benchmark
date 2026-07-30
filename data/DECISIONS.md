@@ -74,7 +74,19 @@ forgotten. Related: `STATUS.md` risk R3.
 - **Direction of bias if wrong:** the 306 excluded stations are AirGradient (173) and
   Clarity (133) low-cost units with median span 0.59 y, earliest deployment 2023-07. If
   their `datetimeFirst` reflects OpenAQ ingestion rather than sensor deployment, the true
-  spans are longer and the benchmark is smaller than it needs to be. **Unverified.**
+  spans are longer and the benchmark is smaller than it needs to be.
+- **Verified 2026-07-30 — risk did not materialise (R10 closed).** `scripts/verify_r10.py`
+  queried 60 excluded stations, stratified across both providers, for measurements in the
+  three years *before* each reported `datetimeFirst`. **0 of 60 returned any row.** The
+  exclusions stand and the eligible pool is not artificially small; **n is unchanged**.
+  Verified by probing the archive rather than reading provider documentation, and gated on
+  a positive control — an eligible station returned 144 hours from a known-good 7-day
+  window, establishing that the probe detects data when data exists. Without that control a
+  broken query would have produced the same all-negative sweep and the same conclusion.
+  Result banked in `paper/tables/t2_04_r10_span_provenance.csv`.
+- **Residual scope:** this closes the question for the archive we are entitled to use. A
+  sensor that ran earlier without that history reaching OpenAQ is indistinguishable from
+  one that did not, and yields no recoverable benchmark row either way.
 
 ### D-002 — Flatline policy: MASK_WINDOW
 - **Date:** 2026-07-28

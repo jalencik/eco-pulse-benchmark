@@ -1,0 +1,2 @@
+n_excluded_total,n_probed,n_interpretable,n_unusable,n_with_earlier_data,pct_with_earlier_data,lookback_years,positive_control,verdict
+306,60,60,0,0,0.0,3,pass,CLOSED

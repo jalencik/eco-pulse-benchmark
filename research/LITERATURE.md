@@ -14,8 +14,17 @@ misleading in exactly the places most likely to be wrong.
 | **ABSTRACT** | Publisher abstract/landing page retrieved |
 | **SNIPPET** | Only search-result summary seen. **Claims from these sources are provisional and are not load-bearing in `GAP.md`.** |
 
-Several ScienceDirect articles returned HTTP 403. They are recorded at SNIPPET depth and
-must be re-verified through institutional access before the paper cites them.
+**Depth and citation-verification are separate axes** (added 2026-07-30). A source can have
+an authoritative DOI and a confirmed author list while its full text stays behind a
+paywall. Conflating the two made paywalled sources look uncitable when in fact only their
+*content claims* were provisional, never their identity. Bibliographic metadata is now
+resolved through scholarly APIs and marked **citation verified**; depth continues to record
+only what was actually read.
+
+Several ScienceDirect and MDPI pages returned HTTP 403, so full text remains unavailable
+for some entries. Their bibliographic records were recovered via Crossref/OpenAlex — see
+§F. Content claims from SNIPPET sources still require institutional access before the paper
+relies on them.
 
 ---
 
@@ -24,7 +33,7 @@ must be re-verified through institutional access before the paper cites them.
 | # | Source | Depth | What it establishes | Splits / protocol |
 |---|---|---|---|---|
 | A1 | **OpenAQ, *Air Quality Data: Central Asia* (2025 regional snapshot of the 2024 Global Landscape report)** | **FULL** | The data-sparsity premise, quantified. See below — the single most important source for this project. | n/a (policy report) |
-| A2 | Kulkarni et al. (?), *Cities of Central Asia: New hotspots of air pollution in the world*, **Atmospheric Environment** 2023 | SNIPPET | Six capitals (Almaty, Astana, Ashgabat, Bishkek, Dushanbe, Tashkent) exceed the WHO annual guideline by **4.3–12.6×**. Winter peaks in Almaty/Bishkek/Astana; winter *and* summer in Tashkent/Dushanbe. Coal combustion, not transport, is the dominant PM2.5 source — contradicting official inventories. Explicitly notes "limited studies and knowledge" for the region. | Descriptive + HYSPLIT back-trajectories. **No ML, no predictive splits.** |
+| A2 | **Tursumbayeva, Muratuly, Baimatova & Karaca**, *Cities of Central Asia: New hotspots of air pollution in the world*, **Atmospheric Environment** 2023, `10.1016/j.atmosenv.2023.119901` | SNIPPET (citation verified) | Six capitals (Almaty, Astana, Ashgabat, Bishkek, Dushanbe, Tashkent) exceed the WHO annual guideline by **4.3–12.6×**. Winter peaks in Almaty/Bishkek/Astana; winter *and* summer in Tashkent/Dushanbe. Coal combustion, not transport, is the dominant PM2.5 source — contradicting official inventories. Explicitly notes "limited studies and knowledge" for the region. | Descriptive + HYSPLIT back-trajectories. **No ML, no predictive splits.** |
 | A3 | Guttikunda, *A Multi-Pollutant Emissions Inventory ... for Bishkek*, **Zenodo 12720883** (2024), CC-BY | **FULL** | Gridded 2018 emissions inventory, WRF met, CAMx output, GIS layers, **and ambient monitoring: Clarity sensors (2021) + US Embassy (2019–2024)**. ~5,500 t/yr PM2.5 → 48 µg/m³ annual mean. | **No train/test splits. Not an ML benchmark.** Usable as an emissions-proxy predictor and as a source-apportionment cross-check. |
 | A4 | *Validation and comparison of high-resolution MAIAC aerosol products over Central Asia*, **Atmospheric Environment** 2021 | SNIPPET | Direct MAIAC validation for the study region. **High priority for full-text retrieval** — it bears directly on whether PR-1 is usable here. | Validation against AERONET, not a prediction task |
 | A5 | *Dominant sources of PM2.5 in Kazakhstan's urban cities: PMF and HYSPLIT*, 2025 | SNIPPET | Source apportionment, Kazakhstan | PMF, not predictive |
@@ -170,13 +179,69 @@ that makes the work legible to the target venue.
 
 ---
 
+## F. Methodological sources for the machinery this repository already uses
+
+Every statistical method the code implements is cited to its originating source rather than
+to a secondary description. These were resolved by exact-title lookup (`M1`–`M12` in
+`scripts/fetch_literature.py`), not topical browsing.
+
+| Ref | Work | Used in this repo for |
+|---|---|---|
+| M1 | Roberts et al., *Cross-validation strategies for data with temporal, spatial, hierarchical, or phylogenetic structure*, **Ecography** 2016 | The canonical justification for blocked and leave-city-out splits over random k-fold |
+| M2 | Meyer et al., *Importance of spatial predictor variable selection in machine learning*, 2019 | Why spatially-derived predictors need spatial validation |
+| M3 | Diebold & Mariano, *Comparing Predictive Accuracy*, 1994/1995 | The DM test itself |
+| M4 | Harvey, Leybourne & Newbold, *Testing the equality of prediction mean squared errors*, **IJF** 1997 | The small-sample HLN correction applied to every DM statistic |
+| M5 | Newey & West, *A Simple, Positive Semi-Definite... Covariance Matrix*, **Econometrica** 1987 | HAC variance under the derived truncation lag |
+| M6 | Probst, Wright & Boulesteix, *Hyperparameters and tuning strategies for random forest*, 2019 | Tuning protocol on the 2023 validation block |
+| M7 | Xu et al., *Evaluation of machine learning techniques with multiple remote sensing...*, **Env. Pollution** 2018 | Satellite-to-PM2.5 estimation precedent |
+| M8 | Zheng et al., *Field evaluation of low-cost particulate matter sensors*, **AMT** 2018 | Low-cost sensor uncertainty, bearing on the excluded-station pool |
+| M9 | Inness et al., *The CAMS reanalysis of atmospheric composition*, **ACP** 2019 | The CAMS baseline rung and its debiasing |
+| M10 | Ke et al., *LightGBM*, NeurIPS 2017 | The GBDT implementation (no DOI exists; NeurIPS proceedings) |
+| M11 | Lundberg & Lee, *A Unified Approach to Interpreting Model Predictions*, 2017 | SHAP attribution in Section 6 |
+| M12 | Zang et al., *Estimating ground-level PM2.5 concentrations*, 2017 | AOD-to-surface-PM2.5 precedent |
+
+### Resolved bibliographic records
+
+Generated from `research/sources.json` by `scripts/build_literature_table.py` — see
+[`SOURCES_TABLE.md`](SOURCES_TABLE.md). Hand-typed citations drift from their sources
+exactly as hand-typed numbers do, so the reference table is produced, not written.
+
+### Two failure modes the resolver had to be hardened against
+
+Both were caught by spot-checking output that looked entirely reasonable.
+
+1. **Relevance is not identity.** Taking the top search hit resolved "PM2.5 prediction in
+   Tashkent using machine learning" to a study of the **Brazilian Cerrado** — every generic
+   term matched and only the place name did not. Targets defined by a proper noun now
+   require that noun outright, and A9 is honestly `UNRESOLVED` rather than wrong.
+2. **Fields must not be merged across records.** Combining APIs field-by-field paired
+   OpenAlex's title for the LightGBM paper with a Crossref DOI belonging to an unrelated
+   *Natural Resources Research* article. A correct title with a wrong DOI is the most
+   dangerous citation error, because nothing about it invites checking. Merging now
+   requires DOI agreement or near-exact title identity, and 7 rejected cross-source merges
+   are recorded in `sources.json`. Fixing this **reduced** the FULL count from 12 to 8
+   before other gains — several "full texts" had been open-access links belonging to
+   different papers.
+
+---
+
 ## Gaps in this review — to close before submission
 
-1. **403-blocked, high priority:** A2, A4, B2, and A9. A9 (Tashkent ML) especially — its
-   split protocol determines how the related-work section is written.
-2. **Russian-language search returned monitoring portals and news, not research.** A
-   targeted search of CyberLeninka / eLIBRARY.RU is still needed to close falsifier F4
-   properly. The current F4 verdict is provisional.
-3. **Uzhydromet / Kazhydromet primary sources** not yet examined for data availability.
-4. **Count is ~19 sources, but only 4 at FULL depth.** The master spec asks for 15–25 with
-   full extraction; that bar is not yet met and this file will be revised.
+**Revised 2026-07-30.**
+
+1. **Resolved.** A2, A4, B2 and A5 are no longer citation-blocked: authors, venue, year and
+   DOI are confirmed via Crossref/OpenAlex, and **A2's attribution was wrong in this file**
+   — recorded as "Kulkarni et al. (?)", it is Tursumbayeva, Muratuly, Baimatova & Karaca.
+   Full text is still paywalled, so their *content* claims remain provisional.
+2. **A9 (Tashkent ML) is not indexed in any of the four APIs.** It is an ECAS 2025 Sciforum
+   conference abstract, and the resolver correctly refuses to guess. Its split protocol
+   therefore remains **unknown**, and Section 1 must not assert what that paper did. This is
+   the one gap that still constrains the related-work text.
+3. **Russian-language search still returned portals and news, not research.** CyberLeninka /
+   eLIBRARY.RU are not covered by these APIs. The F4 verdict remains **provisional**.
+4. **Uzhydromet / Kazhydromet primary sources** not yet examined for data availability.
+5. **Count: 30 distinct sources** — 25 API-resolved, plus A1, A3, B1, C1, C2 carried
+   forward. 24 of the 25 carry an authoritative DOI (the exception is LightGBM, which has
+   none). Depth across all 30: **16 FULL, 5 ABSTRACT, 8 SNIPPET, 1 UNRESOLVED**. The
+   master spec's 15–25 sources with full extraction is **met at 16 FULL**; the 8 remaining
+   SNIPPET entries are paywalled full texts whose citations are nonetheless verified.

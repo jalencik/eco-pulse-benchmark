@@ -17,8 +17,31 @@ future work has to beat honestly.
 ## Quickstart
 
 ```bash
-uv venv --python 3.12 && uv pip install -e ".[dev]"
+python scripts/setup_env.py
 ```
+
+That creates the pinned Python 3.12 environment in `.venv` and installs the project. It
+works with or without [`uv`](https://docs.astral.sh/uv/): if `uv` is on PATH it is used
+(and can download a 3.12 for you), otherwise the script finds a suitable interpreter and
+falls back to `venv` + `pip`. It **executes** each candidate interpreter rather than
+trusting version metadata — on our own Windows machine the `py` launcher advertised a 3.12
+that would not start. Re-running is safe: a healthy `.venv` is reused, not rebuilt. Pass
+`--force` to recreate it.
+
+Equivalent, once the environment exists: `make setup` or `python tasks.py setup`.
+
+<details>
+<summary><b>Windows: if <code>python tasks.py …</code> fails with exit 103</b></summary>
+
+The Microsoft Store build of Python runs in a sandbox that cannot see
+`%APPDATA%\Roaming`. If your 3.12 lives there (which is where `uv` installs it), any
+subprocess into `.venv` dies with `No Python at '…'`. The environment is fine; the
+launcher cannot reach it. `tasks.py` detects this and prints the fix. The quickest one:
+
+```bash
+.venv\Scripts\python.exe tasks.py test
+```
+</details>
 
 Run the full test suite — **no credentials required**, everything runs against committed
 fixtures:
@@ -36,8 +59,9 @@ python -m ecopulse_ca.ingest.openaq --census -v
 To use real data, paste your OpenAQ key into `.env` (see [`REGISTRATION.md`](REGISTRATION.md)).
 The pipeline switches from fixtures to the live API automatically — nothing else to change.
 
-On Windows, where `make` is absent, `python tasks.py <target>` mirrors every Makefile
-target. A test enforces that the two never drift.
+On Windows, where `make` is absent, `python tasks.py <target>` runs every Makefile target.
+The Makefile delegates to `tasks.py`, so the two cannot issue different commands, and tests
+assert the delegation holds.
 
 ---
 

@@ -12,11 +12,22 @@ exists, and no leave-city-out transfer evaluation covers these countries. Two in
 framings were found to be already claimed and have been struck from `PAPER_CLAIM.md`.
 **F3 is unresolved and is the live threat to the headline result.**
 
-Phase 0 debt (does not block Phase 1, must close before submission):
-- 4 sources at FULL depth; the master spec asks 15–25 with full extraction. Four key
-  papers returned HTTP 403 from ScienceDirect and need institutional access.
-- Russian-language search covered general web only; CyberLeninka / eLIBRARY.RU outstanding,
-  so the F4 verdict stays provisional.
+Phase 0 debt — **largely closed 2026-07-30** (`scripts/fetch_literature.py`):
+- **Source count target met.** 30 distinct sources, **16 at FULL depth** against a 15–25
+  target; 24 carry an authoritative DOI. The publisher 403s were routed around via
+  Crossref / OpenAlex / Semantic Scholar / Europe PMC rather than defeated.
+- **A2's attribution in `LITERATURE.md` was wrong** — recorded as "Kulkarni et al. (?)",
+  the paper is Tursumbayeva, Muratuly, Baimatova & Karaca (*Atmos. Env.* 2023). Corrected.
+- **Every method the code implements now cites its originating source** (Newey–West 1987,
+  Harvey–Leybourne–Newbold 1997, Diebold–Mariano, Roberts et al. 2016, Inness et al. 2019,
+  Lundberg & Lee 2017, Ke et al. 2017).
+- **Still open — A9 (Tashkent ML) is not indexed in any of the four APIs.** It is an ECAS
+  2025 Sciforum conference abstract. Its split protocol remains unknown and Section 1 must
+  not assert what that paper did.
+- **Still open — Russian-language search.** CyberLeninka / eLIBRARY.RU are not covered by
+  these APIs, so the F4 verdict stays provisional.
+- A2/A4/B2 full text remains paywalled: their *citations* are verified, their *content*
+  claims are not. `tests/test_literature_integrity.py` enforces the distinction.
 
 **Next: Phase 1, beginning with the station census** — because F3 determines whether the
 leave-city-out headline setting exists at all, and it is cheap to settle.
@@ -96,4 +107,4 @@ Recorded here so that "not done" is never confused with "forgotten".
 | R7 | **MAIAC missingness is correlated with the target** — retrievals fail during dust storms, snow and heavy cloud, i.e. exactly the extreme-PM2.5 episodes | Missingness modelled as an informative feature and reported as an error-analysis stratum. **Never drop missing-AOD rows** — doing so conditions on "retrieval succeeded" and biases results toward calm, clear, low-concentration days |
 | R8 | Turkmenistan has no national monitoring; Ashgabat can enter only via the US Embassy monitor | Recorded as a benchmark coverage property, not worked around |
 | **R9** | **The US State Department terminated its global embassy air quality programme in March 2025 (funding).** 6 of 9 reference monitors stop at exactly 2025-03-04. The benchmark's designated spine is now a historical archive, not a live feed. | The temporal test block cannot be "the most recent full year" for reference-grade data — the last full year with embassy coverage is **2024**. Forces an explicit split design decision in Phase 2. Some AirNow feeds run later (Almaty→2025-11, Ashgabat→2025-09, Dushanbe→2026-07); **cause unverified** — partial resumption or a different pipeline. |
-| R10 | 306 of 317 stations excluded for <2 y span are AirGradient/Clarity low-cost units, median span 0.59 y. If `datetimeFirst` reflects OpenAQ ingestion rather than deployment, true spans are longer and the benchmark is smaller than necessary. | Verify against provider metadata before freezing splits. Logged as D-001. |
+| ~~R10~~ **CLOSED** | 306 of 317 stations excluded for <2 y span are AirGradient/Clarity low-cost units, median span 0.59 y. If `datetimeFirst` reflected OpenAQ ingestion rather than deployment, true spans would be longer and the benchmark smaller than necessary. | **Verified empirically, not against documentation** (`scripts/verify_r10.py`). 60 excluded stations, stratified across both providers, were queried for measurements in the 3 years *before* their reported start: **0 of 60 returned any**. A positive control on an eligible station returned 144 hours from a known-good 7-day window, so the probe demonstrably detects data when data exists. `datetimeFirst` reflects the archive's true start; the exclusions stand and the eligible pool is not artificially small. Banked in `paper/tables/t2_04_r10_span_provenance.csv`. **Scope:** this closes R10 for the archive we can use — a sensor whose earlier history never reached OpenAQ yields no recoverable benchmark row either way. |

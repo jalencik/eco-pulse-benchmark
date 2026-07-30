@@ -1,0 +1,612 @@
+[
+  {
+    "title": "Cities of Central Asia: New hotspots of air pollution in the world",
+    "year": 2023,
+    "doi": "10.1016/j.atmosenv.2023.119901",
+    "venue": "Atmospheric Environment",
+    "authors": [
+      "Madina Tursumbayeva",
+      "Aset Muratuly",
+      "Nassiba Baimatova",
+      "Ferhat Karaca",
+      "Aiymgul Kerimray"
+    ],
+    "is_oa": false,
+    "cited_by": 40,
+    "source_api": "openalex",
+    "apis": [
+      "openalex"
+    ],
+    "merge_conflicts": [
+      "crossref:Cities of Central Asia: New Hotspots of "
+    ],
+    "match_score": 1.0,
+    "ref": "A2",
+    "query": "Cities of Central Asia new hotspots of air pollution in the world",
+    "depth": "SNIPPET"
+  },
+  {
+    "title": "Validation and comparison of high-resolution MAIAC aerosol products over Central Asia",
+    "year": 2021,
+    "doi": "10.1016/j.atmosenv.2021.118273",
+    "venue": "Atmospheric Environment",
+    "authors": [
+      "Xiangyue Chen",
+      "Jianli Ding",
+      "Jie Liu",
+      "Jingzhe Wang",
+      "Xiangyu Ge",
+      "Rui Wang",
+      "Hongchao Zuo"
+    ],
+    "is_oa": false,
+    "cited_by": 70,
+    "source_api": "openalex",
+    "apis": [
+      "openalex",
+      "crossref"
+    ],
+    "match_score": 1.0,
+    "ref": "A4",
+    "query": "Validation and comparison of high-resolution MAIAC aerosol products over Central Asia",
+    "depth": "SNIPPET"
+  },
+  {
+    "title": "Dominant sources of PM2.5 in Kazakhstan's urban cities: A PMF and HYSPLIT-based study for air quality management in Central Asia",
+    "year": 2025,
+    "doi": "10.1016/j.uclim.2025.102706",
+    "venue": "Urban Climate",
+    "authors": [
+      "Kazbek Tursun",
+      "Anara Omarova",
+      "Olga P. Ibragimova",
+      "Bauyrzhan Bukenov",
+      "Madina Tursumbayeva",
+      "Ravkat Mukhtarov",
+      "Ivan Radelyuk",
+      "Serpil Yenisoy"
+    ],
+    "is_oa": false,
+    "cited_by": 3,
+    "source_api": "openalex",
+    "apis": [
+      "openalex",
+      "crossref"
+    ],
+    "match_score": 1.0,
+    "ref": "A5",
+    "query": "Dominant sources of PM2.5 in Kazakhstan urban cities PMF HYSPLIT",
+    "depth": "SNIPPET"
+  },
+  {
+    "title": "Air quality challenges in Central Asian urban areas: a PM2.5 source apportionment analysis in Dushanbe, Tajikistan",
+    "year": 2024,
+    "doi": "10.1007/s11356-024-33833-6",
+    "venue": "Environmental Science and Pollution Research",
+    "authors": [
+      "Stefanos Papagiannis",
+      "Sabur F. Abdullaev",
+      "Vasiliki Vasilatou",
+      "Manousos Ioannis Manousakas",
+      "Konstantinos Eleftheriadis",
+      "Evangelia Diapouli"
+    ],
+    "oa_pdf": "https://www.dora.lib4ri.ch/psi/dload/psi:63330/PDF2/view",
+    "is_oa": true,
+    "cited_by": 11,
+    "source_api": "openalex",
+    "apis": [
+      "openalex"
+    ],
+    "merge_conflicts": [
+      "crossref:Air Quality Challenges in Central Asian "
+    ],
+    "match_score": 1.0,
+    "ref": "A6",
+    "query": "PM2.5 source apportionment Dushanbe Tajikistan air quality Central Asian urban",
+    "depth": "FULL"
+  },
+  {
+    "title": "Impacts of the Desiccation of the Aral Sea on the Central Asian Dust Life‐Cycle",
+    "year": 2022,
+    "doi": "10.1029/2022jd036618",
+    "venue": "Journal of Geophysical Research Atmospheres",
+    "authors": [
+      "Jamie Banks",
+      "Bernd Heinold",
+      "Kerstin Schepanski"
+    ],
+    "abstract": "Abstract The formation of the Aralkum (Aral Desert), following the severe desiccation of the former Aral Sea since the 1960s, has created what may be regarded as one of the world's most significant anthropogenic dust sources. In this paper, focusing on dust emission and transport patterns from the Aralkum, the dust life‐cycle has been simulated over Central Asia using the aerosol transport model COSMO‐MUSCAT (COnsortium for Small‐scale MOdelling‐MUltiScale Chemistry Aerosol Transport Model), making use of the Global Surface Water data set to take into account the sensitivity to changes in surface water coverage over the region between the 1980s (the “past”) and the 2010s (the “present”). Over a case study 1‐year period, the simulated dust emissions from the Aralkum region increased from 14.3 to 27.1 Tg year −1 between the past and present, an increase driven solely by the changes in the surface water environment. Of these simulated modern emissions, 14.5 Tg are driven by westerly winds, indicating that regions downwind to the east may be worst affected by Aralkum dust. However a high degree of interannual variability in the prevailing surface wind patterns ensures that these transport patterns of Aralkum dust do not occur every year. Frequent cloud cover poses substantial challenges for observations of Central Asian dust: in the Aralkum, over two‐thirds of the yearly emissions are emitted under overcast skies, dust which may be impossible to observe using traditional satellite or ground‐based passive remote sensing techniques. Furthermore, it is apparent that the pattern of dust transport from the Aralkum under clear‐sky conditions is not representative of the pattern under all‐sky conditions.",
+    "oa_pdf": "https://onlinelibrary.wiley.com/doi/pdfdirect/10.1029/2022JD036618",
+    "is_oa": true,
+    "cited_by": 46,
+    "source_api": "openalex",
+    "apis": [
+      "openalex",
+      "crossref"
+    ],
+    "match_score": 1.0,
+    "ref": "A7",
+    "query": "Impacts of the desiccation of the Aral Sea on the Central Asian dust life cycle",
+    "depth": "FULL"
+  },
+  {
+    "title": "Characteristics of salt dust aerosols and their transport implications in the Aral Sea",
+    "year": 2025,
+    "doi": "10.1038/s41598-025-86880-5",
+    "venue": "Scientific Reports",
+    "authors": [
+      "Jie Liu",
+      "Jianli Ding",
+      "Bohua Liu",
+      "Shu Wu",
+      "Zhijuan Han"
+    ],
+    "source_api": "crossref",
+    "apis": [
+      "crossref"
+    ],
+    "match_score": 1.0,
+    "pmcid": "PMC11758023",
+    "ref": "A8",
+    "query": "Characteristics of salt dust aerosols and their transport implications Aral Sea",
+    "depth": "FULL"
+  },
+  {
+    "ref": "A9",
+    "query": "Particulate matter PM2.5 prediction in Tashkent using machine learning",
+    "depth": "UNRESOLVED",
+    "best_score": 0.43,
+    "closest_rejected": "Interpretable Multi-Horizon Machine Learning Framework for PM₂.₅ Forecasting in Tashkent: Toward Early-Warning Air Quality Management"
+  },
+  {
+    "title": "A review of machine learning for modeling air quality: Overlooked but important issues",
+    "year": 2024,
+    "doi": "10.1016/j.atmosres.2024.107261",
+    "venue": "Atmospheric Research",
+    "authors": [
+      "Dié Tang",
+      "Yu Zhan",
+      "Fumo Yang"
+    ],
+    "is_oa": false,
+    "cited_by": 112,
+    "source_api": "openalex",
+    "apis": [
+      "openalex",
+      "crossref"
+    ],
+    "match_score": 1.0,
+    "ref": "B2",
+    "query": "A review of machine learning for modeling air quality overlooked but important issues",
+    "depth": "SNIPPET"
+  },
+  {
+    "title": "Assessing and Validating the Ability of Machine Learning to Handle Unrefined Particle Air Pollution Mobile Monitoring Data Randomly, Spatially, and Spatiotemporally",
+    "year": 2022,
+    "doi": "10.3390/ijerph191610098",
+    "venue": "International Journal of Environmental Research and Public Health",
+    "authors": [
+      "Asmaa Alazmi",
+      "Hesham Rakha"
+    ],
+    "abstract": "Many epidemiological studies have evaluated the accuracy of machine learning models in predicting levels of particulate number (PN) and black carbon (BC) pollutant concentrations. However, few studies have investigated the ability of machine learning to predict the pollutant concentration with using unrefined mobile measurement data and explore the reliability of the prediction models. Additionally, researchers are moving away from using fixed-site data in favor of using mobile monitoring data in a variety of locations to develop hourly empirical models of particulate air pollution. This study compared the differences between long-term (daily average) and short-term (hourly average and 1 s unrefined data) model performance in three different classes of cross validation: randomly, spatially, and spatially temporally. This study used secondary data describing BC and PN pollutant levels in the rural location of Blacksburg (VA). Our results show that the model based on unrefined data was able to detect the pollutant hot spot areas with similar accuracy compared to the aggregated model. Moreover, the performance was found to improve when temporal data added to the model: the 10-fold MAE for the BC and PN were 0.44 μg/m3 and 3391 pt/cm3, respectively, for the unrefined data (one second data) model. The findings detailed here will add to the literature on the correlation between data (pre)processing and the efficacy of machine learning models in predicting pollution levels while also enhancing our understanding of more reliable validation strategies.",
+    "oa_pdf": "https://www.mdpi.com/1660-4601/19/16/10098/pdf?version=1660612012",
+    "is_oa": true,
+    "cited_by": 21,
+    "source_api": "openalex",
+    "apis": [
+      "openalex",
+      "crossref"
+    ],
+    "match_score": 1.0,
+    "pmcid": "PMC9408314",
+    "ref": "B3",
+    "query": "Assessing validating machine learning unrefined particle air pollution mobile monitoring spatially spatiotemporally",
+    "depth": "FULL"
+  },
+  {
+    "title": "Distributional bias compromises leave-one-out cross-validation",
+    "year": 2025,
+    "doi": "10.1126/sciadv.adx6976",
+    "venue": "Science Advances",
+    "authors": [
+      "George I. Austin",
+      "Itsik Pe’er",
+      "Tal Korem"
+    ],
+    "abstract": "Cross-validation is a common method for estimating the predictive performance of machine learning models. In a data-scarce regime, where one typically wishes to maximize the number of instances used for training the model, an approach called \"leave-one-out cross-validation\" is often used. In this design, a separate model is built for predicting each data instance after training on all other instances. Since this results in a single test instance available per model trained, predictions are aggregated across the entire dataset to calculate common performance metrics such as the area under the receiver operating characteristic or R2 scores. In this work, we demonstrate that this approach creates a negative correlation between the average label of each training fold and the label of its corresponding test instance, a phenomenon that we term distributional bias. As machine learning models tend to regress to the mean of their training data, this distributional bias tends to negatively impact performance evaluation and hyperparameter optimization. We show that this effect generalizes to leave-P-out cross-validation and persists across a wide range of modeling and evaluation approaches, and that it can lead to a bias against stronger regularization. To address this, we propose a generalizable rebalanced cross-validation approach that corrects for distributional bias for both classification and regression. We demonstrate that our approach improves cross-validation performance evaluation in synthetic simulations, across machine learning benchmarks, and in several published leave-one-out analyses.",
+    "oa_pdf": "https://www.science.org/doi/pdf/10.1126/sciadv.adx6976?download=true",
+    "is_oa": true,
+    "cited_by": 15,
+    "source_api": "openalex",
+    "apis": [
+      "openalex",
+      "crossref"
+    ],
+    "match_score": 1.0,
+    "pmcid": "PMC12662204",
+    "ref": "B4",
+    "query": "Distributional bias compromises leave-one-out cross-validation",
+    "depth": "FULL"
+  },
+  {
+    "title": "AirDelhi: Fine-Grained Spatio-Temporal Particulate Matter Dataset From Delhi For ML based Modeling",
+    "year": 2023,
+    "doi": "10.52202/075280-3298",
+    "authors": [
+      "Sachin Chauhan",
+      "Zeel Bharatkumar Patel",
+      "Sayan Ranu",
+      "Rijurekha Sen",
+      "Nipun Batra"
+    ],
+    "is_oa": false,
+    "cited_by": 0,
+    "source_api": "openalex",
+    "venue": "Advances in Neural Information Processing Systems 36",
+    "apis": [
+      "openalex",
+      "crossref"
+    ],
+    "match_score": 1.0,
+    "ref": "B5",
+    "query": "AirDelhi fine-grained spatio-temporal particulate matter dataset Delhi",
+    "depth": "SNIPPET"
+  },
+  {
+    "title": "Explainable PSO-optimised machine learning models for multi-pollutant air quality forecasting in major African cities with transfer learning",
+    "year": 2026,
+    "doi": "10.3389/fenvs.2026.1828162",
+    "venue": "Frontiers in Environmental Science",
+    "authors": [
+      "Gideon Mazuruse",
+      "Retius Chifurira",
+      "Temesgen Zewotir",
+      "Knowledge Chinhamu"
+    ],
+    "abstract": "Poor air quality is responsible for deaths, particularly in African cities, where rapid urbanisation and rising vehicle emissions are increasing. The current study employs the hybrid Particle Swarm Optimisation–Machine Learning (PSO–ML) framework for air quality prediction in selected African cities, namely, Cairo, Johannesburg, Kinshasa, Lagos and Nairobi. The study contributes novel insights to environmental modelling by integrating advanced machine learning, metaheuristic optimisation, and transfer learning and domain adaptation techniques to address the issue of air quality prediction in African cities. Key variables such as particulate matter (PM\n                    2.5\n                    and PM\n                    10\n                    ), nitrogen dioxide (NO\n                    2\n                    ), sulphur dioxide (SO\n                    2\n                    ), carbon monoxide (CO) and ozone (O\n                    3\n                    ) were used in this study. The performance of XGBoost using PSO optimisation and PSO optimisation with Random Forest was compared with the performance of standard XGBoost and RF using several metrics such as the\n                    R\n                    2\n                    and Mean Absolute Error. From the obtained results, the PSO models outperformed the baseline algorithms. Comparing cross-city testing, the PSO-XGBoost models performed very well when trained with the Lagos dataset and tested with the Nairobi dataset, demonstrating the applicability of transfer learning. The algorithm garnered an\n                    R\n                    2\n                    value of 83% when trained with Lagos and tested with Nairobi under the PSO-XGBoost model, whilst the PSO-RF followed second with an\n                    R\n                    2\n                    value of 81% when trained with Lagos and tested with Johannesburg. Moreover, the PSO-XGBoost had 80% when Lagos and Cairo were tested with Johannesburg and Nairobi, respectively. In addition, the domain adaptation through fine-tuning revealed significant improvements in predictive skill for all source-target pairs, demonstrating that adapting models to different African cities is a useful step. The greatest gains were from Lagos to Nairobi (16.4%). Moreover, the SHAP results highlight the critical role of the SO\n                    2\n                    factor in predicting PM\n                    2.5\n                    . The enhanced machine learning offers a flexible and powerful tool that can be utilised to support data-driven environmental management and contribute to Sustainable Development Goals in health, climate action, and sustainable urban development. It also provides a pragmatic approach to estimating air quality in metropolitan regions with few monitoring facilities by training predictive models on data-abundant cities.",
+    "source_api": "crossref",
+    "apis": [
+      "crossref"
+    ],
+    "match_score": 1.0,
+    "ref": "C3",
+    "query": "Explainable machine learning multi-pollutant forecasting African cities transfer learning",
+    "depth": "ABSTRACT"
+  },
+  {
+    "title": "An Improved Hybrid Transfer Learning-Based Deep Learning Model for PM2.5 Concentration Prediction",
+    "year": 2022,
+    "doi": "10.3390/app12073597",
+    "venue": "Applied Sciences",
+    "authors": [
+      "Jianjun Ni",
+      "Yan Chen",
+      "Yu Gu",
+      "Xiaolong Fang",
+      "Pengfei Shi"
+    ],
+    "abstract": "With the improvement of the living standards of the residents, it is a very important and challenging task to continuously improve the accuracy of PM2.5 (particulate matter less than 2.5 μm in diameter) prediction. Deep learning-based networks, such as LSTM and CNN, have achieved good performance in recent years. However, these methods require sufficient data to train the model. The performance of these methods is limited for the sites where the data is lacking, such as the newly constructed monitoring sites. To deal with this problem, an improved deep learning model based on the hybrid transfer learning strategy is proposed for predicting PM2.5 concentration in this paper. In the proposed model, the maximum mean discrepancy (MMD) is used to select which station in the source domain is most suitable for migration to the target domain. An improved dual-stage two-phase (DSTP) model is used to extract the spatial–temporal features of the source domain and the target domain. Then the domain adversarial neural network (DANN) is used to find the domain invariant features between the source and target domains by domain adaptation. Thus, the model trained by source domain site data can be used to assist the prediction of the target site without degradation of the prediction performance due to domain drift. At last, some experiments are conducted. The experimental results show that the proposed model can effectively improve the accuracy of the PM2.5 prediction at the sites lacking data, and the proposed model outperforms most of the latest models.",
+    "oa_pdf": "https://www.mdpi.com/2076-3417/12/7/3597/pdf?version=1648862161",
+    "is_oa": true,
+    "cited_by": 11,
+    "source_api": "openalex",
+    "apis": [
+      "openalex",
+      "crossref"
+    ],
+    "match_score": 1.0,
+    "ref": "C4",
+    "query": "Improved hybrid transfer learning based deep learning model PM2.5 concentration",
+    "depth": "FULL"
+  },
+  {
+    "title": "Cross‐validation strategies for data with temporal, spatial, hierarchical, or phylogenetic structure",
+    "year": 2016,
+    "doi": "10.1111/ecog.02881",
+    "venue": "Ecography",
+    "authors": [
+      "David R. Roberts",
+      "Volker Bahn",
+      "Simone Ciuti",
+      "Mark S. Boyce",
+      "Jane Elith",
+      "Gurutzeta Guillera‐Arroita",
+      "Severin Hauenstein",
+      "José J. Lahoz‐Monfort"
+    ],
+    "abstract": "Ecological data often show temporal, spatial, hierarchical (random effects), or phylogenetic structure. Modern statistical approaches are increasingly accounting for such dependencies. However, when performing cross‐validation, these structures are regularly ignored, resulting in serious underestimation of predictive error. One cause for the poor performance of uncorrected (random) cross‐validation, noted often by modellers, are dependence structures in the data that persist as dependence structures in model residuals, violating the assumption of independence. Even more concerning, because often overlooked, is that structured data also provides ample opportunity for overfitting with non‐causal predictors. This problem can persist even if remedies such as autoregressive models, generalized least squares, or mixed models are used. Block cross‐validation, where data are split strategically rather than randomly, can address these issues. However, the blocking strategy must be carefully considered. Blocking in space, time, random effects or phylogenetic distance, while accounting for dependencies in the data, may also unwittingly induce extrapolations by restricting the ranges or combinations of predictor variables available for model training, thus overestimating interpolation errors. On the other hand, deliberate blocking in predictor space may also improve error estimates when extrapolation is the modelling goal. Here, we review the ecological literature on non‐random and blocked cross‐validation approaches. We also provide a series of simulations and case studies, in which we show that, for all instances tested, block cross‐validation is nearly universally more appropriate than random cross‐validation if the goal is predicting to new data or predictor space, or for selecting causal predictors. We recommend that block cross‐validation be used wherever dependence structures exist in a dataset, even if no correlation structure is visible in the fitted model residuals, or if the fitted models account for such correlations.",
+    "is_oa": false,
+    "cited_by": 2607,
+    "source_api": "openalex",
+    "apis": [
+      "openalex",
+      "crossref"
+    ],
+    "match_score": 1.0,
+    "ref": "S:M1",
+    "query": "Cross-validation strategies for data with temporal, spatial, hierarchical, or phylogenetic structure",
+    "depth": "ABSTRACT"
+  },
+  {
+    "title": "Importance of spatial predictor variable selection in machine learning applications – Moving from data reproduction to spatial prediction",
+    "year": 2019,
+    "doi": "10.1016/j.ecolmodel.2019.108815",
+    "venue": "Ecological Modelling",
+    "authors": [
+      "Hanna Meyer",
+      "Christoph Reudenbach",
+      "Stephan Wöllauer",
+      "Thomas Nauss"
+    ],
+    "source_api": "crossref",
+    "apis": [
+      "crossref"
+    ],
+    "match_score": 0.82,
+    "ref": "S:M2",
+    "query": "Importance of spatial predictor variable selection in machine learning applications of moving window kriging",
+    "depth": "SNIPPET"
+  },
+  {
+    "title": "Comparing Predictive Accuracy",
+    "year": 1994,
+    "doi": "10.3386/t0169",
+    "venue": "National Bureau of Economic Research",
+    "authors": [
+      "Francis X. Diebold",
+      "Roberto S. Mariano"
+    ],
+    "abstract": "We propose and evaluate explicit tests of the null hypothesis of no difference in the accuracy of two competing forecasts. In contrast to previously developed tests, a wide variety of accuracy measures can be used (in particular, the loss function need not be quadratic and need not even be symmetric), and forecast errors can be non-Gaussian, nonzero mean, serially correlated, and contemporaneously correlated. Asymptotic and exact finite-sample tests are proposed, evaluated, and illustrated.",
+    "oa_pdf": "https://doi.org/10.3386/t0169",
+    "is_oa": true,
+    "cited_by": 5309,
+    "source_api": "openalex",
+    "apis": [
+      "openalex",
+      "crossref"
+    ],
+    "merge_conflicts": [
+      "semanticscholar:Comparing Predictive Accuracy"
+    ],
+    "match_score": 1.0,
+    "ref": "S:M3",
+    "query": "Comparing predictive accuracy",
+    "depth": "FULL"
+  },
+  {
+    "title": "Testing the equality of prediction mean squared errors",
+    "year": 1997,
+    "doi": "10.1016/s0169-2070(96)00719-4",
+    "venue": "International Journal of Forecasting",
+    "authors": [
+      "David I. Harvey",
+      "Stephen J. Leybourne",
+      "Paul Newbold"
+    ],
+    "is_oa": false,
+    "cited_by": 2020,
+    "source_api": "openalex",
+    "apis": [
+      "openalex",
+      "crossref"
+    ],
+    "match_score": 1.0,
+    "ref": "S:M4",
+    "query": "Testing the equality of prediction mean squared errors",
+    "depth": "SNIPPET"
+  },
+  {
+    "title": "A Simple, Positive Semi-Definite, Heteroskedasticity and Autocorrelation Consistent Covariance Matrix",
+    "year": 1987,
+    "doi": "10.2307/1913610",
+    "venue": "Econometrica",
+    "authors": [
+      "Whitney K. Newey",
+      "Kenneth D. West"
+    ],
+    "abstract": "This paper describes a simple method of calculating a heteroskedasticity and autocorrelation consistent covariance matrix that is positive semi-definite by construction. It also establishes consistency of the estimated covariance matrix under fairly general conditions.",
+    "is_oa": false,
+    "cited_by": 17263,
+    "source_api": "openalex",
+    "apis": [
+      "openalex",
+      "crossref"
+    ],
+    "match_score": 1.0,
+    "ref": "S:M5",
+    "query": "A simple, positive semi-definite, heteroskedasticity and autocorrelation consistent covariance matrix",
+    "depth": "ABSTRACT"
+  },
+  {
+    "title": "Hyperparameters and tuning strategies for random forest",
+    "year": 2019,
+    "doi": "10.1002/widm.1301",
+    "venue": "Wiley Interdisciplinary Reviews Data Mining and Knowledge Discovery",
+    "authors": [
+      "Philipp Probst",
+      "Marvin N. Wright",
+      "Anne‐Laure Boulesteix"
+    ],
+    "abstract": "The random forest (RF) algorithm has several hyperparameters that have to be set by the user, for example, the number of observations drawn randomly for each tree and whether they are drawn with or without replacement, the number of variables drawn randomly for each split, the splitting rule, the minimum number of samples that a node must contain, and the number of trees. In this paper, we first provide a literature review on the parameters' influence on the prediction performance and on variable importance measures. It is well known that in most cases RF works reasonably well with the default values of the hyperparameters specified in software packages. Nevertheless, tuning the hyperparameters can improve the performance of RF. In the second part of this paper, after a presenting brief overview of tuning strategies, we demonstrate the application of one of the most established tuning strategies, model‐based optimization (MBO). To make it easier to use, we provide the tuneRanger R package that tunes RF with MBO automatically. In a benchmark study on several datasets, we compare the prediction performance and runtime of tuneRanger with other tuning implementations in R and RF with default hyperparameters. This article is categorized under: Algorithmic Development &gt; Biological Data Mining Algorithmic Development &gt; Statistics Algorithmic Development &gt; Hierarchies and Trees Technologies &gt; Machine Learning",
+    "oa_pdf": "https://arxiv.org/pdf/1804.03515",
+    "is_oa": true,
+    "cited_by": 1544,
+    "source_api": "openalex",
+    "apis": [
+      "openalex",
+      "crossref"
+    ],
+    "match_score": 1.0,
+    "ref": "S:M6",
+    "query": "Hyperparameters and tuning strategies for random forest",
+    "depth": "FULL"
+  },
+  {
+    "title": "Evaluation of machine learning techniques with multiple remote sensing datasets in estimating monthly concentrations of ground-level PM2.5",
+    "year": 2018,
+    "doi": "10.1016/j.envpol.2018.08.029",
+    "venue": "Environmental Pollution",
+    "authors": [
+      "Yongming Xu",
+      "Hung Chak Ho",
+      "Man Sing Wong",
+      "Chengbin Deng",
+      "Yuan Shi",
+      "Ta‐Chien Chan",
+      "Anders Knudby"
+    ],
+    "oa_pdf": "https://www.sciencedirect.com/science/article/am/pii/S0269749118324229?via%3Dihub",
+    "is_oa": true,
+    "cited_by": 181,
+    "source_api": "openalex",
+    "apis": [
+      "openalex"
+    ],
+    "merge_conflicts": [
+      "crossref:Machine-learning-based estimation of gro"
+    ],
+    "match_score": 0.88,
+    "ref": "S:M7",
+    "query": "Machine learning based estimation of ground-level PM2.5 concentrations",
+    "depth": "FULL"
+  },
+  {
+    "title": "Field evaluation of low-cost particulate matter sensors in high- and low-concentration environments",
+    "year": 2018,
+    "doi": "10.5194/amt-11-4823-2018",
+    "venue": "Atmospheric measurement techniques",
+    "authors": [
+      "Tongshu Zheng",
+      "Michael Bergin",
+      "Karoline K. Johnson",
+      "S. N. Tripathi",
+      "Shilpa Shirodkar",
+      "Matthew S. Landis",
+      "Ronak Sutaria",
+      "David Carlson"
+    ],
+    "abstract": "Abstract. Low-cost particulate matter (PM) sensors are promising tools for supplementing existing air quality monitoring networks. However, the performance of the new generation of low-cost PM sensors under field conditions is not well understood. In this study, we characterized the performance capabilities of a new low-cost PM sensor model (Plantower model PMS3003) for measuring PM2.5 at 1 min, 1 h, 6 h, 12 h, and 24 h integration times. We tested the PMS3003 sensors in both low-concentration suburban regions (Durham and Research Triangle Park (RTP), NC, US) with 1 h PM2.5 (mean ± SD) of 9±9 and 10±3 µg m−3, respectively, and a high-concentration urban location (Kanpur, India) with 1 h PM2.5 of 36±17 and 116±57 µg m−3 during monsoon and post-monsoon seasons, respectively. In Durham and Kanpur, the sensors were compared to a research-grade instrument (environmental β attenuation monitor, E-BAM) to determine how these sensors perform across a range of PM2.5 concentrations and meteorological factors (e.g., temperature and relative humidity, RH). In RTP, the sensors were compared to three Federal Equivalent Methods (FEMs) including two Teledyne model T640s and a Thermo Scientific model 5030 SHARP to demonstrate the importance of the type of reference monitor selected for sensor calibration. The decrease in 1 h mean errors of the calibrated sensors using univariate linear models from Durham (201 %) to Kanpur monsoon (46 %) and post-monsoon (35 %) seasons showed that PMS3003 performance generally improved as ambient PM2.5 increased. The precision of reference instruments (T640: ±0.5 µg m−3 for 1 h; SHARP: ±2 µg m−3 for 24 h, better than the E-BAM) is critical in evaluating sensor performance, and β-attenuation-based monitors may not be ideal for testing PM sensors at low concentrations, as underscored by (1) the less dramatic error reduction over averaging times in RTP against optically based T640 (from 27 % for 1 h to 9 % for 24 h) than in Durham (from 201 % to 15 %); (2) the lower errors in RTP than the Kanpur post-monsoon season (from 35 % to 11 %); and (3) the higher T640–PMS3003 correlations (R2≥0.63) than SHARP–PMS3003 (R2≥0.25). A major RH influence was found in RTP (1 h RH =64±22 %) due to the relatively high precision of the T640 measurements that can explain up to ∼30 % of the variance in 1 min to 6 h PMS3003 PM2.5 measurements. When proper RH corrections are made by empirical nonlinear equations after using a more precise reference method to calibrate the sensors, our work suggests that the PMS3003 sensors can measure PM2.5 concentrations within ∼10 % of ambient values. We observed that PMS3003 sensors appeared to exhibit a nonlinear response when ambient PM2.5 exceeded ∼125 µg m−3 and found that the quadratic fit is more appropriate than the univariate linear model to capture this nonlinearity and can further reduce errors by up to 11 %. Our results have substantial implications for how variability in ambient PM2.5 concentrations, reference monitor types, and meteorological factors can affect PMS3003 performance characterization.",
+    "oa_pdf": "https://amt.copernicus.org/articles/11/4823/2018/amt-11-4823-2018.pdf",
+    "is_oa": true,
+    "cited_by": 399,
+    "source_api": "openalex",
+    "apis": [
+      "openalex",
+      "crossref"
+    ],
+    "match_score": 1.0,
+    "ref": "S:M8",
+    "query": "Field evaluation of low-cost particulate matter sensors in high and low concentration environments",
+    "depth": "FULL"
+  },
+  {
+    "title": "The CAMS reanalysis of atmospheric composition",
+    "year": 2019,
+    "doi": "10.5194/acp-19-3515-2019",
+    "venue": "Atmospheric chemistry and physics",
+    "authors": [
+      "Antje Inness",
+      "Melanie Ades",
+      "Anna Agustí‐Panareda",
+      "Jérôme Barré",
+      "Anna Benedictow",
+      "Anne‐Marlene Blechschmidt",
+      "Juan J. Dominguez",
+      "Richard Engelen"
+    ],
+    "abstract": "Abstract. The Copernicus Atmosphere Monitoring Service (CAMS) reanalysis is the latest global reanalysis dataset of atmospheric composition produced by the European Centre for Medium-Range Weather Forecasts (ECMWF), consisting of three-dimensional time-consistent atmospheric composition fields, including aerosols and chemical species. The dataset currently covers the period 2003–2016 and will be extended in the future by adding 1 year each year. A reanalysis for greenhouse gases is being produced separately. The CAMS reanalysis builds on the experience gained during the production of the earlier Monitoring Atmospheric Composition and Climate (MACC) reanalysis and CAMS interim reanalysis. Satellite retrievals of total column CO; tropospheric column NO2; aerosol optical depth (AOD); and total column, partial column and profile ozone retrievals were assimilated for the CAMS reanalysis with ECMWF's Integrated Forecasting System. The new reanalysis has an increased horizontal resolution of about 80 km and provides more chemical species at a better temporal resolution (3-hourly analysis fields, 3-hourly forecast fields and hourly surface forecast fields) than the previously produced CAMS interim reanalysis. The CAMS reanalysis has smaller biases compared with most of the independent ozone, carbon monoxide, nitrogen dioxide and aerosol optical depth observations used for validation in this paper than the previous two reanalyses and is much improved and more consistent in time, especially compared to the MACC reanalysis. The CAMS reanalysis is a dataset that can be used to compute climatologies, study trends, evaluate models, benchmark other reanalyses or serve as boundary conditions for regional models for past periods.",
+    "oa_pdf": "https://acp.copernicus.org/articles/19/3515/2019/acp-19-3515-2019.pdf",
+    "is_oa": true,
+    "cited_by": 1426,
+    "source_api": "openalex",
+    "apis": [
+      "openalex"
+    ],
+    "merge_conflicts": [
+      "crossref:Anonymous review of \"CAMS reanalysis of "
+    ],
+    "match_score": 1.0,
+    "ref": "S:M9",
+    "query": "The CAMS reanalysis of atmospheric composition",
+    "depth": "FULL"
+  },
+  {
+    "title": "LightGBM: A Highly Efficient Gradient Boosting Decision Tree",
+    "year": 2017,
+    "venue": "HAL (Le Centre pour la Communication Scientifique Directe)",
+    "authors": [
+      "Guolin Ke",
+      "Qi Meng",
+      "Thomas Finley",
+      "Taifeng Wang",
+      "Wei Chen",
+      "Weidong Ma",
+      "Qiwei Ye",
+      "Tie‐Yan Liu"
+    ],
+    "abstract": "Gradient Boosting Decision Tree (GBDT) is a popular machine learning algorithm, and has quite a few effective implementations such as XGBoost and pGBRT. Although many engineering optimizations have been adopted in these implementations, the efficiency and scalability are still unsatisfactory when the feature dimension is high and data size is large. A major reason is that for each feature, they need to scan all the data instances to estimate the information gain of all possible split points, which is very time consuming. To tackle this problem, we propose two novel techniques: Gradient-based One-Side Sampling (GOSS) and Exclusive Feature Bundling (EFB). With GOSS, we exclude a significant proportion of data instances with small gradients, and only use the rest to estimate the information gain. We prove that, since the data instances with larger gradients play a more important role in the computation of information gain, GOSS can obtain quite accurate estimation of the information gain with a much smaller data size. With EFB, we bundle mutually exclusive features (i.e., they rarely take nonzero values simultaneously), to reduce the number of features. We prove that finding the optimal bundling of exclusive features is NP-hard, but a greedy algorithm can achieve quite good approximation ratio (and thus can effectively reduce the number of features without hurting the accuracy of split point determination by much). We call our new GBDT implementation with GOSS and EFB LightGBM. Our experiments on multiple public datasets show that, LightGBM speeds up the training process of conventional GBDT by up to over 20 times while achieving almost the same accuracy.",
+    "is_oa": true,
+    "cited_by": 9488,
+    "source_api": "openalex",
+    "apis": [
+      "openalex"
+    ],
+    "merge_conflicts": [
+      "crossref:A Novel Scheme for Mapping of MVT-Type P"
+    ],
+    "match_score": 1.0,
+    "ref": "S:M10",
+    "query": "LightGBM: a highly efficient gradient boosting decision tree",
+    "depth": "ABSTRACT"
+  },
+  {
+    "title": "A Unified Approach to Interpreting Model Predictions",
+    "year": 2017,
+    "doi": "10.48550/arxiv.1705.07874",
+    "venue": "arXiv (Cornell University)",
+    "authors": [
+      "Scott Lundberg",
+      "Su‐In Lee"
+    ],
+    "abstract": "Understanding why a model makes a certain prediction can be as crucial as the prediction's accuracy in many applications. However, the highest accuracy for large modern datasets is often achieved by complex models that even experts struggle to interpret, such as ensemble or deep learning models, creating a tension between accuracy and interpretability. In response, various methods have recently been proposed to help users interpret the predictions of complex models, but it is often unclear how these methods are related and when one method is preferable over another. To address this problem, we present a unified framework for interpreting predictions, SHAP (SHapley Additive exPlanations). SHAP assigns each feature an importance value for a particular prediction. Its novel components include: (1) the identification of a new class of additive feature importance measures, and (2) theoretical results showing there is a unique solution in this class with a set of desirable properties. The new class unifies six existing methods, notable because several recent methods in the class lack the proposed desirable properties. Based on insights from this unification, we present new methods that show improved computational performance and/or better consistency with human intuition than previous approaches.",
+    "oa_pdf": "https://arxiv.org/pdf/1705.07874",
+    "is_oa": true,
+    "cited_by": 7622,
+    "source_api": "openalex",
+    "apis": [
+      "openalex"
+    ],
+    "match_score": 1.0,
+    "ref": "S:M11",
+    "query": "A unified approach to interpreting model predictions",
+    "depth": "FULL"
+  },
+  {
+    "title": "Estimating ground-level PM2.5 concentrations over three megalopolises in China using satellite-derived aerosol optical depth measurements",
+    "year": 2015,
+    "doi": "10.1016/j.atmosenv.2015.06.046",
+    "venue": "Atmospheric Environment",
+    "authors": [
+      "Yixuan Zheng",
+      "Qiang Zhang",
+      "Yang Liu",
+      "Guannan Geng",
+      "Kebin He"
+    ],
+    "is_oa": false,
+    "cited_by": 193,
+    "source_api": "openalex",
+    "apis": [
+      "openalex"
+    ],
+    "merge_conflicts": [
+      "crossref:Estimating ground-level PM2.5 concentrat"
+    ],
+    "match_score": 0.89,
+    "ref": "S:M12",
+    "query": "Estimating ground-level PM2.5 using aerosol optical depth and meteorological parameters",
+    "depth": "SNIPPET"
+  }
+]
