@@ -123,10 +123,7 @@ class TestTheV001Regression:
 
 class TestCoverageBookkeeping:
     def test_every_mapped_collection_has_measured_coverage(self):
-        missing = [
-            c for c in set(COLLECTION_FOR_FEATURE.values())
-            if c not in COLLECTION_COVERAGE
-        ]
+        missing = [c for c in set(COLLECTION_FOR_FEATURE.values()) if c not in COLLECTION_COVERAGE]
         assert not missing, f"collections mapped without measured coverage: {missing}"
 
     def test_exemptions_are_justified_not_just_listed(self):

@@ -83,8 +83,7 @@ def month_chunks(date_from: str, date_to: str) -> list[tuple[str, str]]:
     cursor = start.replace(day=1)
     while cursor <= end:
         nxt = (cursor.replace(day=28) + timedelta(days=4)).replace(day=1)
-        out.append((max(cursor, start).isoformat(),
-                    min(nxt - timedelta(days=1), end).isoformat()))
+        out.append((max(cursor, start).isoformat(), min(nxt - timedelta(days=1), end).isoformat()))
         cursor = nxt
     return out
 
@@ -102,8 +101,13 @@ def retry(fn: Any, tries: int = 5, base: float = 3.0) -> Any:
             if attempt == tries - 1:
                 raise
             wait = base * 2**attempt
-            log.warning("EE call failed (%s); retry %d/%d in %.0fs",
-                        type(exc).__name__, attempt + 1, tries - 1, wait)
+            log.warning(
+                "EE call failed (%s); retry %d/%d in %.0fs",
+                type(exc).__name__,
+                attempt + 1,
+                tries - 1,
+                wait,
+            )
             time.sleep(wait)
     raise ExtractionError("unreachable")
 
@@ -124,17 +128,17 @@ def extract_daily_chunk(
             f"the {GETINFO_LIMIT} ceiling. Use month_chunks()."
         )
 
-    points = ee.FeatureCollection([
-        ee.Feature(
-            ee.Geometry.Point([s.longitude, s.latitude]).buffer(spec.buffer_m),
-            {"station_id": s.station_id},
-        )
-        for s in stations
-    ])
-    start = ee.Date(date_from)
-    slices = ee.ImageCollection(spec.collection).select(spec.band).filterBounds(
-        points.geometry()
+    points = ee.FeatureCollection(
+        [
+            ee.Feature(
+                ee.Geometry.Point([s.longitude, s.latitude]).buffer(spec.buffer_m),
+                {"station_id": s.station_id},
+            )
+            for s in stations
+        ]
     )
+    start = ee.Date(date_from)
+    slices = ee.ImageCollection(spec.collection).select(spec.band).filterBounds(points.geometry())
 
     # A fully-masked single-band image, used for days with no orbit slices at all.
     #
@@ -154,23 +158,17 @@ def extract_daily_chunk(
         day = start.advance(ee.Number(offset), "day")
         same_day = slices.filterDate(day, day.advance(1, "day"))
         composite = ee.Image(
-            ee.Algorithms.If(same_day.size().gt(0), same_day.mean().rename(spec.band),
-                             empty_day)
+            ee.Algorithms.If(same_day.size().gt(0), same_day.mean().rename(spec.band), empty_day)
         )
-        return (
-            composite
-            .set("date", day.format("YYYY-MM-dd"))
-            .set("n_slices", same_day.size())
-        )
+        return composite.set("date", day.format("YYYY-MM-dd")).set("n_slices", same_day.size())
 
     composited = ee.ImageCollection(ee.List.sequence(0, n_days - 1).map(daily))
     reducer = ee.Reducer.mean().combine(ee.Reducer.count(), sharedInputs=True)
 
     def reduce_day(image: Any) -> Any:
-        return image.reduceRegions(
-            collection=points, reducer=reducer, scale=spec.scale_m
-        ).map(lambda f: f.set("date", image.get("date"))
-                        .set("n_slices", image.get("n_slices")))
+        return image.reduceRegions(collection=points, reducer=reducer, scale=spec.scale_m).map(
+            lambda f: f.set("date", image.get("date")).set("n_slices", image.get("n_slices"))
+        )
 
     table = retry(lambda: composited.map(reduce_day).flatten().getInfo())
 
@@ -178,13 +176,15 @@ def extract_daily_chunk(
     for feat in table.get("features", []):
         p = feat.get("properties", {})
         raw = p.get("mean")
-        rows.append({
-            "station_id": p.get("station_id"),
-            "date": p.get("date"),
-            spec.value_column(): None if raw is None else float(raw) * spec.scale_factor,
-            "valid_pixels": p.get("count") or 0,
-            "n_slices": p.get("n_slices"),
-        })
+        rows.append(
+            {
+                "station_id": p.get("station_id"),
+                "date": p.get("date"),
+                spec.value_column(): None if raw is None else float(raw) * spec.scale_factor,
+                "valid_pixels": p.get("count") or 0,
+                "n_slices": p.get("n_slices"),
+            }
+        )
 
     cols = ["station_id", "date", spec.value_column(), "valid_pixels", "n_slices"]
     df = pd.DataFrame(rows, columns=cols)

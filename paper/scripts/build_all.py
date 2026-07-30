@@ -143,7 +143,12 @@ def table_dm(df: pd.DataFrame, task: str) -> str:
 
 
 def main() -> int:
-    need = ["t3_01_task_f_baselines_hourly.csv", "t3_02_task_n_baselines_hourly.csv", "t3_03_dm_task_f.csv", "t3_04_dm_task_n.csv"]
+    need = [
+        "t3_01_task_f_baselines_hourly.csv",
+        "t3_02_task_n_baselines_hourly.csv",
+        "t3_03_dm_task_f.csv",
+        "t3_04_dm_task_n.csv",
+    ]
     missing = [n for n in need if not (TABLES / n).exists()]
     if missing:
         print(f"missing results: {missing}\nrun scripts/run_baselines.py first")
@@ -153,6 +158,7 @@ def main() -> int:
     task_n = pd.read_csv(TABLES / "t3_02_task_n_baselines_hourly.csv")
     dm_f = pd.read_csv(TABLES / "t3_03_dm_task_f.csv")
     dm_n = pd.read_csv(TABLES / "t3_04_dm_task_n.csv")
+    bish = pd.read_csv(TABLES / "t2_03_feed_divergence.csv").set_index("city").loc["Bishkek"]
 
     doc = [
         "# Baseline results — ECO Pulse CA benchmark v1.0.0",
@@ -171,9 +177,13 @@ def main() -> int:
         table_dm(dm_n, "N"),
         "## Known caveats that travel with these numbers",
         "",
-        "1. **Bishkek's 2024 labels are publisher-dependent** — the two feeds of that one "
-        "instrument agree on only 11.1% of overlapping hours in the test block "
-        "(p95 disagreement 33.6 µg/m³). Bishkek rows carry that uncertainty irreducibly.",
+        # Read from the banked table rather than typed: these two figures were transcribed
+        # by hand and the transcription was the last hand-entered statistic in the paper.
+        f"1. **Bishkek's test-block labels are publisher-dependent** — the two feeds of "
+        f"that one instrument agree on only {bish.agreement_pct_test:.1f}% of "
+        f"{int(bish.overlap_hours_test)} overlapping hours in the test block (p95 "
+        f"disagreement {bish.p95_abs_diff_test:.1f} µg/m³). Bishkek rows carry that "
+        "uncertainty irreducibly.",
         "2. **Leave-station-out covers 2 of 6 cities.** The rest hold a single instrument.",
         "3. **Kazakhstan contributes one city** — Astana failed Q7 at 42.8% completeness.",
         "4. **No result speaks to current conditions.** The reference network ended 2025-03-04.",

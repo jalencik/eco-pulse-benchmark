@@ -27,8 +27,10 @@ TARGET = StationMeta("held", 38.6, 68.8, "Dushanbe", True)
 @pytest.fixture
 def panel() -> pd.DataFrame:
     return pd.DataFrame(
-        {s: synthetic_pm25("2021-01-01", "2024-12-31", seed=i, base=30 + 10 * i)
-         for i, s in enumerate(META)}
+        {
+            s: synthetic_pm25("2021-01-01", "2024-12-31", seed=i, base=30 + 10 * i)
+            for i, s in enumerate(META)
+        }
     )
 
 

@@ -126,6 +126,7 @@ def peak_alignment(composite: pd.Series, reference: pd.Series) -> tuple[int, int
 
     Offsets are returned wrapped into [-12, +11].
     """
+
     def wrap(x: int) -> int:
         return x - 24 if x > 12 else x
 
@@ -156,12 +157,22 @@ def q6_timezone(
 
     if not np.isfinite(corr):
         return QCFinding(
-            "Q6", "station", station_id, n_obs, 0, "flag",
+            "Q6",
+            "station",
+            station_id,
+            n_obs,
+            0,
+            "flag",
             "diurnal composite unusable (too few observations per hour bin)",
         )
     if corr < min_corr:
         return QCFinding(
-            "Q6", "station", station_id, n_obs, 0, "flag",
+            "Q6",
+            "station",
+            station_id,
+            n_obs,
+            0,
+            "flag",
             f"diurnal shape does not match the region (r={corr:.2f} at lag {lag:+d}h); "
             "could be a genuinely different source regime rather than a timezone error "
             "-- inspect before deciding",
@@ -175,7 +186,12 @@ def q6_timezone(
 
         if ambiguity > max_ambiguity:
             return QCFinding(
-                "Q6", "station", station_id, n_obs, 0, "flag",
+                "Q6",
+                "station",
+                station_id,
+                n_obs,
+                0,
+                "flag",
                 f"apparent {lag:+d}h shift (r={corr:.2f}) is NOT IDENTIFIABLE: the regional "
                 f"reference self-correlates at r={ambiguity:.2f} under the same rotation, "
                 f"because the diurnal cycle is bimodal. Physical features disagree with the "
@@ -185,20 +201,35 @@ def q6_timezone(
 
         if abs(dmin) <= max_lag and abs(dmax) <= max_lag:
             return QCFinding(
-                "Q6", "station", station_id, n_obs, 0, "flag",
+                "Q6",
+                "station",
+                station_id,
+                n_obs,
+                0,
+                "flag",
                 f"correlation suggests {lag:+d}h but the daily minimum and maximum are "
                 f"aligned ({dmin:+d}h / {dmax:+d}h). Contradictory evidence -- flagged, "
                 f"not rejected.",
             )
 
         return QCFinding(
-            "Q6", "station", station_id, n_obs, n_obs, "reject",
+            "Q6",
+            "station",
+            station_id,
+            n_obs,
+            n_obs,
+            "reject",
             f"diurnal cycle shifted {lag:+d}h vs regional reference (r={corr:.2f}, "
             f"ambiguity={ambiguity:.2f}, min {dmin:+d}h, max {dmax:+d}h) "
             "-- probable timezone error",
         )
     return QCFinding(
-        "Q6", "station", station_id, n_obs, 0, "pass",
+        "Q6",
+        "station",
+        station_id,
+        n_obs,
+        0,
+        "pass",
         f"aligned within {max_lag}h (lag {lag:+d}h, r={corr:.2f})",
     )
 
@@ -232,8 +263,14 @@ def detect_offset_change(
         if chunk.notna().sum() < 24 * 14:  # need ~2 weeks to form a stable composite
             continue
         lag, corr = best_lag(diurnal_composite(chunk, tz), reference)
-        rows.append({"period": period, "n": int(chunk.notna().sum()), "lag_hours": lag,
-                     "corr": round(corr, 3) if np.isfinite(corr) else np.nan})
+        rows.append(
+            {
+                "period": period,
+                "n": int(chunk.notna().sum()),
+                "lag_hours": lag,
+                "corr": round(corr, 3) if np.isfinite(corr) else np.nan,
+            }
+        )
 
     out = pd.DataFrame(rows)
     if out.empty:

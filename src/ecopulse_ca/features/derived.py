@@ -80,13 +80,15 @@ def build_aralkum_distances(stations: pd.DataFrame) -> pd.DataFrame:
         if not (np.isfinite(lat) and np.isfinite(lon)):
             raise ValueError(f"station {s['station_id']} has non-finite coordinates")
         near = nearest_aralkum_point(lat, lon)
-        rows.append({
-            "station_id": str(s["station_id"]),
-            "city": s.get("city"),
-            "feature": "distance_to_aralkum",
-            "value": round(distance_to_aralkum(lat, lon), 2),
-            "nearest_aralkum_lat": near[0],
-            "nearest_aralkum_lon": near[1],
-            "fixture": False,
-        })
+        rows.append(
+            {
+                "station_id": str(s["station_id"]),
+                "city": s.get("city"),
+                "feature": "distance_to_aralkum",
+                "value": round(distance_to_aralkum(lat, lon), 2),
+                "nearest_aralkum_lat": near[0],
+                "nearest_aralkum_lon": near[1],
+                "fixture": False,
+            }
+        )
     return pd.DataFrame(rows).sort_values("value").reset_index(drop=True)

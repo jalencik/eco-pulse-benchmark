@@ -58,13 +58,15 @@ def load_splits() -> dict:
 
 def blocks_from(splits: dict) -> Blocks:
     b = {x["name"]: x for x in splits["temporal_blocks"]}
+
     def rng(name: str) -> tuple[pd.Timestamp, pd.Timestamp]:
         return pd.Timestamp(b[name]["start"]), pd.Timestamp(b[name]["end"])
+
     return Blocks(rng("train"), rng("val"), rng("test"))
 
 
 def window(series: pd.Series, span: tuple[pd.Timestamp, pd.Timestamp]) -> pd.Series:
-    return series.loc[span[0]:span[1]]
+    return series.loc[span[0] : span[1]]
 
 
 # --------------------------------------------------------------------------- Task F
@@ -121,15 +123,24 @@ def run_task_f(panel: pd.DataFrame, blocks: Blocks, tz_of: dict[str, str]) -> pd
             for name, pred in preds.items():
                 reg = regression_metrics(obs, pred)
                 exc = exceedance_metrics(obs, pred, WHO_2021_PM25_24H, tz_of.get(sid))
-                rows.append({
-                    "task": "F", "station_id": sid, "horizon_h": horizon, "model": name,
-                    **reg.as_dict(), "f1_exceed": exc.f1,
-                    "f1_trivial_always": exc.f1_trivial_always,
-                    "beats_trivial": exc.beats_trivial,
-                    "peirce_skill": exc.peirce_skill, "base_rate": exc.base_rate,
-                    "precision": exc.precision, "recall": exc.recall,
-                    "n_days": exc.n_days, "n_exceed_obs": exc.n_exceed_obs,
-                })
+                rows.append(
+                    {
+                        "task": "F",
+                        "station_id": sid,
+                        "horizon_h": horizon,
+                        "model": name,
+                        **reg.as_dict(),
+                        "f1_exceed": exc.f1,
+                        "f1_trivial_always": exc.f1_trivial_always,
+                        "beats_trivial": exc.beats_trivial,
+                        "peirce_skill": exc.peirce_skill,
+                        "base_rate": exc.base_rate,
+                        "precision": exc.precision,
+                        "recall": exc.recall,
+                        "n_days": exc.n_days,
+                        "n_exceed_obs": exc.n_exceed_obs,
+                    }
+                )
     return pd.DataFrame(rows)
 
 
@@ -176,8 +187,7 @@ def run_task_n(
                 obs = window(panel[held], blocks.test)
                 target = meta[held]
                 preds = [
-                    model.predict(test_train.loc[ts], target) if ts in test_train.index
-                    else np.nan
+                    model.predict(test_train.loc[ts], target) if ts in test_train.index else np.nan
                     for ts in obs.index
                 ]
                 pred = pd.Series(preds, index=obs.index, dtype=float)
@@ -185,14 +195,22 @@ def run_task_n(
                 reg = regression_metrics(obs, pred)
                 exc = exceedance_metrics(obs, pred, WHO_2021_PM25_24H, tz_of.get(held))
                 row = {
-                    "task": "N", "fold": fold["fold"], "held_out_city": fold["held_out_city"],
-                    "station_id": held, "model": name, "seed": seed,
-                    **reg.as_dict(), "f1_exceed": exc.f1,
+                    "task": "N",
+                    "fold": fold["fold"],
+                    "held_out_city": fold["held_out_city"],
+                    "station_id": held,
+                    "model": name,
+                    "seed": seed,
+                    **reg.as_dict(),
+                    "f1_exceed": exc.f1,
                     "f1_trivial_always": exc.f1_trivial_always,
                     "beats_trivial": exc.beats_trivial,
-                    "peirce_skill": exc.peirce_skill, "base_rate": exc.base_rate,
-                    "precision": exc.precision, "recall": exc.recall,
-                    "n_days": exc.n_days, "n_exceed_obs": exc.n_exceed_obs,
+                    "peirce_skill": exc.peirce_skill,
+                    "base_rate": exc.base_rate,
+                    "precision": exc.precision,
+                    "recall": exc.recall,
+                    "n_days": exc.n_days,
+                    "n_exceed_obs": exc.n_exceed_obs,
                 }
                 if name == "ordinary_kriging":
                     row["kriging_fallback_rate"] = round(model.fallback_rate, 4)

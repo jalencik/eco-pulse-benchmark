@@ -122,13 +122,15 @@ class TestLatencyIsCheckable:
 
     def test_construction_rejects_available_without_latency(self):
         with pytest.raises(ValueError, match="requires a latency_hours"):
-            FeatureSpec("x", Source.DERIVED, "d", "u",
-                        available_at_runtime=True, latency_hours=None)
+            FeatureSpec(
+                "x", Source.DERIVED, "d", "u", available_at_runtime=True, latency_hours=None
+            )
 
     def test_construction_rejects_latency_on_an_oracle_feature(self):
         with pytest.raises(ValueError, match="meaningless"):
-            FeatureSpec("x", Source.CDS_ERA5, "d", "u",
-                        available_at_runtime=False, latency_hours=120.0)
+            FeatureSpec(
+                "x", Source.CDS_ERA5, "d", "u", available_at_runtime=False, latency_hours=120.0
+            )
 
     def test_deployable_latency_fits_inside_the_shortest_horizon(self):
         """A feature staler than the horizon cannot inform that forecast."""
@@ -163,7 +165,8 @@ class TestServerSideReductionByConstruction:
     """~8.6 GB free disk. No code path may download a raster."""
 
     @pytest.mark.parametrize(
-        "f", [f for f in ALL_FEATURES if f.source is not Source.DERIVED],
+        "f",
+        [f for f in ALL_FEATURES if f.source is not Source.DERIVED],
         ids=lambda f: f.name,
     )
     def test_gridded_features_either_reduce_or_declare_raster_download(self, f: FeatureSpec):
@@ -192,8 +195,9 @@ class TestServerSideReductionByConstruction:
 
     def test_construction_rejects_a_silent_raster_feature(self):
         with pytest.raises(ValueError, match="downloaded as a raster"):
-            FeatureSpec("sneaky", Source.GEE_MODIS, "d", "u",
-                        available_at_runtime=True, latency_hours=1.0)
+            FeatureSpec(
+                "sneaky", Source.GEE_MODIS, "d", "u", available_at_runtime=True, latency_hours=1.0
+            )
 
     @pytest.mark.parametrize(
         "f", [f for f in ALL_FEATURES if f.reduction is not None], ids=lambda f: f.name

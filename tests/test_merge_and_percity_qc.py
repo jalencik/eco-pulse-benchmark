@@ -140,7 +140,8 @@ class TestRunQ6PerCity:
     def test_groups_by_city_and_covers_every_station(self):
         panel = pd.DataFrame(
             {
-                "a1": synthetic_pm25(seed=0), "a2": synthetic_pm25(seed=1),
+                "a1": synthetic_pm25(seed=0),
+                "a2": synthetic_pm25(seed=1),
                 "b1": synthetic_pm25(seed=2),
             }
         )

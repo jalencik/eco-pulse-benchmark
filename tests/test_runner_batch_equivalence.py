@@ -73,9 +73,7 @@ def test_batch_respects_the_forecast_origin(series, train):
     """The batch path must never read a value at or after the target timestamp."""
     batch = forecast_batch(series, "persistence", 24, train)
     target = pd.Timestamp("2024-06-15 12:00", tz="UTC")
-    assert batch.loc[target] == pytest.approx(
-        series.loc[target - pd.Timedelta(24, unit="h")]
-    )
+    assert batch.loc[target] == pytest.approx(series.loc[target - pd.Timedelta(24, unit="h")])
 
 
 def test_persistence_and_diurnal_coincide_at_multiples_of_24(series, train):
@@ -105,7 +103,5 @@ def test_same_hour_mean_uses_the_right_hours(series, train):
     h = 48
     batch = forecast_batch(series, "same_hour_mean_7d", h, train)
     target = pd.Timestamp("2024-06-15 09:00", tz="UTC")
-    expected = np.mean(
-        [series.loc[target - pd.Timedelta(h + 24 * k, unit="h")] for k in range(7)]
-    )
+    expected = np.mean([series.loc[target - pd.Timedelta(h + 24 * k, unit="h")] for k in range(7)])
     assert batch.loc[target] == pytest.approx(expected)

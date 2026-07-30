@@ -4,6 +4,7 @@ Every quoted statistic is a {{placeholder}} substituted at render time from numb
 which is itself extracted from paper/tables/*.csv. This test enforces the chain end to end,
 so a number cannot drift from its source and a stale figure cannot survive a re-run.
 """
+
 from __future__ import annotations
 
 import json
@@ -33,8 +34,12 @@ class TestExtractionChain:
     def test_numbers_json_regenerates_identically(self, numbers):
         """Re-extracting from the CSVs must reproduce the same figures."""
         before = dict(numbers)
-        subprocess.run([sys.executable, str(ROOT / "paper/scripts/extract_numbers.py")],
-                       check=True, capture_output=True, cwd=ROOT)
+        subprocess.run(
+            [sys.executable, str(ROOT / "paper/scripts/extract_numbers.py")],
+            check=True,
+            capture_output=True,
+            cwd=ROOT,
+        )
         after = json.loads(NUMBERS.read_text(encoding="utf-8"))
         drift = {k for k in before if before[k] != after.get(k)}
         assert not drift, f"figures changed on re-extraction: {sorted(drift)[:10]}"
@@ -75,8 +80,9 @@ class TestFiguresMatchSourceTables:
         assert numbers["taskn_retrospective_r2"] == f"{g.r2.mean():.2f}"
 
     def test_shap_shares_sum_to_100(self, numbers):
-        shares = [float(v) for k, v in numbers.items() if k.startswith("shap_") and
-                  k.endswith("_pct")]
+        shares = [
+            float(v) for k, v in numbers.items() if k.startswith("shap_") and k.endswith("_pct")
+        ]
         assert abs(sum(shares) - 100.0) < 0.5, f"SHAP families sum to {sum(shares)}"
 
     def test_benchmark_shape_matches_frozen_splits(self, numbers):
@@ -101,3 +107,96 @@ class TestClaimsAreHedgedWhereEvidenceIsPartial:
     def test_data_section_names_the_zero_shot_city(self):
         txt = (SEC / "02_data_pipeline.md").read_text(encoding="utf-8")
         assert "Khujand contributes no training rows" in txt
+
+
+class TestSectionTwoFiguresAreGenerated:
+    """Section 2's missingness figures were once hand-typed, and had drifted."""
+
+    def test_r7_retrieval_rates_match_source_csv(self, numbers):
+        r7 = pd.read_csv(TABLES / "t2_01_r7_missingness.csv").set_index("key")
+        for key, short in [("s5p_so2", "so2"), ("maiac_aod", "aod"), ("s5p_aai", "aai")]:
+            assert numbers[f"r7_{short}_retrieval"] == f"{r7.loc[key, 'retrieval_pct']:.1f}"
+
+    def test_r7_generator_output_is_reproducible(self):
+        """The table must be rebuildable; it originally had no producer at all."""
+        path = TABLES / "t2_01_r7_missingness.csv"
+        before = path.read_bytes()
+        subprocess.run(
+            [sys.executable, str(ROOT / "scripts/build_r7_tables.py")],
+            check=True,
+            capture_output=True,
+            cwd=ROOT,
+        )
+        assert path.read_bytes() == before, "R7 table is not deterministic"
+
+    def test_clean_and_contaminated_features_are_split_by_physics(self):
+        """CO and AAI must remain the uncontaminated pair; the claim rests on it."""
+        r7 = pd.read_csv(TABLES / "t2_01_r7_missingness.csv").set_index("key")
+        assert not r7.loc["s5p_co", "target_correlated"]
+        assert not r7.loc["s5p_aai", "target_correlated"]
+        assert r7.loc["s5p_so2", "target_correlated"]
+        assert r7.loc["maiac_aod", "target_correlated"]
+
+    def test_delta_signs_are_not_hardcoded_positive(self, numbers):
+        """CO's delta is negative. A '+' in the template would fabricate a result."""
+        assert numbers["r7_co_delta"].startswith("-")
+        assert numbers["r7_so2_delta"].startswith("+")
+
+
+class TestBaselineLadderIsHonest:
+    def test_trivial_classifier_score_is_reported(self, numbers):
+        txt = (SEC / "04_baselines.md").read_text(encoding="utf-8")
+        assert numbers["p3_trivial_f1"] in txt, "trivial F1 must appear beside exceedance F1"
+        assert numbers["p3_base_rate"] in txt
+
+    def test_constant_baseline_has_zero_peirce_skill(self, numbers):
+        """A constant carries no information; any nonzero skill is a scoring bug."""
+        assert float(numbers["p3n_training_pool_mean_pss"]) == 0.0
+
+    def test_constant_baseline_is_present_as_a_rung(self):
+        t = pd.read_csv(TABLES / "t3_02_task_n_baselines_hourly.csv")
+        assert "training_pool_mean" in set(t.model)
+
+    def test_tasks_are_never_pooled_in_one_results_file(self):
+        """Rule 4: nowcasting and forecasting metrics never share a table."""
+        for name in ["t3_01_task_f_baselines_hourly.csv", "t3_02_task_n_baselines_hourly.csv"]:
+            tasks = set(pd.read_csv(TABLES / name).task.unique())
+            assert len(tasks) == 1, f"{name} mixes tasks: {tasks}"
+
+
+class TestLimitationsAreStated:
+    """Section 7 must carry the four limitations, not bury them."""
+
+    def test_bishkek_label_divergence_is_quantified(self, numbers):
+        txt = (SEC / "07_limitations_discussion.md").read_text(encoding="utf-8")
+        assert numbers["feed_bishkek_agree_test"] in txt
+        assert numbers["feed_bishkek_p95_test"] in txt
+
+    def test_feed_divergence_matches_source_csv(self, numbers):
+        fd = pd.read_csv(TABLES / "t2_03_feed_divergence.csv").set_index("city")
+        assert (
+            numbers["feed_bishkek_agree_test"] == f"{fd.loc['Bishkek', 'agreement_pct_test']:.1f}"
+        )
+
+    def test_single_station_cities_are_named(self, numbers):
+        txt = (SEC / "07_limitations_discussion.md").read_text(encoding="utf-8")
+        assert numbers["lso_ineligible"] in txt
+
+    def test_fold_favouring_cams_is_named(self, numbers):
+        txt = (SEC / "07_limitations_discussion.md").read_text(encoding="utf-8")
+        assert numbers["dm_fold_favouring_cams"] in txt
+
+    def test_shap_result_is_not_spun(self, numbers):
+        """Spatial neighbours must be stated as dominant over satellite features."""
+        txt = (SEC / "07_limitations_discussion.md").read_text(encoding="utf-8")
+        assert float(numbers["shap_spatial_neighbour_pct"]) > float(numbers["shap_satellite_pct"])
+        assert "spatial interpolator" in txt
+
+    def test_network_closure_is_disclosed(self):
+        txt = (SEC / "07_limitations_discussion.md").read_text(encoding="utf-8")
+        assert "2025-03-04" in txt
+        assert "No result in this paper" in txt
+
+    def test_results_section_forbids_quoting_tasks_together(self):
+        txt = (SEC / "06_results.md").read_text(encoding="utf-8")
+        assert "never be quoted together" in txt

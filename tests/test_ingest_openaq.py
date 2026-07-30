@@ -221,14 +221,18 @@ class TestTimeFilterParameterNames:
             def paginate(self, path, params=None, **kw):  # type: ignore[override]
                 # One year requested; return far more records than the year contains.
                 return [
-                    {"period": {"datetimeFrom": {"utc": "2022-01-01T00:00:00Z"}},
-                     "value": 1.0, "coverage": {}}
+                    {
+                        "period": {"datetimeFrom": {"utc": "2022-01-01T00:00:00Z"}},
+                        "value": 1.0,
+                        "coverage": {},
+                    }
                 ] * 20000
 
         client = Overflowing(Settings(use_fixtures=True))
         with pytest.raises(IngestError, match="time filter was not applied"):
             fetch_sensor_series(
-                client, 1,
+                client,
+                1,
                 pd.Timestamp("2022-01-01", tz="UTC"),
                 pd.Timestamp("2022-12-31 23:59:59", tz="UTC"),
             )

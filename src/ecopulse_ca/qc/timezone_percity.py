@@ -92,7 +92,12 @@ def q6_within_city(
         sid = ids[0] if ids else city
         return [
             QCFinding(
-                "Q6a", "station", sid, n_obs.get(sid, 0), 0, "pass",
+                "Q6a",
+                "station",
+                sid,
+                n_obs.get(sid, 0),
+                0,
+                "pass",
                 f"{city} has a single instrument -- within-city timing check not possible. "
                 "A constant lifelong offset here is undetectable by any check in this suite.",
             )
@@ -109,7 +114,10 @@ def q6_within_city(
         agrees = abs(lag) <= max_lag and abs(dmin) <= max_lag and abs(dmax) <= max_lag
         out.append(
             QCFinding(
-                "Q6a", "station", sid, n_obs.get(sid, 0),
+                "Q6a",
+                "station",
+                sid,
+                n_obs.get(sid, 0),
                 0 if agrees else n_obs.get(sid, 0),
                 "pass" if agrees else "reject",
                 f"{city}: lag {lag:+d}h (r={corr:.2f}), min {dmin:+d}h, max {dmax:+d}h "
@@ -134,12 +142,19 @@ def q6_cross_city_informational(
         if comp.isna().all():
             continue
         amin, amax = peak_hours(comp)
-        regime = "afternoon-minimum (dilution-driven)" if 11 <= amin <= 18 else (
-            "pre-dawn-minimum (evening-source-driven)" if amin <= 8 else "other"
+        regime = (
+            "afternoon-minimum (dilution-driven)"
+            if 11 <= amin <= 18
+            else ("pre-dawn-minimum (evening-source-driven)" if amin <= 8 else "other")
         )
         out.append(
             QCFinding(
-                "Q6b", "station", sid, 0, 0, "pass",
+                "Q6b",
+                "station",
+                sid,
+                0,
+                0,
+                "pass",
                 f"{cities.get(sid, '?')}: local min {amin:02d}:00, max {amax:02d}:00 "
                 f"-- {regime} [informational, never rejects]",
             )

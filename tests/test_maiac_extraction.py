@@ -80,6 +80,7 @@ class TestExtractedDataContract:
     def extracted(self):
         path = pd.io.common.get_handle  # noqa: F841 - keep import surface small
         import pathlib
+
         p = pathlib.Path("data/interim/maiac_aod.parquet")
         if not p.exists():
             pytest.skip("maiac_aod.parquet not present (run scripts/pull_maiac.py)")
@@ -112,8 +113,10 @@ class TestExtractedDataContract:
     def test_missingness_is_seasonal(self, extracted):
         """The mechanism is winter cloud/snow, not bright-desert failure: retrieval runs
         34% in January against 94% in July."""
-        rate = extracted.assign(mo=extracted.date.dt.month).groupby("mo").aod_055.apply(
-            lambda s: s.notna().mean()
+        rate = (
+            extracted.assign(mo=extracted.date.dt.month)
+            .groupby("mo")
+            .aod_055.apply(lambda s: s.notna().mean())
         )
         assert rate.loc[1] < rate.loc[7], "January should retrieve worse than July"
         assert rate.loc[7] - rate.loc[1] > 0.3

@@ -79,7 +79,9 @@ def test_no_forbidden_split_constructs(pattern: str, reason: str, remedy: str):
             if any(a in code for a in ALLOWED_SUBSTRINGS):
                 continue
             if rx.search(code):
-                violations.append(f"  {path.relative_to(SRC.parent.parent)}:{lineno}: {line.strip()}")
+                violations.append(
+                    f"  {path.relative_to(SRC.parent.parent)}:{lineno}: {line.strip()}"
+                )
 
     assert not violations, (
         f"\nForbidden random-split construct: /{pattern}/\n"

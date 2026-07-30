@@ -47,8 +47,10 @@ def build_local_lags(df: pd.DataFrame, target: str = "pm25") -> pd.DataFrame:
     shifted = g.shift(1)
     for w in ROLL_WINDOWS:
         out[f"pm25_roll{w}d"] = (
-            shifted.groupby(out["station_id"]).rolling(w, min_periods=max(2, w // 3))
-            .mean().reset_index(level=0, drop=True)
+            shifted.groupby(out["station_id"])
+            .rolling(w, min_periods=max(2, w // 3))
+            .mean()
+            .reset_index(level=0, drop=True)
         )
     out["pm25_delta_1d"] = out["pm25_lag1d"] - out["pm25_lag2d"]
     return out
@@ -96,9 +98,7 @@ def build_spatial_features(
             counts.append(0)
             continue
         lat, lon = coords[row["station_id"]]
-        d = np.array([
-            haversine_km(lat, lon, *coords[s]) for s in day.station_id
-        ], dtype=float)
+        d = np.array([haversine_km(lat, lon, *coords[s]) for s in day.station_id], dtype=float)
         v = day[target].to_numpy(dtype=float)
         d = np.maximum(d, 1e-6)
         w = 1.0 / np.power(d, power)

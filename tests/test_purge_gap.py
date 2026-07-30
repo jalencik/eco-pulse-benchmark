@@ -83,8 +83,7 @@ class TestGapsAreWideEnough:
 
 class TestBlockOrdering:
     def test_blocks_are_chronological_and_non_overlapping(self, blocks):
-        order = ["train", "purge_train_val", "val", "purge_val_test", "test",
-                 "reserved_post_test"]
+        order = ["train", "purge_train_val", "val", "purge_val_test", "test", "reserved_post_test"]
         prev_end = None
         for name in order:
             b = blocks[name]
@@ -106,7 +105,7 @@ class TestBlockOrdering:
         any retained station has an observation.
         """
         panel = pd.DataFrame({"a": synthetic_pm25("2020-06-01", "2026-01-01", seed=0)})
-        panel.loc[panel.index[0]:panel.index[100], "a"] = float("nan")
+        panel.loc[panel.index[0] : panel.index[100], "a"] = float("nan")
         blocks = {b.name: b for b in build_temporal_blocks(panel)}
         first_real = panel["a"].first_valid_index()
         assert pd.Timestamp(blocks["train"].start) >= first_real.floor("h")

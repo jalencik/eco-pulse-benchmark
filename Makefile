@@ -42,6 +42,8 @@ baselines:
 	$(PY) -m ecopulse_ca.tasks.nowcasting  --all-seeds
 
 paper:
+	$(PY) scripts/build_r7_tables.py
+	$(PY) scripts/build_merge_divergence.py
 	$(PY) paper/scripts/build_all.py
 
 # The single command that must regenerate every number in the paper from a clean checkout.

@@ -145,9 +145,7 @@ def run_qc(
 
     # -- stage 2+3: reference composite from survivors, then timezone ------------------
     if len(surviving) >= 2:
-        composites = {
-            sid: diurnal_composite(s, timezones.get(sid)) for sid, s in surviving.items()
-        }
+        composites = {sid: diurnal_composite(s, timezones.get(sid)) for sid, s in surviving.items()}
         reference = reference_composite(composites)
         for sid, comp in composites.items():
             finding = q6_timezone(comp, reference, sid, int(surviving[sid].notna().sum()))

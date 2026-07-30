@@ -132,9 +132,7 @@ class FeatureSpec:
                 f"{self.name}: latency_hours is meaningless when the feature is not "
                 "available at runtime. Set it to None."
             )
-        gridded_without_reduction = (
-            self.reduction is None and self.source is not Source.DERIVED
-        )
+        gridded_without_reduction = self.reduction is None and self.source is not Source.DERIVED
         if gridded_without_reduction and not self.requires_raster_download:
             raise ValueError(
                 f"{self.name}: a gridded feature with no Reduction would have to be "

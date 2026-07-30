@@ -77,8 +77,7 @@ class StationCell:
 
 def station_bbox(lats: list[float], lons: list[float], pad_deg: float = 0.5) -> list[float]:
     """CDS `area` order is [North, West, South, East] -- not a lat/lon pair."""
-    return [max(lats) + pad_deg, min(lons) - pad_deg,
-            min(lats) - pad_deg, max(lons) + pad_deg]
+    return [max(lats) + pad_deg, min(lons) - pad_deg, min(lats) - pad_deg, max(lons) + pad_deg]
 
 
 def month_blocks(start: str, end: str, months_per_block: int) -> list[list[tuple[int, int]]]:
@@ -108,7 +107,7 @@ def month_blocks(start: str, end: str, months_per_block: int) -> list[list[tuple
     for year in sorted(by_year):
         months = by_year[year]
         for i in range(0, len(months), months_per_block):
-            blocks.append(months[i:i + months_per_block])
+            blocks.append(months[i : i + months_per_block])
     return blocks
 
 
@@ -140,15 +139,20 @@ def assign_cells(
         # Rough great-circle offset from station to cell centre.
         dlat_km = (clat - lat) * 111.0
         dlon_km = (clon - lon) * 111.0 * np.cos(np.radians(lat))
-        cells.append(StationCell(sid, city, i, j, clat, clon,
-                                 float(np.hypot(dlat_km, dlon_km))))
+        cells.append(StationCell(sid, city, i, j, clat, clon, float(np.hypot(dlat_km, dlon_km))))
 
     by_cell: dict[tuple[int, int], list[str]] = {}
     for c in cells:
         by_cell.setdefault((c.lat_idx, c.lon_idx), []).append(c.station_id)
     return [
         StationCell(
-            c.station_id, c.city, c.lat_idx, c.lon_idx, c.cell_lat, c.cell_lon, c.offset_km,
+            c.station_id,
+            c.city,
+            c.lat_idx,
+            c.lon_idx,
+            c.cell_lat,
+            c.cell_lon,
+            c.offset_km,
             tuple(s for s in by_cell[(c.lat_idx, c.lon_idx)] if s != c.station_id),
         )
         for c in cells

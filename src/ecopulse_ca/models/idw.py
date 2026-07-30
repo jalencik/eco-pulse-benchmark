@@ -57,9 +57,7 @@ class _SpatialBase(Nowcaster):
     def _distances_to(self, target: StationMeta) -> np.ndarray:
         cached = self._dist_cache.get(target.station_id)
         if cached is None:
-            cached = haversine_km_array(
-                target.latitude, target.longitude, self._lats, self._lons
-            )
+            cached = haversine_km_array(target.latitude, target.longitude, self._lats, self._lons)
             self._dist_cache[target.station_id] = cached
         return cached
 

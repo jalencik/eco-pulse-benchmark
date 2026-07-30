@@ -1,0 +1,3 @@
+city,primary,secondary,overlap_hours,agreement_pct,p95_abs_diff,max_abs_diff,overlap_hours_test,agreement_pct_test,p95_abs_diff_test
+Bishkek,8225,8827,31995,52.03000468823254,21.0,479.0,5389,11.133791055854518,33.6
+Ashgabat,8870,8170,28789,99.45117926986,0.0,423.0,6155,99.98375304630382,0.0

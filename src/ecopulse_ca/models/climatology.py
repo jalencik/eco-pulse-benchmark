@@ -55,9 +55,7 @@ class Climatology(Forecaster):
             return self
 
         idx = pd.DatetimeIndex(observed.index)
-        frame = pd.DataFrame(
-            {"value": observed.to_numpy(), "month": idx.month, "hour": idx.hour}
-        )
+        frame = pd.DataFrame({"value": observed.to_numpy(), "month": idx.month, "hour": idx.hour})
         agg = "median" if self.use_median else "mean"
 
         self._cell = frame.groupby(["month", "hour"])["value"].agg(agg)

@@ -195,7 +195,9 @@ def main() -> int:
     dm_f.to_csv(TABLES / "t3_03_dm_task_f.csv", index=False)
     dm_n.to_csv(TABLES / "t3_04_dm_task_n.csv", index=False)
     if sens:
-        pd.concat(sens, ignore_index=True).to_csv(TABLES / "t3_05_dm_lag_sensitivity_hourly.csv", index=False)
+        pd.concat(sens, ignore_index=True).to_csv(
+            TABLES / "t3_05_dm_lag_sensitivity_hourly.csv", index=False
+        )
 
     # ---- Report -------------------------------------------------------------------
     det_f = "(det.)" if f_deterministic else "± see csv"

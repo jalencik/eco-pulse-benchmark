@@ -41,8 +41,8 @@ INTERIM = ROOT / "data" / "interim"
 SPLIT_DIR = ROOT / "benchmark" / "splits"
 
 BENCHMARK_VERSION = "1.0.0"
-MAX_LAG_HOURS = 168      # longest feature window on the ladder (SameHourMean, 7 days)
-MAX_HORIZON_HOURS = 72   # longest forecast horizon (t+72h)
+MAX_LAG_HOURS = 168  # longest feature window on the ladder (SameHourMean, 7 days)
+MAX_HORIZON_HOURS = 72  # longest forecast horizon (t+72h)
 PURGE_HOURS = MAX_LAG_HOURS + MAX_HORIZON_HOURS  # 240 h -- derived, not chosen
 TEST_YEAR = 2024
 
@@ -166,7 +166,7 @@ def build(panel_path: Path = INTERIM / "benchmark_panel.parquet") -> dict:
     stations = []
     for col in panel.columns:
         sid = str(col)
-        city = city_of.get(sid, sid)          # merged columns are named by city
+        city = city_of.get(sid, sid)  # merged columns are named by city
         lookup = sid if sid in coords.index else id_of_city.get(city, sid)
         lat = float(coords.loc[lookup, "latitude"]) if lookup in coords.index else float("nan")
         lon = float(coords.loc[lookup, "longitude"]) if lookup in coords.index else float("nan")
@@ -201,7 +201,7 @@ def build(panel_path: Path = INTERIM / "benchmark_panel.parquet") -> dict:
         "leave_station_out": lso[0],
         "combined_headline": {
             "description": "unseen city x unseen period: leave_city_out folds evaluated "
-                           "only on the test block",
+            "only on the test block",
             "spatial": "leave_city_out",
             "temporal": "test",
         },
@@ -264,8 +264,10 @@ def main(argv: list[str] | None = None) -> int:
     for b in payload["temporal_blocks"]:
         print(f"  {b['name']:20s} {b['start']}  ->  {b['end']}")
     print(f"\nleave-city-out folds     : {len(payload['leave_city_out'])}")
-    print(f"leave-station-out folds  : {len(payload['leave_station_out']['folds'])}"
-          f"  (ineligible: {payload['leave_station_out']['ineligible_cities']})")
+    print(
+        f"leave-station-out folds  : {len(payload['leave_station_out']['folds'])}"
+        f"  (ineligible: {payload['leave_station_out']['ineligible_cities']})"
+    )
     print(f"\nsha256: {sha}")
 
     if args.freeze:

@@ -33,8 +33,10 @@ META = {
 @pytest.fixture
 def panel() -> pd.DataFrame:
     return pd.DataFrame(
-        {sid: synthetic_pm25("2022-01-01", "2023-12-31", seed=i, base=40 + 5 * i)
-         for i, sid in enumerate(META)}
+        {
+            sid: synthetic_pm25("2022-01-01", "2023-12-31", seed=i, base=40 + 5 * i)
+            for i, sid in enumerate(META)
+        }
     )
 
 
@@ -212,9 +214,7 @@ class TestNowcasterLeakage:
         target = META["bishkek"]
         without = m.predict(_observed(almaty=100.0, dushanbe=20.0), target)
         # Same observations, but the held-out station's own value smuggled in.
-        with_leak = m.predict(
-            _observed(almaty=100.0, dushanbe=20.0, bishkek=999.0), target
-        )
+        with_leak = m.predict(_observed(almaty=100.0, dushanbe=20.0, bishkek=999.0), target)
         assert with_leak == pytest.approx(without, rel=1e-9), (
             f"{model_cls.__name__} used the held-out station's own value"
         )
@@ -265,9 +265,7 @@ class TestOrdinaryKriging:
 
 # --------------------------------------------------------------------------- contracts
 class TestDeterminismContract:
-    @pytest.mark.parametrize(
-        "make", [Persistence, DiurnalPersistence, SameHourMean, Climatology]
-    )
+    @pytest.mark.parametrize("make", [Persistence, DiurnalPersistence, SameHourMean, Climatology])
     def test_forecasters_are_deterministic(self, clean_series, make):
         a = make(seed=0).fit(clean_series).predict(clean_series, HORIZONS)
         b = make(seed=999).fit(clean_series).predict(clean_series, HORIZONS)
@@ -313,6 +311,7 @@ class TestVectorisedHaversineMatchesScalar:
         from ecopulse_ca.models.base import haversine_km_array
 
         m = META["almaty"]
-        d = haversine_km_array(m.latitude, m.longitude, np.array([m.latitude]),
-                               np.array([m.longitude]))
+        d = haversine_km_array(
+            m.latitude, m.longitude, np.array([m.latitude]), np.array([m.longitude])
+        )
         assert d[0] == pytest.approx(0.0, abs=1e-9)

@@ -123,9 +123,7 @@ def haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     return float(2 * r * np.arcsin(np.sqrt(a)))
 
 
-def haversine_km_array(
-    lat: float, lon: float, lats: np.ndarray, lons: np.ndarray
-) -> np.ndarray:
+def haversine_km_array(lat: float, lon: float, lats: np.ndarray, lons: np.ndarray) -> np.ndarray:
     """Distances from one point to many, in kilometres.
 
     Same formula as `haversine_km`, vectorised. Evaluating the ladder makes ~788k

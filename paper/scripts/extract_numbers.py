@@ -105,6 +105,58 @@ for v, g in cb.groupby("variant"):
     put(f"cams_{v}_r2", g.r2.mean())
     put(f"cams_{v}_bias", g.bias.mean())
 
+# ---- Phase 3 baseline ladder (Section 4) ----
+# Task F and Task N are never pooled: different problems, different admissible features.
+tf3 = pd.read_csv(T / "t3_01_task_f_baselines_hourly.csv")
+for mdl, g in tf3.groupby("model"):
+    put(f"p3f_{mdl}_rmse", g.rmse.mean())
+    put(f"p3f_{mdl}_r2", g.r2.mean())
+for (mdl, h), g in tf3.groupby(["model", "horizon_h"]):
+    put(f"p3f_{mdl}_rmse_h{h}", g.rmse.mean())
+put("p3f_horizons", ", ".join(f"t+{h} h" for h in sorted(tf3.horizon_h.unique())))
+
+tn3 = pd.read_csv(T / "t3_02_task_n_baselines_hourly.csv")
+for mdl, g in tn3.groupby("model"):
+    put(f"p3n_{mdl}_rmse", g.rmse.mean())
+    put(f"p3n_{mdl}_r2", g.r2.mean())
+    put(f"p3n_{mdl}_f1", g.f1_exceed.mean(), 3)
+    put(f"p3n_{mdl}_pss", g.peirce_skill.mean(), 3)
+put("p3_trivial_f1", tn3.f1_trivial_always.mean(), 3)
+put("p3_base_rate", 100 * tn3.base_rate.mean(), 1)
+put("p3n_any_beats_trivial", "yes" if bool(tn3.beats_trivial.any()) else "no")
+put("p3n_best_rmse_model", tn3.groupby("model").rmse.mean().idxmin())
+put("p3n_best_f1_model", tn3.groupby("model").f1_exceed.mean().idxmax())
+
+# ---- R7 informative missingness (Section 2) ----
+r7 = pd.read_csv(T / "t2_01_r7_missingness.csv")
+for _, r in r7.iterrows():
+    k = r.key.replace("s5p_", "").replace("maiac_", "")
+    put(f"r7_{k}_retrieval", r.retrieval_pct, 1)
+    # Signed: CO's delta is genuinely negative. A hardcoded '+' in the template would
+    # turn a null result into a fabricated positive one.
+    put(f"r7_{k}_delta", f"{r.delta_median_pm25:+.1f}")
+    put(f"r7_{k}_worst", r.retrieval_worst_decile_pct, 1)
+    put(f"r7_{k}_dec", r.retrieval_dec_pct, 1)
+    put(f"r7_{k}_jul", r.retrieval_jul_pct, 1)
+    # Underflow to exactly 0.0 is a float64 limit, not a p-value. Report it as a bound.
+    put(f"r7_{k}_p", "< 1e-300" if r.mannwhitney_p == 0 else f"{r.mannwhitney_p:.2g}")
+put("r7_so2_negative", r7.set_index("key").loc["s5p_so2", "negative_retrieval_pct"], 1)
+
+# ---- co-located feed divergence (Section 7) ----
+fd = pd.read_csv(T / "t2_03_feed_divergence.csv").set_index("city")
+for city in fd.index:
+    c = city.lower()
+    put(f"feed_{c}_agree", fd.loc[city, "agreement_pct"], 1)
+    put(f"feed_{c}_agree_test", fd.loc[city, "agreement_pct_test"], 1)
+    put(f"feed_{c}_p95_test", fd.loc[city, "p95_abs_diff_test"], 1)
+    put(f"feed_{c}_overlap_test", int(fd.loc[city, "overlap_hours_test"]))
+
+comp = pd.read_csv(T / "t2_02_satellite_complementarity.csv").iloc[0]
+put("comp_both", comp.both_pct, 1)
+put("comp_aai_only", comp.aai_only_pct, 1)
+put("comp_neither", comp.neither_pct, 1)
+put("comp_combined", comp.combined_pct, 1)
+
 out = ROOT / "paper" / "numbers.json"
 out.write_text(json.dumps(dict(sorted(N.items())), indent=2), encoding="utf-8")
 print(f"extracted {len(N)} verified figures -> {out}")

@@ -106,8 +106,9 @@ def merge_colocated(
     diff = pd.Series(dtype=float) if both.empty else (both.iloc[:, 0] - both.iloc[:, 1]).abs()
 
     values = p.where(p.notna(), s)
-    source = pd.Series(np.where(p.notna(), primary_id, np.where(s.notna(), secondary_id, "")),
-                       index=idx)
+    source = pd.Series(
+        np.where(p.notna(), primary_id, np.where(s.notna(), secondary_id, "")), index=idx
+    )
     source[values.isna()] = ""
 
     per_year: dict[int, float] = {}

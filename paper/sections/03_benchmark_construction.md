@@ -1,0 +1,93 @@
+# 3. Benchmark Construction
+
+The benchmark is the primary contribution. This section states what is frozen, what a
+submission must satisfy, and which failure modes are enforced mechanically rather than
+requested in prose.
+
+## 3.1 What is frozen
+
+`benchmark/splits/splits.json` fixes 8 stations across 6 cities, the
+three temporal blocks, 6 leave-city-out folds and 4
+leave-station-out folds. It is accompanied by `splits.sha256`. The checksum is verified in
+CI and by `make reproduce`; any edit to the split file fails the build.
+
+The checksum is over bytes, which on a mixed-platform repository is not automatic. An early
+version was unverifiable because `Path.write_text` applied CRLF translation on Windows, and
+the `.gitattributes` fix that followed was itself wrong: for attributes the **last** matching
+line wins, the opposite of `.gitignore`. The general `* text=auto` rule must therefore be
+declared *before* the `benchmark/splits/** -text` override, not after. This was caught only
+by cloning into a temporary directory and running `sha256sum -c` there — an in-place check
+passes on a file that no other machine can reproduce.
+
+## 3.2 Two tasks, never pooled
+
+| | Task N — nowcasting | Task F — forecasting |
+|---|---|---|
+| Question | concentration at an **unmonitored** location, now | concentration at a **monitored** station, later |
+| Protocol | leave-city-out | blocked temporal, t+24 h, t+48 h, t+72 h |
+| Target history | **inadmissible** | admissible |
+| Spatial features | admissible (neighbours exclude the held-out city) | admissible |
+
+The separation is not stylistic. Under leave-city-out the held-out city contributes no
+label, so a local autoregressive lag is undefined at inference — not merely optimistic, but
+unavailable. Under blocked-temporal forecasting the same lag is exactly what a deployed
+service holds. A single table containing both tasks would compare models with access to the
+target's own history against models without it, and the resulting ranking would be an
+artefact of that asymmetry. The two are reported separately throughout, and a test asserts
+that no results file mixes them.
+
+## 3.3 The purge gap is derived
+
+Purge = max_lag + max_horizon = 168 + 72 =
+240 hours, applied at both block boundaries. A test recomputes this from the
+registered model definitions rather than reading a constant, so adding a model with a longer
+feature window fails the build instead of quietly leaking across the boundary. The failure
+mode this prevents is specific: a 168-hour rolling feature computed at the first test
+timestamp reads 168 hours of training labels.
+
+## 3.4 Feature admissibility is typed, not documented
+
+Every feature carries `available_at_runtime` and `latency_hours` as properties, and feature
+sets are constructed by filtering on them:
+
+- `static_only` — geography and land surface; no temporal input at all
+- `deployable` — everything a live service can hold at inference time
+- `benchmark_retrospective` — adds products whose latency exceeds the forecast horizon
+- `reanalysis_oracle` — deliberately inadmissible; exists to quantify the gap
+
+The oracle set is retained precisely because it is not deployable. Reporting it alongside
+the deployable set converts an invisible methodological error into a measured quantity: the
+difference between the two is the cost of the operational constraint, and Section 6 reports
+it. A guard test constructs a contaminated feature set and asserts the admissibility check
+rejects it, so the check cannot silently degrade into a no-op.
+
+## 3.5 Khujand: zero-shot spatial transfer
+
+Both Khujand stations begin after the training block closes, so Khujand appears only in
+validation and test. Its leave-city-out fold is therefore strictly harder than the other
+five: the model has no local history in any form, not merely no label in the current fold.
+
+We retain it as a distinct evaluation regime rather than repairing it. Every other fold
+measures interpolation between cities the model has seen at some point in training; Khujand
+measures extrapolation to a city that never appears. Averaging the two would report neither.
+Khujand is reported both inside the pooled figure and separately, and its fold is labelled
+zero-shot wherever it appears.
+
+## 3.6 What a submission must report
+
+1. Both tasks, in separate tables, with the ladder of Section 4 included.
+2. Mean ± standard deviation over at least five seeds. Deterministic models report `(det.)`
+   rather than `± 0.000`, so that a zero is never mistaken for a measured variance.
+3. Per-city results, not only the pooled figure. Six cities with different aerosol regimes
+   averaged into one number hides the variation that matters.
+4. Diebold–Mariano tests for any claimed improvement, with the truncation lag stated.
+5. Exceedance metrics accompanied by the trivial-classifier score and Peirce skill
+   (Section 4.3), because F1 alone does not establish skill.
+6. A statement of which feature set was used, from the four above.
+
+## 3.7 Reproduction
+
+`make reproduce` runs the pipeline end to end from the frozen splits: environment check,
+checksum verification, table regeneration, manuscript rendering, full test suite. Every
+number in this paper is produced by that command. No figure in the manuscript is typed by
+hand — Section 7.5 describes the mechanism and the drift it caught.

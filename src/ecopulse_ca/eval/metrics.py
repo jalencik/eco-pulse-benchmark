@@ -37,8 +37,12 @@ class RegressionMetrics:
 
     def as_dict(self) -> dict[str, float]:
         return {
-            "n": self.n, "rmse": self.rmse, "mae": self.mae,
-            "bias": self.bias, "r2": self.r2, "median_ae": self.median_ae,
+            "n": self.n,
+            "rmse": self.rmse,
+            "mae": self.mae,
+            "bias": self.bias,
+            "r2": self.r2,
+            "median_ae": self.median_ae,
         }
 
 
@@ -82,10 +86,17 @@ class ExceedanceMetrics:
 
     def as_dict(self) -> dict[str, float]:
         return {
-            "n_days": self.n_days, "n_exceed_obs": self.n_exceed_obs,
-            "n_exceed_pred": self.n_exceed_pred, "tp": self.tp, "fp": self.fp,
-            "fn": self.fn, "tn": self.tn, "precision": self.precision,
-            "recall": self.recall, "f1": self.f1, "base_rate": self.base_rate,
+            "n_days": self.n_days,
+            "n_exceed_obs": self.n_exceed_obs,
+            "n_exceed_pred": self.n_exceed_pred,
+            "tp": self.tp,
+            "fp": self.fp,
+            "fn": self.fn,
+            "tn": self.tn,
+            "precision": self.precision,
+            "recall": self.recall,
+            "f1": self.f1,
+            "base_rate": self.base_rate,
             "f1_trivial_always": self.f1_trivial_always,
             "peirce_skill": self.peirce_skill,
             "beats_trivial": self.beats_trivial,
@@ -182,10 +193,19 @@ def exceedance_metrics(
     pss = float(tpr - fpr) if not (np.isnan(tpr) or np.isnan(fpr)) else nan
 
     return ExceedanceMetrics(
-        n_days=len(both), n_exceed_obs=int(oe.sum()), n_exceed_pred=int(pe.sum()),
-        tp=tp, fp=fp, fn=fn, tn=tn,
-        precision=precision, recall=recall, f1=f1,
-        base_rate=base_rate, f1_trivial_always=f1_trivial, peirce_skill=pss,
+        n_days=len(both),
+        n_exceed_obs=int(oe.sum()),
+        n_exceed_pred=int(pe.sum()),
+        tp=tp,
+        fp=fp,
+        fn=fn,
+        tn=tn,
+        precision=precision,
+        recall=recall,
+        f1=f1,
+        base_rate=base_rate,
+        f1_trivial_always=f1_trivial,
+        peirce_skill=pss,
     )
 
 

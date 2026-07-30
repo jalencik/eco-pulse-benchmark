@@ -135,7 +135,7 @@ def derive_city(locality: Any, name: Any) -> str | None:
     label = str(name).strip()
     for prefix in _NAME_PREFIXES:
         if label.lower().startswith(prefix.lower()):
-            label = label[len(prefix):].lstrip(": ").strip()
+            label = label[len(prefix) :].lstrip(": ").strip()
     return None if _is_missing(label) else label
 
 
@@ -253,8 +253,10 @@ def main(argv: list[str] | None = None) -> int:
 
     eligible = df[df["q7_span_ok_upper_bound"]]
     cities = eligible["city"].dropna().nunique()
-    print(f"\nF3 check: {cities} distinct cities pass the >=2yr span pre-filter "
-          f"({len(eligible)} feeds).")
+    print(
+        f"\nF3 check: {cities} distinct cities pass the >=2yr span pre-filter "
+        f"({len(eligible)} feeds)."
+    )
     print("  (upper bound -- Q7 completeness and Q5b de-duplication not yet applied)")
     if not eligible.empty:
         print("  cities: " + ", ".join(sorted(eligible["city"].dropna().unique())))

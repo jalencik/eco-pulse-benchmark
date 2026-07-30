@@ -17,13 +17,15 @@ from ecopulse_ca.features.derived import (
 )
 
 # The eight benchmark stations.
-STATIONS = pd.DataFrame([
-    {"station_id": "8881", "city": "Tashkent", "latitude": 41.3255, "longitude": 69.2947},
-    {"station_id": "8876", "city": "Almaty", "latitude": 43.2380, "longitude": 76.9450},
-    {"station_id": "Bishkek", "city": "Bishkek", "latitude": 42.8560, "longitude": 74.6010},
-    {"station_id": "Ashgabat", "city": "Ashgabat", "latitude": 37.9340, "longitude": 58.3860},
-    {"station_id": "9769", "city": "Dushanbe", "latitude": 38.5730, "longitude": 68.7860},
-])
+STATIONS = pd.DataFrame(
+    [
+        {"station_id": "8881", "city": "Tashkent", "latitude": 41.3255, "longitude": 69.2947},
+        {"station_id": "8876", "city": "Almaty", "latitude": 43.2380, "longitude": 76.9450},
+        {"station_id": "Bishkek", "city": "Bishkek", "latitude": 42.8560, "longitude": 74.6010},
+        {"station_id": "Ashgabat", "city": "Ashgabat", "latitude": 37.9340, "longitude": 58.3860},
+        {"station_id": "9769", "city": "Dushanbe", "latitude": 38.5730, "longitude": 68.7860},
+    ]
+)
 
 
 class TestDistanceComputation:
@@ -80,8 +82,13 @@ class TestBenchmarkStations:
         supports a source-timing interpretation -- residential heating decaying overnight --
         rather than a dust one.
         """
-        regime = {"Tashkent": "dilution", "Dushanbe": "dilution",
-                  "Bishkek": "evening", "Ashgabat": "evening", "Almaty": "own"}
+        regime = {
+            "Tashkent": "dilution",
+            "Dushanbe": "dilution",
+            "Bishkek": "evening",
+            "Ashgabat": "evening",
+            "Almaty": "own",
+        }
         d = distances.assign(regime=distances["city"].map(regime))
         dilution = d.loc[d.regime == "dilution", "value"]
         evening = d.loc[d.regime == "evening", "value"]
@@ -96,9 +103,7 @@ class TestContract:
             build_aralkum_distances(pd.DataFrame([{"station_id": "x"}]))
 
     def test_rejects_non_finite_coordinates(self):
-        bad = pd.DataFrame([
-            {"station_id": "x", "latitude": float("nan"), "longitude": 60.0}
-        ])
+        bad = pd.DataFrame([{"station_id": "x", "latitude": float("nan"), "longitude": 60.0}])
         with pytest.raises(ValueError, match="non-finite"):
             build_aralkum_distances(bad)
 

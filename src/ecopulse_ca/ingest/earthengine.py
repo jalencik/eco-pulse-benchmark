@@ -106,9 +106,11 @@ COLLECTION_COVERAGE: dict[str, tuple[str, str, str]] = {
 
 #: Collections Earth Engine reports as deprecated. Mapping one is a build failure: a
 #: deprecated collection is frozen, so it silently stops covering recent periods.
-DEPRECATED_COLLECTIONS: frozenset[str] = frozenset({
-    "NOAA/VIIRS/001/VNP14A1",  # superseded by NASA/VIIRS/002/VNP14A1; last asset 2024-06-16
-})
+DEPRECATED_COLLECTIONS: frozenset[str] = frozenset(
+    {
+        "NOAA/VIIRS/001/VNP14A1",  # superseded by NASA/VIIRS/002/VNP14A1; last asset 2024-06-16
+    }
+)
 
 #: Collections exempt from the test-block coverage check, with the reason.
 #: Static products have no time dimension, so "coverage" is not meaningful for them.
@@ -331,15 +333,15 @@ class EarthEngineExtractor:
 
     def _execute_live(self, request: ReductionRequest) -> pd.DataFrame:
         ee = self._import_ee()
-        points = ee.FeatureCollection([
-            ee.Feature(
-                ee.Geometry.Point([s.longitude, s.latitude]).buffer(
-                    request.reduction.buffer_m
-                ),
-                {"station_id": s.station_id},
-            )
-            for s in request.stations
-        ])
+        points = ee.FeatureCollection(
+            [
+                ee.Feature(
+                    ee.Geometry.Point([s.longitude, s.latitude]).buffer(request.reduction.buffer_m),
+                    {"station_id": s.station_id},
+                )
+                for s in request.stations
+            ]
+        )
         collection = (
             ee.ImageCollection(request.collection)
             .filterDate(request.date_from, request.date_to)
@@ -376,8 +378,12 @@ class EarthEngineExtractor:
 
 def _ee_reducer(ee: Any, statistic: Statistic) -> Any:
     mapping = {
-        Statistic.MEAN: "mean", Statistic.MEDIAN: "median", Statistic.MAX: "max",
-        Statistic.MIN: "min", Statistic.COUNT: "count", Statistic.STDDEV: "stdDev",
+        Statistic.MEAN: "mean",
+        Statistic.MEDIAN: "median",
+        Statistic.MAX: "max",
+        Statistic.MIN: "min",
+        Statistic.COUNT: "count",
+        Statistic.STDDEV: "stdDev",
     }
     return getattr(ee.Reducer, mapping[statistic])()
 
@@ -388,13 +394,15 @@ def _rows_to_frame(rows: list[dict], request: ReductionRequest) -> pd.DataFrame:
     for row in rows:
         props = row.get("properties", row)
         value = props.get(request.reduction.statistic.value, props.get("mean"))
-        out.append({
-            "station_id": props.get("station_id"),
-            "date": props.get("date"),
-            "feature": request.feature_name,
-            "value": None if value is None else float(value) * request.scale_factor,
-            "valid_count": props.get("count"),
-        })
+        out.append(
+            {
+                "station_id": props.get("station_id"),
+                "date": props.get("date"),
+                "feature": request.feature_name,
+                "value": None if value is None else float(value) * request.scale_factor,
+                "valid_count": props.get("count"),
+            }
+        )
     df = pd.DataFrame(out, columns=["station_id", "date", "feature", "value", "valid_count"])
     if not df.empty:
         df["date"] = pd.to_datetime(df["date"], errors="coerce", utc=True)

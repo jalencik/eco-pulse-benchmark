@@ -93,7 +93,7 @@ class OrdinaryKriging(Nowcaster):
         # pooled over time, binned by separation distance.
         dists, semivars = [], []
         for i, a in enumerate(stations):
-            for b in stations[i + 1:]:
+            for b in stations[i + 1 :]:
                 pair = panel[[a, b]].dropna()
                 if len(pair) < 10:  # too few concurrent observations to be informative
                     continue
@@ -172,7 +172,9 @@ class OrdinaryKriging(Nowcaster):
         b = np.ones(n + 1, dtype=float)
         b[:n] = exponential_variogram(
             haversine_km_array(target.latitude, target.longitude, lats, lons),
-            nugget, sill, rng,
+            nugget,
+            sill,
+            rng,
         )
 
         try:

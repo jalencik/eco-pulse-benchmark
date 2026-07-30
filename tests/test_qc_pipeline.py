@@ -73,8 +73,8 @@ class TestRowMasking:
         panel["s0"] = s
         out = run_qc(panel)
         kept = out.kept["s0"]
-        assert len(kept) == len(s)          # length preserved -- masked, not dropped
-        assert np.isnan(kept.iloc[100])     # value removed
+        assert len(kept) == len(s)  # length preserved -- masked, not dropped
+        assert np.isnan(kept.iloc[100])  # value removed
 
     def test_flatline_window_masked(self):
         panel = _panel()
@@ -110,9 +110,11 @@ class TestNEffect:
 
 class TestDuplicateStations:
     def test_census_duplicates_are_reported(self):
-        census = pd.DataFrame([
-            {"location_id": "s0", "latitude": 41.36, "longitude": 69.289},
-            {"location_id": "s1", "latitude": 41.36, "longitude": 69.289},
-        ])
+        census = pd.DataFrame(
+            [
+                {"location_id": "s0", "latitude": 41.36, "longitude": 69.289},
+                {"location_id": "s1", "latitude": 41.36, "longitude": 69.289},
+            ]
+        )
         out = run_qc(_panel(2), census=census)
         assert any(f.rule == "Q5b" for f in out.report.findings)

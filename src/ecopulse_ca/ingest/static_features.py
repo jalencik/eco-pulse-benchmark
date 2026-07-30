@@ -78,25 +78,30 @@ def _ee(project_id: str) -> Any:
 
 
 def _points(ee: Any, stations: list[StationPoint], buffer_m: int) -> Any:
-    return ee.FeatureCollection([
-        ee.Feature(
-            ee.Geometry.Point([s.longitude, s.latitude]).buffer(buffer_m),
-            {"station_id": s.station_id},
-        )
-        for s in stations
-    ])
+    return ee.FeatureCollection(
+        [
+            ee.Feature(
+                ee.Geometry.Point([s.longitude, s.latitude]).buffer(buffer_m),
+                {"station_id": s.station_id},
+            )
+            for s in stations
+        ]
+    )
 
 
 def _annuli(ee: Any, stations: list[StationPoint], outer_m: int) -> Any:
     """Ring geometries: surrounding terrain with the immediate area removed."""
-    return ee.FeatureCollection([
-        ee.Feature(
-            ee.Geometry.Point([s.longitude, s.latitude]).buffer(outer_m)
-            .difference(ee.Geometry.Point([s.longitude, s.latitude]).buffer(BASIN_INNER_M)),
-            {"station_id": s.station_id},
-        )
-        for s in stations
-    ])
+    return ee.FeatureCollection(
+        [
+            ee.Feature(
+                ee.Geometry.Point([s.longitude, s.latitude])
+                .buffer(outer_m)
+                .difference(ee.Geometry.Point([s.longitude, s.latitude]).buffer(BASIN_INNER_M)),
+                {"station_id": s.station_id},
+            )
+            for s in stations
+        ]
+    )
 
 
 def _reduce_to_frame(ee: Any, image: Any, regions: Any, scale: int, column: str) -> pd.DataFrame:
@@ -105,8 +110,7 @@ def _reduce_to_frame(ee: Any, image: Any, regions: Any, scale: int, column: str)
         collection=regions, reducer=ee.Reducer.mean(), scale=scale
     ).getInfo()
     rows = [
-        {"station_id": f["properties"].get("station_id"),
-         column: f["properties"].get("mean")}
+        {"station_id": f["properties"].get("station_id"), column: f["properties"].get("mean")}
         for f in table.get("features", [])
     ]
     return pd.DataFrame(rows)
@@ -158,7 +162,10 @@ def extract_static(
             "collection yields no rows, which downstream misreads as 'no signal'."
         )
     lights = _reduce_to_frame(
-        ee, vnl_col.mean(), _points(ee, stations, BUF_STATIC_M), 500,
+        ee,
+        vnl_col.mean(),
+        _points(ee, stations, BUF_STATIC_M),
+        500,
         "viirs_nighttime_lights",
     )
 
@@ -184,9 +191,9 @@ def extract_static(
         "viirs_window": f"{train_start}..{train_end} ({n_vnl} monthly images, mean)",
         "basin_annulus_m": f"inner {BASIN_INNER_M}, outer {list(BASIN_OUTER_RADII_M)}",
         "ghsl_units": f"raw band is count per {GHSL_CELL_M} m cell; "
-                      f"multiplied by {GHSL_COUNT_TO_DENSITY:.0f} to give persons/km^2",
+        f"multiplied by {GHSL_COUNT_TO_DENSITY:.0f} to give persons/km^2",
         "buffer_m": BUF_STATIC_M,
         "note": "VIIRS restricted to the TRAIN block so a 'static' feature carries no "
-                "test-period information.",
+        "test-period information.",
     }
     return StaticExtractionResult(frame=df, provenance=provenance)

@@ -105,8 +105,13 @@ def _retry(fn: Any, tries: int = 5, base: float = 3.0) -> Any:
             if attempt == tries - 1:
                 raise
             wait = base * 2**attempt
-            log.warning("EE call failed (%s); retry %d/%d in %.0fs",
-                        type(exc).__name__, attempt + 1, tries - 1, wait)
+            log.warning(
+                "EE call failed (%s); retry %d/%d in %.0fs",
+                type(exc).__name__,
+                attempt + 1,
+                tries - 1,
+                wait,
+            )
             time.sleep(wait)
     raise ExtractionError("unreachable")
 
@@ -118,13 +123,15 @@ def extract_maiac_chunk(
     date_to: str,
 ) -> MaiacChunkResult:
     """Daily MAIAC AOD per station for one date window."""
-    points = ee.FeatureCollection([
-        ee.Feature(
-            ee.Geometry.Point([s.longitude, s.latitude]).buffer(BUFFER_M),
-            {"station_id": s.station_id},
-        )
-        for s in stations
-    ])
+    points = ee.FeatureCollection(
+        [
+            ee.Feature(
+                ee.Geometry.Point([s.longitude, s.latitude]).buffer(BUFFER_M),
+                {"station_id": s.station_id},
+            )
+            for s in stations
+        ]
+    )
     region = points.geometry()
 
     start = ee.Date(date_from)
@@ -138,34 +145,33 @@ def extract_maiac_chunk(
         # mean() over granules; an empty day yields an image with no bands, which
         # reduceRegions reports as null -- exactly the behaviour we want to preserve.
         composite = same_day.mean().rename(BAND)
-        return composite.set("date", day.format("YYYY-MM-dd")).set("n_granules",
-                                                                   same_day.size())
+        return composite.set("date", day.format("YYYY-MM-dd")).set("n_granules", same_day.size())
 
     daily = ee.ImageCollection(ee.List.sequence(0, n_days - 1).map(daily_composite))
 
     reducer = ee.Reducer.mean().combine(ee.Reducer.count(), sharedInputs=True)
 
     def reduce_day(image: Any) -> Any:
-        return image.reduceRegions(
-            collection=points, reducer=reducer, scale=SCALE_M
-        ).map(lambda f: f.set("date", image.get("date"))
-                        .set("n_granules", image.get("n_granules")))
+        return image.reduceRegions(collection=points, reducer=reducer, scale=SCALE_M).map(
+            lambda f: f.set("date", image.get("date")).set("n_granules", image.get("n_granules"))
+        )
 
     table = _retry(lambda: daily.map(reduce_day).flatten().getInfo())
     rows = []
     for feat in table.get("features", []):
         p = feat.get("properties", {})
         raw = p.get("mean")
-        rows.append({
-            "station_id": p.get("station_id"),
-            "date": p.get("date"),
-            "aod_055": None if raw is None else float(raw) * SCALE_FACTOR,
-            "valid_pixels": p.get("count") or 0,
-            "n_granules": p.get("n_granules"),
-        })
+        rows.append(
+            {
+                "station_id": p.get("station_id"),
+                "date": p.get("date"),
+                "aod_055": None if raw is None else float(raw) * SCALE_FACTOR,
+                "valid_pixels": p.get("count") or 0,
+                "n_granules": p.get("n_granules"),
+            }
+        )
 
-    df = pd.DataFrame(rows, columns=["station_id", "date", "aod_055",
-                                     "valid_pixels", "n_granules"])
+    df = pd.DataFrame(rows, columns=["station_id", "date", "aod_055", "valid_pixels", "n_granules"])
     if not df.empty:
         df["date"] = pd.to_datetime(df["date"], errors="coerce")
         df = df.sort_values(["station_id", "date"]).reset_index(drop=True)

@@ -42,9 +42,13 @@ class DMResult:
 
     def as_dict(self) -> dict[str, object]:
         return {
-            "dm_stat": self.statistic, "p_value": self.p_value, "n": self.n,
-            "horizon_hours": self.horizon_hours, "mean_loss_diff": self.mean_loss_diff,
-            "better": self.better, "significant_at_05": self.significant_at_05,
+            "dm_stat": self.statistic,
+            "p_value": self.p_value,
+            "n": self.n,
+            "horizon_hours": self.horizon_hours,
+            "mean_loss_diff": self.mean_loss_diff,
+            "better": self.better,
+            "significant_at_05": self.significant_at_05,
         }
 
     def verdict(self, name_a: str, name_b: str) -> str:
@@ -114,9 +118,7 @@ def diebold_mariano(
     because a degenerate comparison is a legitimate outcome that must be reported, not an
     error to swallow.
     """
-    frame = pd.concat(
-        [obs.rename("obs"), pred_a.rename("a"), pred_b.rename("b")], axis=1
-    ).dropna()
+    frame = pd.concat([obs.rename("obs"), pred_a.rename("a"), pred_b.rename("b")], axis=1).dropna()
     n = len(frame)
     if n < 10:
         return DMResult(float("nan"), float("nan"), n, horizon_hours, float("nan"), "?", False)
@@ -153,7 +155,10 @@ def diebold_mariano(
         p = float(2 * (1 - stats.norm.cdf(abs(stat))))
 
     return DMResult(
-        statistic=float(stat), p_value=p, n=n, horizon_hours=horizon_hours,
+        statistic=float(stat),
+        p_value=p,
+        n=n,
+        horizon_hours=horizon_hours,
         mean_loss_diff=mean_d,
         better="a" if mean_d < 0 else "b",
         significant_at_05=bool(p < 0.05),
@@ -170,15 +175,22 @@ def pairwise_dm(
     names = sorted(predictions)
     rows = []
     for i, a in enumerate(names):
-        for b in names[i + 1:]:
+        for b in names[i + 1 :]:
             r = diebold_mariano(
-                obs, predictions[a], predictions[b], horizon_hours,
+                obs,
+                predictions[a],
+                predictions[b],
+                horizon_hours,
                 truncation_lag=truncation_lag,
             )
-            rows.append({"model_a": a, "model_b": b,
-                         "truncation_lag": r.horizon_hours if truncation_lag is None
-                         else truncation_lag,
-                         **r.as_dict()})
+            rows.append(
+                {
+                    "model_a": a,
+                    "model_b": b,
+                    "truncation_lag": r.horizon_hours if truncation_lag is None else truncation_lag,
+                    **r.as_dict(),
+                }
+            )
     return pd.DataFrame(rows)
 
 
@@ -196,6 +208,12 @@ def lag_sensitivity(
     rows = []
     for lag in lags:
         r = diebold_mariano(obs, pred_a, pred_b, truncation_lag=lag)
-        rows.append({"truncation_lag_h": lag, "dm_stat": r.statistic,
-                     "p_value": r.p_value, "significant_at_05": r.significant_at_05})
+        rows.append(
+            {
+                "truncation_lag_h": lag,
+                "dm_stat": r.statistic,
+                "p_value": r.p_value,
+                "significant_at_05": r.significant_at_05,
+            }
+        )
     return pd.DataFrame(rows)

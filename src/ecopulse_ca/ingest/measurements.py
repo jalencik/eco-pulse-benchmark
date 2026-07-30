@@ -153,7 +153,10 @@ def fetch_sensor_series(
         v, c = records_to_series(records)
         log.info(
             "sensor %s %s: %d records%s",
-            sensor_id, year, len(v), " (PARTIAL)" if client.last_pagination_partial else "",
+            sensor_id,
+            year,
+            len(v),
+            " (PARTIAL)" if client.last_pagination_partial else "",
         )
         if not v.empty:
             values.append(v)
@@ -190,7 +193,9 @@ def build_panel(
 
     for _, row in census.iterrows():
         sensor_ids = [
-            int(s) for s in str(row.get("pm25_sensor_ids", "")).split(",") if str(s).strip().isdigit()
+            int(s)
+            for s in str(row.get("pm25_sensor_ids", "")).split(",")
+            if str(s).strip().isdigit()
         ]
         if not sensor_ids:
             continue

@@ -94,23 +94,28 @@ conditions that accompany the highest concentrations. Dropping incomplete rows t
 conditions the evaluation on *"retrieval succeeded"* and biases every result toward calm,
 clear, low-concentration days.
 
-We quantified this across all five satellite features on daily station-matched data.
+We quantified this across all five satellite features on daily station-matched data. Each
+satellite product is extracted onto a complete station × date grid — the compositor emits a
+fully-masked image on days with no usable granule rather than omitting the row — so a failed
+retrieval is a masked cell, not an absent one, and the grid is the denominator. Rates below
+are conditional on the station-day also carrying a ground observation, since that is the
+subset on which the association can be tested at all.
 
 | Feature | Retrieval | Δ median PM2.5 on missing days | *p* | Retrieval on worst decile |
 |---|---:|---:|---:|---:|
-| Sentinel-5P SO₂ | 61.5% | **+11.2** | 8.3e-134 | **25.2%** |
-| MAIAC AOD | 65.8% | +5.3 | 1.4e-35 | 45.2% |
-| Sentinel-5P NO₂ | 73.4% | +3.4 | 6.3e-15 | 59.0% |
-| Sentinel-5P CO | 82.6% | −0.6 | 0.72 | 85.6% |
-| Sentinel-5P AAI | 99.8% | −0.6 | 0.48 | 100.0% |
+| Sentinel-5P SO₂ | 59.2% | **+10.6** | 6.6e-128 | **26.3%** |
+| MAIAC AOD | 64.6% | +4.8 | 3.8e-33 | 45.3% |
+| Sentinel-5P NO₂ | 71.6% | +3.0 | 1.3e-12 | 60.0% |
+| Sentinel-5P CO | 82.7% | -0.4 | 0.24 | 85.8% |
+| Sentinel-5P AAI | 99.8% | +1.5 | 0.46 | 100.0% |
 
-**SO₂ is blind in the season it exists to observe.** It retrieves on 0.1% of December days
-and 18.4% across winter, against 92.6% in summer. Retrieval requires ultraviolet signal, and
+**SO₂ is blind in the season it exists to observe.** It retrieves on 0.1% of December days against
+93.5% in July. Retrieval requires ultraviolet signal, and
 at 38–43°N in December the solar zenith angle leaves too little; this is a geometric floor,
 not a cloud accident. The direct tracer for the region's dominant winter source is
-unavailable throughout that source's season. Additionally, 31.8% of the retrievals that do
-occur are negative, sitting below the noise floor — clipping them at zero would bias the
-coal tracer upward across a third of its observations.
+unavailable throughout that source's season. Additionally, 32.7% of the
+retrievals that do occur are negative, sitting below the noise floor — clipping them at zero
+would bias the coal tracer upward across a third of its observations.
 
 **The split between clean and contaminated features follows retrieval physics.** CO uses the
 2.3 µm shortwave-infrared band and AAI uses ultraviolet reflectance *ratios* rather than
@@ -118,8 +123,9 @@ absorption depth; both survive winter geometry and cloud, and neither shows targ
 missingness. MAIAC (visible/near-infrared) and the ultraviolet absorption retrievals do not.
 
 **The two clean features are complementary to the contaminated ones.** AOD and AAI are both
-present on 65.4% of station-days; AAI alone covers a further 34.4%; neither is available on
-0.1%. Usable satellite coverage therefore rises from 65.4% to 99.8%, and the coverage AAI
+present on 64.5% of station-days; AAI alone covers a further 35.3%; neither
+is available on 0.1%. Usable satellite coverage therefore rises from
+64.5% to 99.9%, and the coverage AAI
 adds is concentrated precisely where MAIAC fails.
 
 Consequently missingness is **modelled, never dropped**. Valid-pixel counts are promoted to

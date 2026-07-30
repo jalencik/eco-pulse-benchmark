@@ -210,10 +210,14 @@ def q5_duplicate_stations(
             if spread > colocation_m:
                 out.append(
                     QCFinding(
-                        rule="Q5a", scope="station", station_id=str(loc_id),
-                        n_total=len(grp), n_flagged=len(grp), verdict="reject",
+                        rule="Q5a",
+                        scope="station",
+                        station_id=str(loc_id),
+                        n_total=len(grp),
+                        n_flagged=len(grp),
+                        verdict="reject",
                         detail=f"one location_id spans {spread:.0f} m across "
-                               f"{len(pts)} coordinates",
+                        f"{len(pts)} coordinates",
                     )
                 )
 
@@ -242,11 +246,15 @@ def q5_duplicate_stations(
             providers = sorted({str(p) for p in grp.get("provider", pd.Series(dtype=str))})
             out.append(
                 QCFinding(
-                    rule="Q5b", scope="station", station_id=",".join(ids),
-                    n_total=len(grp), n_flagged=len(grp), verdict="flag",
+                    rule="Q5b",
+                    scope="station",
+                    station_id=",".join(ids),
+                    n_total=len(grp),
+                    n_flagged=len(grp),
+                    verdict="flag",
                     detail=f"{len(ids)} location_ids within {colocation_m:.0f} m "
-                           f"-- probably one instrument"
-                           + (f", providers: {', '.join(providers)}" if providers else ""),
+                    f"-- probably one instrument"
+                    + (f", providers: {', '.join(providers)}" if providers else ""),
                 )
             )
     return out

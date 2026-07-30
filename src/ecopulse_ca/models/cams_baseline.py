@@ -49,8 +49,10 @@ class BiasTable:
 
     def to_frame(self) -> pd.DataFrame:
         return pd.DataFrame(
-            [{"station_id": s, "bias_ug_m3": round(b, 3), "n_train_obs": self.n_obs.get(s, 0)}
-             for s, b in sorted(self.per_station.items())]
+            [
+                {"station_id": s, "bias_ug_m3": round(b, 3), "n_train_obs": self.n_obs.get(s, 0)}
+                for s, b in sorted(self.per_station.items())
+            ]
         )
 
 
@@ -73,9 +75,7 @@ def fit_bias(
         if sub.empty:
             continue
         sub["d"] = pd.to_datetime(sub["time"]).dt.date
-        joined = pd.DataFrame({"obs": obs}).join(
-            sub.set_index("d")[[value_col]], how="inner"
-        )
+        joined = pd.DataFrame({"obs": obs}).join(sub.set_index("d")[[value_col]], how="inner")
         joined = joined[joined.index <= train_end.date()]
         joined = joined.dropna()
         if len(joined) < 30:
@@ -87,15 +87,17 @@ def fit_bias(
     return BiasTable(per_station=per_station, pooled=pooled, n_obs=n_obs)
 
 
-def apply_local_debias(cams: pd.DataFrame, bias: BiasTable,
-                       value_col: str = "cams_pm25_forecast") -> pd.Series:
+def apply_local_debias(
+    cams: pd.DataFrame, bias: BiasTable, value_col: str = "cams_pm25_forecast"
+) -> pd.Series:
     """Task F: subtract each station's own bias. Illegal under leave-city-out."""
     off = cams["station_id"].map(bias.per_station).fillna(bias.pooled)
     return cams[value_col] - off
 
 
-def apply_pooled_debias(cams: pd.DataFrame, bias: BiasTable, held_out: set[str],
-                        value_col: str = "cams_pm25_forecast") -> pd.Series:
+def apply_pooled_debias(
+    cams: pd.DataFrame, bias: BiasTable, held_out: set[str], value_col: str = "cams_pm25_forecast"
+) -> pd.Series:
     """Task N: subtract the mean bias of the TRAINING stations only.
 
     `held_out` is excluded from the average, so no label from the held-out city informs its

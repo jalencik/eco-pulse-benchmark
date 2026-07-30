@@ -38,9 +38,7 @@ def cache_key(url: str, params: dict[str, Any] | None) -> str:
 
 def sha256_of(obj: Any) -> str:
     """Checksum of a parsed payload, for the data manifest."""
-    return hashlib.sha256(
-        json.dumps(obj, sort_keys=True, ensure_ascii=False).encode()
-    ).hexdigest()
+    return hashlib.sha256(json.dumps(obj, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
 
 
 def load_fixture(name: str) -> Any:

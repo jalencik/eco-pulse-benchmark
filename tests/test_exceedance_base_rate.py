@@ -70,12 +70,15 @@ class TestPeirceSkill:
 
     def test_is_independent_of_base_rate(self):
         """The property F1 lacks: the same skill scores the same on clean and dirty cities."""
+
         # A predictor that is right on 80% of exceedances and 80% of non-exceedances.
         def build(n_exceed: int, n_clean: int):
             obs = _hourly([50.0] * n_exceed + [5.0] * n_clean)
             pred = (
-                [50.0] * int(n_exceed * 0.8) + [5.0] * (n_exceed - int(n_exceed * 0.8))
-                + [5.0] * int(n_clean * 0.8) + [50.0] * (n_clean - int(n_clean * 0.8))
+                [50.0] * int(n_exceed * 0.8)
+                + [5.0] * (n_exceed - int(n_exceed * 0.8))
+                + [5.0] * int(n_clean * 0.8)
+                + [50.0] * (n_clean - int(n_clean * 0.8))
             )
             return exceedance_metrics(obs, _hourly(pred), WHO_2021_PM25_24H, TZ)
 

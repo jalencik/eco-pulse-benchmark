@@ -1,0 +1,133 @@
+# 6. Results
+
+All figures are on the frozen test block {{test_start}} to {{test_end}}, five seeds, with
+Task N and Task F reported separately throughout.
+
+## 6.1 Task N — leave-city-out nowcasting
+
+| Model | RMSE (µg/m³) | MAE | R² |
+|---|---:|---:|---:|
+| best spatial baseline (kriging) | {{p3n_ordinary_kriging_rmse}} | — | {{p3n_ordinary_kriging_r2}} |
+| training-pool mean (constant) | {{p3n_training_pool_mean_rmse}} | — | {{p3n_training_pool_mean_r2}} |
+| CAMS, pooled debias | {{taskn_cams_rmse}} | {{taskn_cams_mae}} | {{taskn_cams_r2}} |
+| LightGBM, static only | {{taskn_static_only_rmse}} | {{taskn_static_only_mae}} | {{taskn_static_only_r2}} |
+| LightGBM, deployable | {{taskn_deployable_rmse}} | {{taskn_deployable_mae}} | {{taskn_deployable_r2}} |
+| LightGBM, retrospective | {{taskn_retrospective_rmse}} | {{taskn_retrospective_mae}} | {{taskn_retrospective_r2}} |
+
+**The learned model beats every baseline, and its R² is {{taskn_retrospective_r2}}.** Both
+statements are load-bearing. It improves on pooled-debiased CAMS by
+{{taskn_cams_rmse}} → {{taskn_retrospective_rmse}} µg/m³ and on the best spatial
+interpolator by a wider margin. It also explains almost none of the variance in a
+never-seen city. We report this as the result: predicting urban PM2.5 at a location with no
+local monitor, from a training set of five other cities, is close to unsolved in this
+region, and the benchmark exists to make that measurable rather than to conceal it.
+
+## 6.2 Per-city results and the Diebold–Mariano tests
+
+Pooling six cities into one number hides the finding.
+
+| Held-out city | LightGBM RMSE | CAMS RMSE | DM statistic | *p* |
+|---|---:|---:|---:|---:|
+| Almaty | {{rmse_lgbm_almaty}} | {{rmse_cams_almaty}} | {{dm_almaty_stat}} | {{dm_almaty_p}} |
+| Ashgabat | {{rmse_lgbm_ashgabat}} | {{rmse_cams_ashgabat}} | {{dm_ashgabat_stat}} | {{dm_ashgabat_p}} |
+| Bishkek | {{rmse_lgbm_bishkek}} | {{rmse_cams_bishkek}} | {{dm_bishkek_stat}} | {{dm_bishkek_p}} |
+| Dushanbe | {{rmse_lgbm_dushanbe}} | {{rmse_cams_dushanbe}} | {{dm_dushanbe_stat}} | {{dm_dushanbe_p}} |
+| Khujand (zero-shot) | {{rmse_lgbm_khujand}} | {{rmse_cams_khujand}} | {{dm_khujand_stat}} | {{dm_khujand_p}} |
+| Tashkent | {{rmse_lgbm_tashkent}} | {{rmse_cams_tashkent}} | {{dm_tashkent_stat}} | {{dm_tashkent_p}} |
+| **pooled** (n = {{dm_pooled_n}}) | **{{rmse_lgbm_pooled}}** | **{{rmse_cams_pooled}}** | **{{dm_pooled_stat}}** | **{{dm_pooled_p}}** |
+
+Tests use Newey–West HAC variance with the Harvey–Leybourne–Newbold small-sample
+correction. Negative statistics favour the learned model.
+
+**The pooled improvement is significant ({{dm_pooled_p}}); only {{dm_n_sig}} of
+{{dm_n_folds}} individual folds are.** Bishkek ({{dm_bishkek_p}}) and Tashkent
+({{dm_tashkent_p}}) show lower RMSE that does not clear significance, and we do not describe
+those as improvements. **{{dm_fold_favouring_cams}} favours CAMS outright**
+({{rmse_lgbm_ashgabat}} vs {{rmse_cams_ashgabat}} µg/m³, DM statistic
+{{dm_ashgabat_stat}}, *p* = {{dm_ashgabat_p}}) — the sign is reversed and the result is far
+from significant, so the honest summary is that the two are indistinguishable there rather
+than that CAMS wins.
+
+**Khujand, the zero-shot fold, is significant ({{dm_khujand_p}})** at
+{{rmse_lgbm_khujand}} µg/m³ against CAMS at {{rmse_cams_khujand}}. A city with no training
+rows at all is predicted better than by the operational chemistry-transport model. It
+remains among the hardest folds in absolute terms, second only to Dushanbe.
+
+**Truncation-lag sensitivity.** The DM truncation lag is derived from the forecast horizon,
+and an early implementation passed `horizon_hours = 1` for the nowcasting task, which
+disables the HAC correction entirely and inflated *p*-values by roughly seven orders of
+magnitude. We now report the full sensitivity sweep: across truncation lags of
+{{dm_lag_range}} hours the pooled conclusion is stable, with all comparisons significant
+({{dm_lag_all_sig}}) and a worst-case *p* of {{dm_lag_min_p}}.
+
+## 6.3 Task F — forecasting at monitored stations
+
+| Feature set | RMSE (µg/m³) | R² |
+|---|---:|---:|
+| best Task F baseline (same-hour 7-day mean) | {{p3f_same_hour_mean_7d_rmse}} | {{p3f_same_hour_mean_7d_r2}} |
+| LightGBM, static only | {{taskf_static_only_rmse}} | {{taskf_static_only_r2}} |
+| LightGBM, deployable | {{taskf_deployable_rmse}} | {{taskf_deployable_r2}} |
+| LightGBM, retrospective | {{taskf_retrospective_rmse}} | {{taskf_retrospective_r2}} |
+
+Task F is the easier problem and the numbers say so: R² = {{taskf_retrospective_r2}} against
+{{taskn_retrospective_r2}} for Task N. **These two figures must never be quoted together as
+though they described one system.** The Task F model may read the station's own recent
+history; the Task N model is predicting a city it has never seen. Reporting
+{{taskf_retrospective_rmse}} µg/m³ as "the model's accuracy" would describe a capability the
+deployment does not have at unmonitored locations, which is the case the artefact exists to
+serve.
+
+## 6.4 SHAP attribution: what actually carries the model
+
+Mean absolute SHAP over the test block, by feature family:
+
+| Family | Share of total attribution |
+|---|---:|
+| spatial neighbour | **{{shap_spatial_neighbour_pct}}%** |
+| static geography | {{shap_static_geography_pct}}% |
+| calendar | {{shap_calendar_pct}}% |
+| satellite | {{shap_satellite_pct}}% |
+| CAMS forecast | {{shap_cams_forecast_pct}}% |
+| satellite missingness | {{shap_satellite_missingness_pct}}% |
+
+**Spatial interpolation drives the model, not the satellite record.** The single largest
+feature is `{{shap_top_feature}}` at {{shap_top_value}} mean absolute SHAP — inverse-distance
+weighted neighbour concentration — more than twice the second-ranked feature
+(`{{shap_second_feature}}`, {{shap_second_value}}). Spatial neighbours and static geography
+together account for
+{{shap_spatial_neighbour_pct}}% + {{shap_static_geography_pct}}% of attribution, while the
+five satellite products contribute {{shap_satellite_pct}}% between them.
+
+This is the paper's least comfortable result and we state it plainly: **the model is largely
+a well-tuned spatial interpolator with geographic priors.** The satellite features are not
+inert — {{shap_satellite_pct}}% is not nothing, and Section 5.5 shows the deployable set
+loses little — but a reader would be entitled to expect, from a study built on five
+remote-sensing products, that those products carried the prediction. They do not.
+
+Two further readings follow. First, **satellite missingness earns
+{{shap_satellite_missingness_pct}}% — comparable to the {{shap_cams_forecast_pct}}%
+contributed by the entire chemistry-transport model.** Whether a retrieval failed carries
+nearly as much information as what the atmospheric model predicted, which vindicates
+modelling missingness rather than dropping it (Section 2.4) and simultaneously indicates how
+little the retrieved values themselves add. Second, calendar features at
+{{shap_calendar_pct}}% confirm that a large part of the signal is seasonal regularity that
+any climatology captures — consistent with the same-hour 7-day mean being the only Task F
+baseline with positive R².
+
+## 6.5 Summary of what is and is not established
+
+Established:
+
+- The learned model beats pooled-debiased CAMS across the {{n_loco_folds}}-fold leave-city-out
+  protocol, pooled *p* = {{dm_pooled_p}}.
+- Deployability costs almost nothing: {{taskn_deployable_rmse}} vs
+  {{taskn_retrospective_rmse}} µg/m³.
+- Zero-shot transfer to a city with no training rows beats CAMS significantly
+  ({{dm_khujand_p}}).
+
+Not established:
+
+- Per-city superiority. {{dm_n_sig}} of {{dm_n_folds}} folds reach significance;
+  {{dm_fold_favouring_cams}} does not favour the model at all.
+- Useful absolute accuracy at unmonitored locations. R² = {{taskn_retrospective_r2}}.
+- That satellite remote sensing drives the result. Section 6.4 shows it does not.

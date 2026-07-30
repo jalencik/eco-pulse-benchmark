@@ -73,7 +73,8 @@ class TestRequestConstruction:
             build_request(BY_NAME["maiac_aod_055"], [], "2024-01-01", "2024-01-02")
 
     @pytest.mark.parametrize(
-        "f", [f for f in SATELLITE + STATIC if f.name in COLLECTION_FOR_FEATURE],
+        "f",
+        [f for f in SATELLITE + STATIC if f.name in COLLECTION_FOR_FEATURE],
         ids=lambda f: f.name,
     )
     def test_every_mapped_feature_builds(self, f):
@@ -81,12 +82,16 @@ class TestRequestConstruction:
         assert r.collection and r.band
 
     def test_scale_matches_native_resolution(self):
-        assert build_request(BY_NAME["maiac_aod_055"], STATIONS, "2024-01-01",
-                             "2024-01-02").scale_m == 1000
-        assert build_request(BY_NAME["elevation"], STATIONS, "2024-01-01",
-                             "2024-01-02").scale_m == 30
-        assert build_request(BY_NAME["s5p_so2"], STATIONS, "2024-01-01",
-                             "2024-01-02").scale_m == 7000
+        assert (
+            build_request(BY_NAME["maiac_aod_055"], STATIONS, "2024-01-01", "2024-01-02").scale_m
+            == 1000
+        )
+        assert (
+            build_request(BY_NAME["elevation"], STATIONS, "2024-01-01", "2024-01-02").scale_m == 30
+        )
+        assert (
+            build_request(BY_NAME["s5p_so2"], STATIONS, "2024-01-01", "2024-01-02").scale_m == 7000
+        )
 
 
 class TestCollectionAndBandMappings:
@@ -106,7 +111,8 @@ class TestCollectionAndBandMappings:
 
     def test_every_reducible_satellite_feature_is_mapped(self):
         unmapped = [
-            f.name for f in SATELLITE
+            f.name
+            for f in SATELLITE
             if f.reduction is not None and f.name not in COLLECTION_FOR_FEATURE
         ]
         assert not unmapped, f"satellite features with no collection mapping: {unmapped}"
@@ -205,16 +211,19 @@ class TestRequestProvenance:
     def test_fingerprint_changes_with_the_buffer(self):
         """'Which buffer produced this column?' must be answerable from the archive."""
         a = build_request(BY_NAME["maiac_aod_055"], STATIONS, "2024-01-01", "2024-01-31")
-        altered = ReductionRequest(**{**a.to_dict_for_replace(), "scale_m": 500}) \
-            if hasattr(a, "to_dict_for_replace") else None
+        altered = (
+            ReductionRequest(**{**a.to_dict_for_replace(), "scale_m": 500})
+            if hasattr(a, "to_dict_for_replace")
+            else None
+        )
         if altered is None:
             import dataclasses
+
             altered = dataclasses.replace(a, scale_m=500)
         assert a.fingerprint() != altered.fingerprint()
 
     def test_request_serialises_for_the_manifest(self):
-        d = build_request(BY_NAME["maiac_aod_055"], STATIONS, "2024-01-01",
-                          "2024-01-31").to_dict()
+        d = build_request(BY_NAME["maiac_aod_055"], STATIONS, "2024-01-01", "2024-01-31").to_dict()
         assert d["reduction"]["buffer_m"] == 3000
         assert d["reduction"]["statistic"] == "mean"
         assert len(d["stations"]) == 3

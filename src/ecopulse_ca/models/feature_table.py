@@ -32,8 +32,12 @@ ROOT = Path(__file__).resolve().parents[3]
 INTERIM = ROOT / "data" / "interim"
 
 CITY_TZ = {
-    "Bishkek": "Asia/Bishkek", "Ashgabat": "Asia/Ashgabat", "Almaty": "Asia/Almaty",
-    "Tashkent": "Asia/Tashkent", "Dushanbe": "Asia/Dushanbe", "Khujand": "Asia/Dushanbe",
+    "Bishkek": "Asia/Bishkek",
+    "Ashgabat": "Asia/Ashgabat",
+    "Almaty": "Asia/Almaty",
+    "Tashkent": "Asia/Tashkent",
+    "Dushanbe": "Asia/Dushanbe",
+    "Khujand": "Asia/Dushanbe",
 }
 
 #: Satellite sources: (parquet stem, value column).
@@ -46,8 +50,12 @@ SATELLITE_SOURCES = [
 ]
 
 STATIC_COLS = [
-    "elevation", "ghsl_population_density", "viirs_nighttime_lights",
-    "terrain_basin_index_25km", "terrain_basin_index_50km", "terrain_basin_index_100km",
+    "elevation",
+    "ghsl_population_density",
+    "viirs_nighttime_lights",
+    "terrain_basin_index_25km",
+    "terrain_basin_index_50km",
+    "terrain_basin_index_100km",
     "distance_to_aralkum",
 ]
 
@@ -70,8 +78,7 @@ class TrainingCoverage:
         return "\n".join(lines)
 
 
-def daily_target(panel: pd.DataFrame, city_of: dict[str, str],
-                 min_hours: int = 18) -> pd.DataFrame:
+def daily_target(panel: pd.DataFrame, city_of: dict[str, str], min_hours: int = 18) -> pd.DataFrame:
     """Local-calendar daily mean PM2.5, requiring `min_hours` observations.
 
     Local days, not UTC: a UTC boundary splits a Central Asian night in half, cutting the
@@ -86,10 +93,16 @@ def daily_target(panel: pd.DataFrame, city_of: dict[str, str],
         ser = pd.Series(local.to_numpy(), index=local.index)
         grouped = ser.groupby(ser.index.date)
         agg = grouped.mean().where(grouped.count() >= min_hours).dropna()
-        rows.append(pd.DataFrame({
-            "station_id": str(sid), "city": city_of[str(sid)],
-            "date": pd.to_datetime(list(agg.index)), "pm25": agg.to_numpy(),
-        }))
+        rows.append(
+            pd.DataFrame(
+                {
+                    "station_id": str(sid),
+                    "city": city_of[str(sid)],
+                    "date": pd.to_datetime(list(agg.index)),
+                    "pm25": agg.to_numpy(),
+                }
+            )
+        )
     return pd.concat(rows, ignore_index=True)
 
 
@@ -123,8 +136,11 @@ def build_feature_table(splits: dict) -> tuple[pd.DataFrame, TrainingCoverage]:
         cams = pd.read_parquet(cams_path)[["station_id", "time", "cams_pm25_forecast"]].copy()
         cams["station_id"] = cams["station_id"].astype(str)
         cams["date"] = pd.to_datetime(cams["time"]).dt.normalize()
-        df = df.merge(cams[["station_id", "date", "cams_pm25_forecast"]],
-                      on=["station_id", "date"], how="left")
+        df = df.merge(
+            cams[["station_id", "date", "cams_pm25_forecast"]],
+            on=["station_id", "date"],
+            how="left",
+        )
 
     static_path = INTERIM / "static_features.csv"
     if static_path.exists():
@@ -163,8 +179,11 @@ def feature_columns(df: pd.DataFrame, tier: str) -> list[str]:
     """
     static = [c for c in STATIC_COLS if c in df.columns]
     calendar = ["doy_sin", "doy_cos", "month", "dow", "is_heating_season"]
-    sat_all = [c for c, _ in [(v, k) for k, v in SATELLITE_SOURCES]] if False else \
-        [col for _, col in SATELLITE_SOURCES if col in df.columns]
+    sat_all = (
+        [c for c, _ in [(v, k) for k, v in SATELLITE_SOURCES]]
+        if False
+        else [col for _, col in SATELLITE_SOURCES if col in df.columns]
+    )
     valid_px = [f"{c}_valid_px" for _, c in SATELLITE_SOURCES if f"{c}_valid_px" in df.columns]
     cams = ["cams_pm25_forecast"] if "cams_pm25_forecast" in df.columns else []
 
