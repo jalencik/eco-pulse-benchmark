@@ -164,7 +164,7 @@ def extract_points(
 ) -> pd.DataFrame:
     """Pull each station's cell out of an open dataset. Nulls are preserved as NaN."""
     scale = scale or {}
-    times = pd.to_datetime(ds[time_dim].values)
+    times = pd.to_datetime(ds[time_dim].to_numpy())
     rows = []
     for cell in cells:
         block: dict[str, Any] = {
@@ -178,7 +178,7 @@ def extract_points(
             if src not in ds:
                 log.warning("variable %s absent from dataset", src)
                 continue
-            arr = ds[src].isel(latitude=cell.lat_idx, longitude=cell.lon_idx).values
+            arr = ds[src].isel(latitude=cell.lat_idx, longitude=cell.lon_idx).to_numpy()
             block[out] = np.asarray(arr, dtype=float).ravel() * scale.get(out, 1.0)
         rows.append(pd.DataFrame(block))
     return pd.concat(rows, ignore_index=True)

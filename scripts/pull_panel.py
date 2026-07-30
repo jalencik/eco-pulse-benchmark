@@ -87,8 +87,7 @@ def main() -> int:
             print(f"  {sid} ({label}): {why}")
 
     survivors = eligible[eligible["location_id"].astype(str).isin(outcome.kept)]
-    print(f"\nSURVIVING: {len(outcome.kept)} stations across "
-          f"{survivors['city'].nunique()} cities")
+    print(f"\nSURVIVING: {len(outcome.kept)} stations across {survivors['city'].nunique()} cities")
     print("cities: " + ", ".join(sorted(survivors["city"].dropna().unique())))
     return 0
 

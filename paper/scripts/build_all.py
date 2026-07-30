@@ -24,23 +24,39 @@ def _fmt(df: pd.DataFrame, digits: int = 2) -> str:
 
 def table_task_f(df: pd.DataFrame) -> str:
     """Task F: forecasting. Horizons are reported separately -- never pooled."""
-    out = ["## Task F — forecasting at monitored stations", "",
-           "Test block 2024. Five seeds; every model is deterministic, so seed variance is "
-           "**zero by construction** and is reported as `(det.)` rather than `± 0.000`.", ""]
+    out = [
+        "## Task F — forecasting at monitored stations",
+        "",
+        "Test block 2024. Five seeds; every model is deterministic, so seed variance is "
+        "**zero by construction** and is reported as `(det.)` rather than `± 0.000`.",
+        "",
+    ]
     for h in sorted(df.horizon_h.unique()):
         sub = df[df.horizon_h == h]
-        agg = sub.groupby("model").agg(
-            rmse=("rmse", "mean"), mae=("mae", "mean"), bias=("bias", "mean"),
-            r2=("r2", "mean"), f1_exceed=("f1_exceed", "mean"), n=("n", "sum"),
-        ).sort_values("rmse")
+        agg = (
+            sub.groupby("model")
+            .agg(
+                rmse=("rmse", "mean"),
+                mae=("mae", "mean"),
+                bias=("bias", "mean"),
+                r2=("r2", "mean"),
+                f1_exceed=("f1_exceed", "mean"),
+                n=("n", "sum"),
+            )
+            .sort_values("rmse")
+        )
         out += [f"### t+{h} h", "", _fmt(agg, 3), ""]
     return "\n".join(out)
 
 
 def table_task_f_by_city(df: pd.DataFrame) -> str:
-    out = ["## Task F — RMSE by city and horizon", "",
-           "Per-city numbers are reported individually. Averaging six cities with different "
-           "aerosol regimes into one figure hides exactly the variation that matters.", ""]
+    out = [
+        "## Task F — RMSE by city and horizon",
+        "",
+        "Per-city numbers are reported individually. Averaging six cities with different "
+        "aerosol regimes into one figure hides exactly the variation that matters.",
+        "",
+    ]
     for h in sorted(df.horizon_h.unique()):
         piv = df[df.horizon_h == h].pivot_table(
             index="city", columns="model", values="rmse", aggfunc="mean"
@@ -50,66 +66,93 @@ def table_task_f_by_city(df: pd.DataFrame) -> str:
 
 
 def table_task_n(df: pd.DataFrame) -> str:
-    out = ["## Task N — nowcasting, leave-city-out", "",
-           "Each fold holds out one city entirely; the held-out city contributes no "
-           "training label. These are the baselines any satellite model must beat.", ""]
-    agg = df.groupby("model").agg(
-        rmse=("rmse", "mean"), mae=("mae", "mean"), bias=("bias", "mean"),
-        r2=("r2", "mean"), f1_exceed=("f1_exceed", "mean"), n=("n", "sum"),
-    ).sort_values("rmse")
+    out = [
+        "## Task N — nowcasting, leave-city-out",
+        "",
+        "Each fold holds out one city entirely; the held-out city contributes no "
+        "training label. These are the baselines any satellite model must beat.",
+        "",
+    ]
+    agg = (
+        df.groupby("model")
+        .agg(
+            rmse=("rmse", "mean"),
+            mae=("mae", "mean"),
+            bias=("bias", "mean"),
+            r2=("r2", "mean"),
+            f1_exceed=("f1_exceed", "mean"),
+            n=("n", "sum"),
+        )
+        .sort_values("rmse")
+    )
     out += ["### Pooled across folds", "", _fmt(agg, 3), ""]
 
-    piv = df.pivot_table(index="held_out_city", columns="model", values="rmse",
-                         aggfunc="mean")
+    piv = df.pivot_table(index="held_out_city", columns="model", values="rmse", aggfunc="mean")
     out += ["### RMSE by held-out city (µg/m³)", "", _fmt(piv), ""]
 
     if "kriging_fallback_rate" in df.columns:
         fb = df.dropna(subset=["kriging_fallback_rate"])
         if not fb.empty:
             rate = fb.groupby("held_out_city")["kriging_fallback_rate"].mean()
-            out += ["### Kriging fallback rate", "",
-                    "Share of predictions where the kriging system was singular and the "
-                    "model silently fell back to IDW. A high rate means the reported "
-                    "'kriging' column is substantially IDW underneath.", "",
-                    _fmt(rate.to_frame("fallback_rate"), 4), ""]
+            out += [
+                "### Kriging fallback rate",
+                "",
+                "Share of predictions where the kriging system was singular and the "
+                "model silently fell back to IDW. A high rate means the reported "
+                "'kriging' column is substantially IDW underneath.",
+                "",
+                _fmt(rate.to_frame("fallback_rate"), 4),
+                "",
+            ]
     return "\n".join(out)
 
 
 def table_dm(df: pd.DataFrame, task: str) -> str:
-    out = [f"## Diebold–Mariano — Task {task}", "",
-           "Newey–West HAC variance with truncation lag h−1, plus the "
-           "Harvey–Leybourne–Newbold small-sample correction. A lower RMSE with "
-           "p ≥ 0.05 is **not** an improvement.", ""]
+    out = [
+        f"## Diebold–Mariano — Task {task}",
+        "",
+        "Newey–West HAC variance with truncation lag h−1, plus the "
+        "Harvey–Leybourne–Newbold small-sample correction. A lower RMSE with "
+        "p ≥ 0.05 is **not** an improvement.",
+        "",
+    ]
     if df.empty:
         return "\n".join(out + ["_No comparisons available._", ""])
 
     total = len(df)
     sig = int(df.significant_at_05.sum())
     ties = int((df.better == "tie").sum())
-    out += [f"- comparisons: **{total}**",
-            f"- significant at p < 0.05: **{sig}** ({100 * sig / total:.0f}%)",
-            f"- exact ties (identical forecasts): **{ties}**", ""]
+    out += [
+        f"- comparisons: **{total}**",
+        f"- significant at p < 0.05: **{sig}** ({100 * sig / total:.0f}%)",
+        f"- exact ties (identical forecasts): **{ties}**",
+        "",
+    ]
 
-    pair = df.groupby(["model_a", "model_b"]).agg(
-        n_comparisons=("p_value", "size"),
-        n_significant=("significant_at_05", "sum"),
-        median_p=("p_value", "median"),
-    ).reset_index()
+    pair = (
+        df.groupby(["model_a", "model_b"])
+        .agg(
+            n_comparisons=("p_value", "size"),
+            n_significant=("significant_at_05", "sum"),
+            median_p=("p_value", "median"),
+        )
+        .reset_index()
+    )
     out += ["### By model pair", "", _fmt(pair, 4), ""]
     return "\n".join(out)
 
 
 def main() -> int:
-    need = ["task_f_baselines.csv", "task_n_baselines.csv", "dm_task_f.csv", "dm_task_n.csv"]
+    need = ["t3_01_task_f_baselines_hourly.csv", "t3_02_task_n_baselines_hourly.csv", "t3_03_dm_task_f.csv", "t3_04_dm_task_n.csv"]
     missing = [n for n in need if not (TABLES / n).exists()]
     if missing:
         print(f"missing results: {missing}\nrun scripts/run_baselines.py first")
         return 1
 
-    task_f = pd.read_csv(TABLES / "task_f_baselines.csv")
-    task_n = pd.read_csv(TABLES / "task_n_baselines.csv")
-    dm_f = pd.read_csv(TABLES / "dm_task_f.csv")
-    dm_n = pd.read_csv(TABLES / "dm_task_n.csv")
+    task_f = pd.read_csv(TABLES / "t3_01_task_f_baselines_hourly.csv")
+    task_n = pd.read_csv(TABLES / "t3_02_task_n_baselines_hourly.csv")
+    dm_f = pd.read_csv(TABLES / "t3_03_dm_task_f.csv")
+    dm_n = pd.read_csv(TABLES / "t3_04_dm_task_n.csv")
 
     doc = [
         "# Baseline results — ECO Pulse CA benchmark v1.0.0",
@@ -133,8 +176,7 @@ def main() -> int:
         "(p95 disagreement 33.6 µg/m³). Bishkek rows carry that uncertainty irreducibly.",
         "2. **Leave-station-out covers 2 of 6 cities.** The rest hold a single instrument.",
         "3. **Kazakhstan contributes one city** — Astana failed Q7 at 42.8% completeness.",
-        "4. **No result speaks to current conditions.** The reference network ended "
-        "2025-03-04.",
+        "4. **No result speaks to current conditions.** The reference network ended 2025-03-04.",
         "",
     ]
     out = TABLES.parent / "RESULTS.md"

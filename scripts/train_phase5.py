@@ -3,18 +3,31 @@
 Hyperparameters are selected on the 2023 VALIDATION block and then frozen. The test block
 is scored once per configuration -- the spec forbids tuning on test.
 """
+
 from __future__ import annotations
-import itertools, json, pathlib, sys, warnings
+
+import itertools
+import json
+import pathlib
+import sys
+import warnings
+
 warnings.filterwarnings("ignore")
-import numpy as np, pandas as pd, lightgbm as lgb
+import lightgbm as lgb
+import numpy as np
+import pandas as pd
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-from ecopulse_ca.models.feature_table import build_feature_table, feature_columns, daily_target
-from ecopulse_ca.models.lag_features import (LOCAL_LAG_COLS, SPATIAL_COLS,
-                                             build_local_lags, build_spatial_features)
-from ecopulse_ca.models.cams_baseline import apply_pooled_debias, fit_bias
 from ecopulse_ca.eval.metrics import regression_metrics
+from ecopulse_ca.models.cams_baseline import apply_pooled_debias, fit_bias
+from ecopulse_ca.models.feature_table import build_feature_table, daily_target, feature_columns
+from ecopulse_ca.models.lag_features import (
+    LOCAL_LAG_COLS,
+    SPATIAL_COLS,
+    build_local_lags,
+    build_spatial_features,
+)
 
 SEEDS = [0, 1, 2, 3, 4]
 TIERS = ["static_only", "deployable", "retrospective"]
@@ -23,20 +36,34 @@ GRID = list(itertools.product([0.03, 0.08], [31, 63], [20, 40], [0.7, 0.9]))
 splits = json.loads((ROOT / "benchmark/splits/splits.json").read_text())
 B = {b["name"]: b for b in splits["temporal_blocks"]}
 tr_end = pd.Timestamp(B["train"]["end"]).tz_localize(None)
-va_lo, va_hi = (pd.Timestamp(B["val"]["start"]).tz_localize(None),
-                pd.Timestamp(B["val"]["end"]).tz_localize(None))
-te_lo, te_hi = (pd.Timestamp(B["test"]["start"]).tz_localize(None),
-                pd.Timestamp(B["test"]["end"]).tz_localize(None))
+va_lo, va_hi = (
+    pd.Timestamp(B["val"]["start"]).tz_localize(None),
+    pd.Timestamp(B["val"]["end"]).tz_localize(None),
+)
+te_lo, te_hi = (
+    pd.Timestamp(B["test"]["start"]).tz_localize(None),
+    pd.Timestamp(B["test"]["end"]).tz_localize(None),
+)
 coords = {s["station_id"]: (s["latitude"], s["longitude"]) for s in splits["stations"]}
 
 df, cov = build_feature_table(splits)
 print(cov.report(), flush=True)
 
+
 def mk(seed, p):
     lr, leaves, mcs, ff = p
-    return lgb.LGBMRegressor(n_estimators=800, learning_rate=lr, num_leaves=leaves,
-                             min_child_samples=mcs, colsample_bytree=ff, subsample=0.8,
-                             subsample_freq=1, random_state=seed, verbose=-1)
+    return lgb.LGBMRegressor(
+        n_estimators=800,
+        learning_rate=lr,
+        num_leaves=leaves,
+        min_child_samples=mcs,
+        colsample_bytree=ff,
+        subsample=0.8,
+        subsample_freq=1,
+        random_state=seed,
+        verbose=-1,
+    )
+
 
 def tune(tr, va, feats):
     """Select on VALIDATION only. Test is never consulted here."""
@@ -47,6 +74,7 @@ def tune(tr, va, feats):
         if np.isfinite(r.rmse) and r.rmse < best_rmse:
             best, best_rmse = p, r.rmse
     return best, best_rmse
+
 
 # ---------- CAMS comparator (pooled debias, train-block bias) ----------
 panel = pd.read_parquet(ROOT / "data/interim/benchmark_panel.parquet")
@@ -77,18 +105,40 @@ for tier in TIERS:
         for seed in SEEDS:
             m = mk(seed, p).fit(pd.concat([tr, va])[feats], pd.concat([tr, va]).pm25)
             r = regression_metrics(te.pm25, pd.Series(m.predict(te[feats]), index=te.index))
-            rows.append({"task": "N", "tier": tier, "held_out_city": held, "seed": seed,
-                         "model": "lgbm_tuned", "params": str(p), "val_rmse": vrmse,
-                         "zero_shot": held == "Khujand", **r.as_dict()})
+            rows.append(
+                {
+                    "task": "N",
+                    "tier": tier,
+                    "held_out_city": held,
+                    "seed": seed,
+                    "model": "lgbm_tuned",
+                    "params": str(p),
+                    "val_rmse": vrmse,
+                    "zero_shot": held == "Khujand",
+                    **r.as_dict(),
+                }
+            )
         ids = set(te.station_id.unique())
         s2 = cams[cams.station_id.isin(ids)].copy()
         s2["pooled"] = apply_pooled_debias(s2, bias, held_out=ids)
-        j = te.merge(s2[["station_id","date","pooled"]], on=["station_id","date"]).dropna(subset=["pooled"])
+        j = te.merge(s2[["station_id", "date", "pooled"]], on=["station_id", "date"]).dropna(
+            subset=["pooled"]
+        )
         if len(j) >= 30:
             r = regression_metrics(j.pm25, j.pooled)
-            rows.append({"task":"N","tier":tier,"held_out_city":held,"seed":0,
-                         "model":"cams_debiased_pooled","params":"","val_rmse":np.nan,
-                         "zero_shot":held=="Khujand", **r.as_dict()})
+            rows.append(
+                {
+                    "task": "N",
+                    "tier": tier,
+                    "held_out_city": held,
+                    "seed": 0,
+                    "model": "cams_debiased_pooled",
+                    "params": "",
+                    "val_rmse": np.nan,
+                    "zero_shot": held == "Khujand",
+                    **r.as_dict(),
+                }
+            )
     print(f"  {tier} done", flush=True)
 
 # ================= TASK F: blocked temporal, local lags LEGAL =================
@@ -103,26 +153,50 @@ for tier in TIERS:
     for seed in SEEDS:
         m = mk(seed, p).fit(pd.concat([tr, va])[feats], pd.concat([tr, va]).pm25)
         r = regression_metrics(te.pm25, pd.Series(m.predict(te[feats]), index=te.index))
-        rows.append({"task":"F","tier":tier,"held_out_city":"ALL","seed":seed,
-                     "model":"lgbm_tuned_lags","params":str(p),"val_rmse":vrmse,
-                     "zero_shot":False, **r.as_dict()})
+        rows.append(
+            {
+                "task": "F",
+                "tier": tier,
+                "held_out_city": "ALL",
+                "seed": seed,
+                "model": "lgbm_tuned_lags",
+                "params": str(p),
+                "val_rmse": vrmse,
+                "zero_shot": False,
+                **r.as_dict(),
+            }
+        )
     print(f"  {tier} done  params={p}", flush=True)
 
 res = pd.DataFrame(rows)
 res.to_csv(ROOT / "paper/tables/phase5_tuned.csv", index=False)
-print("\n" + "="*76)
+print("\n" + "=" * 76)
 print("TASK N -- leave-city-out (spatial features only)")
-print("="*76)
-n = res[res.task=="N"]
-print(n[n.model=="lgbm_tuned"].groupby("tier").agg(
-    rmse=("rmse","mean"), mae=("mae","mean"), r2=("r2","mean"), sd=("rmse","std")).round(2).to_string())
-c = n[n.model=="cams_debiased_pooled"].agg({"rmse":"mean","mae":"mean","r2":"mean"})
+print("=" * 76)
+n = res[res.task == "N"]
+print(
+    n[n.model == "lgbm_tuned"]
+    .groupby("tier")
+    .agg(rmse=("rmse", "mean"), mae=("mae", "mean"), r2=("r2", "mean"), sd=("rmse", "std"))
+    .round(2)
+    .to_string()
+)
+c = n[n.model == "cams_debiased_pooled"].agg({"rmse": "mean", "mae": "mean", "r2": "mean"})
 print(f"\ncams_debiased_pooled   rmse {c.rmse:.2f}  mae {c.mae:.2f}  r2 {c.r2:.2f}")
 print("\nper-city RMSE:")
-print(n[n.model=="lgbm_tuned"].pivot_table(index="held_out_city", columns="tier",
-      values="rmse", aggfunc="mean").round(1).to_string())
-print("\n" + "="*76)
+print(
+    n[n.model == "lgbm_tuned"]
+    .pivot_table(index="held_out_city", columns="tier", values="rmse", aggfunc="mean")
+    .round(1)
+    .to_string()
+)
+print("\n" + "=" * 76)
 print("TASK F -- blocked temporal, local lags (NOT comparable to Task N)")
-print("="*76)
-print(res[res.task=="F"].groupby("tier").agg(
-    rmse=("rmse","mean"), mae=("mae","mean"), r2=("r2","mean"), sd=("rmse","std")).round(2).to_string())
+print("=" * 76)
+print(
+    res[res.task == "F"]
+    .groupby("tier")
+    .agg(rmse=("rmse", "mean"), mae=("mae", "mean"), r2=("r2", "mean"), sd=("rmse", "std"))
+    .round(2)
+    .to_string()
+)

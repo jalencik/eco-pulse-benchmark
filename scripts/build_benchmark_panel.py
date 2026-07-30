@@ -44,9 +44,7 @@ def main() -> int:
     # -- decision 2: merge co-located feeds ------------------------------------------
     surviving = census[census.location_id.isin([str(c) for c in panel.columns])].copy()
     surviving[["latitude", "longitude"]] = surviving[["latitude", "longitude"]].astype(float)
-    pairs = [
-        f.station_id.split(",") for f in q5_duplicate_stations(surviving) if f.rule == "Q5b"
-    ]
+    pairs = [f.station_id.split(",") for f in q5_duplicate_stations(surviving) if f.rule == "Q5b"]
     print(f"co-located pairs to merge: {len(pairs)}")
 
     merged = panel.copy()
@@ -57,8 +55,11 @@ def main() -> int:
         city = city_of.get(a, a)
         p_id, s_id = choose_primary(panel[a], panel[b], a, b)
         vals, src, rep = merge_colocated(
-            panel[p_id], panel[s_id],
-            merged_id=city, primary_id=p_id, secondary_id=s_id,
+            panel[p_id],
+            panel[s_id],
+            merged_id=city,
+            primary_id=p_id,
+            secondary_id=s_id,
         )
         merged = merged.drop(columns=[a, b])
         merged[city] = vals
@@ -67,8 +68,10 @@ def main() -> int:
         city_of[city] = city
         tz_of[city] = tz_of.get(p_id)
         coords.loc[city] = coords.loc[p_id]
-        print(f"  {city}: primary={p_id} secondary={s_id} -> {rep.n_merged:,} obs "
-              f"({rep.pct_exact:.1f}% agreement)")
+        print(
+            f"  {city}: primary={p_id} secondary={s_id} -> {rep.n_merged:,} obs "
+            f"({rep.pct_exact:.1f}% agreement)"
+        )
 
     for c in merged.columns:
         c = str(c)
@@ -78,13 +81,23 @@ def main() -> int:
     # -- decision 3: per-city Q6 -------------------------------------------------------
     findings = run_q6_per_city(merged, city_of, tz_of)
     fdf = pd.DataFrame(
-        [{"rule": f.rule, "station_id": f.station_id, "verdict": f.verdict,
-          "n_flagged": f.n_flagged, "detail": f.detail} for f in findings]
+        [
+            {
+                "rule": f.rule,
+                "station_id": f.station_id,
+                "verdict": f.verdict,
+                "n_flagged": f.n_flagged,
+                "detail": f.detail,
+            }
+            for f in findings
+        ]
     )
     fdf.to_csv(INTERIM / "q6_percity_findings.csv", index=False)
     q6_rejects = set(fdf.loc[fdf.verdict == "reject", "station_id"])
-    print(f"\nQ6 per-city: {len(q6_rejects)} rejections "
-          f"({int((fdf.rule == 'Q6a').sum())} stations checked)")
+    print(
+        f"\nQ6 per-city: {len(q6_rejects)} rejections "
+        f"({int((fdf.rule == 'Q6a').sum())} stations checked)"
+    )
     for _, r in fdf[fdf.verdict == "reject"].iterrows():
         print(f"  REJECT {r.station_id}: {r.detail}")
 
@@ -104,14 +117,19 @@ def main() -> int:
     print("\n" + "=" * 74)
     print("FINAL BENCHMARK PANEL")
     print("=" * 74)
-    summary = pd.DataFrame({
-        "city": [city_of.get(str(c), str(c)) for c in final.columns],
-        "n_obs": [int(final[c].notna().sum()) for c in final.columns],
-        "first": [final[c].first_valid_index() for c in final.columns],
-        "last": [final[c].last_valid_index() for c in final.columns],
-        f"obs_in_{TEST_YEAR}": [int(test[c].notna().sum()) for c in final.columns],
-        f"complete_{TEST_YEAR}": [round(float(test[c].notna().mean()), 3) for c in final.columns],
-    }, index=[str(c) for c in final.columns])
+    summary = pd.DataFrame(
+        {
+            "city": [city_of.get(str(c), str(c)) for c in final.columns],
+            "n_obs": [int(final[c].notna().sum()) for c in final.columns],
+            "first": [final[c].first_valid_index() for c in final.columns],
+            "last": [final[c].last_valid_index() for c in final.columns],
+            f"obs_in_{TEST_YEAR}": [int(test[c].notna().sum()) for c in final.columns],
+            f"complete_{TEST_YEAR}": [
+                round(float(test[c].notna().mean()), 3) for c in final.columns
+            ],
+        },
+        index=[str(c) for c in final.columns],
+    )
     print(summary.to_string())
 
     cities = sorted({city_of.get(str(c), str(c)) for c in final.columns})
@@ -119,8 +137,10 @@ def main() -> int:
     print(f"\nstations   : {len(final.columns)}")
     print(f"cities     : {len(cities)} -> {cities}")
     print(f"observations: {int(final.notna().sum().sum()):,}")
-    print(f"\nTEST BLOCK {TEST_YEAR}: {len(with_test)} stations with data, "
-          f"{len({city_of.get(str(c), str(c)) for c in with_test})} cities")
+    print(
+        f"\nTEST BLOCK {TEST_YEAR}: {len(with_test)} stations with data, "
+        f"{len({city_of.get(str(c), str(c)) for c in with_test})} cities"
+    )
     return 0
 
 

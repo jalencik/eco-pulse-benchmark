@@ -72,21 +72,27 @@ def main() -> int:
             print(f"  [{i:2d}/{len(chunks)}] {lo[:7]}  FAILED: {type(exc).__name__}", flush=True)
             continue
         if not res.complete:
-            incomplete.append({"chunk": f"{lo}..{hi}",
-                               "expected": res.n_expected, "returned": res.n_returned})
+            incomplete.append(
+                {"chunk": f"{lo}..{hi}", "expected": res.n_expected, "returned": res.n_returned}
+            )
         frames.append(res.frame)
         if i % 12 == 0 or i == len(chunks):
             done = sum(len(f) for f in frames)
-            print(f"  [{i:2d}/{len(chunks)}] {lo[:7]}  rows so far {done:,}  "
-                  f"elapsed {(time.time()-t0)/60:.1f} min", flush=True)
+            print(
+                f"  [{i:2d}/{len(chunks)}] {lo[:7]}  rows so far {done:,}  "
+                f"elapsed {(time.time() - t0) / 60:.1f} min",
+                flush=True,
+            )
 
     if not frames:
         print("nothing retrieved")
         return 1
 
-    df = pd.concat(frames, ignore_index=True).sort_values(
-        ["station_id", "date"]
-    ).reset_index(drop=True)
+    df = (
+        pd.concat(frames, ignore_index=True)
+        .sort_values(["station_id", "date"])
+        .reset_index(drop=True)
+    )
     INTERIM.mkdir(parents=True, exist_ok=True)
     df.to_parquet(INTERIM / "maiac_aod.parquet")
 
@@ -107,16 +113,15 @@ def main() -> int:
         "chunks_failed": failed,
         "chunks_incomplete": incomplete,
         "note": "Daily composite of ~100 granules/day computed server-side BEFORE "
-                "reduction; reducing per-granule would weight days by overpass count. "
-                "Null rows retained deliberately (risk R7).",
+        "reduction; reducing per-granule would weight days by overpass count. "
+        "Null rows retained deliberately (risk R7).",
     }
     (INTERIM / "maiac_aod_provenance.json").write_text(
         json.dumps(provenance, indent=2), encoding="utf-8"
     )
 
-    print(f"\nrows {len(df):,} / expected {len(stations)*expected_days:,}")
-    print(f"null AOD {df['aod_055'].isna().sum():,} "
-          f"({100*df['aod_055'].isna().mean():.1f}%)")
+    print(f"\nrows {len(df):,} / expected {len(stations) * expected_days:,}")
+    print(f"null AOD {df['aod_055'].isna().sum():,} ({100 * df['aod_055'].isna().mean():.1f}%)")
     if failed:
         print(f"FAILED chunks: {len(failed)} -- see provenance JSON")
     if incomplete:
@@ -132,8 +137,10 @@ def main() -> int:
     print(by_city.to_string())
 
     print("\nretrieval rate by month (informative missingness -- expect a winter minimum):")
-    m = df.assign(month=df["date"].dt.month).groupby("month").agg(
-        pct_retrieved=("aod_055", lambda s: round(100 * s.notna().mean(), 1))
+    m = (
+        df.assign(month=df["date"].dt.month)
+        .groupby("month")
+        .agg(pct_retrieved=("aod_055", lambda s: round(100 * s.notna().mean(), 1)))
     )
     print(m.to_string())
     return 0

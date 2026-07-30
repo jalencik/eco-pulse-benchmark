@@ -53,12 +53,17 @@ def load_context():
     census["location_id"] = census["location_id"].astype(str)
     tz_raw = dict(zip(census.location_id, census.timezone, strict=False))
     city_tz = {
-        "Bishkek": "Asia/Bishkek", "Ashgabat": "Asia/Ashgabat",
-        "Almaty": "Asia/Almaty", "Tashkent": "Asia/Tashkent",
-        "Dushanbe": "Asia/Dushanbe", "Khujand": "Asia/Dushanbe",
+        "Bishkek": "Asia/Bishkek",
+        "Ashgabat": "Asia/Ashgabat",
+        "Almaty": "Asia/Almaty",
+        "Tashkent": "Asia/Tashkent",
+        "Dushanbe": "Asia/Dushanbe",
+        "Khujand": "Asia/Dushanbe",
     }
-    tz_of = {s["station_id"]: tz_raw.get(s["station_id"]) or city_tz.get(s["city"])
-             for s in splits["stations"]}
+    tz_of = {
+        s["station_id"]: tz_raw.get(s["station_id"]) or city_tz.get(s["city"])
+        for s in splits["stations"]
+    }
     city_of = {s["station_id"]: s["city"] for s in splits["stations"]}
     return splits, panel, blocks, tz_of, city_of
 
@@ -72,9 +77,7 @@ def dm_task_f(panel, blocks: Blocks, city_of) -> pd.DataFrame:
             continue
         for h in HORIZONS:
             obs = window(y, blocks.test)
-            preds = {
-                n: window(forecast_batch(y, n, h, train), blocks.test) for n in FORECASTERS
-            }
+            preds = {n: window(forecast_batch(y, n, h, train), blocks.test) for n in FORECASTERS}
             d = pairwise_dm(obs, preds, horizon_hours=h)
             d.insert(0, "horizon_h", h)
             d.insert(0, "city", city_of.get(sid, sid))
@@ -83,16 +86,15 @@ def dm_task_f(panel, blocks: Blocks, city_of) -> pd.DataFrame:
     return pd.concat(rows, ignore_index=True) if rows else pd.DataFrame()
 
 
-def dm_task_n(
-    panel, splits, blocks: Blocks, sensitivity: list | None = None
-) -> pd.DataFrame:
+def dm_task_n(panel, splits, blocks: Blocks, sensitivity: list | None = None) -> pd.DataFrame:
     import numpy as np
 
     sensitivity = [] if sensitivity is None else sensitivity
 
     meta = {
-        s["station_id"]: StationMeta(s["station_id"], s["latitude"], s["longitude"],
-                                     s["city"], True)
+        s["station_id"]: StationMeta(
+            s["station_id"], s["latitude"], s["longitude"], s["city"], True
+        )
         for s in splits["stations"]
     }
     rows = []
@@ -115,14 +117,15 @@ def dm_task_n(
             preds = {}
             for name, m in fitted.items():
                 preds[name] = pd.Series(
-                    [m.predict(test_train.loc[ts], target) if ts in test_train.index else np.nan
-                     for ts in obs.index],
-                    index=obs.index, dtype=float,
+                    [
+                        m.predict(test_train.loc[ts], target) if ts in test_train.index else np.nan
+                        for ts in obs.index
+                    ],
+                    index=obs.index,
+                    dtype=float,
                 )
             n_obs = int(obs.notna().sum())
-            d = pairwise_dm(
-                obs, preds, truncation_lag=nowcast_truncation_lag(n_obs)
-            )
+            d = pairwise_dm(obs, preds, truncation_lag=nowcast_truncation_lag(n_obs))
             d.insert(0, "station_id", held)
             d.insert(0, "held_out_city", fold["held_out_city"])
             rows.append(d)
@@ -130,7 +133,7 @@ def dm_task_n(
             # Robustness: a verdict that flips with the truncation lag is not a verdict.
             names = sorted(preds)
             for i, a in enumerate(names):
-                for b in names[i + 1:]:
+                for b in names[i + 1 :]:
                     s = lag_sensitivity(obs, preds[a], preds[b])
                     s.insert(0, "model_b", b)
                     s.insert(0, "model_a", a)
@@ -142,8 +145,10 @@ def dm_task_n(
 def main() -> int:
     TABLES.mkdir(parents=True, exist_ok=True)
     splits, panel, blocks, tz_of, city_of = load_context()
-    print(f"benchmark v{splits['benchmark_version']}  "
-          f"test {blocks.test[0].date()} .. {blocks.test[1].date()}")
+    print(
+        f"benchmark v{splits['benchmark_version']}  "
+        f"test {blocks.test[0].date()} .. {blocks.test[1].date()}"
+    )
     print(f"stations {len(panel.columns)}  cities {len(set(city_of.values()))}\n")
 
     # ---- Task F -------------------------------------------------------------------
@@ -158,8 +163,10 @@ def main() -> int:
     key = ["station_id", "horizon_h", "model"]
     spread = task_f.groupby(key)["rmse"].std(ddof=0).fillna(0.0)
     f_deterministic = bool((spread < 1e-12).all())
-    print(f"  seed variance across {len(SEEDS)} seeds: "
-          f"{'ZERO (deterministic, as declared)' if f_deterministic else 'NON-ZERO'}")
+    print(
+        f"  seed variance across {len(SEEDS)} seeds: "
+        f"{'ZERO (deterministic, as declared)' if f_deterministic else 'NON-ZERO'}"
+    )
 
     task_f_agg = task_f[task_f.seed == 0].drop(columns="seed").copy()
     task_f_agg["city"] = task_f_agg.station_id.map(city_of)
@@ -171,8 +178,10 @@ def main() -> int:
     nkey = ["fold", "station_id", "model"]
     nspread = task_n.groupby(nkey)["rmse"].std(ddof=0).fillna(0.0)
     n_deterministic = bool((nspread < 1e-12).all())
-    print(f"  seed variance across {len(SEEDS)} seeds: "
-          f"{'ZERO (deterministic, as declared)' if n_deterministic else 'NON-ZERO'}")
+    print(
+        f"  seed variance across {len(SEEDS)} seeds: "
+        f"{'ZERO (deterministic, as declared)' if n_deterministic else 'NON-ZERO'}"
+    )
     task_n_agg = task_n[task_n.seed == 0].drop(columns="seed")
 
     # ---- DM tests -----------------------------------------------------------------
@@ -181,14 +190,12 @@ def main() -> int:
     sens: list = []
     dm_n = dm_task_n(panel, splits, blocks, sens)
 
-    task_f_agg.to_csv(TABLES / "task_f_baselines.csv", index=False)
-    task_n_agg.to_csv(TABLES / "task_n_baselines.csv", index=False)
-    dm_f.to_csv(TABLES / "dm_task_f.csv", index=False)
-    dm_n.to_csv(TABLES / "dm_task_n.csv", index=False)
+    task_f_agg.to_csv(TABLES / "t3_01_task_f_baselines_hourly.csv", index=False)
+    task_n_agg.to_csv(TABLES / "t3_02_task_n_baselines_hourly.csv", index=False)
+    dm_f.to_csv(TABLES / "t3_03_dm_task_f.csv", index=False)
+    dm_n.to_csv(TABLES / "t3_04_dm_task_n.csv", index=False)
     if sens:
-        pd.concat(sens, ignore_index=True).to_csv(
-            TABLES / "dm_lag_sensitivity.csv", index=False
-        )
+        pd.concat(sens, ignore_index=True).to_csv(TABLES / "t3_05_dm_lag_sensitivity_hourly.csv", index=False)
 
     # ---- Report -------------------------------------------------------------------
     det_f = "(det.)" if f_deterministic else "± see csv"
@@ -197,22 +204,32 @@ def main() -> int:
     print("\n" + "=" * 86)
     print(f"TASK F -- FORECASTING at monitored stations   [5 seeds, {det_f}]")
     print("=" * 86)
-    pv = task_f_agg.pivot_table(index="model", columns="horizon_h",
-                                values=["rmse", "mae", "f1_exceed"], aggfunc="mean")
+    pv = task_f_agg.pivot_table(
+        index="model", columns="horizon_h", values=["rmse", "mae", "f1_exceed"], aggfunc="mean"
+    )
     print(pv.round(3).to_string())
 
     print("\n" + "=" * 86)
     print(f"TASK N -- NOWCASTING, leave-city-out          [5 seeds, {det_n}]")
     print("=" * 86)
     pn = task_n_agg.groupby("model").agg(
-        rmse=("rmse", "mean"), mae=("mae", "mean"), r2=("r2", "mean"),
-        bias=("bias", "mean"), f1_exceed=("f1_exceed", "mean"), n=("n", "sum"),
+        rmse=("rmse", "mean"),
+        mae=("mae", "mean"),
+        r2=("r2", "mean"),
+        bias=("bias", "mean"),
+        f1_exceed=("f1_exceed", "mean"),
+        n=("n", "sum"),
     )
     print(pn.round(3).to_string())
 
     print("\nper held-out city (RMSE):")
-    print(task_n_agg.pivot_table(index="held_out_city", columns="model",
-                                 values="rmse", aggfunc="mean").round(2).to_string())
+    print(
+        task_n_agg.pivot_table(
+            index="held_out_city", columns="model", values="rmse", aggfunc="mean"
+        )
+        .round(2)
+        .to_string()
+    )
 
     if not dm_f.empty:
         sig = dm_f[dm_f.significant_at_05]

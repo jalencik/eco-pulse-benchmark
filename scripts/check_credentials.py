@@ -55,13 +55,16 @@ def main() -> int:
         pkg_ok, install_hint = _package_ready(var)
         unlocks = sorted({f.name for f in ALL_FEATURES if f.credential == var})
         mark = "OK " if has_key else "-- "
-        print(f"  {mark} {var:22s} {'set' if has_key else 'MISSING':8s} "
-              f"unlocks {len(unlocks)} features")
+        print(
+            f"  {mark} {var:22s} {'set' if has_key else 'MISSING':8s} "
+            f"unlocks {len(unlocks)} features"
+        )
         if has_key and not pkg_ok:
             print(f"       key present but package missing:  {install_hint}")
         if not has_key:
-            print(f"       would unlock: {', '.join(unlocks[:4])}"
-                  f"{' ...' if len(unlocks) > 4 else ''}")
+            print(
+                f"       would unlock: {', '.join(unlocks[:4])}{' ...' if len(unlocks) > 4 else ''}"
+            )
 
     print("\nfeature sets:")
     for fset in FEATURE_SETS:
@@ -78,8 +81,9 @@ def main() -> int:
         print("  table. The MAIAC claim was checked and proved wrong by ~32x; the rest")
         print("  are not assumed correct.")
 
-    ready = [s.name for s in FEATURE_SETS
-             if not [c for c in s.credentials_required() if not _present(c)]]
+    ready = [
+        s.name for s in FEATURE_SETS if not [c for c in s.credentials_required() if not _present(c)]
+    ]
     print(f"\n{len(ready)}/{len(FEATURE_SETS)} feature sets ready: {ready or 'none'}")
     return 0
 

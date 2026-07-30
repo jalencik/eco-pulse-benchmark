@@ -57,6 +57,14 @@ target-version = "py312"
 select = ["E", "F", "I", "UP", "B", "SIM", "NPY", "PD"]
 ignore = ["E501"]
 
+[tool.ruff.lint.per-file-ignores]
+# Extraction/training scripts must mutate sys.path before importing the package, because
+# they run standalone against the repo checkout rather than an installed distribution.
+# E402 is therefore unavoidable there and is exempted deliberately -- NOT suppressed
+# across the codebase, where an out-of-order import is still an error.
+"scripts/*.py" = ["E402"]
+"paper/scripts/*.py" = ["E402"]
+
 [tool.mypy]
 python_version = "3.12"
 warn_unused_ignores = true

@@ -85,11 +85,15 @@ def build_spatial_features(
     for _, row in df.iterrows():
         day = by_date.get(row["date"])
         if day is None or day.empty:
-            idw_vals.append(np.nan); mean_vals.append(np.nan); counts.append(0)
+            idw_vals.append(np.nan)
+            mean_vals.append(np.nan)
+            counts.append(0)
             continue
         day = day[day.station_id != row["station_id"]]
         if day.empty:
-            idw_vals.append(np.nan); mean_vals.append(np.nan); counts.append(0)
+            idw_vals.append(np.nan)
+            mean_vals.append(np.nan)
+            counts.append(0)
             continue
         lat, lon = coords[row["station_id"]]
         d = np.array([
@@ -110,7 +114,7 @@ def build_spatial_features(
 
 
 LOCAL_LAG_COLS = (
-    [f"pm25_lag{l}d" for l in LAG_DAYS]
+    [f"pm25_lag{d}d" for d in LAG_DAYS]
     + [f"pm25_roll{w}d" for w in ROLL_WINDOWS]
     + ["pm25_delta_1d"]
 )
