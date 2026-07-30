@@ -50,14 +50,46 @@ fixtures:
 python -m pytest
 ```
 
-Run the station census, which settles whether leave-city-out is viable at all:
+## What a reviewer can do, and what needs a key
+
+Be precise about this, because "one command reproduces everything" is only true once the
+ground-truth panel exists locally.
+
+**Without any credentials, from a clean clone:**
+
+| Goal | Command |
+|---|---|
+| Verify the frozen benchmark | `cd benchmark/splits && sha256sum -c splits.sha256` |
+| Run the full test suite (538 tests, offline fixtures) | `python tasks.py test` |
+| Lint and type-check | `python tasks.py lint && python tasks.py typecheck` |
+| Rebuild every table and re-render the manuscript | `python tasks.py paper` |
+
+The splits **are** the benchmark and they are committed, so verifying them requires no
+rebuild and no key.
+
+**To regenerate the numbers from source**, the derived ground-truth panel must be built
+first. It is not committed — `data/MANIFEST.md` records its provenance, and the per-station
+OpenAQ licence terms are not yet transcribed, so the archive is not redistributed here.
+With an `OPENAQ_API_KEY` in `.env` (see [`REGISTRATION.md`](REGISTRATION.md)):
 
 ```bash
-python -m ecopulse_ca.ingest.openaq --census -v
+python -m ecopulse_ca.ingest.openaq --census
+python scripts/pull_panel.py
 ```
 
-To use real data, paste your OpenAQ key into `.env` (see [`REGISTRATION.md`](REGISTRATION.md)).
-The pipeline switches from fixtures to the live API automatically — nothing else to change.
+Then the single command that rebuilds every reported number end to end:
+
+```bash
+make reproduce
+```
+
+Equivalently, where `make` is absent: `python tasks.py reproduce`. It runs lint →
+typecheck → tests → splits (frozen and hash-verified *before* any model sees data) →
+baselines (5 seeds) → tables → manuscript render → stitch, and stops at the first failure.
+Attempting it without the panel fails with instructions rather than a bare traceback.
+
+`make reproduce` is idempotent: re-running it leaves the working tree clean, including
+`splits.sha256`, whose freeze timestamp is preserved when the hash is unchanged.
 
 On Windows, where `make` is absent, `python tasks.py <target>` runs every Makefile target.
 The Makefile delegates to `tasks.py`, so the two cannot issue different commands, and tests

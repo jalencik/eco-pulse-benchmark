@@ -210,3 +210,32 @@ class TestFreezeIsIdempotent:
         after = (tmp_path / "splits.sha256").read_text(encoding="utf-8")
 
         assert before.split()[0] != after.split()[0], "hash did not change with the payload"
+
+
+class TestCleanCloneGuidance:
+    """A fresh clone lacks the derived panel; the failure must say so.
+
+    `data/interim/**` is gitignored, so `make reproduce` on a clean checkout hits three
+    missing files. The bare FileNotFoundError gave a reviewer no way to tell a broken
+    repository from a missing acquisition step -- on the one command the paper points them
+    at. Verifying the benchmark needs no rebuild at all, and the error now says that too.
+    """
+
+    def test_missing_panel_raises_actionable_guidance(self, tmp_path, monkeypatch):
+        import ecopulse_ca.splits.builder as builder
+
+        monkeypatch.setattr(builder, "INTERIM", tmp_path)
+        with pytest.raises(FileNotFoundError) as exc:
+            builder.build(tmp_path / "benchmark_panel.parquet")
+
+        message = str(exc.value)
+        assert "OPENAQ_API_KEY" in message, "does not say what credential is needed"
+        assert "pull_panel.py" in message, "does not say how to rebuild the panel"
+        assert "sha256sum -c" in message, "does not offer the no-rebuild verification path"
+        for name in builder.REQUIRED_INPUTS:
+            assert name in message, f"{name} not named among the missing inputs"
+
+    def test_the_committed_splits_need_no_rebuild_to_verify(self):
+        """The benchmark deliverable must be self-verifying from the clone alone."""
+        for name in ("splits.json", "splits.sha256"):
+            assert (SPLIT_DIR / name).exists(), f"{name} is not committed"

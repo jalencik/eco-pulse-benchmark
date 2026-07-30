@@ -98,12 +98,23 @@ zero-shot wherever it appears.
 
 ## 3.7 Reproduction
 
-`make reproduce` runs the pipeline end to end from the frozen splits: lint, type check, the
-full test suite, checksum verification, split regeneration, the baseline ladder, table
-regeneration and manuscript rendering — in that order, because splits are frozen and
-hash-verified before any model sees data. Every number in this paper is produced by that
-command. No figure in the manuscript is typed by hand; Section 7.5 describes the mechanism
-and the drift it caught.
+`make reproduce` runs the pipeline end to end: lint, type check, the full test suite,
+checksum verification, split regeneration, the baseline ladder, table regeneration and
+manuscript rendering — in that order, because splits are frozen and hash-verified before
+any model sees data. Every number in this paper is produced by that command. No figure in
+the manuscript is typed by hand; Section 7.5 describes the mechanism and the drift it
+caught. The command is idempotent: a second run leaves the working tree unchanged.
+
+**What that command does and does not require.** The frozen splits are committed, so
+*verifying* the benchmark needs neither credentials nor a rebuild — `sha256sum -c
+splits.sha256` is sufficient, and the test suite runs offline against committed fixtures.
+*Regenerating* the numbers additionally requires the derived ground-truth panel, which is
+built from the OpenAQ archive with an API key. That panel is not redistributed here because
+the per-station licence terms are not yet transcribed; `data/MANIFEST.md` records the
+provenance and `README.md` the two commands that rebuild it. Running the pipeline without
+it fails with those instructions rather than a missing-file traceback. We state this
+explicitly because "one command reproduces everything" is a claim reviewers test, and it is
+true only after that acquisition step.
 
 Two properties of that command are load-bearing and were not true of earlier versions.
 First, it **regenerates the manuscript, not only the tables**: an earlier `paper` target

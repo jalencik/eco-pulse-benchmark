@@ -155,7 +155,39 @@ def digest(payload: dict) -> str:
     return hashlib.sha256(canonical_json(payload).encode("utf-8")).hexdigest()
 
 
+REQUIRED_INPUTS = ("benchmark_panel.parquet", "panel_provenance.csv", "station_census.csv")
+
+
+def _require_inputs(panel_path: Path) -> None:
+    """Fail with instructions rather than a bare FileNotFoundError.
+
+    These three files are derived from the OpenAQ archive and are gitignored, so a fresh
+    clone does not have them. A reviewer running `make reproduce` first would otherwise get
+    `FileNotFoundError: data\\interim\\benchmark_panel.parquet` and no indication of whether
+    the repository was broken or a step was missing. The splits themselves *are* committed,
+    so verifying the benchmark needs no rebuild — only regenerating it from source does.
+    """
+    missing = [panel_path] if not panel_path.exists() else []
+    missing += [INTERIM / n for n in REQUIRED_INPUTS[1:] if not (INTERIM / n).exists()]
+    if not missing:
+        return
+    names = "\n".join(f"    {m}" for m in missing)
+    raise FileNotFoundError(
+        "cannot rebuild the splits: the derived ground-truth panel is absent.\n\n"
+        f"missing:\n{names}\n\n"
+        "These are produced from the OpenAQ archive and are not committed (see\n"
+        "data/MANIFEST.md for provenance and licence status). To regenerate them you need\n"
+        "an OPENAQ_API_KEY in .env, then:\n\n"
+        "    python -m ecopulse_ca.ingest.openaq --census\n"
+        "    python scripts/pull_panel.py\n\n"
+        "To *verify* the frozen benchmark instead, no rebuild is needed. The splits are\n"
+        "committed and self-verifying:\n\n"
+        "    cd benchmark/splits && sha256sum -c splits.sha256"
+    )
+
+
 def build(panel_path: Path = INTERIM / "benchmark_panel.parquet") -> dict:
+    _require_inputs(panel_path)
     panel = pd.read_parquet(panel_path)
     prov = pd.read_csv(INTERIM / "panel_provenance.csv")
     census = pd.read_csv(INTERIM / "station_census.csv", keep_default_na=False, na_values=[""])
