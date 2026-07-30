@@ -136,13 +136,29 @@ def extract_daily_chunk(
         points.geometry()
     )
 
+    # A fully-masked single-band image, used for days with no orbit slices at all.
+    #
+    # This is not defensive padding -- it fixes a bug that destroyed whole months. An
+    # earlier version returned `same_day.mean()` directly and asserted in a comment that an
+    # empty day "reports as null". It does not: mean() over an empty collection yields a
+    # BAND-LESS image, reduceRegions raises `Image has no bands`, and map() propagates that
+    # failure across the entire chunk. NO2 lost all of May 2022 and SO2 lost late Nov 2018
+    # to a single empty day each.
+    #
+    # Structurally the same failure as the OpenAQ pagination bug in Phase 1c: a LOCAL
+    # failure destroying a BATCH. A masked image has a band, so reduceRegions succeeds and
+    # returns null -- which is the semantics originally intended.
+    empty_day = ee.Image.constant(0).rename(spec.band).updateMask(ee.Image.constant(0))
+
     def daily(offset: Any) -> Any:
         day = start.advance(ee.Number(offset), "day")
         same_day = slices.filterDate(day, day.advance(1, "day"))
-        # mean() over slices. An empty day gives a band-less image, which reduceRegions
-        # reports as null -- the behaviour we want to keep, not suppress.
+        composite = ee.Image(
+            ee.Algorithms.If(same_day.size().gt(0), same_day.mean().rename(spec.band),
+                             empty_day)
+        )
         return (
-            same_day.mean().rename(spec.band)
+            composite
             .set("date", day.format("YYYY-MM-dd"))
             .set("n_slices", same_day.size())
         )
@@ -203,4 +219,42 @@ S5P_AAI = CompositeSpec(
     # clipping at zero would destroy the feature's entire purpose.
     non_negative=False,
     plausible_max=8.0,
+)
+
+
+# The cloud-screened trio. Unlike AAI, these products ARE masked where cloud is retrieved,
+# so target-correlated missingness (risk R7) is expected to return -- worst for SO2, whose
+# signal peaks in the same winter months that are cloudiest here.
+#
+# All three carry non_negative=False. Trace-gas column retrievals go negative when the true
+# column is near the noise floor, and SO2 does so routinely away from large point sources.
+# Clipping at zero would bias the coal tracer upward exactly where it is weakest.
+S5P_NO2 = CompositeSpec(
+    name="no2_tropospheric",
+    collection="COPERNICUS/S5P/OFFL/L3_NO2",
+    band="tropospheric_NO2_column_number_density",
+    buffer_m=7_000,
+    scale_m=7_000,
+    non_negative=False,
+    plausible_max=1e-3,
+)
+
+S5P_SO2 = CompositeSpec(
+    name="so2_column",
+    collection="COPERNICUS/S5P/OFFL/L3_SO2",
+    band="SO2_column_number_density",
+    buffer_m=7_000,
+    scale_m=7_000,
+    non_negative=False,
+    plausible_max=1e-2,
+)
+
+S5P_CO = CompositeSpec(
+    name="co_column",
+    collection="COPERNICUS/S5P/OFFL/L3_CO",
+    band="CO_column_number_density",
+    buffer_m=7_000,
+    scale_m=7_000,
+    non_negative=False,
+    plausible_max=1.0,
 )
