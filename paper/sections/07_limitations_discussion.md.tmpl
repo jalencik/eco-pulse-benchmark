@@ -1,7 +1,7 @@
 # 7. Limitations and Discussion
 
-This section is written to be read by someone trying to find the study's weakest point. We
-would rather state it than have it found.
+This section is written for a reader hunting the study's weakest point. We would rather
+state it than have it found.
 
 ## 7.1 The labels themselves are provider-dependent in one city
 
@@ -10,99 +10,105 @@ identifiers. Ashgabat's pair is a clean duplicate: the two feeds agree to 0.1 µ
 {{feed_ashgabat_agree_test}}% of overlapping test-block hours. **Bishkek's pair is not.**
 
 Across the full record the Bishkek feeds agree on {{feed_bishkek_agree}}% of overlapping
-hours, and the divergence is concentrated in the frozen test year: over
+hours, and the divergence concentrates in the frozen test year. Over
 {{feed_bishkek_overlap_test}} overlapping hours in {{test_year}} they agree on only
 **{{feed_bishkek_agree_test}}%**, with a 95th-percentile disagreement of
-**{{feed_bishkek_p95_test}} µg/m³** — comparable in magnitude to the RMSE of every model in
-this paper.
+**{{feed_bishkek_p95_test}} µg/m³**. That is comparable to the RMSE of every model in this
+paper.
 
 The implication is uncomfortable and irreducible. For Bishkek in the test block there is no
-single ground truth: choosing the other provider's feed would change the reported error by
-an amount similar to the differences between models. Bishkek's DM result
-(*p* = {{dm_bishkek_p}}, not significant) should be read with that in mind, and we do not
-claim an improvement there. Merging the feeds, which we do, reduces variance but cannot
-manufacture a label that the two publishers agree on. **This is a limitation of the data
-source, not of the pipeline, and no modelling choice can remove it.**
+single ground truth. Choosing the other provider's feed would shift the reported error by
+roughly the margin that separates our models from each other. Bishkek's DM result
+(*p* = {{dm_bishkek_p}}, not significant) should be read with that in view, and we claim no
+improvement there. Merging the feeds, which we do, reduces variance. It cannot manufacture a
+label the two publishers agree on. **This limits the data source, not the pipeline, and no
+modelling choice removes it.**
 
 ## 7.2 Leave-station-out covers a minority of the benchmark
 
-{{n_lso_folds}} leave-station-out folds exist, and they span only two cities.
+{{n_lso_folds}} leave-station-out folds exist and they span two cities.
 **{{lso_ineligible}} each hold a single instrument**, so within-city station holdout is
 undefined there.
 
-This has a specific consequence beyond reduced coverage. The Q6 timezone check compares
-instruments within a city; in a single-station city a constant lifelong offset is
-undetectable by any rule in the suite, and the QC output records this explicitly rather than
-reporting a pass that means "not tested". Four of six cities therefore rest on metadata
+The consequence runs deeper than reduced coverage. The Q6 timezone check compares
+instruments within a city. In a single-station city, a constant lifelong offset is invisible
+to every rule in the suite, and the QC output records that explicitly rather than returning
+a pass that actually means "not tested". Four of six cities therefore rest on metadata
 correctness for their time alignment. We regard this as the benchmark's largest unaudited
 assumption.
 
-Leave-city-out remains the primary spatial protocol precisely because it is available for
-all {{n_cities}} cities. Leave-station-out is reported where possible and is not used to
-support any headline claim.
+Leave-city-out stays the primary spatial protocol for one reason: it is available for all
+{{n_cities}} cities. Leave-station-out is reported where possible and supports no headline
+claim.
 
 ## 7.3 The model does not beat CAMS everywhere
 
 {{dm_n_sig}} of {{dm_n_folds}} leave-city-out folds reach significance. In
 **{{dm_fold_favouring_cams}} the sign is reversed**: LightGBM {{rmse_lgbm_ashgabat}} µg/m³
 against CAMS {{rmse_cams_ashgabat}} µg/m³, DM statistic {{dm_ashgabat_stat}},
-*p* = {{dm_ashgabat_p}}. The correct reading is that the two are indistinguishable there,
-not that CAMS wins — but the honest summary of the fold set is that the pooled result
-({{dm_pooled_p}}) is carried by Almaty, Dushanbe and Khujand, while Bishkek
-({{dm_bishkek_p}}) and Tashkent ({{dm_tashkent_p}}) show lower RMSE that does not clear
-significance.
+*p* = {{dm_ashgabat_p}}. Read correctly, the two are indistinguishable there. CAMS does not
+win. The honest summary of the fold set is that the pooled result ({{dm_pooled_p}}) rests on
+Almaty, Dushanbe and Khujand, while Bishkek ({{dm_bishkek_p}}) and Tashkent
+({{dm_tashkent_p}}) post lower RMSE that never clears significance.
 
-Ashgabat is also the city where the model has least to work with: Turkmenistan has no
-national monitoring network, so the fold is a single embassy instrument with no domestic
-context, and its nearest benchmark neighbour is far outside any plausible interpolation
-radius. A chemistry-transport model with a physical emissions inventory is a strong
-comparator under exactly those conditions.
+Khujand carrying part of the pooled result is worth pausing on, since it is the fold with no
+training label at all. Zero-shot transfer into an unmonitored city is not where a reader
+would expect the method to hold up best. It does, and we take that as the strongest evidence
+in the paper that the spatial machinery generalises rather than memorising.
+
+Ashgabat is the opposite case, and the one where the model has least to work with.
+Turkmenistan operates no national monitoring network, so the fold reduces to a single
+embassy instrument with no domestic context, and its nearest benchmark neighbour sits far
+outside any plausible interpolation radius. Under exactly those conditions a
+chemistry-transport model with a physical emissions inventory is a strong comparator. It
+should be.
 
 ## 7.4 The satellite record is not what carries the model
 
-Section 6.4 is the result we would most like to have come out differently. Spatial
-neighbour features account for {{shap_spatial_neighbour_pct}}% of attribution and static
-geography a further {{shap_static_geography_pct}}%; the five satellite products together
-account for {{shap_satellite_pct}}%, and the top single feature is
-`{{shap_top_feature}}` — inverse-distance-weighted neighbour concentration — at more than
-twice the second-ranked feature.
+Section 6.4 is the result we would most like to have come out differently. Spatial neighbour
+features account for {{shap_spatial_neighbour_pct}}% of attribution and static geography a
+further {{shap_static_geography_pct}}%. The five satellite products together account for
+{{shap_satellite_pct}}%. The top single feature is `{{shap_top_feature}}`,
+inverse-distance-weighted neighbour concentration, at more than twice the second-ranked
+feature.
 
-**A study assembled around five remote-sensing products is, on inspection, largely a
-well-tuned spatial interpolator with geographic priors.** Three qualifications, none of
-which overturn it:
+**A study assembled around five remote-sensing products turns out, on inspection, to be
+largely a well-tuned spatial interpolator with geographic priors.** Three qualifications
+follow, none of which overturn that.
 
 1. *This is a property of the protocol as much as of the products.* Leave-city-out asks for
-   a concentration where no monitor exists; neighbour information is the most direct route
+   a concentration where no monitor exists. Neighbour information is the most direct route
    to that answer, and satellite columns are a weak proxy for surface concentration under
-   any protocol.
+   any protocol whatsoever.
 2. *Missingness outperforms the values.* Satellite missingness earns
-   {{shap_satellite_missingness_pct}}% — comparable to the {{shap_cams_forecast_pct}}%
+   {{shap_satellite_missingness_pct}}%, comparable to the {{shap_cams_forecast_pct}}%
    contributed by the entire chemistry-transport forecast. *Whether* a retrieval failed is
-   nearly as informative as what CAMS predicted, which is a finding about retrieval
-   physics, and simultaneously an indication of how little the retrieved values add.
-3. *SO₂ is structurally absent in the season it exists to observe.* Retrieval requires
+   nearly as informative as what CAMS predicted. That is a finding about retrieval physics,
+   and at the same time a measure of how little the retrieved values contribute.
+3. *SO₂ is structurally absent in the season it exists to observe.* Retrieval needs
    ultraviolet signal; at these latitudes in December it falls to {{r7_so2_dec}}% against
    {{r7_so2_jul}}% in July. The direct tracer for the region's dominant winter source is
    unavailable throughout that source's season, so its low attribution is partly a
-   measurement-geometry artefact rather than evidence that SO₂ is uninformative.
+   measurement-geometry artefact rather than evidence that SO₂ carries no information.
 
-We report the attribution as measured. A paper claiming that satellite remote sensing
-enables air quality prediction in Central Asia would not be supported by these experiments.
+We report the attribution as measured. A paper arguing that satellite remote sensing enables
+air quality prediction in Central Asia would not be supported by these experiments.
 
 ## 7.5 Zero-drift reporting, and the drift it caught
 
 Every number in this manuscript is a double-brace placeholder token resolved at render time
-from `paper/tables/*.csv`. An unresolved placeholder is a hard build failure, and a test verifies
-a sample of manuscript figures against the CSVs while bypassing the intermediate
-`numbers.json` entirely, so that a bug in the extractor cannot validate itself.
+from `paper/tables/*.csv`. An unresolved placeholder is a hard build failure. A test also
+checks a sample of manuscript figures directly against the CSVs, bypassing the intermediate
+`numbers.json` entirely, so that a bug in the extractor cannot certify itself.
 
 The mechanism earned its place during drafting. Section 2's missingness statistics were
-originally transcribed from a console output, and when they were finally banked to a table
-the transcribed values proved wrong — SO₂ retrieval had been written as 61.5% against a
-recomputed {{r7_so2_retrieval}}%, and four other figures were off in the same direction.
-The errors were small and none changed a conclusion, which is precisely why no reader would
-have caught them. Regenerating the table also exposed that the two Section 2 tables had no
-producer script at all and could not be rebuilt by `make reproduce`; both now have one.
+originally transcribed from a console output. When they were finally banked to a table, the
+transcribed values proved wrong: SO₂ retrieval had been written as 61.5% against a
+recomputed {{r7_so2_retrieval}}%, and four further figures were off in the same direction.
+The errors were small and none of them changed a conclusion, which is exactly why no reader
+would ever have caught them. Regenerating the table also exposed that the two Section 2
+tables had no producer script at all and could not be rebuilt by `make reproduce`. Both have
+one now.
 
 ## 7.6 Scope of the record
 
@@ -117,47 +123,48 @@ producer script at all and could not be rebuilt by `make reproduce`; both now ha
   ({{taskn_seed_sd_max}} µg/m³) by roughly an order of magnitude. Conclusions are far more
   sensitive to which cities are in the set than to any training randomness.
 - **ERA5 is oracle-only and incompletely retrieved.** Its measured latency (163 h) exceeds
-  every evaluated horizon, so it cannot enter the deployable set; the multi-year retrieval
+  every evaluated horizon, so it cannot enter the deployable set. The multi-year retrieval
   was stopped once that was established.
 - **One item of prior art is unresolved.** A 2025 conference abstract claims the first
   machine-learning PM2.5 prediction for Tashkent. The publisher page returns HTTP 403 and
   the record is absent from OpenAlex, Crossref, Semantic Scholar and Europe PMC, so **its
   split protocol could not be verified**. Section 1.4 states what we consequently do not
-  claim. If that work is spatially stratified, the contribution of C1 narrows from
-  "first such protocol in the region" to "first multi-city benchmark in the region" — the
-  benchmark itself is unaffected, only the framing of its novelty.
+  claim. Should that work prove spatially stratified, the contribution of C1 narrows from
+  "first such protocol in the region" to "first multi-city benchmark in the region". The
+  benchmark is unaffected either way. Only the framing of its novelty moves.
 - **Literature depth is uneven, and recorded as such.** Of 30 sources, 16 were read in full
   and 6 at abstract depth; 7 remain at snippet depth behind publisher paywalls. For those,
   bibliographic identity is verified against Crossref/OpenAlex but *content* claims are not
   independently confirmed. `research/LITERATURE.md` records the two axes separately rather
   than averaging them into a single confidence.
 - **Russian-language coverage is incomplete.** CyberLeninka and eLIBRARY.RU are not indexed
-  by the APIs used here, so the falsifier F4 verdict — that no equivalent regional benchmark
-  exists in the Russian-language literature — remains provisional.
+  by the APIs used here, so the falsifier F4 verdict, that no equivalent regional benchmark
+  exists in the Russian-language literature, remains provisional.
 
 ## 7.7 Train/serve skew is measured but not eliminated
 
-The deployable set uses near-real-time satellite products, while the benchmark is built on
+The deployable set uses near-real-time satellite products while the benchmark is built on
 standard-latency ones. These are different processing streams over the same instrument, and
 we have not quantified the distributional difference between them. A service trained on
 standard products and served NRT products is exposed to skew that this study bounds only
-indirectly — via the small deployable/retrospective gap of Section 5.5, which is evidence
-that latency-restricted *feature sets* cost little, not that NRT and standard versions of
-the same product are interchangeable. Quantifying that is the most immediate piece of
-follow-up work, and it requires a parallel NRT archive that we did not have.
+indirectly, through the small deployable/retrospective gap of Section 5.5. That gap is
+evidence that latency-restricted *feature sets* cost little. It is not evidence that NRT and
+standard versions of the same product are interchangeable. Quantifying the difference is the
+most immediate piece of follow-up work, and it needs a parallel NRT archive we did not have.
 
 ## 7.8 What the benchmark is for
 
-The headline modelling result is modest: R² = {{taskn_retrospective_r2}} at unmonitored
+The headline modelling result is modest. R² = {{taskn_retrospective_r2}} at unmonitored
 locations, a significant but not transformative improvement over CAMS, and an attribution
 profile dominated by spatial interpolation. We consider that the appropriate outcome.
 
 The contribution is the fixed evaluation. Before this benchmark existed, a Central Asian air
 quality result could be reported on a random split, with reanalysis features unavailable at
-inference, against no baseline ladder, scored with an exceedance F1 that a constant achieves
-({{p3_trivial_f1}} at a {{p3_base_rate}}% base rate) — and every one of those choices would
-have produced a more impressive paper than this one. The splits are frozen and checksummed,
-the protocol violations are enforced by failing tests rather than requested in prose, and the
-numbers above are what survives that. A future model that genuinely improves on
+inference time, against no baseline ladder, scored with an exceedance F1 that a constant
+already achieves ({{p3_trivial_f1}} at a {{p3_base_rate}}% base rate, because the region's
+air is bad on most days rather than because the classifier is good). Every one of those
+choices would have produced a more impressive paper than this one. The splits are frozen and
+checksummed. The protocol violations are enforced by failing tests rather than requested in
+prose. The numbers above are what survives that. A future model that genuinely improves on
 {{taskn_retrospective_rmse}} µg/m³ under this protocol will have demonstrated something
 real.

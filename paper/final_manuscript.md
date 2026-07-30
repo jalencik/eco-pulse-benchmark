@@ -10,111 +10,121 @@
 
 ## 1.1 The gap
 
-Central Asia is among the most polluted inhabited regions on earth and among the least
-instrumented. Tursumbayeva et al. (2023) place annual PM2.5 in six regional capitals at
-4.3–12.6× the WHO 2021 guideline, and attribute the burden principally to coal combustion
-rather than transport — contradicting official emissions inventories. Yet the monitoring
-base supporting those figures is thin and unevenly open. Of the five states, one —
-Turkmenistan — operates no national air quality monitoring at all; another, Kazakhstan,
-shares its data only with users physically inside the country; only Kyrgyzstan publishes in
-a fully open form (OpenAQ, 2025).
+Central Asia is among the most polluted inhabited regions on earth. It is also among the
+least instrumented. Tursumbayeva et al. (2023) put annual PM2.5 in six regional capitals at
+4.3–12.6 times the WHO 2021 guideline and trace the burden mainly to coal combustion rather
+than transport, contradicting the official emissions inventories. The monitoring base under
+those numbers is thin and unevenly open. Turkmenistan runs no national air quality network
+at all. Kazakhstan releases its data only to users physically inside the country. Only
+Kyrgyzstan publishes in a fully open form (OpenAQ, 2025).
 
-The scientific consequence is not an absence of estimates. Global gridded products already
-assign PM2.5 values across the region, and the epidemiological literature uses them. What is
-absent is the ability to *check* those estimates, or to compare methods against one another
-on identical terms. There is no open, station-level benchmark for Central Asia: no frozen
-splits, no declared protocol, no shared evaluation.
+Estimates are not what the region lacks. Global gridded products already assign PM2.5 values
+across Central Asia, and the epidemiological literature consumes them. What nobody can do is
+check those estimates, or set two methods against each other on identical terms. There is no
+open station-level benchmark for the region. No frozen splits, no declared protocol, no
+shared evaluation.
 
-That absence has a measurable cost. The closest environmental analogue in the literature —
-PM2.5 estimation across Xinjiang, a comparably arid, dust-affected, sparsely-monitored
-region — reports R² of 0.73–0.81 under 10-fold cross-validation with no spatial
-stratification (Jin et al., 2022). With 41 stations across 16 cities and 8-day-averaged
-samples, that protocol places observations from the same station, frequently the same
-window, on both sides of the split. The resulting figure answers *"how well can we
-interpolate within known stations?"* It is routinely read as answering *"how well can we
-estimate at an unmonitored location?"* Those are different questions with very different
-answers, and nothing in a reported R² distinguishes them.
+The cost of that absence is measurable. Consider the closest environmental analogue in the
+literature: PM2.5 estimation across Xinjiang, an arid, dust-affected, sparsely monitored
+region much like this one. Jin et al. (2022) report R² between 0.73 and 0.81 under 10-fold
+cross-validation with no spatial stratification. With 41 stations in 16 cities and 8-day
+averaging, that design places observations from the same station, frequently the same
+window, on both sides of the split. The number answers one question. How well can we
+interpolate among stations we already have? Readers take it as answering a different one:
+how well can we estimate where no monitor exists? Nothing in a reported R² separates the two.
 
-This is not a criticism peculiar to one paper. Roberts et al. (2016) establish that data
-with spatial, temporal or hierarchical structure require blocked validation, because
-ordinary k-fold leaves dependence spanning the split; Meyer et al. (2019) show the same for
-spatially-derived predictors specifically. Alazmi and Rakha (2022) demonstrate the effect
-empirically for particulate matter, comparing random, spatial and spatiotemporal
-cross-validation on identical data. Tang et al. (2024), reviewing machine learning for air
-quality, name validation strategy among the field's systematically overlooked issues. The
-methodological position this benchmark takes is therefore not novel — what is absent is a
-regional benchmark that *enforces* it.
+This is not a complaint about one paper. Roberts et al. (2016) show that spatially,
+temporally or hierarchically structured data require blocked validation, because ordinary
+k-fold leaves dependence straddling the split. Meyer et al. (2019) demonstrate the same for
+spatially derived predictors. Alazmi and Rakha (2022) measure the effect directly on
+particulate data, running random, spatial and spatiotemporal cross-validation side by side.
+Tang et al. (2024) place validation strategy among the systematically overlooked issues in
+air quality machine learning. The methodological position taken here is therefore not new.
+What the region has never had is a benchmark that enforces it.
 
 ## 1.2 What this paper contributes
 
-The precedent for a machine-learning air quality benchmark is AQ-Bench (Betancourt et al.,
-2021), which covers 5,577 stations worldwide and splits with spatial clustering at a 50 km
-threshold. AQ-Bench targets long-term *ozone* metrics from station metadata — a
-time-independent regression — and does not include Central Asia. We adopt its spatial
-clustering rationale for leave-station-out rather than reinventing one, and depart from it
-in pollutant, target, temporal protocol and region; Section 3 states the differences
-exactly. AirDelhi (Chauhan et al., 2023) provides a second precedent for a fine-grained
-particulate benchmark, though for a single city.
+AQ-Bench (Betancourt et al., 2021) is the precedent: 5,577 stations worldwide, split by
+spatial clustering at a 50 km threshold. It targets long-term ozone metrics from station
+metadata, a time-independent regression, and it excludes Central Asia entirely. We borrow
+its spatial clustering rationale for leave-station-out rather than inventing a second one,
+and diverge on pollutant, target, temporal protocol and region. Section 3 states the
+differences precisely. AirDelhi (Chauhan et al., 2023) offers a second precedent for
+fine-grained particulate benchmarking, confined to a single city.
 
-**C1 — a benchmark.** 8 stations across 6 cities, with splits frozen
-and hashed before any model was fitted: blocked-temporal with a derived purge gap,
-leave-city-out across 6 folds, and leave-station-out where station density
-permits (4 folds; Almaty, Ashgabat, Bishkek, Tashkent hold a single instrument each and are
-named as ineligible rather than silently omitted). The splits are immutable by test, and
-that test fails for the authors as readily as for anyone else.
+**C1 — a benchmark.** 8 stations across 6 cities. Splits were frozen
+and hashed before a single model was fitted: blocked-temporal with a derived purge gap,
+leave-city-out over 6 folds, and leave-station-out where station density
+allows it (4 folds; Almaty, Ashgabat, Bishkek, Tashkent hold one instrument each and are named
+ineligible rather than quietly dropped). A test enforces immutability. It fails for the
+authors exactly as it fails for anyone else.
 
-**C2 — honestly-evaluated transfer.** Rather than claiming a method, we characterise how far
-spatial transfer carries into an aerosol regime unlike the source domain, under a protocol
-the region has never had. A negative result is publishable under this framing, and several
-of ours are.
+**C2 — transfer evaluated without flattery.** We offer no new method. We measure how far
+spatial transfer survives into an aerosol regime unlike the source domain, under a protocol
+the region has never applied. That framing makes a negative result publishable. Several of
+ours are negative.
+
+One fold deserves naming here. Khujand's stations begin after the training block closes, so
+the city contributes no training label anywhere in the record. Not one row. The model arrives
+with no local history of any kind and has to return a concentration regardless. This is the
+harshest test the benchmark contains, and it is also the one that matches the deployment
+case the work exists for: an unmonitored city asking for a number it has never been given.
+A model that collapses on Khujand has not earned the right to be deployed anywhere new. We
+report the fold on its own rather than letting it dissolve into a six-fold average.
 
 **C3 — an operational-constraint account.** Every predictor carries a measured latency and a
-typed availability flag. Features that cannot exist at prediction time are barred from
-deployable configurations by test, not by convention.
+typed availability flag. Anything that cannot exist at prediction time is barred from
+deployable configurations by test rather than by convention.
 
 ## 1.3 Findings that shaped the work
 
-Three results recur and are worth stating before the methods.
+Three results recur, and each is worth stating before the methods.
 
-**Cheap references are strong, and expensive ones are not.** No credential-free nowcaster
-beat a trivial always-exceed predictor on health-relevant exceedance. Raw CAMS — a full
-chemistry-transport model — is beaten by subtracting a per-city constant, and even
-bias-corrected it reaches only R² -0.22. Every baseline we tried,
-across two phases, sat below the accuracy of predicting the held-out city's own mean.
+**A constant is hard to beat, and that says more about the region than about the models.**
+No credential-free nowcaster beat a trivial always-exceed predictor on health-relevant
+exceedance. The reason is uncomfortable and entirely physical: PM2.5 in these cities clears
+the WHO 24-hour guideline on most days of the year, so a classifier that never varies is
+correct most of the time. Chronic pollution, not modelling skill, sets that floor. Beating
+it is the only evidence that a model has learned something past the regional mean. Raw CAMS,
+a full chemistry-transport model, is improved simply by subtracting a per-city constant, and
+even after that correction it reaches only R² -0.22. Across two
+phases, every baseline we tried sat below the accuracy of predicting the held-out city's own
+mean.
 
 **Metric choice reverses conclusions.** RMSE and exceedance skill rank the same models in
 nearly opposite orders. Smoothing toward the mean lowers squared error while destroying the
-variance needed to distinguish a bad day from a good one, so a model can win one metric by
-losing the other. Reporting either alone would rank the ladder backwards for the other task.
+variance needed to tell a bad day from a good one, so a model wins one metric by losing the
+other. Report either alone and the ladder comes out backwards for the other task.
 
-**The first positive leave-city-out R² required removing two handicaps, not a better model.**
-Tuned gradient boosting with spatial neighbour encodings reaches R² 0.07
-(RMSE 25.70) against 31.09 for bias-corrected CAMS,
-Diebold–Mariano -4.52, p < 0.0001. The same architecture untuned and
-without neighbours scored RMSE 31.99 and R²
--0.64 — worse than the baseline it now beats.
+**The first positive leave-city-out R² came from removing two handicaps, not from a better
+model.** Tuned gradient boosting with spatial neighbour encodings reaches R²
+0.07 at RMSE 25.70, against
+31.09 for bias-corrected CAMS, Diebold–Mariano -4.52 at p
+< 0.0001. The same architecture untuned and stripped of neighbours scored RMSE
+31.99 and R² -0.64. Worse than the baseline
+it now beats.
 
 ## 1.4 What this paper does not claim
 
-We do not claim state of the art: no like-for-like comparison exists on these splits, because
-we are creating them. We do not claim to introduce transfer learning for data-poor regions —
-that framing is held by Gupta et al. (2024), who propose a latent dependency factor for
-spatial transfer of PM2.5 estimation and report a 19.34% improvement over baselines. Their
-evaluation covers ten target sensors against eastern-US source data; it is a method paper,
-not a benchmark, and defines no reusable public split. What remains available to us is the
-evaluation protocol and the region, not the idea. We do not compare against published R²
-values obtained under random cross-validation, because a leave-city-out number and a
-random-CV number are not commensurable, and treating them as such is the error this
-benchmark exists to prevent.
+We do not claim state of the art. No like-for-like comparison exists on these splits, for
+the plain reason that we are the ones creating them. Nor do we claim to introduce transfer
+learning for data-poor regions. Gupta et al. (2024) hold that ground already, proposing a
+latent dependency factor for spatial transfer of PM2.5 estimation and reporting a 19.34%
+gain over baselines across ten target sensors against eastern-US source data. Theirs is a
+method paper, not a benchmark, and it defines no reusable public split. What remains
+available to us is the evaluation protocol and the region, not the idea. We also decline to
+compare our figures against published R² values obtained under random cross-validation. A
+leave-city-out number and a random-CV number are not commensurable, and treating them as
+though they were is the precise error this benchmark exists to prevent.
 
-**One point of prior art we cannot resolve.** A 2025 conference abstract claims the first
+**One piece of prior art we cannot resolve.** A 2025 conference abstract claims the first
 machine-learning PM2.5 prediction for Tashkent, using ten automated stations with weather
-and seasonal features. We could not obtain it: the publisher page returns HTTP 403, and the
-record is not indexed in OpenAlex, Crossref, Semantic Scholar or Europe PMC. **Its split
-protocol is therefore unverified**, and we make no claim about what it did or did not do —
-in particular, we do not assert that our leave-city-out protocol is the first applied to
-Tashkent. Should that work use a spatially-stratified protocol, the novelty of C1 narrows to
-the multi-city benchmark rather than the city. Section 7 records this as an open item.
+and seasonal inputs. We could not obtain it. The publisher returns HTTP 403, and the record
+appears in none of OpenAlex, Crossref, Semantic Scholar or Europe PMC. **Its split protocol
+is unverified.** We therefore make no claim about what that work did or did not do, and we
+specifically do not assert priority for applying leave-city-out to Tashkent. Should it prove
+to be spatially stratified, the novelty of C1 narrows to the multi-city benchmark rather
+than the city. Section 7 carries this as an open item.
 
 ---
 
@@ -749,8 +759,8 @@ Not established:
 
 # 7. Limitations and Discussion
 
-This section is written to be read by someone trying to find the study's weakest point. We
-would rather state it than have it found.
+This section is written for a reader hunting the study's weakest point. We would rather
+state it than have it found.
 
 ## 7.1 The labels themselves are provider-dependent in one city
 
@@ -759,99 +769,105 @@ identifiers. Ashgabat's pair is a clean duplicate: the two feeds agree to 0.1 µ
 100.0% of overlapping test-block hours. **Bishkek's pair is not.**
 
 Across the full record the Bishkek feeds agree on 52.0% of overlapping
-hours, and the divergence is concentrated in the frozen test year: over
+hours, and the divergence concentrates in the frozen test year. Over
 5389.00 overlapping hours in 2024 they agree on only
 **11.1%**, with a 95th-percentile disagreement of
-**33.6 µg/m³** — comparable in magnitude to the RMSE of every model in
-this paper.
+**33.6 µg/m³**. That is comparable to the RMSE of every model in this
+paper.
 
 The implication is uncomfortable and irreducible. For Bishkek in the test block there is no
-single ground truth: choosing the other provider's feed would change the reported error by
-an amount similar to the differences between models. Bishkek's DM result
-(*p* = 0.0630, not significant) should be read with that in mind, and we do not
-claim an improvement there. Merging the feeds, which we do, reduces variance but cannot
-manufacture a label that the two publishers agree on. **This is a limitation of the data
-source, not of the pipeline, and no modelling choice can remove it.**
+single ground truth. Choosing the other provider's feed would shift the reported error by
+roughly the margin that separates our models from each other. Bishkek's DM result
+(*p* = 0.0630, not significant) should be read with that in view, and we claim no
+improvement there. Merging the feeds, which we do, reduces variance. It cannot manufacture a
+label the two publishers agree on. **This limits the data source, not the pipeline, and no
+modelling choice removes it.**
 
 ## 7.2 Leave-station-out covers a minority of the benchmark
 
-4 leave-station-out folds exist, and they span only two cities.
+4 leave-station-out folds exist and they span two cities.
 **Almaty, Ashgabat, Bishkek, Tashkent each hold a single instrument**, so within-city station holdout is
 undefined there.
 
-This has a specific consequence beyond reduced coverage. The Q6 timezone check compares
-instruments within a city; in a single-station city a constant lifelong offset is
-undetectable by any rule in the suite, and the QC output records this explicitly rather than
-reporting a pass that means "not tested". Four of six cities therefore rest on metadata
+The consequence runs deeper than reduced coverage. The Q6 timezone check compares
+instruments within a city. In a single-station city, a constant lifelong offset is invisible
+to every rule in the suite, and the QC output records that explicitly rather than returning
+a pass that actually means "not tested". Four of six cities therefore rest on metadata
 correctness for their time alignment. We regard this as the benchmark's largest unaudited
 assumption.
 
-Leave-city-out remains the primary spatial protocol precisely because it is available for
-all 6 cities. Leave-station-out is reported where possible and is not used to
-support any headline claim.
+Leave-city-out stays the primary spatial protocol for one reason: it is available for all
+6 cities. Leave-station-out is reported where possible and supports no headline
+claim.
 
 ## 7.3 The model does not beat CAMS everywhere
 
 3 of 6 leave-city-out folds reach significance. In
 **Ashgabat the sign is reversed**: LightGBM 21.34 µg/m³
 against CAMS 20.75 µg/m³, DM statistic 0.35,
-*p* = 0.7271. The correct reading is that the two are indistinguishable there,
-not that CAMS wins — but the honest summary of the fold set is that the pooled result
-(< 0.0001) is carried by Almaty, Dushanbe and Khujand, while Bishkek
-(0.0630) and Tashkent (0.1180) show lower RMSE that does not clear
-significance.
+*p* = 0.7271. Read correctly, the two are indistinguishable there. CAMS does not
+win. The honest summary of the fold set is that the pooled result (< 0.0001) rests on
+Almaty, Dushanbe and Khujand, while Bishkek (0.0630) and Tashkent
+(0.1180) post lower RMSE that never clears significance.
 
-Ashgabat is also the city where the model has least to work with: Turkmenistan has no
-national monitoring network, so the fold is a single embassy instrument with no domestic
-context, and its nearest benchmark neighbour is far outside any plausible interpolation
-radius. A chemistry-transport model with a physical emissions inventory is a strong
-comparator under exactly those conditions.
+Khujand carrying part of the pooled result is worth pausing on, since it is the fold with no
+training label at all. Zero-shot transfer into an unmonitored city is not where a reader
+would expect the method to hold up best. It does, and we take that as the strongest evidence
+in the paper that the spatial machinery generalises rather than memorising.
+
+Ashgabat is the opposite case, and the one where the model has least to work with.
+Turkmenistan operates no national monitoring network, so the fold reduces to a single
+embassy instrument with no domestic context, and its nearest benchmark neighbour sits far
+outside any plausible interpolation radius. Under exactly those conditions a
+chemistry-transport model with a physical emissions inventory is a strong comparator. It
+should be.
 
 ## 7.4 The satellite record is not what carries the model
 
-Section 6.4 is the result we would most like to have come out differently. Spatial
-neighbour features account for 32.5% of attribution and static
-geography a further 25.1%; the five satellite products together
-account for 16.6%, and the top single feature is
-`nbr_idw` — inverse-distance-weighted neighbour concentration — at more than
-twice the second-ranked feature.
+Section 6.4 is the result we would most like to have come out differently. Spatial neighbour
+features account for 32.5% of attribution and static geography a
+further 25.1%. The five satellite products together account for
+16.6%. The top single feature is `nbr_idw`,
+inverse-distance-weighted neighbour concentration, at more than twice the second-ranked
+feature.
 
-**A study assembled around five remote-sensing products is, on inspection, largely a
-well-tuned spatial interpolator with geographic priors.** Three qualifications, none of
-which overturn it:
+**A study assembled around five remote-sensing products turns out, on inspection, to be
+largely a well-tuned spatial interpolator with geographic priors.** Three qualifications
+follow, none of which overturn that.
 
 1. *This is a property of the protocol as much as of the products.* Leave-city-out asks for
-   a concentration where no monitor exists; neighbour information is the most direct route
+   a concentration where no monitor exists. Neighbour information is the most direct route
    to that answer, and satellite columns are a weak proxy for surface concentration under
-   any protocol.
+   any protocol whatsoever.
 2. *Missingness outperforms the values.* Satellite missingness earns
-   4.1% — comparable to the 5.1%
+   4.1%, comparable to the 5.1%
    contributed by the entire chemistry-transport forecast. *Whether* a retrieval failed is
-   nearly as informative as what CAMS predicted, which is a finding about retrieval
-   physics, and simultaneously an indication of how little the retrieved values add.
-3. *SO₂ is structurally absent in the season it exists to observe.* Retrieval requires
+   nearly as informative as what CAMS predicted. That is a finding about retrieval physics,
+   and at the same time a measure of how little the retrieved values contribute.
+3. *SO₂ is structurally absent in the season it exists to observe.* Retrieval needs
    ultraviolet signal; at these latitudes in December it falls to 0.1% against
    93.5% in July. The direct tracer for the region's dominant winter source is
    unavailable throughout that source's season, so its low attribution is partly a
-   measurement-geometry artefact rather than evidence that SO₂ is uninformative.
+   measurement-geometry artefact rather than evidence that SO₂ carries no information.
 
-We report the attribution as measured. A paper claiming that satellite remote sensing
-enables air quality prediction in Central Asia would not be supported by these experiments.
+We report the attribution as measured. A paper arguing that satellite remote sensing enables
+air quality prediction in Central Asia would not be supported by these experiments.
 
 ## 7.5 Zero-drift reporting, and the drift it caught
 
 Every number in this manuscript is a double-brace placeholder token resolved at render time
-from `paper/tables/*.csv`. An unresolved placeholder is a hard build failure, and a test verifies
-a sample of manuscript figures against the CSVs while bypassing the intermediate
-`numbers.json` entirely, so that a bug in the extractor cannot validate itself.
+from `paper/tables/*.csv`. An unresolved placeholder is a hard build failure. A test also
+checks a sample of manuscript figures directly against the CSVs, bypassing the intermediate
+`numbers.json` entirely, so that a bug in the extractor cannot certify itself.
 
 The mechanism earned its place during drafting. Section 2's missingness statistics were
-originally transcribed from a console output, and when they were finally banked to a table
-the transcribed values proved wrong — SO₂ retrieval had been written as 61.5% against a
-recomputed 59.2%, and four other figures were off in the same direction.
-The errors were small and none changed a conclusion, which is precisely why no reader would
-have caught them. Regenerating the table also exposed that the two Section 2 tables had no
-producer script at all and could not be rebuilt by `make reproduce`; both now have one.
+originally transcribed from a console output. When they were finally banked to a table, the
+transcribed values proved wrong: SO₂ retrieval had been written as 61.5% against a
+recomputed 59.2%, and four further figures were off in the same direction.
+The errors were small and none of them changed a conclusion, which is exactly why no reader
+would ever have caught them. Regenerating the table also exposed that the two Section 2
+tables had no producer script at all and could not be rebuilt by `make reproduce`. Both have
+one now.
 
 ## 7.6 Scope of the record
 
@@ -866,48 +882,49 @@ producer script at all and could not be rebuilt by `make reproduce`; both now ha
   (0.85 µg/m³) by roughly an order of magnitude. Conclusions are far more
   sensitive to which cities are in the set than to any training randomness.
 - **ERA5 is oracle-only and incompletely retrieved.** Its measured latency (163 h) exceeds
-  every evaluated horizon, so it cannot enter the deployable set; the multi-year retrieval
+  every evaluated horizon, so it cannot enter the deployable set. The multi-year retrieval
   was stopped once that was established.
 - **One item of prior art is unresolved.** A 2025 conference abstract claims the first
   machine-learning PM2.5 prediction for Tashkent. The publisher page returns HTTP 403 and
   the record is absent from OpenAlex, Crossref, Semantic Scholar and Europe PMC, so **its
   split protocol could not be verified**. Section 1.4 states what we consequently do not
-  claim. If that work is spatially stratified, the contribution of C1 narrows from
-  "first such protocol in the region" to "first multi-city benchmark in the region" — the
-  benchmark itself is unaffected, only the framing of its novelty.
+  claim. Should that work prove spatially stratified, the contribution of C1 narrows from
+  "first such protocol in the region" to "first multi-city benchmark in the region". The
+  benchmark is unaffected either way. Only the framing of its novelty moves.
 - **Literature depth is uneven, and recorded as such.** Of 30 sources, 16 were read in full
   and 6 at abstract depth; 7 remain at snippet depth behind publisher paywalls. For those,
   bibliographic identity is verified against Crossref/OpenAlex but *content* claims are not
   independently confirmed. `research/LITERATURE.md` records the two axes separately rather
   than averaging them into a single confidence.
 - **Russian-language coverage is incomplete.** CyberLeninka and eLIBRARY.RU are not indexed
-  by the APIs used here, so the falsifier F4 verdict — that no equivalent regional benchmark
-  exists in the Russian-language literature — remains provisional.
+  by the APIs used here, so the falsifier F4 verdict, that no equivalent regional benchmark
+  exists in the Russian-language literature, remains provisional.
 
 ## 7.7 Train/serve skew is measured but not eliminated
 
-The deployable set uses near-real-time satellite products, while the benchmark is built on
+The deployable set uses near-real-time satellite products while the benchmark is built on
 standard-latency ones. These are different processing streams over the same instrument, and
 we have not quantified the distributional difference between them. A service trained on
 standard products and served NRT products is exposed to skew that this study bounds only
-indirectly — via the small deployable/retrospective gap of Section 5.5, which is evidence
-that latency-restricted *feature sets* cost little, not that NRT and standard versions of
-the same product are interchangeable. Quantifying that is the most immediate piece of
-follow-up work, and it requires a parallel NRT archive that we did not have.
+indirectly, through the small deployable/retrospective gap of Section 5.5. That gap is
+evidence that latency-restricted *feature sets* cost little. It is not evidence that NRT and
+standard versions of the same product are interchangeable. Quantifying the difference is the
+most immediate piece of follow-up work, and it needs a parallel NRT archive we did not have.
 
 ## 7.8 What the benchmark is for
 
-The headline modelling result is modest: R² = 0.07 at unmonitored
+The headline modelling result is modest. R² = 0.07 at unmonitored
 locations, a significant but not transformative improvement over CAMS, and an attribution
 profile dominated by spatial interpolation. We consider that the appropriate outcome.
 
 The contribution is the fixed evaluation. Before this benchmark existed, a Central Asian air
 quality result could be reported on a random split, with reanalysis features unavailable at
-inference, against no baseline ladder, scored with an exceedance F1 that a constant achieves
-(0.764 at a 64.8% base rate) — and every one of those choices would
-have produced a more impressive paper than this one. The splits are frozen and checksummed,
-the protocol violations are enforced by failing tests rather than requested in prose, and the
-numbers above are what survives that. A future model that genuinely improves on
+inference time, against no baseline ladder, scored with an exceedance F1 that a constant
+already achieves (0.764 at a 64.8% base rate, because the region's
+air is bad on most days rather than because the classifier is good). Every one of those
+choices would have produced a more impressive paper than this one. The splits are frozen and
+checksummed. The protocol violations are enforced by failing tests rather than requested in
+prose. The numbers above are what survives that. A future model that genuinely improves on
 25.70 µg/m³ under this protocol will have demonstrated something
 real.
 
