@@ -244,15 +244,18 @@
     "is_oa": false,
     "cited_by": 0,
     "source_api": "openalex",
-    "venue": "Advances in Neural Information Processing Systems 36",
+    "venue": "Neural Information Processing Systems",
+    "abstract": "Air pollution poses serious health concerns in developing countries, such as India, necessitating large-scale measurement for correlation analysis, policy recommendations, and informed decision-making. However, fine-grained data collection is costly. Specifically, static sensors for pollution measurement cost several thousand dollars per unit, leading to inadequate deployment and coverage. To complement the existing sparse static sensor network, we propose a mobile sensor network utilizing lower-cost PM 2 . 5 sensors mounted on public buses in the Delhi-NCR region of India. Through this exercise, we introduce a novel dataset A IR D ELHI comprising PM 2 . 5 and PM 10 measurements. This dataset is made publicly available at https: // www. cse. iitd. ac. in/ pollutiondata , serving as a valuable resource for machine learning (ML) researchers and environmental-ists. We present three key contributions with the release of this dataset. Firstly, through in-depth statistical analysis, we demonstrate that the released dataset significantly differs from existing pollution datasets, highlighting its uniqueness and potential for new insights. Secondly, the dataset quality been validated against existing expensive sensors. Thirdly, we conduct a benchmarking exercise ( https: // github. com/ sachin-iitd/ DelhiPMDatasetBenchmark ), evaluating state-of-the-art methods for interpolation, feature imputation, and forecasting on this dataset, which is the largest publicly available PM dataset to date. The results of the benchmarking exercise underscore the substantial disparities in accuracy between the proposed",
+    "tldr": "This work introduces a novel dataset A IR D ELHI comprising PM 2 .",
     "apis": [
       "openalex",
+      "semanticscholar",
       "crossref"
     ],
     "match_score": 1.0,
     "ref": "B5",
     "query": "AirDelhi fine-grained spatio-temporal particulate matter dataset Delhi",
-    "depth": "SNIPPET"
+    "depth": "ABSTRACT"
   },
   {
     "title": "Explainable PSO-optimised machine learning models for multi-pollutant air quality forecasting in major African cities with transfer learning",
@@ -299,6 +302,91 @@
     "match_score": 1.0,
     "ref": "C4",
     "query": "Improved hybrid transfer learning based deep learning model PM2.5 concentration",
+    "depth": "FULL"
+  },
+  {
+    "ref": "A3",
+    "query": "A multi-pollutant emissions inventory and air quality analysis for Bishkek",
+    "depth": "UNRESOLVED",
+    "best_score": 0.12,
+    "closest_rejected": "Mapping PM2.5 Sources and Emission Management Options for Bishkek, Kyrgyzstan"
+  },
+  {
+    "title": "AQ-Bench: a benchmark dataset for machine learning on global air quality metrics",
+    "year": 2021,
+    "doi": "10.5194/essd-13-3013-2021",
+    "venue": "Earth system science data",
+    "authors": [
+      "Clara Betancourt",
+      "Timo T. Stomberg",
+      "Ribana Roscher",
+      "Martin G. Schultz",
+      "Scarlet Stadtler"
+    ],
+    "abstract": "Abstract. With the AQ-Bench dataset, we contribute to the recent developments towards shared data usage and machine learning methods in the field of environmental science. The dataset presented here enables researchers to relate global air quality metrics to easy-access metadata and to explore different machine learning methods for obtaining estimates of air quality based on this metadata. AQ-Bench contains a unique collection of aggregated air quality data from the years 2010–2014 and metadata at more than 5500 air quality monitoring stations all over the world, provided by the first Tropospheric Ozone Assessment Report (TOAR). It focuses in particular on metrics of tropospheric ozone, which has a detrimental effect on climate, human morbidity and mortality, as well as crop yields. The purpose of this dataset is to produce estimates of various long-term ozone metrics based on time-independent local site conditions. We combine this task with a suitable evaluation metric. Baseline scores obtained from a linear regression method, a fully connected neural network and random forest are provided for reference and validation. AQ-Bench offers a low-threshold entrance for all machine learners with an interest in environmental science and for atmospheric scientists who are interested in applying machine learning techniques. It enables them to start with a real-world problem relevant to humans and nature. The dataset and introductory machine learning code are available at https://doi.org/10.23728/b2share.30d42b5a87344e82855a486bf2123e9f (Betancourt et al., 2020) and https://gitlab.version.fz-juelich.de/esde/machine-learning/aq-bench (Betancourt et al., 2021). AQ-Bench thus provides a blueprint for environmental benchmark datasets as well as an example for data re-use according to the FAIR principles.",
+    "is_oa": true,
+    "cited_by": 28,
+    "source_api": "openalex",
+    "apis": [
+      "openalex",
+      "crossref"
+    ],
+    "match_score": 1.0,
+    "ref": "B1",
+    "query": "AQ-Bench a benchmark dataset for machine learning on global air quality metrics",
+    "depth": "ABSTRACT"
+  },
+  {
+    "title": "Spatial Transfer Learning for Estimating PM$$_{2.5}$$ in Data-Poor Regions",
+    "year": 2024,
+    "doi": "10.1007/978-3-031-70378-2_24",
+    "venue": "Lecture Notes in Computer Science",
+    "authors": [
+      "Shrey Gupta",
+      "Yongbee Park",
+      "Jianzhao Bi",
+      "Suyash Gupta",
+      "Andreas Züfle",
+      "Avani Wildani",
+      "Yang Liu"
+    ],
+    "source_api": "crossref",
+    "apis": [
+      "crossref"
+    ],
+    "match_score": 0.88,
+    "ref": "C1",
+    "query": "Spatial transfer learning for estimating PM2.5 in data-poor regions",
+    "depth": "SNIPPET"
+  },
+  {
+    "title": "Machine learning driven by environmental covariates to estimate high-resolution PM2.5 in data-poor regions",
+    "year": 2022,
+    "doi": "10.7717/peerj.13203",
+    "venue": "PeerJ",
+    "authors": [
+      "Xiaoye Jin",
+      "Jianli Ding",
+      "Xiangyu Ge",
+      "Jie Liu",
+      "Boqiang Xie",
+      "Shuang Zhao",
+      "Qiaozhen Zhao"
+    ],
+    "abstract": "PM 2.5 , which refers to fine particles with an equivalent aerodynamic diameter of less than or equal to 2.5 µm, can not only affect air quality but also endanger public health. Nevertheless, the spatial distribution of PM 2.5 is not well understood in data-poor regions where monitoring stations are scarce. Therefore, we constructed a random forest (RF) model and a bagging algorithm model based on ground-monitored PM 2.5 data, aerosol optical depth (AOD) and meteorological data, and auxiliary geographical variables to accurately estimate the spatial distribution of PM 2.5 concentrations in Xinjiang during 2015–2020 at a resolution of 1 km. Through 10-fold cross-validation (CV), the RF model and bagging algorithm model were verified and compared. The results showed the following: (1) The RF model achieved better model performance and thus can be used to estimate the PM 2.5 concentration at a relatively high resolution. (2) The PM 2.5 concentrations were high in southern Xinjiang and low in northern Xinjiang. The high values were concentrated mainly in the Tarim Basin, while most areas of northern Xinjiang maintained low PM 2.5 levels year-round. (3) The PM 2.5 values in Xinjiang showed significant seasonality, with the seasonally averaged concentrations decreasing as follows: winter (71.95 µg m −3 ) &gt; spring (64.76 µg m −3 ) &gt; autumn (46.01 µg m −3 ) &gt; summer (43.40 µg m −3 ). Our model provides a way to monitor air quality in data-scarce places, thereby advancing efforts to achieve sustainable development in the future.",
+    "is_oa": true,
+    "cited_by": 12,
+    "source_api": "openalex",
+    "apis": [
+      "openalex"
+    ],
+    "merge_conflicts": [
+      "crossref:Peer Review #2 of \"Machine learning driv"
+    ],
+    "match_score": 1.0,
+    "pmcid": "PMC8976473",
+    "ref": "C2",
+    "query": "Machine learning driven by environmental covariates to estimate high-resolution PM2.5 in data-poor regions",
     "depth": "FULL"
   },
   {
@@ -366,9 +454,6 @@
     "apis": [
       "openalex",
       "crossref"
-    ],
-    "merge_conflicts": [
-      "semanticscholar:Comparing Predictive Accuracy"
     ],
     "match_score": 1.0,
     "ref": "S:M3",

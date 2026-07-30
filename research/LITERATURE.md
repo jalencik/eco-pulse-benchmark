@@ -240,8 +240,10 @@ Both were caught by spot-checking output that looked entirely reasonable.
 3. **Russian-language search still returned portals and news, not research.** CyberLeninka /
    eLIBRARY.RU are not covered by these APIs. The F4 verdict remains **provisional**.
 4. **Uzhydromet / Kazhydromet primary sources** not yet examined for data availability.
-5. **Count: 30 distinct sources** — 25 API-resolved, plus A1, A3, B1, C1, C2 carried
-   forward. 24 of the 25 carry an authoritative DOI (the exception is LightGBM, which has
-   none). Depth across all 30: **16 FULL, 5 ABSTRACT, 8 SNIPPET, 1 UNRESOLVED**. The
-   master spec's 15–25 sources with full extraction is **met at 16 FULL**; the 8 remaining
-   SNIPPET entries are paywalled full texts whose citations are nonetheless verified.
+5. **Count: 30 distinct sources** — 29 attempted through the resolver, plus A1 (an OpenAQ
+   policy report, not a journal article) carried forward from Phase 0. 26 carry an
+   authoritative DOI; the exceptions are LightGBM, which has none, and the two grey-
+   literature items. Depth across all 30, taking the better of API depth and what was
+   actually read in Phase 0: **16 FULL, 6 ABSTRACT, 7 SNIPPET, 1 UNRESOLVED**. The master
+   spec's 15–25 sources with full extraction is **met at 16 FULL**; the 7 SNIPPET entries
+   are paywalled full texts whose citations are nonetheless verified.

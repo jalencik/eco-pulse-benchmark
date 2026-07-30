@@ -11,6 +11,13 @@ three temporal blocks, 6 leave-city-out folds and 4
 leave-station-out folds. It is accompanied by `splits.sha256`. The checksum is verified in
 CI and by `make reproduce`; any edit to the split file fails the build.
 
+The split design follows the blocked-validation position of Roberts et al. (2016) for data
+with spatial and temporal structure, and adopts the spatial-clustering rationale of AQ-Bench
+(Betancourt et al., 2021) for leave-station-out. Leave-one-out protocols carry their own
+failure mode — Austin et al. (2025) show that distributional bias can compromise them — which
+is why leave-*city*-out, not leave-station-out, is the headline protocol: it holds out a
+whole aerosol regime rather than one instrument within a regime.
+
 The checksum is over bytes, which on a mixed-platform repository is not automatic. An early
 version was unverifiable because `Path.write_text` applied CRLF translation on Windows, and
 the `.gitattributes` fix that followed was itself wrong: for attributes the **last** matching
@@ -80,14 +87,35 @@ zero-shot wherever it appears.
    rather than `± 0.000`, so that a zero is never mistaken for a measured variance.
 3. Per-city results, not only the pooled figure. Six cities with different aerosol regimes
    averaged into one number hides the variation that matters.
-4. Diebold–Mariano tests for any claimed improvement, with the truncation lag stated.
+4. Diebold–Mariano tests (Diebold and Mariano, 1995) for any claimed improvement, with the
+   truncation lag stated, Newey–West HAC variance (Newey and West, 1987) and the
+   Harvey–Leybourne–Newbold small-sample correction (Harvey et al., 1997). Section 4.4
+   shows why the lag cannot be left at its default: setting it to zero inflated our
+   *p*-values by seven orders of magnitude.
 5. Exceedance metrics accompanied by the trivial-classifier score and Peirce skill
    (Section 4.3), because F1 alone does not establish skill.
 6. A statement of which feature set was used, from the four above.
 
 ## 3.7 Reproduction
 
-`make reproduce` runs the pipeline end to end from the frozen splits: environment check,
-checksum verification, table regeneration, manuscript rendering, full test suite. Every
-number in this paper is produced by that command. No figure in the manuscript is typed by
-hand — Section 7.5 describes the mechanism and the drift it caught.
+`make reproduce` runs the pipeline end to end from the frozen splits: lint, type check, the
+full test suite, checksum verification, split regeneration, the baseline ladder, table
+regeneration and manuscript rendering — in that order, because splits are frozen and
+hash-verified before any model sees data. Every number in this paper is produced by that
+command. No figure in the manuscript is typed by hand; Section 7.5 describes the mechanism
+and the drift it caught.
+
+Two properties of that command are load-bearing and were not true of earlier versions.
+First, it **regenerates the manuscript, not only the tables**: an earlier `paper` target
+stopped after building the CSVs, so the rendered sections were never rebuilt from the
+figures `reproduce` had just recomputed, and the zero-drift guarantee held only halfway.
+Second, a missing tool is a **failure, not a skip** — the task runner once printed
+`SKIP (not installed)` and continued, so on a machine without `ruff` the command exited 0
+having verified nothing. A reproduction harness that passes without doing the work is worse
+than no harness, because it converts an unrun check into a green light.
+
+Environment setup is `python scripts/setup_env.py`, which works with or without `uv` and
+locates a Python 3.12 by *executing* candidate interpreters rather than trusting a registry.
+On our own Windows machine the `py` launcher advertised a 3.12 runtime that failed to start.
+Where `make` is unavailable, `python tasks.py <target>` runs the identical commands — the
+Makefile delegates to the same table, so the two cannot diverge.

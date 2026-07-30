@@ -21,6 +21,7 @@ own `predict()` would report numbers for a model nobody implemented, so
 from __future__ import annotations
 
 import json
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -32,7 +33,7 @@ from ecopulse_ca.eval.metrics import (
     exceedance_metrics,
     regression_metrics,
 )
-from ecopulse_ca.models.base import StationMeta
+from ecopulse_ca.models.base import Nowcaster, StationMeta
 from ecopulse_ca.models.climatology import Climatology
 from ecopulse_ca.models.idw import IDW, NearestMonitor
 from ecopulse_ca.models.kriging import OrdinaryKriging
@@ -145,7 +146,7 @@ def run_task_f(panel: pd.DataFrame, blocks: Blocks, tz_of: dict[str, str]) -> pd
 
 
 # --------------------------------------------------------------------------- Task N
-NOWCASTERS = {
+NOWCASTERS: dict[str, Callable[..., Nowcaster]] = {
     # Rung 0: the achievable constant. Any model claiming to have learned something
     # about an unmonitored city must beat this. See models/pool_mean.py.
     "training_pool_mean": TrainingPoolMean,
@@ -212,7 +213,12 @@ def run_task_n(
                     "n_days": exc.n_days,
                     "n_exceed_obs": exc.n_exceed_obs,
                 }
-                if name == "ordinary_kriging":
-                    row["kriging_fallback_rate"] = round(model.fallback_rate, 4)
+                # Only OrdinaryKriging exposes this; it records the share of predictions
+                # where the kriging system was singular and the model silently fell back
+                # to IDW. Probed rather than assumed, so adding a nowcaster that also
+                # reports a fallback rate does not require editing this branch.
+                fallback = getattr(model, "fallback_rate", None)
+                if fallback is not None:
+                    row["kriging_fallback_rate"] = round(float(fallback), 4)
                 rows.append(row)
     return pd.DataFrame(rows)

@@ -171,3 +171,42 @@ def test_split_files_are_committed_to_git():
     """The frozen splits are the deliverable; .gitignore must not exclude them."""
     gitignore = (Path(SPLIT_DIR).parents[1] / ".gitignore").read_text(encoding="utf-8")
     assert "!benchmark/splits/**" in gitignore
+
+
+class TestFreezeIsIdempotent:
+    """Re-freezing identical splits must not modify a single committed byte.
+
+    The freeze timestamp was previously re-stamped on every invocation, so `make reproduce`
+    dirtied `splits.sha256` even when the benchmark had not moved. A reviewer running the
+    pipeline then had to work out whether the splits had changed or only the clock had —
+    on the one file whose stability the whole benchmark rests on. An idempotent
+    reproduction is part of the claim, so it is tested rather than assumed.
+    """
+
+    def test_refreezing_preserves_the_original_timestamp(self, tmp_path):
+        from ecopulse_ca.splits.builder import build, freeze
+
+        payload = build()
+        first = freeze(payload, out_dir=tmp_path)
+        stamp_before = (tmp_path / "splits.sha256").read_text(encoding="utf-8")
+
+        second = freeze(payload, out_dir=tmp_path)
+        stamp_after = (tmp_path / "splits.sha256").read_text(encoding="utf-8")
+
+        assert first == second
+        assert stamp_before == stamp_after, "re-freezing rewrote the checksum file"
+
+    def test_a_changed_payload_does_get_a_new_timestamp(self, tmp_path):
+        """The preservation must be conditional on the hash, not unconditional."""
+        from ecopulse_ca.splits.builder import build, freeze
+
+        payload = build()
+        freeze(payload, out_dir=tmp_path)
+        before = (tmp_path / "splits.sha256").read_text(encoding="utf-8")
+
+        altered = json.loads(json.dumps(payload))
+        altered["benchmark_version"] = "9.9.9-test"
+        freeze(altered, out_dir=tmp_path)
+        after = (tmp_path / "splits.sha256").read_text(encoding="utf-8")
+
+        assert before.split()[0] != after.split()[0], "hash did not change with the payload"

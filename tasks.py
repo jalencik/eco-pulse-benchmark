@@ -59,16 +59,23 @@ TARGETS: dict[str, list[list[str]]] = {
     "test": [[PY, "-m", "pytest"]],
     "test-fast": [[PY, "-m", "pytest", "-m", "not network and not slow"]],
     "splits": [[PY, "-m", "ecopulse_ca.splits.builder", "--freeze"]],
-    "baselines": [
-        [PY, "-m", "ecopulse_ca.tasks.forecasting", "--all-seeds"],
-        [PY, "-m", "ecopulse_ca.tasks.nowcasting", "--all-seeds"],
-    ],
+    # One script runs Task F and Task N across all five seeds. The target previously named
+    # `ecopulse_ca.tasks.forecasting` and `.nowcasting`, which have never existed — the
+    # package holds only __init__.py. `reproduce` therefore could not have run to
+    # completion, and the error surfaced the first time it was executed end to end.
+    "baselines": [[PY, "scripts/run_baselines.py"]],
     "paper": [
         [PY, "scripts/build_r7_tables.py"],
         [PY, "scripts/build_merge_divergence.py"],
+        # Reads the committed research/sources.json; deterministic and offline. The
+        # resolver that *populates* that file (scripts/fetch_literature.py) is network
+        # bound and deliberately stays out of `reproduce`, which must run without a
+        # network and give the same answer every time.
+        [PY, "scripts/build_literature_table.py"],
         [PY, "paper/scripts/build_all.py"],
         [PY, "paper/scripts/extract_numbers.py"],
         [PY, "paper/scripts/render.py"],
+        [PY, "paper/scripts/stitch.py"],
     ],
 }
 

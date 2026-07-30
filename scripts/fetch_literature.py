@@ -61,6 +61,13 @@ TARGETS: dict[str, str] = {
     "B5": "AirDelhi fine-grained spatio-temporal particulate matter dataset Delhi",
     "C3": "Explainable machine learning multi-pollutant forecasting African cities transfer learning",
     "C4": "Improved hybrid transfer learning based deep learning model PM2.5 concentration",
+    # Read at FULL depth during Phase 0. Resolved here too, so that no entry in the
+    # reference list is hand-typed -- the same reason the results tables are generated.
+    "A3": "A multi-pollutant emissions inventory and air quality analysis for Bishkek",
+    "B1": "AQ-Bench a benchmark dataset for machine learning on global air quality metrics",
+    "C1": "Spatial transfer learning for estimating PM2.5 in data-poor regions",
+    "C2": "Machine learning driven by environmental covariates to estimate high-resolution "
+    "PM2.5 in data-poor regions",
 }
 
 # Methodological sources the manuscript already leans on. These are known-item lookups by
@@ -108,6 +115,10 @@ REQUIRED: dict[str, set[str]] = {
     "B5": {"delhi"},
     "C3": {"african"},
     "M9": {"cams"},
+    "A3": {"bishkek"},
+    "B1": {"bench"},
+    "C1": {"transfer"},
+    "C2": {"covariates"},
 }
 
 STOPWORDS = {

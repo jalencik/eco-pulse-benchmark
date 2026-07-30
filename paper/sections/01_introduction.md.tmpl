@@ -3,11 +3,13 @@
 ## 1.1 The gap
 
 Central Asia is among the most polluted inhabited regions on earth and among the least
-instrumented. Published work places annual PM2.5 in the region's capitals at 4.3–12.6× the
-WHO 2021 guideline, yet the monitoring base supporting those figures is thin and unevenly
-open. Of the five states, one — Turkmenistan — operates no national air quality monitoring
-at all; another, Kazakhstan, shares its data only with users physically inside the country;
-only Kyrgyzstan publishes in a fully open form.
+instrumented. Tursumbayeva et al. (2023) place annual PM2.5 in six regional capitals at
+4.3–12.6× the WHO 2021 guideline, and attribute the burden principally to coal combustion
+rather than transport — contradicting official emissions inventories. Yet the monitoring
+base supporting those figures is thin and unevenly open. Of the five states, one —
+Turkmenistan — operates no national air quality monitoring at all; another, Kazakhstan,
+shares its data only with users physically inside the country; only Kyrgyzstan publishes in
+a fully open form (OpenAQ, 2025).
 
 The scientific consequence is not an absence of estimates. Global gridded products already
 assign PM2.5 values across the region, and the epidemiological literature uses them. What is
@@ -18,14 +20,33 @@ splits, no declared protocol, no shared evaluation.
 That absence has a measurable cost. The closest environmental analogue in the literature —
 PM2.5 estimation across Xinjiang, a comparably arid, dust-affected, sparsely-monitored
 region — reports R² of 0.73–0.81 under 10-fold cross-validation with no spatial
-stratification. With 41 stations across 16 cities and 8-day-averaged samples, that protocol
-places observations from the same station, frequently the same window, on both sides of the
-split. The resulting figure answers *"how well can we interpolate within known stations?"*
-It is routinely read as answering *"how well can we estimate at an unmonitored location?"*
-Those are different questions with very different answers, and nothing in a reported R²
-distinguishes them.
+stratification (Jin et al., 2022). With 41 stations across 16 cities and 8-day-averaged
+samples, that protocol places observations from the same station, frequently the same
+window, on both sides of the split. The resulting figure answers *"how well can we
+interpolate within known stations?"* It is routinely read as answering *"how well can we
+estimate at an unmonitored location?"* Those are different questions with very different
+answers, and nothing in a reported R² distinguishes them.
+
+This is not a criticism peculiar to one paper. Roberts et al. (2016) establish that data
+with spatial, temporal or hierarchical structure require blocked validation, because
+ordinary k-fold leaves dependence spanning the split; Meyer et al. (2019) show the same for
+spatially-derived predictors specifically. Alazmi and Rakha (2022) demonstrate the effect
+empirically for particulate matter, comparing random, spatial and spatiotemporal
+cross-validation on identical data. Tang et al. (2024), reviewing machine learning for air
+quality, name validation strategy among the field's systematically overlooked issues. The
+methodological position this benchmark takes is therefore not novel — what is absent is a
+regional benchmark that *enforces* it.
 
 ## 1.2 What this paper contributes
+
+The precedent for a machine-learning air quality benchmark is AQ-Bench (Betancourt et al.,
+2021), which covers 5,577 stations worldwide and splits with spatial clustering at a 50 km
+threshold. AQ-Bench targets long-term *ozone* metrics from station metadata — a
+time-independent regression — and does not include Central Asia. We adopt its spatial
+clustering rationale for leave-station-out rather than reinventing one, and depart from it
+in pollutant, target, temporal protocol and region; Section 3 states the differences
+exactly. AirDelhi (Chauhan et al., 2023) provides a second precedent for a fine-grained
+particulate benchmark, though for a single city.
 
 **C1 — a benchmark.** {{n_stations}} stations across {{n_cities}} cities, with splits frozen
 and hashed before any model was fitted: blocked-temporal with a derived purge gap,
@@ -68,7 +89,21 @@ without neighbours scored RMSE {{untuned_retrospective_rmse}} and R²
 ## 1.4 What this paper does not claim
 
 We do not claim state of the art: no like-for-like comparison exists on these splits, because
-we are creating them. We do not claim to introduce transfer learning for data-poor regions;
-that framing is held by prior work. We do not compare against published R² values obtained
-under random cross-validation, because a leave-city-out number and a random-CV number are
-not commensurable, and treating them as such is the error this benchmark exists to prevent.
+we are creating them. We do not claim to introduce transfer learning for data-poor regions —
+that framing is held by Gupta et al. (2024), who propose a latent dependency factor for
+spatial transfer of PM2.5 estimation and report a 19.34% improvement over baselines. Their
+evaluation covers ten target sensors against eastern-US source data; it is a method paper,
+not a benchmark, and defines no reusable public split. What remains available to us is the
+evaluation protocol and the region, not the idea. We do not compare against published R²
+values obtained under random cross-validation, because a leave-city-out number and a
+random-CV number are not commensurable, and treating them as such is the error this
+benchmark exists to prevent.
+
+**One point of prior art we cannot resolve.** A 2025 conference abstract claims the first
+machine-learning PM2.5 prediction for Tashkent, using ten automated stations with weather
+and seasonal features. We could not obtain it: the publisher page returns HTTP 403, and the
+record is not indexed in OpenAlex, Crossref, Semantic Scholar or Europe PMC. **Its split
+protocol is therefore unverified**, and we make no claim about what it did or did not do —
+in particular, we do not assert that our leave-city-out protocol is the first applied to
+Tashkent. Should that work use a spatially-stratified protocol, the novelty of C1 narrows to
+the multi-city benchmark rather than the city. Section 7 records this as an open item.

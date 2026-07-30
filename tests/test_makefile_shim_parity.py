@@ -212,6 +212,30 @@ class TestGitHygiene:
         assert "!benchmark/splits/**" in text, "frozen splits are the deliverable and must commit"
 
 
+@pytest.mark.parametrize("target", ["splits", "baselines", "paper"])
+def test_every_referenced_script_or_module_exists(target):
+    """`baselines` pointed at ecopulse_ca.tasks.forecasting, which has never existed.
+
+    The package holds only __init__.py, so `reproduce` could not run to completion — and
+    nothing caught it, because the chain had never been executed end to end. Resolving the
+    target of every command is cheap and turns that into a test failure.
+    """
+    import importlib.util
+
+    import tasks
+
+    for cmd in tasks.TARGETS[target]:
+        if "-m" in cmd:
+            module = cmd[cmd.index("-m") + 1]
+            assert importlib.util.find_spec(module) is not None, (
+                f"{target} runs `-m {module}`, which does not exist"
+            )
+        else:
+            script = cmd[-1]
+            if script.endswith(".py"):
+                assert (ROOT / script).exists(), f"{target} runs {script}, which does not exist"
+
+
 @pytest.mark.parametrize("target", ["lint", "typecheck", "test", "splits", "baselines", "paper"])
 def test_no_target_invokes_a_bare_tool_name(target):
     """Bare `ruff`/`mypy` depend on PATH. `python -m ruff` depends on the venv, correctly."""

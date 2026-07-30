@@ -16,7 +16,7 @@ import hashlib
 import json
 import logging
 from pathlib import Path
-from typing import Any
+from typing import Any, Self
 
 import httpx
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
@@ -93,7 +93,7 @@ class HttpSource:
             self._client.close()
             self._client = None
 
-    def __enter__(self) -> HttpSource:
+    def __enter__(self) -> Self:
         return self
 
     def __exit__(self, *exc: object) -> None:
@@ -165,7 +165,8 @@ class HttpSource:
         limit = int(params["limit"])
         hard_cap = max_pages if max_pages is not None else 1000
 
-        page, out = 1, []
+        page = 1
+        out: list[dict] = []
         self.last_pagination_partial = False
         while page <= hard_cap:
             params["page"] = page

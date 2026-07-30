@@ -7,6 +7,7 @@
 | A8 | FULL | yes | Jie Liu et al. | 2025 | Scientific Reports | `10.1038/s41598-025-86880-5` |
 | B3 | FULL | yes | Asmaa Alazmi, Hesham Rakha | 2022 | International Journal of Environmental Research and Public Health | `10.3390/ijerph191610098` |
 | B4 | FULL | yes | George I. Austin, Itsik Pe’er, Tal Korem | 2025 | Science Advances | `10.1126/sciadv.adx6976` |
+| C2 | FULL | yes | Xiaoye Jin et al. | 2022 | PeerJ | `10.7717/peerj.13203` |
 | C4 | FULL | yes | Jianjun Ni et al. | 2022 | Applied Sciences | `10.3390/app12073597` |
 | S:M11 | FULL | yes | Scott Lundberg, Su‐In Lee | 2017 | arXiv (Cornell University) | `10.48550/arxiv.1705.07874` |
 | S:M3 | FULL | yes | Francis X. Diebold, Roberto S. Mariano | 1994 | National Bureau of Economic Research | `10.3386/t0169` |
@@ -14,6 +15,8 @@
 | S:M7 | FULL | yes | Yongming Xu et al. | 2018 | Environmental Pollution | `10.1016/j.envpol.2018.08.029` |
 | S:M8 | FULL | yes | Tongshu Zheng et al. | 2018 | Atmospheric measurement techniques | `10.5194/amt-11-4823-2018` |
 | S:M9 | FULL | yes | Antje Inness et al. | 2019 | Atmospheric chemistry and physics | `10.5194/acp-19-3515-2019` |
+| B1 | ABSTRACT | yes | Clara Betancourt et al. | 2021 | Earth system science data | `10.5194/essd-13-3013-2021` |
+| B5 | ABSTRACT | yes | Sachin Chauhan et al. | 2023 | Neural Information Processing Systems | `10.52202/075280-3298` |
 | C3 | ABSTRACT | yes | Gideon Mazuruse et al. | 2026 | Frontiers in Environmental Science | `10.3389/fenvs.2026.1828162` |
 | S:M1 | ABSTRACT | yes | David R. Roberts et al. | 2016 | Ecography | `10.1111/ecog.02881` |
 | S:M10 | ABSTRACT | partial | Guolin Ke et al. | 2017 | HAL (Le Centre pour la Communication Scientifique Directe) | — |
@@ -22,10 +25,11 @@
 | A4 | SNIPPET | yes | Xiangyue Chen et al. | 2021 | Atmospheric Environment | `10.1016/j.atmosenv.2021.118273` |
 | A5 | SNIPPET | yes | Kazbek Tursun et al. | 2025 | Urban Climate | `10.1016/j.uclim.2025.102706` |
 | B2 | SNIPPET | yes | Dié Tang, Yu Zhan, Fumo Yang | 2024 | Atmospheric Research | `10.1016/j.atmosres.2024.107261` |
-| B5 | SNIPPET | yes | Sachin Chauhan et al. | 2023 | Advances in Neural Information Processing Systems 36 | `10.52202/075280-3298` |
+| C1 | SNIPPET | yes | Shrey Gupta et al. | 2024 | Lecture Notes in Computer Science | `10.1007/978-3-031-70378-2_24` |
 | S:M12 | SNIPPET | yes | Yixuan Zheng et al. | 2015 | Atmospheric Environment | `10.1016/j.atmosenv.2015.06.046` |
 | S:M2 | SNIPPET | yes | Hanna Meyer et al. | 2019 | Ecological Modelling | `10.1016/j.ecolmodel.2019.108815` |
 | S:M4 | SNIPPET | yes | David I. Harvey, Stephen J. Leybourne, Paul Newbold | 1997 | International Journal of Forecasting | `10.1016/s0169-2070(96)00719-4` |
+| A3 | UNRESOLVED | no | — | — | *not indexed; closest rejected: Mapping PM2.5 Sources and Emission Management Op* | — |
 | A9 | UNRESOLVED | no | — | — | *not indexed; closest rejected: Interpretable Multi-Horizon Machine Learning Fra* | — |
 
-**25 records resolved via API.** ABSTRACT=4, FULL=12, SNIPPET=8, UNRESOLVED=1. 23 carry an authoritative DOI; 16 reached abstract depth or better.
+**29 records resolved via API.** ABSTRACT=6, FULL=13, SNIPPET=8, UNRESOLVED=2. 26 carry an authoritative DOI; 19 reached abstract depth or better.

@@ -33,6 +33,7 @@ import json
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 
@@ -126,7 +127,8 @@ def build_leave_station_out(stations: list[dict]) -> list[dict]:
     for s in stations:
         by_city.setdefault(s["city"], []).append(s["station_id"])
 
-    folds, ineligible = [], []
+    folds: list[dict[str, Any]] = []
+    ineligible: list[str] = []
     for city, ids in sorted(by_city.items()):
         ids = sorted(ids)
         if len(ids) < 2:
@@ -236,11 +238,28 @@ def freeze(payload: dict, out_dir: Path = SPLIT_DIR) -> str:
         _write_exact(out_dir / f"{name}.json", canonical_json({name: payload[name]}))
 
     sha = digest(payload)
+
+    # The freeze timestamp records when the benchmark was frozen, not when this command
+    # last ran. Re-stamping it on every invocation made `make reproduce` mutate a committed
+    # file even when the splits were byte-identical, so a reviewer who ran the pipeline got
+    # a dirty working tree from a no-op and had to decide whether the benchmark had moved.
+    # An idempotent reproduction is part of the claim, so the original stamp is preserved
+    # whenever the hash is unchanged.
+    frozen_at = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+    existing = out_dir / "splits.sha256"
+    if existing.exists():
+        text = existing.read_text(encoding="utf-8")
+        if text.startswith(f"{sha}  splits.json"):
+            for line in text.splitlines():
+                if line.startswith("# frozen "):
+                    frozen_at = line.removeprefix("# frozen ").strip()
+                    break
+
     _write_exact(
         out_dir / "splits.sha256",
         f"{sha}  splits.json\n"
         f"# benchmark_version {payload['benchmark_version']}\n"
-        f"# frozen {datetime.now(UTC).strftime('%Y-%m-%dT%H:%M:%SZ')}\n"
+        f"# frozen {frozen_at}\n"
         f"# IMMUTABLE. If this hash changes, tests/test_splits_immutable.py fails.\n"
         f"# Poor predictor coverage in a frozen city is REPORTED, never fixed by refreezing.\n"
         f"# Verify with:  sha256sum -c splits.sha256\n",

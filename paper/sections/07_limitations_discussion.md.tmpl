@@ -119,6 +119,21 @@ producer script at all and could not be rebuilt by `make reproduce`; both now ha
 - **ERA5 is oracle-only and incompletely retrieved.** Its measured latency (163 h) exceeds
   every evaluated horizon, so it cannot enter the deployable set; the multi-year retrieval
   was stopped once that was established.
+- **One item of prior art is unresolved.** A 2025 conference abstract claims the first
+  machine-learning PM2.5 prediction for Tashkent. The publisher page returns HTTP 403 and
+  the record is absent from OpenAlex, Crossref, Semantic Scholar and Europe PMC, so **its
+  split protocol could not be verified**. Section 1.4 states what we consequently do not
+  claim. If that work is spatially stratified, the contribution of C1 narrows from
+  "first such protocol in the region" to "first multi-city benchmark in the region" — the
+  benchmark itself is unaffected, only the framing of its novelty.
+- **Literature depth is uneven, and recorded as such.** Of 30 sources, 16 were read in full
+  and 6 at abstract depth; 7 remain at snippet depth behind publisher paywalls. For those,
+  bibliographic identity is verified against Crossref/OpenAlex but *content* claims are not
+  independently confirmed. `research/LITERATURE.md` records the two axes separately rather
+  than averaging them into a single confidence.
+- **Russian-language coverage is incomplete.** CyberLeninka and eLIBRARY.RU are not indexed
+  by the APIs used here, so the falsifier F4 verdict — that no equivalent regional benchmark
+  exists in the Russian-language literature — remains provisional.
 
 ## 7.7 Train/serve skew is measured but not eliminated
 
