@@ -15,3 +15,14 @@ benchmark/splits/** -text
 
 # Fixtures are compared byte-wise by the test suite for the same reason.
 src/ecopulse_ca/ingest/fixtures/*.json -text
+
+# Binary artifacts. Without this, `* text=auto` misclassified the submission PDF as text
+# and rewrote LF to CRLF on checkout: the file arrived 827 bytes larger than it was
+# committed, and every byte offset in the PDF xref table was wrong. Lenient parsers still
+# opened it, which is what makes the fault dangerous -- it would have surfaced in a
+# journal's submission portal rather than here.
+*.pdf binary
+*.parquet binary
+*.png binary
+*.jpg binary
+*.ttf binary
