@@ -34,6 +34,18 @@ dev = [
     "pre-commit>=3.7",
 ]
 
+# Optional, and deliberately outside `dev`: `scripts/build_pdf.py` renders the submission
+# PDF and is not part of `make reproduce`. The usual pandoc + LaTeX route needs system
+# packages that a reviewer may not have, so this chain is pure Python and installs anywhere
+# the project installs. pdfminer.six is used by the build to verify its own output --
+# a PDF that exists is not a PDF that rendered correctly.
+#     python -m pip install -e ".[pdf]" && python scripts/build_pdf.py
+pdf = [
+    "markdown>=3.6",
+    "xhtml2pdf>=0.2.16",
+    "pdfminer.six>=20240706",
+]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"

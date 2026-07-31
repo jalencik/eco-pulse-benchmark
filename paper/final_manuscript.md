@@ -47,7 +47,7 @@ What the region has never had is a benchmark that enforces it.
 AQ-Bench (Betancourt et al., 2021) is the precedent: 5,577 stations worldwide, split by
 spatial clustering at a 50 km threshold. It targets long-term ozone metrics from station
 metadata, a time-independent regression, and it excludes Central Asia entirely. We borrow
-its spatial clustering rationale for leave-station-out rather than inventing a second one,
+its spatial clustering rationale for leave-station-out instead of inventing a second one,
 and diverge on pollutant, target, temporal protocol and region. Section 3 states the
 differences precisely. AirDelhi (Chauhan et al., 2023) offers a second precedent for
 fine-grained particulate benchmarking, confined to a single city.
@@ -56,7 +56,7 @@ fine-grained particulate benchmarking, confined to a single city.
 and hashed before a single model was fitted: blocked-temporal with a derived purge gap,
 leave-city-out over 6 folds, and leave-station-out where station density
 allows it (4 folds; Almaty, Ashgabat, Bishkek, Tashkent hold one instrument each and are named
-ineligible rather than quietly dropped). A test enforces immutability. It fails for the
+ineligible, not quietly dropped). A test enforces immutability. It fails for the
 authors exactly as it fails for anyone else.
 
 **C2 — transfer evaluated without flattery.** We offer no new method. We measure how far
@@ -70,7 +70,7 @@ with no local history of any kind and has to return a concentration regardless. 
 harshest test the benchmark contains, and it is also the one that matches the deployment
 case the work exists for: an unmonitored city asking for a number it has never been given.
 A model that collapses on Khujand has not earned the right to be deployed anywhere new. We
-report the fold on its own rather than letting it dissolve into a six-fold average.
+report the fold on its own. Averaging it into the other five would report neither.
 
 **C3 — an operational-constraint account.** Every predictor carries a measured latency and a
 typed availability flag. Anything that cannot exist at prediction time is barred from
@@ -123,8 +123,8 @@ and seasonal inputs. We could not obtain it. The publisher returns HTTP 403, and
 appears in none of OpenAlex, Crossref, Semantic Scholar or Europe PMC. **Its split protocol
 is unverified.** We therefore make no claim about what that work did or did not do, and we
 specifically do not assert priority for applying leave-city-out to Tashkent. Should it prove
-to be spatially stratified, the novelty of C1 narrows to the multi-city benchmark rather
-than the city. Section 7 carries this as an open item.
+to be spatially stratified, the novelty of C1 narrows to the multi-city benchmark, not
+the city. Section 7 carries this as an open item.
 
 ---
 
@@ -791,7 +791,7 @@ undefined there.
 
 The consequence runs deeper than reduced coverage. The Q6 timezone check compares
 instruments within a city. In a single-station city, a constant lifelong offset is invisible
-to every rule in the suite, and the QC output records that explicitly rather than returning
+to every rule in the suite, and the QC output records that explicitly instead of returning
 a pass that actually means "not tested". Four of six cities therefore rest on metadata
 correctness for their time alignment. We regard this as the benchmark's largest unaudited
 assumption.
@@ -813,7 +813,7 @@ Almaty, Dushanbe and Khujand, while Bishkek (0.0630) and Tashkent
 Khujand carrying part of the pooled result is worth pausing on, since it is the fold with no
 training label at all. Zero-shot transfer into an unmonitored city is not where a reader
 would expect the method to hold up best. It does, and we take that as the strongest evidence
-in the paper that the spatial machinery generalises rather than memorising.
+in the paper that the spatial machinery generalises instead of memorising.
 
 Ashgabat is the opposite case, and the one where the model has least to work with.
 Turkmenistan operates no national monitoring network, so the fold reduces to a single
@@ -848,7 +848,7 @@ follow, none of which overturn that.
    ultraviolet signal; at these latitudes in December it falls to 0.1% against
    93.5% in July. The direct tracer for the region's dominant winter source is
    unavailable throughout that source's season, so its low attribution is partly a
-   measurement-geometry artefact rather than evidence that SO₂ carries no information.
+   measurement-geometry artefact, not evidence that SO₂ carries no information.
 
 We report the attribution as measured. A paper arguing that satellite remote sensing enables
 air quality prediction in Central Asia would not be supported by these experiments.
@@ -921,7 +921,7 @@ The contribution is the fixed evaluation. Before this benchmark existed, a Centr
 quality result could be reported on a random split, with reanalysis features unavailable at
 inference time, against no baseline ladder, scored with an exceedance F1 that a constant
 already achieves (0.764 at a 64.8% base rate, because the region's
-air is bad on most days rather than because the classifier is good). Every one of those
+air is bad on most days, not because the classifier is good). Every one of those
 choices would have produced a more impressive paper than this one. The splits are frozen and
 checksummed. The protocol violations are enforced by failing tests rather than requested in
 prose. The numbers above are what survives that. A future model that genuinely improves on

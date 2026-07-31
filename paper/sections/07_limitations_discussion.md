@@ -32,7 +32,7 @@ undefined there.
 
 The consequence runs deeper than reduced coverage. The Q6 timezone check compares
 instruments within a city. In a single-station city, a constant lifelong offset is invisible
-to every rule in the suite, and the QC output records that explicitly rather than returning
+to every rule in the suite, and the QC output records that explicitly instead of returning
 a pass that actually means "not tested". Four of six cities therefore rest on metadata
 correctness for their time alignment. We regard this as the benchmark's largest unaudited
 assumption.
@@ -54,7 +54,7 @@ Almaty, Dushanbe and Khujand, while Bishkek (0.0630) and Tashkent
 Khujand carrying part of the pooled result is worth pausing on, since it is the fold with no
 training label at all. Zero-shot transfer into an unmonitored city is not where a reader
 would expect the method to hold up best. It does, and we take that as the strongest evidence
-in the paper that the spatial machinery generalises rather than memorising.
+in the paper that the spatial machinery generalises instead of memorising.
 
 Ashgabat is the opposite case, and the one where the model has least to work with.
 Turkmenistan operates no national monitoring network, so the fold reduces to a single
@@ -89,7 +89,7 @@ follow, none of which overturn that.
    ultraviolet signal; at these latitudes in December it falls to 0.1% against
    93.5% in July. The direct tracer for the region's dominant winter source is
    unavailable throughout that source's season, so its low attribution is partly a
-   measurement-geometry artefact rather than evidence that SO₂ carries no information.
+   measurement-geometry artefact, not evidence that SO₂ carries no information.
 
 We report the attribution as measured. A paper arguing that satellite remote sensing enables
 air quality prediction in Central Asia would not be supported by these experiments.
@@ -162,7 +162,7 @@ The contribution is the fixed evaluation. Before this benchmark existed, a Centr
 quality result could be reported on a random split, with reanalysis features unavailable at
 inference time, against no baseline ladder, scored with an exceedance F1 that a constant
 already achieves (0.764 at a 64.8% base rate, because the region's
-air is bad on most days rather than because the classifier is good). Every one of those
+air is bad on most days, not because the classifier is good). Every one of those
 choices would have produced a more impressive paper than this one. The splits are frozen and
 checksummed. The protocol violations are enforced by failing tests rather than requested in
 prose. The numbers above are what survives that. A future model that genuinely improves on

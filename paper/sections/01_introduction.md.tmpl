@@ -39,7 +39,7 @@ What the region has never had is a benchmark that enforces it.
 AQ-Bench (Betancourt et al., 2021) is the precedent: 5,577 stations worldwide, split by
 spatial clustering at a 50 km threshold. It targets long-term ozone metrics from station
 metadata, a time-independent regression, and it excludes Central Asia entirely. We borrow
-its spatial clustering rationale for leave-station-out rather than inventing a second one,
+its spatial clustering rationale for leave-station-out instead of inventing a second one,
 and diverge on pollutant, target, temporal protocol and region. Section 3 states the
 differences precisely. AirDelhi (Chauhan et al., 2023) offers a second precedent for
 fine-grained particulate benchmarking, confined to a single city.
@@ -48,7 +48,7 @@ fine-grained particulate benchmarking, confined to a single city.
 and hashed before a single model was fitted: blocked-temporal with a derived purge gap,
 leave-city-out over {{n_loco_folds}} folds, and leave-station-out where station density
 allows it ({{n_lso_folds}} folds; {{lso_ineligible}} hold one instrument each and are named
-ineligible rather than quietly dropped). A test enforces immutability. It fails for the
+ineligible, not quietly dropped). A test enforces immutability. It fails for the
 authors exactly as it fails for anyone else.
 
 **C2 — transfer evaluated without flattery.** We offer no new method. We measure how far
@@ -62,7 +62,7 @@ with no local history of any kind and has to return a concentration regardless. 
 harshest test the benchmark contains, and it is also the one that matches the deployment
 case the work exists for: an unmonitored city asking for a number it has never been given.
 A model that collapses on Khujand has not earned the right to be deployed anywhere new. We
-report the fold on its own rather than letting it dissolve into a six-fold average.
+report the fold on its own. Averaging it into the other five would report neither.
 
 **C3 — an operational-constraint account.** Every predictor carries a measured latency and a
 typed availability flag. Anything that cannot exist at prediction time is barred from
@@ -115,5 +115,5 @@ and seasonal inputs. We could not obtain it. The publisher returns HTTP 403, and
 appears in none of OpenAlex, Crossref, Semantic Scholar or Europe PMC. **Its split protocol
 is unverified.** We therefore make no claim about what that work did or did not do, and we
 specifically do not assert priority for applying leave-city-out to Tashkent. Should it prove
-to be spatially stratified, the novelty of C1 narrows to the multi-city benchmark rather
-than the city. Section 7 carries this as an open item.
+to be spatially stratified, the novelty of C1 narrows to the multi-city benchmark, not
+the city. Section 7 carries this as an open item.
