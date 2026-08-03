@@ -73,6 +73,11 @@ TARGETS: dict[str, list[list[str]]] = {
         # network and give the same answer every time.
         [PY, "scripts/build_literature_table.py"],
         [PY, "paper/scripts/build_all.py"],
+        # Figures are drawn from the same banked CSVs as the prose, so they regenerate with
+        # the tables. A chart pasted in once drifts from its source exactly as a hand-typed
+        # number does. (The PDF build is deliberately NOT here: it is a submission
+        # deliverable, not part of reproducing the numbers.)
+        [PY, "scripts/build_figures.py"],
         [PY, "paper/scripts/extract_numbers.py"],
         [PY, "paper/scripts/render.py"],
         [PY, "paper/scripts/stitch.py"],

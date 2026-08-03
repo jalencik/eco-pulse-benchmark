@@ -44,8 +44,8 @@ from pathlib import Path
 SPLITS = Path("/tmp/bench/benchmark/splits/splits.json")
 EXPECTED_SHA = "544a044c2037c6e6707883b468fcda3b3ba334a3d6cde86d6fcc582f6f9e0c6c"
 
-raw = SPLITS.read_bytes()                      # bytes, not text: CRLF translation
-actual = hashlib.sha256(raw).hexdigest()       # would change the digest on Windows
+raw = SPLITS.read_bytes()  # bytes, not text: CRLF translation
+actual = hashlib.sha256(raw).hexdigest()  # would change the digest on Windows
 if actual != EXPECTED_SHA:
     raise RuntimeError(f"benchmark moved: {actual} != {EXPECTED_SHA}")
 
@@ -88,13 +88,15 @@ import pandas as pd
 
 blocks = {b["name"]: b for b in splits["temporal_blocks"]}
 
+
 def window(df: pd.DataFrame, block: str) -> pd.DataFrame:
     b = blocks[block]
     return df[(df.index >= pd.Timestamp(b["start"])) & (df.index <= pd.Timestamp(b["end"]))]
 
-train = window(panel, "train")     # 2018-11-27 .. 2022-12-31
-val   = window(panel, "val")       # 2023-01-11 .. 2023-12-21
-test  = window(panel, "test")      # 2024 — DO NOT TOUCH until the model is frozen
+
+train = window(panel, "train")  # 2018-11-27 .. 2022-12-31
+val = window(panel, "val")  # 2023-01-11 .. 2023-12-21
+test = window(panel, "test")  # 2024 — DO NOT TOUCH until the model is frozen
 ```
 
 Rules ECO-PULSY inherits by using these splits:
@@ -133,9 +135,9 @@ Use the benchmark's own implementations so definitions cannot drift:
 ```python
 from ecopulse_ca.eval.metrics import regression_metrics, exceedance_metrics, to_daily_mean
 
-reg = regression_metrics(obs, pred)                    # rmse, mae, bias, r2, n
+reg = regression_metrics(obs, pred)  # rmse, mae, bias, r2, n
 daily_obs, daily_pred = to_daily_mean(obs, tz), to_daily_mean(pred, tz)
-exc = exceedance_metrics(daily_obs, daily_pred)        # WHO 2021 24-h guideline, 15 µg/m³
+exc = exceedance_metrics(daily_obs, daily_pred)  # WHO 2021 24-h guideline, 15 µg/m³
 ```
 
 Exceedance is scored on **local-calendar daily means**, because that is what the WHO

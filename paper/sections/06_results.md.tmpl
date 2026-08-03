@@ -60,6 +60,22 @@ magnitude. We now report the full sensitivity sweep: across truncation lags of
 {{dm_lag_range}} hours the pooled conclusion is stable, with all comparisons significant
 ({{dm_lag_all_sig}}) and a worst-case *p* of {{dm_lag_min_p}}.
 
+**Figure 3** gives the per-city comparison against debiased CAMS, and **Figure 5** the
+observed-versus-predicted scatter with the 1:1 line. The compression toward the mean
+visible in Figure 5 is the same effect that drives the RMSE/exceedance divergence of
+Section 4.3.
+
+![Figure 3](figures/fig3_per_city_rmse.png)
+
+**Figure 3.** Held-out city RMSE (µg/m³), tuned LightGBM against debiased CAMS. Ashgabat
+is the fold where the sign reverses; the two are statistically indistinguishable there.
+
+![Figure 5](figures/fig5_obs_vs_pred.png)
+
+**Figure 5.** Observed against predicted daily mean PM2.5 (µg/m³) under leave-city-out,
+with the 1:1 line. Compression toward the mean is visible at high observed values and is
+the mechanism behind the RMSE/exceedance divergence of Section 4.3.
+
 ## 6.3 Task F — forecasting at monitored stations
 
 | Feature set | RMSE (µg/m³) | R² |
@@ -113,6 +129,14 @@ little the retrieved values themselves add. Second, calendar features at
 {{shap_calendar_pct}}% confirm that a large part of the signal is seasonal regularity that
 any climatology captures — consistent with the same-hour 7-day mean being the only Task F
 baseline with positive R².
+
+**Figure 4** shows attribution by feature family.
+
+![Figure 4](figures/fig4_shap_by_family.png)
+
+**Figure 4.** Feature attribution by family, as a share of total mean |SHAP|. Satellite
+families are hatched. Spatial neighbour features dominate; the five satellite products
+together contribute less than static geography.
 
 ## 6.5 Summary of what is and is not established
 

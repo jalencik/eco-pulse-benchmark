@@ -33,6 +33,15 @@ half-day offset from none in such a signal. The check now reports lag identifiab
 flags rather than rejects when the hypothesis is not distinguishable — a station was nearly
 deleted by a discriminator reporting an artefact.
 
+**Figure 1** shows the station geography; marker area is proportional to the number of
+retained hourly observations.
+
+![Figure 1](figures/fig1_study_area.png)
+
+**Figure 1.** Benchmark stations across Central Asia. Marker area is proportional to the
+number of retained hourly observations. Six cities span five countries; Turkmenistan
+(Ashgabat) and Kazakhstan (Almaty) contribute one station each.
+
 ## 2.2 The splits
 
 Train 2018-11-27 to 2022-12-31; validation 2023-01-11 to 2023-12-21; test

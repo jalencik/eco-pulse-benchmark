@@ -61,6 +61,7 @@ th { background: #ececec; border: 0.5pt solid #999; padding: 3pt; font-weight: b
 td { border: 0.5pt solid #bbb; padding: 3pt; vertical-align: top; }
 blockquote { margin: 7pt 18pt; font-size: 10pt; color: #333;
              border-left: 2pt solid #999; padding-left: 8pt; }
+img { max-width: 460px; }
 hr { border: 0; border-top: 0.5pt solid #ccc; margin: 12pt 0; }
 """
 
@@ -92,7 +93,7 @@ def find_font() -> str | None:
     return None
 
 
-def to_html(md_text: str, font_family: str) -> str:
+def to_html(md_text: str, font_family: str, base: Path) -> str:
     import markdown
 
     body = markdown.markdown(
@@ -108,6 +109,17 @@ def to_html(md_text: str, font_family: str) -> str:
     # unaffected and are deliberately left alone. Rewriting subscripts as real <sub>
     # markup draws them with the ordinary digit glyph, which renders and extracts.
     body = body.translate({0x2080 + i: f"<sub>{i}</sub>" for i in range(10)})
+
+    # Rewrite relative figure paths to absolute file paths. pisa's `path=` base did not
+    # resolve them: it emitted "Could not get image data from src attribute" to stderr and
+    # still produced a complete-looking PDF with zero embedded images.
+    def _abs(m: re.Match[str]) -> str:
+        src = m.group(1)
+        if src.startswith(("http://", "https://", "data:", "/")):
+            return m.group(0)
+        return m.group(0).replace(src, (base / src).resolve().as_posix())
+
+    body = re.sub(r'<img[^>]*src="([^"]+)"', lambda m: _abs(m), body)
     return (
         "<html><head><meta charset='utf-8'><style>"
         + (CSS % {"family": font_family})
@@ -118,7 +130,20 @@ def to_html(md_text: str, font_family: str) -> str:
     )
 
 
-def verify(pdf: Path, must_contain: list[str]) -> list[str]:
+def count_images(pdf: Path) -> int:
+    """Embedded XObjects. A figure that fails to load still yields a valid-looking PDF."""
+    from pdfminer.pdfpage import PDFPage
+
+    total = 0
+    with pdf.open("rb") as fh:
+        for page in PDFPage.get_pages(fh):
+            xo = (page.resources or {}).get("XObject")
+            if xo is not None:
+                total += len(xo.resolve() if hasattr(xo, "resolve") else xo)
+    return total
+
+
+def verify(pdf: Path, must_contain: list[str], min_images: int = 0) -> list[str]:
     """Extract the text layer and confirm real content landed.
 
     A zero-byte or blank PDF is a plausible-looking artifact; checking the bytes is the only
@@ -139,6 +164,10 @@ def verify(pdf: Path, must_contain: list[str]) -> list[str]:
     for needle in must_contain:
         if needle not in text:
             problems.append(f"missing from text layer: {needle!r}")
+    if min_images:
+        got = count_images(pdf)
+        if got < min_images:
+            problems.append(f"only {got} embedded images, expected >= {min_images}")
     return problems
 
 
@@ -177,11 +206,13 @@ def main() -> int:
             file=sys.stderr,
         )
 
-    html = to_html(md_text, family)
+    html = to_html(md_text, family, src.parent)
 
     from xhtml2pdf import pisa
 
     with dst.open("wb") as fh:
+        # `path` is the base for resolving relative <img src>. Without it the figure
+        # references silently render as empty boxes -- the PDF still builds.
         result = pisa.CreatePDF(html, dest=fh, encoding="utf-8")
     if result.err:
         print(f"FAILED: {result.err} error(s) during rendering", file=sys.stderr)
@@ -189,7 +220,9 @@ def main() -> int:
 
     # "SO2" is checked because the subscript form silently degraded to "SOn" before the
     # translate() above; a plain size check would not have caught it.
-    problems = verify(dst, ["Central Asia", "Introduction", "Limitations", "SO2"])
+    problems = verify(
+        dst, ["Central Asia", "Introduction", "Limitations", "SO2", "Abstract"], min_images=5
+    )
     if problems:
         print("FAILED verification:", file=sys.stderr)
         for p in problems:

@@ -1,0 +1,38 @@
+# 8. Conclusion
+
+We built the benchmark this region did not have. {{n_stations}} reference instruments across
+{{n_cities}} cities, splits frozen and checksummed before any model was fitted, two tasks
+kept separate, and a baseline ladder that every future submission has to climb. The splits
+are immutable by test, and that test fails for us exactly as it fails for anyone else.
+
+The modelling result is deliberately modest. Tuned gradient boosting reaches R²
+{{taskn_retrospective_r2}} at unmonitored locations, RMSE {{taskn_retrospective_rmse}} µg/m³
+against {{taskn_cams_rmse}} for bias-corrected CAMS, significant at
+*p* {{dm_pooled_p}}. We consider a modest number the correct outcome. Every protocol choice
+available to us would have produced a larger one: a random split, reanalysis features
+unavailable at inference, no baseline ladder, an exceedance F1 that a constant classifier
+already achieves. The number reported here is what survives after those escapes are closed
+by failing tests.
+
+Three findings run against the study's own framing and are reported anyway. A trivial
+always-exceed classifier is not beaten by any credential-free nowcaster, because these
+cities exceed the WHO 24-hour guideline on most days — a fact about the region, not about
+the models. Attribution is carried by spatial interpolation
+({{shap_spatial_neighbour_pct}}%), not by the five satellite products
+({{shap_satellite_pct}}%) the work was assembled around. And measured acquisition latency
+invalidated three of five initial availability assumptions, one of them by a factor of
+roughly 4,600.
+
+**For practitioners.** Public-health early-warning systems in the region should not be
+sized on the assumption that satellite retrieval drives skill. On this evidence, dense
+ground monitoring buys more than additional remote-sensing products, and the single most
+valuable investment for Central Asian air quality modelling is more stations — particularly
+in Turkmenistan, which has none, and Kazakhstan, which contributes one city here.
+
+**For the field.** The benchmark's value is that it forecloses the shortcuts. A future
+model that genuinely improves on {{taskn_retrospective_rmse}} µg/m³ under this protocol will
+have demonstrated something real, and the comparison will be like-for-like because the
+splits cannot move. Priorities for extension, in order: additional cities to reduce the
+fold-to-fold variance that presently exceeds seed variance by an order of magnitude; a
+parallel near-real-time satellite archive to quantify train/serve skew; and a
+post-2025 ground-truth source to replace the reference network that closed on 2025-03-04.
