@@ -7,50 +7,48 @@
 **Frozen leave-city-out splits, an operational-availability account, and an
 honestly-evaluated transfer baseline**
 
-**Jaloliddin Musayev**
+**Jaloliddin Musayev**<sup>1,\*</sup>, **Asadbek Abdivayitov**<sup>2</sup>,
+**Ozodbek Yo'ldashev**<sup>3</sup>
 
-International House Tashkent Academic Lyceum, Tashkent, Uzbekistan
+<sup>1</sup> International House Tashkent Academic Lyceum, Tashkent, Uzbekistan
+<sup>2</sup> First Specialized Boarding School, Karshi, Uzbekistan
+<sup>3</sup> National University of Uzbekistan, Tashkent, Uzbekistan
 
-Correspondence: jaloliddin2009applicant@gmail.com
-
-ORCID: [TO COMPLETE: register free at orcid.org and paste the 16-digit iD here]
+<sup>\*</sup> Corresponding author: jaloliddin2009applicant@gmail.com
+ORCID 0009-0003-0210-3687
 
 ---
 
 ## Abstract
 
 Central Asia carries some of the highest particulate burdens on earth and some of the
-sparsest monitoring. Annual PM2.5 in the region's capitals runs several times the WHO 2021
-guideline, yet no open, station-level benchmark exists against which competing estimation
-methods can be compared on identical terms. Published regional results are typically
+sparsest monitoring, yet no open station-level benchmark exists against which competing
+estimation methods can be compared on identical terms. Regional results are typically
 reported under random cross-validation, which places observations from the same station on
-both sides of the split and answers a question about interpolation while appearing to answer
-one about extrapolation to unmonitored locations.
+both sides of the split, answering a question about interpolation while appearing to answer
+one about unmonitored locations.
 
-We introduce a reproducible benchmark built on 8 reference instruments across
-6 Central Asian cities, spanning 2018-11-27 to 2024-12-31. Splits are
-frozen and checksummed before any model is fitted: blocked-temporal with a purge gap derived
-as 240 hours from the maximum feature lag and forecast horizon, and leave-city-out
-across 6 folds. Two tasks are defined and never pooled — nowcasting at
-unmonitored locations (Task N) and forecasting at monitored stations (Task F). Ground
-observations are fused with satellite retrievals (MAIAC AOD, Sentinel-5P AAI/NO₂/SO₂/CO),
-CAMS chemistry-transport forecasts, ERA5 meteorology and static geography, each carrying a
-measured acquisition latency that determines whether it may enter a deployable
-configuration.
+We present a reproducible benchmark over 8 reference instruments in
+6 cities, 2018-11-27 to 2024-12-31. Splits are frozen and checksummed
+before any model is fitted: blocked-temporal with a purge gap derived as 240
+hours from the maximum feature lag and horizon, plus leave-city-out over 6
+folds. Nowcasting at unmonitored sites and forecasting at monitored stations are defined
+separately and never pooled. Ground observations are fused with satellite retrievals,
+chemistry-transport forecasts, reanalysis meteorology and static geography, each carrying a
+measured acquisition latency that governs admissibility.
 
-Against a mandatory baseline ladder, tuned gradient boosting reaches R²
-0.07 (RMSE 25.70 µg/m³, MAE
-17.38 µg/m³) under leave-city-out, improving on bias-corrected CAMS
-(31.09 µg/m³) at Diebold–Mariano *p* < 0.0001. Three findings are
-reported against interest. No credential-free nowcaster beat a trivial always-exceed
-classifier (0.764 F1 at a 64.8% exceedance base rate). SHAP
-attribution is dominated by spatial neighbour features (32.5%)
-rather than the satellite products (16.6%) the study was assembled around.
-Measured latencies invalidated three of five initial availability assumptions, one by more
-than three orders of magnitude.
+Against a mandatory baseline ladder, tuned gradient boosting attains R²
+0.07 (RMSE 25.70, MAE
+17.38 µg/m³), improving on bias-corrected CAMS
+(31.09 µg/m³) at Diebold–Mariano *p* < 0.0001. Three results are
+reported against interest: no credential-free nowcaster beat a constant always-exceed
+classifier at a 64.8% base rate; attribution is dominated by spatial neighbour
+features (32.5%) over satellite products
+(16.6%); and measured latency invalidated three of five initial
+availability assumptions. The benchmark's contribution is the protocol it forecloses.
 
 **Keywords:** air quality; PM2.5; Central Asia; machine learning benchmark; spatial
-cross-validation; leave-city-out; domain transfer; satellite remote sensing; reproducibility
+cross-validation; leave-city-out; satellite remote sensing; reproducibility
 
 ---
 
@@ -1063,9 +1061,9 @@ post-2025 ground-truth source to replace the reference network that closed on 20
 
 # 9. Declarations
 
-> **AUTHOR ACTION REQUIRED.** Two items remain, flagged inline in the text below: the
-> supervisor's name in §9.3 and §9.7, and the ORCID iD in the author block. Every other
-> declaration on this page is complete.
+> **Before submission:** every co-author must read and approve the final manuscript, and
+> ORCID iDs should be registered for all three (Elsevier requires one for the corresponding
+> author). Both are listed in `SUBMISSION.md`.
 
 ## 9.1 Data availability
 
@@ -1093,10 +1091,10 @@ the frozen checksum, not the branch head.
 
 ## 9.2 Declaration of generative AI in the writing process
 
-During the preparation of this work the author, Jaloliddin Musayev, used Anthropic Claude (Claude Code) to
+During the preparation of this work the corresponding author, Jaloliddin Musayev, used Anthropic Claude (Claude Code) to
 assist with software implementation, data-pipeline construction, statistical tooling, and
-drafting and editing of the manuscript text. The author reviewed and edited all output,
-verified every reported number against the regenerated result tables, and takes full
+drafting and editing of the manuscript text. The authors reviewed and edited all output,
+verified every reported number against the regenerated result tables, and take full
 responsibility for the content of the publication. Generative AI is not listed as an author
 and no AI system holds authorship or accountability for this work.
 
@@ -1108,23 +1106,21 @@ and no AI system holds authorship or accountability for this work.
 analysis; Investigation; Data curation; Writing — original draft; Writing — review and
 editing; Visualisation; Project administration.
 
-**[TO COMPLETE: supervisor's full name and title]:** Supervision.
+**Asadbek Abdivayitov:** Data curation; Investigation.
 
-The supervisor's contribution is recorded as Supervision under CRediT, per the author's
-declaration that they advised on direction without contributing to the manuscript text or
-the experimental design. Should that description be inaccurate, the roles above must be
-widened before submission — under-crediting a genuine contributor is a serious authorship
-problem in its own right.
+**Ozodbek Yo'ldashev:** Supervision; Writing — review and editing.
+
+All authors read and approved the submitted manuscript.
 
 ## 9.4 Funding
 
 This research received no specific grant from any funding agency in the public, commercial,
-or not-for-profit sectors. All compute was performed on the author's personal hardware, and
-all data sources used are publicly accessible at no cost.
+or not-for-profit sectors. All computation was performed on the authors' personal hardware,
+and every data source used is publicly accessible at no cost.
 
 ## 9.5 Competing interests
 
-The author declares no competing financial or non-financial interests.
+The authors declare no competing financial or non-financial interests.
 
 ## 9.6 Ethics
 
@@ -1134,8 +1130,8 @@ required.
 
 ## 9.7 Acknowledgements
 
-The author thanks [TO COMPLETE: supervisor's name] for supervision throughout this work,
-and International House Tashkent Academic Lyceum for institutional support. The author
+The authors thank the National University of Uzbekistan and International House Tashkent
+Academic Lyceum for institutional support. The author
 further thanks OpenAQ for maintaining the aggregation layer that made the regional census
 possible, and notes that the US diplomatic-post monitoring programme supplied the only
 consistent multi-country reference in Central Asia for the period studied.

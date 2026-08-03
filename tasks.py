@@ -81,6 +81,10 @@ TARGETS: dict[str, list[list[str]]] = {
         [PY, "paper/scripts/extract_numbers.py"],
         [PY, "paper/scripts/render.py"],
         [PY, "paper/scripts/stitch.py"],
+        # Guards an Elsevier submission constraint (5 bullets, <=85 chars each). The
+        # editorial system rejects a non-conforming file rather than truncating it, and
+        # a one-word edit breaks the limit silently.
+        [PY, "scripts/check_highlights.py"],
     ],
 }
 
