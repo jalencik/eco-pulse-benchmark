@@ -26,7 +26,7 @@ Five files, all under `benchmark/splits/`:
 | `leave_station_out.json` | Derived view — LSO folds and ineligible cities |
 
 ```bash
-git clone --depth 1 https://github.com/jalencik/eco-pulse-ca-benchmark.git /tmp/bench
+git clone --depth 1 https://github.com/jalencik/eco-pulse-benchmark.git /tmp/bench
 cd /tmp/bench/benchmark/splits && sha256sum -c splits.sha256
 ```
 

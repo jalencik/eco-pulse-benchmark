@@ -7,7 +7,7 @@
 
 The benchmark definition — station set, temporal blocks, leave-city-out and
 leave-station-out folds — is openly available at
-`https://github.com/jalencik/eco-pulse-ca-benchmark` under `benchmark/splits/`, together
+`https://github.com/jalencik/eco-pulse-benchmark` under `benchmark/splits/`, together
 with the SHA-256 checksum that fixes it. All analysis code, the baseline ladder, and the
 scripts that regenerate every table and figure in this manuscript are in the same
 repository. A single command (`make reproduce`) regenerates every reported number from the
