@@ -3,7 +3,13 @@
 **Frozen leave-city-out splits, an operational-availability account, and an
 honestly-evaluated transfer baseline**
 
-Jaloliddin Musaev
+**Jaloliddin Musayev**
+
+International House Tashkent Academic Lyceum, Tashkent, Uzbekistan
+
+Correspondence: jaloliddin2009applicant@gmail.com
+
+ORCID: [TO COMPLETE: register free at orcid.org and paste the 16-digit iD here]
 
 ---
 

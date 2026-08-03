@@ -1,7 +1,8 @@
 # 9. Declarations
 
-> **AUTHOR ACTION REQUIRED.** Fields marked [TO COMPLETE] must be completed before submission. They
-> are institution- and journal-specific and cannot be filled in from the repository.
+> **AUTHOR ACTION REQUIRED.** Two items remain, flagged inline in the text below: the
+> supervisor's name in §9.3 and §9.7, and the ORCID iD in the author block. Every other
+> declaration on this page is complete.
 
 ## 9.1 Data availability
 
@@ -29,32 +30,34 @@ the frozen checksum, not the branch head.
 
 ## 9.2 Declaration of generative AI in the writing process
 
-During the preparation of this work the author used Anthropic Claude (Claude Code) to
+During the preparation of this work the author, Jaloliddin Musayev, used Anthropic Claude (Claude Code) to
 assist with software implementation, data-pipeline construction, statistical tooling, and
 drafting and editing of the manuscript text. The author reviewed and edited all output,
 verified every reported number against the regenerated result tables, and takes full
 responsibility for the content of the publication. Generative AI is not listed as an author
 and no AI system holds authorship or accountability for this work.
 
-**[TO COMPLETE:** Adjust wording to the target journal's required template. Elsevier requires this
-statement immediately above the reference list; IEEE additionally requires the system to be
-named, the affected sections identified, and the level of use described. Routine grammar and
-spelling correction does not, under any of these policies, require declaration.**]**
+*Note for submission: adjust this wording to the target journal's template. Elsevier requires the statement immediately above the reference list. IEEE additionally requires the system to be named, the affected sections identified, and the level of use described. Routine grammar and spelling correction does not, under any of these policies, require declaration.*
 
 ## 9.3 CRediT author contributions
 
-**[TO COMPLETE: Author name]:** Conceptualisation; Methodology; Software; Validation; Formal analysis;
-Investigation; Data curation; Writing — original draft; Writing — review and editing;
-Visualisation; Project administration.
+**Jaloliddin Musayev:** Conceptualisation; Methodology; Software; Validation; Formal
+analysis; Investigation; Data curation; Writing — original draft; Writing — review and
+editing; Visualisation; Project administration.
 
-**[TO COMPLETE:** If the mentor or any collaborator contributed to supervision, methodology or review, add
-them here with the appropriate CRediT terms. Omitting a genuine contributor is a more
-serious problem than any question of AI assistance.**]**
+**[TO COMPLETE: supervisor's full name and title]:** Supervision.
+
+The supervisor's contribution is recorded as Supervision under CRediT, per the author's
+declaration that they advised on direction without contributing to the manuscript text or
+the experimental design. Should that description be inaccurate, the roles above must be
+widened before submission — under-crediting a genuine contributor is a serious authorship
+problem in its own right.
 
 ## 9.4 Funding
 
-**[TO COMPLETE:** State the funding source, or the following if none:**]** This research received no specific
-grant from any funding agency in the public, commercial, or not-for-profit sectors.
+This research received no specific grant from any funding agency in the public, commercial,
+or not-for-profit sectors. All compute was performed on the author's personal hardware, and
+all data sources used are publicly accessible at no cost.
 
 ## 9.5 Competing interests
 
@@ -68,7 +71,8 @@ required.
 
 ## 9.7 Acknowledgements
 
-**[TO COMPLETE:** Acknowledge your mentor, institution, and any data providers here.**]** The author thanks
-OpenAQ for maintaining the aggregation layer that made the regional census possible, and
-notes that the US diplomatic-post monitoring programme supplied the only consistent
-multi-country reference in Central Asia for the period studied.
+The author thanks [TO COMPLETE: supervisor's name] for supervision throughout this work,
+and International House Tashkent Academic Lyceum for institutional support. The author
+further thanks OpenAQ for maintaining the aggregation layer that made the regional census
+possible, and notes that the US diplomatic-post monitoring programme supplied the only
+consistent multi-country reference in Central Asia for the period studied.

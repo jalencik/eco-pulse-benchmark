@@ -190,6 +190,15 @@ def main() -> int:
         )
         return 1
 
+    # Author-completion fields are not a build error -- drafts circulate with them -- but
+    # they must never reach a journal unnoticed, so the count is printed on every build.
+    todo = re.findall(r"\[TO COMPLETE[^\]]*\]", md_text)
+    if todo:
+        print(f"\n  {len(todo)} field(s) still need the author's input before submission:")
+        for t in dict.fromkeys(todo):
+            print(f"    {t}")
+        print()
+
     font_path = find_font()
     if font_path:
         from reportlab.pdfbase import pdfmetrics

@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "An open station-level air quality benchmark for Central Asia, with pre-registered spatial and temporal splits."
 readme = "README.md"
 license = { text = "MIT" }
-authors = [{ name = "Jaloliddin Musaev" }]
+authors = [{ name = "Jaloliddin Musayev" }]
 
 # Pinned to 3.12, NOT the 3.14 installed on the dev machine: the geospatial stack
 # (pyproj, netCDF4, xarray, rasterio) does not yet publish reliable 3.14 wheels.
