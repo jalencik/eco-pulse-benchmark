@@ -92,11 +92,16 @@ invites a meteorological explanation for a dead data feed. A latency check catch
 days; only a coverage check against the *frozen* test block catches the mid-block
 termination. Both are now enforced.
 
-CAMS requires a second operational distinction: forecast step zero has assimilated
+CAMS products derive from the Copernicus Atmosphere Monitoring Service assimilation and
+forecast system (Inness et al., 2019). CAMS requires a second operational distinction: forecast step zero has assimilated
 observations at the valid time, so using it to predict that time is lookahead wearing a
 forecast label. All CAMS features use the 24-hour lead, which is what a live service holds.
 
 ## 2.4 The R7 phenomenon: missingness correlated with the target
+
+Two aerosol regimes operate here and fail retrieval differently: winter coal combustion,
+and spring salt-dust transport from the desiccated Aral bed (Banks et al., 2022; Liu et
+al., 2025).
 
 Satellite retrieval does not fail at random. It fails during dust, cloud and snow — the
 conditions that accompany the highest concentrations. Dropping incomplete rows therefore
@@ -125,6 +130,9 @@ not a cloud accident. The direct tracer for the region's dominant winter source 
 unavailable throughout that source's season. Additionally, {{r7_so2_negative}}% of the
 retrievals that do occur are negative, sitting below the noise floor — clipping them at zero
 would bias the coal tracer upward across a third of its observations.
+
+MAIAC has been validated specifically over Central Asia (Chen et al., 2021), which is why
+it was selected over coarser aerosol products.
 
 **The split between clean and contaminated features follows retrieval physics.** CO uses the
 2.3 µm shortwave-infrared band and AAI uses ultraviolet reflectance *ratios* rather than

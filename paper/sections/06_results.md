@@ -95,6 +95,9 @@ serve.
 
 ## 6.4 SHAP attribution: what actually carries the model
 
+Attribution uses SHAP values (Lundberg and Lee, 2017), computed on the tuned model over
+the held-out folds.
+
 Mean absolute SHAP over the test block, by feature family:
 
 | Family | Share of total attribution |

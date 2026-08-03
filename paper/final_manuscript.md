@@ -59,8 +59,9 @@ cross-validation; leave-city-out; satellite remote sensing; reproducibility
 Central Asia is among the most polluted inhabited regions on earth. It is also among the
 least instrumented. Tursumbayeva et al. (2023) put annual PM2.5 in six regional capitals at
 4.3–12.6 times the WHO 2021 guideline and trace the burden mainly to coal combustion rather
-than transport, contradicting the official emissions inventories. The monitoring base under
-those numbers is thin and unevenly open. Turkmenistan runs no national air quality network
+than transport, contradicting the official emissions inventories. Source-apportionment studies across the region reach the same conclusion independently, in
+Kazakhstan (Tursun et al., 2025) and Tajikistan (Papagiannis et al., 2024). The monitoring
+base under those numbers is thin and unevenly open. Turkmenistan runs no national air quality network
 at all. Kazakhstan releases its data only to users physically inside the country. Only
 Kyrgyzstan publishes in a fully open form (OpenAQ, 2025).
 
@@ -118,6 +119,10 @@ case the work exists for: an unmonitored city asking for a number it has never b
 A model that collapses on Khujand has not earned the right to be deployed anywhere new. We
 report the fold on its own. Averaging it into the other five would report neither.
 
+Estimating surface PM2.5 from satellite columns is itself an established line of work
+(Zang et al., 2017; Xu et al., 2018); what is new here is subjecting it to a spatial
+protocol that withholds whole cities.
+
 **C3 — an operational-constraint account.** Every predictor carries a measured latency and a
 typed availability flag. Anything that cannot exist at prediction time is barred from
 deployable configurations by test rather than by convention.
@@ -158,7 +163,9 @@ learning for data-poor regions. Gupta et al. (2024) hold that ground already, pr
 latent dependency factor for spatial transfer of PM2.5 estimation and reporting a 19.34%
 gain over baselines across ten target sensors against eastern-US source data. Theirs is a
 method paper, not a benchmark, and it defines no reusable public split. What remains
-available to us is the evaluation protocol and the region, not the idea. We also decline to
+available to us is the evaluation protocol and the region, not the idea. Related transfer approaches have since been reported for other data-sparse settings,
+including African cities (Mazuruse et al., 2026) and hybrid deep architectures
+(Ni et al., 2022). We also decline to
 compare our figures against published R² values obtained under random cross-validation. A
 leave-city-out number and a random-CV number are not commensurable, and treating them as
 though they were is the precise error this benchmark exists to prevent.
@@ -268,11 +275,16 @@ invites a meteorological explanation for a dead data feed. A latency check catch
 days; only a coverage check against the *frozen* test block catches the mid-block
 termination. Both are now enforced.
 
-CAMS requires a second operational distinction: forecast step zero has assimilated
+CAMS products derive from the Copernicus Atmosphere Monitoring Service assimilation and
+forecast system (Inness et al., 2019). CAMS requires a second operational distinction: forecast step zero has assimilated
 observations at the valid time, so using it to predict that time is lookahead wearing a
 forecast label. All CAMS features use the 24-hour lead, which is what a live service holds.
 
 ## 2.4 The R7 phenomenon: missingness correlated with the target
+
+Two aerosol regimes operate here and fail retrieval differently: winter coal combustion,
+and spring salt-dust transport from the desiccated Aral bed (Banks et al., 2022; Liu et
+al., 2025).
 
 Satellite retrieval does not fail at random. It fails during dust, cloud and snow — the
 conditions that accompany the highest concentrations. Dropping incomplete rows therefore
@@ -301,6 +313,9 @@ not a cloud accident. The direct tracer for the region's dominant winter source 
 unavailable throughout that source's season. Additionally, 32.7% of the
 retrievals that do occur are negative, sitting below the noise floor — clipping them at zero
 would bias the coal tracer upward across a third of its observations.
+
+MAIAC has been validated specifically over Central Asia (Chen et al., 2021), which is why
+it was selected over coarser aerosol products.
 
 **The split between clean and contaminated features follows retrieval physics.** CO uses the
 2.3 µm shortwave-infrared band and AAI uses ultraviolet reflectance *ratios* rather than
@@ -634,7 +649,8 @@ constructed with the held-out city removed.
 
 Hyperparameters are selected on the 2023-01-11 to 2023-12-21 validation block and then
 frozen. The test block 2024-01-01 to 2024-12-31 is read exactly once per reported
-configuration. No hyperparameter, feature-set choice, or early-stopping decision is made
+configuration. The tuning protocol follows established guidance for tree ensembles (Probst et al., 2019).
+No hyperparameter, feature-set choice, or early-stopping decision is made
 against test-block performance.
 
 Tuning was not cosmetic. Untuned defaults produce a Task N leave-city-out RMSE of
@@ -782,6 +798,9 @@ serve.
 
 ## 6.4 SHAP attribution: what actually carries the model
 
+Attribution uses SHAP values (Lundberg and Lee, 2017), computed on the tuned model over
+the held-out folds.
+
 Mean absolute SHAP over the test block, by feature family:
 
 | Family | Share of total attribution |
@@ -883,6 +902,10 @@ to every rule in the suite, and the QC output records that explicitly instead of
 a pass that actually means "not tested". Four of six cities therefore rest on metadata
 correctness for their time alignment. We regard this as the benchmark's largest unaudited
 assumption.
+
+A related constraint sits upstream: 306 candidate stations were excluded for insufficient
+span, almost all of them low-cost units whose measurement uncertainty is well documented
+(Zheng et al., 2018). Admitting them would have traded reference-grade labels for coverage.
 
 Leave-city-out stays the primary spatial protocol for one reason: it is available for all
 6 cities. Leave-station-out is reported where possible and supports no headline

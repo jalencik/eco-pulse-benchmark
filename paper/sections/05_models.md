@@ -43,7 +43,8 @@ constructed with the held-out city removed.
 
 Hyperparameters are selected on the 2023-01-11 to 2023-12-21 validation block and then
 frozen. The test block 2024-01-01 to 2024-12-31 is read exactly once per reported
-configuration. No hyperparameter, feature-set choice, or early-stopping decision is made
+configuration. The tuning protocol follows established guidance for tree ensembles (Probst et al., 2019).
+No hyperparameter, feature-set choice, or early-stopping decision is made
 against test-block performance.
 
 Tuning was not cosmetic. Untuned defaults produce a Task N leave-city-out RMSE of
