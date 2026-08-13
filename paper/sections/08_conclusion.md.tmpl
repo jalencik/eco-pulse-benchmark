@@ -1,14 +1,20 @@
 # 8. Conclusion
 
-We built the benchmark this region did not have. {{n_stations}} reference instruments across
-{{n_cities}} cities, splits frozen and checksummed before any model was fitted, two tasks
+We built the benchmark this region did not have. {{n_stations}} instruments across
+{{n_cities}} cities ({{n_reference_instruments}} reference-grade, {{n_lowcost_instruments}} low-cost), splits frozen and checksummed before the reported results were produced, two tasks
 kept separate, and a baseline ladder that every future submission has to climb. The splits
 are immutable by test, and that test fails for us exactly as it fails for anyone else.
 
-The modelling result is deliberately modest. Tuned gradient boosting reaches R²
-{{taskn_retrospective_r2}} at unmonitored locations, RMSE {{taskn_retrospective_rmse}} µg/m³
-against {{taskn_cams_rmse}} for bias-corrected CAMS, significant at
-*p* {{dm_pooled_p}}. We consider a modest number the correct outcome. Every protocol choice
+The modelling result is modest and is reported without inflation. Tuned gradient boosting
+reaches RMSE {{taskn_retrospective_rmse}} ± {{taskn_retrospective_rmse_sd}} µg/m³ at
+unmonitored locations, the lowest of any admissible baseline including inverse-distance
+weighting ({{best_legal_baseline_rmse}} µg/m³) — but that ordering is not statistically
+separable (paired *p* = {{idw_paired_p}}) and is not robust to removing a single city. Its
+advantage over bias-corrected CAMS is likewise **not
+statistically significant** when the city is the unit of analysis
+(*p* = {{sig_primary_t_p}}), and mean per-fold R² is {{taskn_retrospective_r2}} with
+{{n_folds_negative_r2}} of {{n_loco_folds}} folds negative. Lowest error and demonstrated
+skill are not the same claim, and only the first is supported here. Every protocol choice
 available to us would have produced a larger one: a random split, reanalysis features
 unavailable at inference, no baseline ladder, an exceedance F1 that a constant classifier
 already achieves. The number reported here is what survives after those escapes are closed
@@ -17,15 +23,19 @@ by failing tests.
 Three findings run against the study's own framing and are reported anyway. A trivial
 always-exceed classifier is not beaten by any credential-free nowcaster, because these
 cities exceed the WHO 24-hour guideline on most days — a fact about the region, not about
-the models. Attribution is carried by spatial interpolation
-({{shap_spatial_neighbour_pct}}%), not by the five satellite products
-({{shap_satellite_pct}}%) the work was assembled around. And measured acquisition latency
+the models. Attribution is carried chiefly by the five satellite
+products ({{shap_satellite_pct}}%) rather than by spatial interpolation
+({{shap_spatial_neighbour_pct}}%) — a reversal of the ordering reported before the duplicate
+Dushanbe instrument was found and merged (Section 7.4). And measured acquisition latency
 invalidated three of five initial availability assumptions, one of them by a factor of
 roughly 4,600.
 
-**For practitioners.** Public-health early-warning systems in the region should not be
-sized on the assumption that satellite retrieval drives skill. On this evidence, dense
-ground monitoring buys more than additional remote-sensing products, and the single most
+**For practitioners.** The clearest practical signal in this work is not an ordering of
+feature families — that ordering proved fragile, reversing once a single duplicated
+instrument was removed. It is that with {{n_stations}} instruments across {{n_cities}}
+cities, a learned model does not beat knowing a city's own average, and the attribution
+ranking is unstable to one station. Both point the same way: the binding constraint is
+network density, not modelling technique or choice of remote-sensing product. The single most
 valuable investment for Central Asian air quality modelling is more stations — particularly
 in Turkmenistan, which has none, and Kazakhstan, which contributes one city here.
 

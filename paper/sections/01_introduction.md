@@ -45,10 +45,10 @@ and diverge on pollutant, target, temporal protocol and region. Section 3 states
 differences precisely. AirDelhi (Chauhan et al., 2023) offers a second precedent for
 fine-grained particulate benchmarking, confined to a single city.
 
-**C1 — a benchmark.** 8 stations across 6 cities. Splits were frozen
-and hashed before a single model was fitted: blocked-temporal with a derived purge gap,
+**C1 — a benchmark.** 7 stations across 6 cities. Splits were frozen
+and hashed before the results reported here were produced: blocked-temporal with a derived purge gap,
 leave-city-out over 6 folds, and leave-station-out where station density
-allows it (4 folds; Almaty, Ashgabat, Bishkek, Tashkent hold one instrument each and are named
+allows it (2 folds; Almaty, Ashgabat, Bishkek, Dushanbe, Tashkent hold one instrument each and are named
 ineligible, not quietly dropped). A test enforces immutability. It fails for the
 authors exactly as it fails for anyone else.
 
@@ -84,7 +84,7 @@ the WHO 24-hour guideline on most days of the year, so a classifier that never v
 correct most of the time. Chronic pollution, not modelling skill, sets that floor. Beating
 it is the only evidence that a model has learned something past the regional mean. Raw CAMS,
 a full chemistry-transport model, is improved simply by subtracting a per-city constant, and
-even after that correction it reaches only R² -0.22. Across two
+even after that correction it reaches only R² -0.11. Across two
 phases, every baseline we tried sat below the accuracy of predicting the held-out city's own
 mean.
 
@@ -93,13 +93,25 @@ nearly opposite orders. Smoothing toward the mean lowers squared error while des
 variance needed to tell a bad day from a good one, so a model wins one metric by losing the
 other. Report either alone and the ladder comes out backwards for the other task.
 
-**The first positive leave-city-out R² came from removing two handicaps, not from a better
-model.** Tuned gradient boosting with spatial neighbour encodings reaches R²
-0.07 at RMSE 25.70, against
-31.09 for bias-corrected CAMS, Diebold–Mariano -4.52 at p
-< 0.0001. The same architecture untuned and stripped of neighbours scored RMSE
-31.99 and R² -0.64. Worse than the baseline
-it now beats.
+**The headline modelling result is mixed, and both halves are reported.** Tuned gradient
+boosting with spatial neighbour encodings reaches RMSE 28.01 ±
+0.35 µg/m³ at unmonitored locations, ahead of every admissible
+baseline — including inverse-distance weighting at 29.44 µg/m³, a
+margin of 1.43 µg/m³. That is a real result on error.
+
+It is not a result on skill. Mean per-fold R² is -0.04, ranging
+-0.55 to 0.52, with 3 of 6 folds
+negative — in those cities the model does worse than a flat line through the city's own mean.
+Ranking first on RMSE while explaining little within-city variation is not a contradiction:
+most of the achievable error reduction in this region is in getting a city's *level* right,
+which is precisely what a benchmark built on whole-city holdout is designed to expose.
+
+Its comparison against bias-corrected CAMS (29.77 µg/m³) is not significant
+under the unit of generalisation this protocol is built on: a paired test over
+6 city means gives *p* = 0.1392, and an exact permutation test
+0.1250. Per-fold Diebold–Mariano tests do clear 0.05 individually, but six
+tests are run and **only 3 of 6 survive Holm correction**. We
+report the corrected count, not the raw one.
 
 ## 1.4 What this paper does not claim
 

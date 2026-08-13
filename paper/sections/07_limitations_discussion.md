@@ -19,15 +19,15 @@ paper.
 The implication is uncomfortable and irreducible. For Bishkek in the test block there is no
 single ground truth. Choosing the other provider's feed would shift the reported error by
 roughly the margin that separates our models from each other. Bishkek's DM result
-(*p* = 0.0630, not significant) should be read with that in view, and we claim no
+(*p* = 0.8805, not significant) should be read with that in view, and we claim no
 improvement there. Merging the feeds, which we do, reduces variance. It cannot manufacture a
 label the two publishers agree on. **This limits the data source, not the pipeline, and no
 modelling choice removes it.**
 
 ## 7.2 Leave-station-out covers a minority of the benchmark
 
-4 leave-station-out folds exist and they span two cities.
-**Almaty, Ashgabat, Bishkek, Tashkent each hold a single instrument**, so within-city station holdout is
+2 leave-station-out folds exist and they span two cities.
+**Almaty, Ashgabat, Bishkek, Dushanbe, Tashkent each hold a single instrument**, so within-city station holdout is
 undefined there.
 
 The consequence runs deeper than reduced coverage. The Q6 timezone check compares
@@ -39,7 +39,23 @@ assumption.
 
 A related constraint sits upstream: 306 candidate stations were excluded for insufficient
 span, almost all of them low-cost units whose measurement uncertainty is well documented
-(Zheng et al., 2018). Admitting them would have traded reference-grade labels for coverage.
+(Zheng et al., 2018).
+
+That exclusion was not applied uniformly, and the exception matters. **Khujand's two
+instruments are Clarity low-cost sensors** (`is_monitor = false` in the OpenAQ census), not
+reference-grade monitors. Every other city in the benchmark is a US-embassy BAM/FEM-class
+monitor published by AirNow or StateAir. Khujand is therefore the one city whose labels carry
+the measurement uncertainty the paragraph above cites Zheng et al. (2018) for, and it is also
+the city that contributes no training rows -- so its fold reports low-cost labels scored
+against a model that never saw them.
+
+Two consequences are stated plainly rather than left implicit. First, results for the Khujand
+fold are not comparable in kind to the other five and should not be read as a reference-grade
+generalisation test. Second, the pre-registered 2-year span rule is satisfied
+for these two stations only by counting observations after the benchmark record ends: inside
+the window their spans are **1.09 y and 1.07 y**,
+against a stated minimum of 2 y. Admitting them was a coverage decision, and it
+is recorded here as one.
 
 Leave-city-out stays the primary spatial protocol for one reason: it is available for all
 6 cities. Leave-station-out is reported where possible and supports no headline
@@ -47,13 +63,13 @@ claim.
 
 ## 7.3 The model does not beat CAMS everywhere
 
-3 of 6 leave-city-out folds reach significance. In
-**Ashgabat the sign is reversed**: LightGBM 21.34 µg/m³
-against CAMS 20.75 µg/m³, DM statistic 0.35,
-*p* = 0.7271. Read correctly, the two are indistinguishable there. CAMS does not
+4 of 6 leave-city-out folds reach significance. In
+**Ashgabat, Bishkek the sign is reversed**: LightGBM 20.74 µg/m³
+against CAMS 18.83 µg/m³, DM statistic 1.17,
+*p* = 0.2420. Read correctly, the two are indistinguishable there. CAMS does not
 win. The honest summary of the fold set is that the pooled result (< 0.0001) rests on
-Almaty, Dushanbe and Khujand, while Bishkek (0.0630) and Tashkent
-(0.1180) post lower RMSE that never clears significance.
+Almaty, Dushanbe and Khujand, while Bishkek (0.8805) and Tashkent
+(0.0050) post lower RMSE that never clears significance.
 
 Khujand carrying part of the pooled result is worth pausing on, since it is the fold with no
 training label at all. Zero-shot transfer into an unmonitored city is not where a reader
@@ -67,31 +83,39 @@ outside any plausible interpolation radius. Under exactly those conditions a
 chemistry-transport model with a physical emissions inventory is a strong comparator. It
 should be.
 
-## 7.4 The satellite record is not what carries the model
+## 7.4 What carries the model, and how that changed
 
-Section 6.4 is the result we would most like to have come out differently. Spatial neighbour
-features account for 32.5% of attribution and static geography a
-further 25.1%. The five satellite products together account for
-16.6%. The top single feature is `nbr_idw`,
-inverse-distance-weighted neighbour concentration, at more than twice the second-ranked
-feature.
+Section 6.4 reports mean absolute SHAP by feature family. On benchmark v1.1.0 the five
+satellite products together account for **26.6%** of attribution, spatial
+neighbour features for 20.4%, and static geography a further
+21.8%. The top single feature is `doy_cos`.
 
-**A study assembled around five remote-sensing products turns out, on inspection, to be
-largely a well-tuned spatial interpolator with geographic priors.** Three qualifications
-follow, none of which overturn that.
+**This reverses the ordering reported in earlier drafts of this work, and the reason is
+instructive rather than incidental.** Under benchmark v1.0.0 the two Dushanbe records were
+treated as separate stations when they are one instrument republished twice (Section 2,
+D-012). Every other city therefore had an additional neighbour at effectively zero distance
+from an existing one, which inflated the apparent value of spatial interpolation. Once the
+duplicate is merged, satellite attribution overtakes it.
+
+The earlier claim — that a study assembled around remote sensing was "really" a spatial
+interpolator — was an artefact of a duplicated station. We state that plainly because it was
+published as a finding reported against interest, and it is no longer supported. Three
+qualifications on the current ordering follow.
 
 1. *This is a property of the protocol as much as of the products.* Leave-city-out asks for
    a concentration where no monitor exists. Neighbour information is the most direct route
    to that answer, and satellite columns are a weak proxy for surface concentration under
    any protocol whatsoever.
-2. *Missingness outperforms the values.* Satellite missingness earns
-   4.1%, comparable to the 5.1%
-   contributed by the entire chemistry-transport forecast. *Whether* a retrieval failed is
-   nearly as informative as what CAMS predicted. That is a finding about retrieval physics,
+2. *Missingness is informative but does not transfer between cities.* Retrieval-count
+   features were promoted to predictors on the evidence that missingness is target-correlated.
+   A validation-block ablation (Section 5.3) then showed they **hurt** leave-city-out
+   generalisation, because retrieval success depends on local surface brightness, snow cover
+   and solar geometry — properties of a particular city. They are excluded from Task N and
+   retained for Task F. That is a finding about retrieval physics,
    and at the same time a measure of how little the retrieved values contribute.
 3. *SO₂ is structurally absent in the season it exists to observe.* Retrieval needs
    ultraviolet signal; at these latitudes in December it falls to 0.1% against
-   93.5% in July. The direct tracer for the region's dominant winter source is
+   91.0% in July. The direct tracer for the region's dominant winter source is
    unavailable throughout that source's season, so its low attribution is partly a
    measurement-geometry artefact, not evidence that SO₂ carries no information.
 
@@ -108,7 +132,7 @@ checks a sample of manuscript figures directly against the CSVs, bypassing the i
 The mechanism earned its place during drafting. Section 2's missingness statistics were
 originally transcribed from a console output. When they were finally banked to a table, the
 transcribed values proved wrong: SO₂ retrieval had been written as 61.5% against a
-recomputed 59.2%, and four further figures were off in the same direction.
+recomputed 57.4%, and four further figures were off in the same direction.
 The errors were small and none of them changed a conclusion, which is exactly why no reader
 would ever have caught them. Regenerating the table also exposed that the two Section 2
 tables had no producer script at all and could not be rebuilt by `make reproduce`. Both have
@@ -120,11 +144,12 @@ one now.
   termination of the US diplomatic-post monitoring programme. **No result in this paper
   speaks to current conditions**, and the benchmark cannot be extended forward from this
   source.
-- **Kazakhstan contributes one city.** Astana failed the completeness rule at 42.8%. The
+- **Kazakhstan contributes one city.** Astana failed the completeness rule at
+  42.8% against a required 60%. The
   largest country in the region is represented by Almaty alone.
 - **Six cities is a small spatial sample.** Fold-to-fold standard deviation
-  (7.74 µg/m³) exceeds seed standard deviation
-  (0.85 µg/m³) by roughly an order of magnitude. Conclusions are far more
+  (11.38 µg/m³) exceeds seed standard deviation
+  (1.79 µg/m³) by roughly an order of magnitude. Conclusions are far more
   sensitive to which cities are in the set than to any training randomness.
 - **ERA5 is oracle-only and incompletely retrieved.** Its measured latency (163 h) exceeds
   every evaluated horizon, so it cannot enter the deployable set. The multi-year retrieval
@@ -158,17 +183,17 @@ most immediate piece of follow-up work, and it needs a parallel NRT archive we d
 
 ## 7.8 What the benchmark is for
 
-The headline modelling result is modest. R² = 0.07 at unmonitored
+The headline modelling result is modest. R² = -0.04 at unmonitored
 locations, a significant but not transformative improvement over CAMS, and an attribution
 profile dominated by spatial interpolation. We consider that the appropriate outcome.
 
 The contribution is the fixed evaluation. Before this benchmark existed, a Central Asian air
 quality result could be reported on a random split, with reanalysis features unavailable at
 inference time, against no baseline ladder, scored with an exceedance F1 that a constant
-already achieves (0.764 at a 64.8% base rate, because the region's
+already achieves (0.741 at a 61.8% base rate, because the region's
 air is bad on most days, not because the classifier is good). Every one of those
 choices would have produced a more impressive paper than this one. The splits are frozen and
 checksummed. The protocol violations are enforced by failing tests rather than requested in
 prose. The numbers above are what survives that. A future model that genuinely improves on
-25.70 µg/m³ under this protocol will have demonstrated something
+28.01 µg/m³ under this protocol will have demonstrated something
 real.

@@ -47,31 +47,44 @@ configuration. The tuning protocol follows established guidance for tree ensembl
 No hyperparameter, feature-set choice, or early-stopping decision is made
 against test-block performance.
 
-Tuning was not cosmetic. Untuned defaults produce a Task N leave-city-out RMSE of
-31.99 µg/m³ with R² = -0.64 — worse than the
-training-pool-mean constant of Section 4. Tuned, the same feature set reaches
-25.70 µg/m³ at R² = 0.07.
+The untuned and tuned configurations are reported side by side below. **They differ in four
+respects, not one, and the gap between them must not be read as the effect of hyperparameter
+tuning alone.** An earlier version of this manuscript described them as sharing "the same
+feature set". That was incorrect. The differences are:
+
+| | Untuned (`train_gbdt.py`) | Tuned (`train_phase5.py`) |
+|---|---|---|
+| features | tier columns only | tier columns **+ 3 spatial neighbour features** |
+| trees | 600 | 800 |
+| training rows | train block only (to 2022-12-31) | train block **+ validation block** (to 2023-12-21) |
+| hyperparameters | library defaults | grid search, 16 combinations |
+
+Because the feature set, the tree count and the training window all change together, the
+untuned-to-tuned difference is a **combined** effect. This paper does not run the ablation
+that would separate them, and no causal attribution to tuning is claimed.
 
 | Feature set | Untuned RMSE | Tuned RMSE | Untuned R² | Tuned R² |
 |---|---:|---:|---:|---:|
-| static only | 33.22 | 28.31 | -1.03 | -0.24 |
-| deployable | 31.15 | 25.75 | -0.57 | 0.04 |
-| retrospective | 31.99 | 25.70 | -0.64 | 0.07 |
+| static only | 32.19 | 28.63 | -0.73 | -0.15 |
+| deployable | 29.25 | 28.56 | -0.21 | -0.09 |
+| retrospective | 29.51 | 28.01 | -0.25 | -0.04 |
 
-An untuned GBDT would have supported the conclusion that gradient boosting cannot beat a
-constant on this task. That conclusion would have been an artefact of the defaults, and it
-is the reason the untuned column is retained in the paper rather than discarded once better
-numbers existed.
+The untuned column is retained because it was once used to argue that a poor result would
+have been an artefact of library defaults. On benchmark v1.1.0 that argument no longer holds:
+the tuned configuration now leads every admissible baseline (Section 6.1), while both
+configurations explain little within-city day-to-day variation. The honest statement is that
+the combined feature-plus-window-plus-hyperparameter change improves RMSE, and that RMSE
+leadership is not by itself evidence of skill.
 
 ## 5.4 Seeds and variance
 
 Every configuration is run with five seeds and reported as mean ± standard deviation. Seed
-variance is small: the maximum across configurations is 0.24 µg/m³ for
-Task F and 0.85 µg/m³ for Task N.
+variance is small: the maximum across configurations is 0.25 µg/m³ for
+Task F and 1.79 µg/m³ for Task N.
 
 **Fold-to-fold variance is an order of magnitude larger than seed variance.** The standard
 deviation of Task N RMSE across the 6 leave-city-out folds is
-7.74 µg/m³, against 0.85 µg/m³ across seeds. Which
+11.38 µg/m³, against 1.79 µg/m³ across seeds. Which
 city is held out dominates which seed was drawn. A study reporting seed error bars alone
 would communicate a precision this benchmark does not have, and per-city results are
 therefore mandatory (Section 3.6).
@@ -84,11 +97,11 @@ deployable:
 
 | Task | Deployable | Retrospective | Cost |
 |---|---:|---:|---:|
-| N (leave-city-out) | 25.75 | 25.70 | small |
-| F (forecasting) | 21.48 | 20.94 | small |
+| N (leave-city-out) | 28.56 | 28.01 | small |
+| F (forecasting) | 21.58 | 21.54 | small |
 
-**The cost is negligible in both tasks** — 25.75 against
-25.70 µg/m³ under leave-city-out, well inside the fold-to-fold spread
-of 7.74 µg/m³. This is a positive result for deployment and a
+**The cost is negligible in both tasks** — 28.56 against
+28.01 µg/m³ under leave-city-out, well inside the fold-to-fold spread
+of 11.38 µg/m³. This is a positive result for deployment and a
 deflationary one for the satellite features: products that arrive too late to be operational
 are also contributing little when they are available. Section 6.4 shows why.

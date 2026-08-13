@@ -9,7 +9,7 @@ exceeds the limit — the constraint is easy to break during editing and the sub
 system rejects the file rather than truncating it.
 
 - First open station-level air quality benchmark for Central Asia
-- Splits are frozen and checksummed before any model is fitted
-- A constant baseline beats every simple method at these pollution levels
-- Spatial interpolation, not satellite data, drives most of the skill
+- Splits are frozen and checksummed before the reported results are produced
+- Gradient boosting leads every admissible baseline at unmonitored sites
+- Lowest error yet negative skill in three of six held-out cities
 - Measured latency invalidated three of five availability assumptions

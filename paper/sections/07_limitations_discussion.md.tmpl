@@ -39,7 +39,23 @@ assumption.
 
 A related constraint sits upstream: 306 candidate stations were excluded for insufficient
 span, almost all of them low-cost units whose measurement uncertainty is well documented
-(Zheng et al., 2018). Admitting them would have traded reference-grade labels for coverage.
+(Zheng et al., 2018).
+
+That exclusion was not applied uniformly, and the exception matters. **Khujand's two
+instruments are Clarity low-cost sensors** (`is_monitor = false` in the OpenAQ census), not
+reference-grade monitors. Every other city in the benchmark is a US-embassy BAM/FEM-class
+monitor published by AirNow or StateAir. Khujand is therefore the one city whose labels carry
+the measurement uncertainty the paragraph above cites Zheng et al. (2018) for, and it is also
+the city that contributes no training rows -- so its fold reports low-cost labels scored
+against a model that never saw them.
+
+Two consequences are stated plainly rather than left implicit. First, results for the Khujand
+fold are not comparable in kind to the other five and should not be read as a reference-grade
+generalisation test. Second, the pre-registered {{q7_min_years}}-year span rule is satisfied
+for these two stations only by counting observations after the benchmark record ends: inside
+the window their spans are **{{khujand_a_span_in_window}} y and {{khujand_b_span_in_window}} y**,
+against a stated minimum of {{q7_min_years}} y. Admitting them was a coverage decision, and it
+is recorded here as one.
 
 Leave-city-out stays the primary spatial protocol for one reason: it is available for all
 {{n_cities}} cities. Leave-station-out is reported where possible and supports no headline
@@ -67,27 +83,35 @@ outside any plausible interpolation radius. Under exactly those conditions a
 chemistry-transport model with a physical emissions inventory is a strong comparator. It
 should be.
 
-## 7.4 The satellite record is not what carries the model
+## 7.4 What carries the model, and how that changed
 
-Section 6.4 is the result we would most like to have come out differently. Spatial neighbour
-features account for {{shap_spatial_neighbour_pct}}% of attribution and static geography a
-further {{shap_static_geography_pct}}%. The five satellite products together account for
-{{shap_satellite_pct}}%. The top single feature is `{{shap_top_feature}}`,
-inverse-distance-weighted neighbour concentration, at more than twice the second-ranked
-feature.
+Section 6.4 reports mean absolute SHAP by feature family. On benchmark v1.1.0 the five
+satellite products together account for **{{shap_satellite_pct}}%** of attribution, spatial
+neighbour features for {{shap_spatial_neighbour_pct}}%, and static geography a further
+{{shap_static_geography_pct}}%. The top single feature is `{{shap_top_feature}}`.
 
-**A study assembled around five remote-sensing products turns out, on inspection, to be
-largely a well-tuned spatial interpolator with geographic priors.** Three qualifications
-follow, none of which overturn that.
+**This reverses the ordering reported in earlier drafts of this work, and the reason is
+instructive rather than incidental.** Under benchmark v1.0.0 the two Dushanbe records were
+treated as separate stations when they are one instrument republished twice (Section 2,
+D-012). Every other city therefore had an additional neighbour at effectively zero distance
+from an existing one, which inflated the apparent value of spatial interpolation. Once the
+duplicate is merged, satellite attribution overtakes it.
+
+The earlier claim — that a study assembled around remote sensing was "really" a spatial
+interpolator — was an artefact of a duplicated station. We state that plainly because it was
+published as a finding reported against interest, and it is no longer supported. Three
+qualifications on the current ordering follow.
 
 1. *This is a property of the protocol as much as of the products.* Leave-city-out asks for
    a concentration where no monitor exists. Neighbour information is the most direct route
    to that answer, and satellite columns are a weak proxy for surface concentration under
    any protocol whatsoever.
-2. *Missingness outperforms the values.* Satellite missingness earns
-   {{shap_satellite_missingness_pct}}%, comparable to the {{shap_cams_forecast_pct}}%
-   contributed by the entire chemistry-transport forecast. *Whether* a retrieval failed is
-   nearly as informative as what CAMS predicted. That is a finding about retrieval physics,
+2. *Missingness is informative but does not transfer between cities.* Retrieval-count
+   features were promoted to predictors on the evidence that missingness is target-correlated.
+   A validation-block ablation (Section 5.3) then showed they **hurt** leave-city-out
+   generalisation, because retrieval success depends on local surface brightness, snow cover
+   and solar geometry — properties of a particular city. They are excluded from Task N and
+   retained for Task F. That is a finding about retrieval physics,
    and at the same time a measure of how little the retrieved values contribute.
 3. *SO₂ is structurally absent in the season it exists to observe.* Retrieval needs
    ultraviolet signal; at these latitudes in December it falls to {{r7_so2_dec}}% against
@@ -120,7 +144,8 @@ one now.
   termination of the US diplomatic-post monitoring programme. **No result in this paper
   speaks to current conditions**, and the benchmark cannot be extended forward from this
   source.
-- **Kazakhstan contributes one city.** Astana failed the completeness rule at 42.8%. The
+- **Kazakhstan contributes one city.** Astana failed the completeness rule at
+  {{astana_completeness_pct}}% against a required {{q7_min_completeness_pct}}%. The
   largest country in the region is represented by Almaty alone.
 - **Six cities is a small spatial sample.** Fold-to-fold standard deviation
   ({{taskn_retrospective_sd}} µg/m³) exceeds seed standard deviation

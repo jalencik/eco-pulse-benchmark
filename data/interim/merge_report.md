@@ -13,3 +13,10 @@
 - median |diff| 0.00, p95 0.00, max 423 ug/m3
 - observations: primary 33,827 + 3,336 gap-filled = **37,163**
 - agreement by year: 2019 100%, 2020 100%, 2021 100%, 2022 100%, 2023 94%, 2024 100%, 2025 100%
+
+**Dushanbe** — primary `8684`, secondary `9769`
+
+- overlap: 33,462 h; agreement to 0.1 ug/m3: **94.0%** (**DIVERGENT — see below**)
+- median |diff| 0.00, p95 5.00, max 551 ug/m3
+- observations: primary 49,305 + 2,781 gap-filled = **52,086**
+- agreement by year: 2019 100%, 2020 100%, 2021 100%, 2022 100%, 2023 58%, 2024 100%, 2025 100%

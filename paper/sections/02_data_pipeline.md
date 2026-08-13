@@ -2,13 +2,17 @@
 
 ## 2.1 Ground truth
 
-Reference PM2.5 comes from 8 instruments across 6 cities: Almaty,
-Ashgabat, Bishkek, Dushanbe, Khujand and Tashkent. Six of the eight are US diplomatic-post
-reference monitors, which are the only consistent multi-country reference in the region and
-the sole route to any measurement in Turkmenistan.
+PM2.5 comes from 7 instruments across 6 cities: Almaty,
+Ashgabat, Bishkek, Dushanbe, Khujand and Tashkent. **5 are
+US diplomatic-post reference monitors and 2 are Clarity low-cost
+sensors (Khujand)** — see Section 7.2. The embassy monitors are the only consistent
+multi-country reference in the region and the sole route to any measurement in Turkmenistan.
 
 That network is now closed. The US State Department ended its global embassy air quality
-programme in March 2025, and six of our eight stations terminate on exactly 2025-03-04.
+programme in March 2025. Five of the twelve contributing source feeds stop on 2025-03-04, and
+after co-published feeds are merged **2 of 7
+benchmark stations (8881, Bishkek) end there**; the rest survive through a
+longer-lived feed.
 Reporting states that seventeen years of archive were subsequently removed from the
 originating platform. The record this benchmark curates is therefore finite, closed, and
 partially deleted at source — which raises rather than lowers the value of freezing it.
@@ -18,11 +22,28 @@ tuned to improve a count. Seven rules cover physical range, flatlining, zero-run
 sanity, duplicate identity, timezone correctness and completeness. Two produced findings
 worth reporting.
 
-*Duplicate identity.* The embassy monitors are published twice — once by StateAir, once by
-AirNow — under distinct identifiers 57 m apart in Bishkek and 40 m in Ashgabat. Exact
-coordinate matching does not catch this. Under leave-station-out the held-out station would
-have been the same physical device as one in training. Detection is therefore distance-based
-at 150 m, with a wide margin: the two genuinely distinct Dushanbe sites are 6.06 km apart.
+*Duplicate identity, and the case distance could not see.* The embassy monitors are published
+twice — once by StateAir, once by AirNow — under distinct identifiers 57 m apart in Bishkek
+and 40 m in Ashgabat. Exact coordinate matching does not catch this. Under leave-station-out
+the held-out station would have been the same physical device as one in training. Detection is
+therefore distance-based at 150 m.
+
+**A distance rule cannot catch the inverse case, and this benchmark contained one.** Dushanbe
+was published by the same two programmes, but its two records carry coordinates **6.06 km
+apart**, so the 150 m rule passed them and an earlier version of this manuscript cited that
+separation as evidence the sites were distinct. They are not. Over the 33,462 hours in which
+both report, **94.0% of readings are bit-identical**, and of the remainder 99.9% match exactly
+at a five-hour offset — Dushanbe is UTC+5, so those are the same measurements timestamped in
+local time rather than UTC. **99.99% of overlapping hours are the same reading.** The
+comparable Khujand pair, 14.4 km apart, is bit-identical on 0.3% of hours.
+
+A second rule (Q5c) was therefore added: flag any station pair whose overlapping observations
+are bit-identical on more than half of samples, regardless of separation. Two independent
+instruments do not agree to floating point. The Dushanbe records are merged under the same
+precedence-and-gap-fill rule already applied to Bishkek and Ashgabat, giving
+7 instruments rather than eight, and the benchmark is versioned **1.1.0** to mark
+that the split changed. Sections 6 and 7 report how the modelling results moved as a result;
+they moved against the model.
 
 *Timezone correctness.* Metadata offsets are not trusted. Each station's diurnal composite is
 cross-correlated against a regional reference, and an initial implementation rejected both
@@ -117,17 +138,17 @@ subset on which the association can be tested at all.
 
 | Feature | Retrieval | Δ median PM2.5 on missing days | *p* | Retrieval on worst decile |
 |---|---:|---:|---:|---:|
-| Sentinel-5P SO₂ | 59.2% | **+10.6** | 6.6e-128 | **26.3%** |
-| MAIAC AOD | 64.6% | +4.8 | 3.8e-33 | 45.3% |
-| Sentinel-5P NO₂ | 71.6% | +3.0 | 1.3e-12 | 60.0% |
-| Sentinel-5P CO | 82.7% | -0.4 | 0.24 | 85.8% |
-| Sentinel-5P AAI | 99.8% | +1.5 | 0.46 | 100.0% |
+| Sentinel-5P SO₂ | 57.4% | **+10.3** | 1.6e-138 | **14.0%** |
+| MAIAC AOD | 62.9% | +5.6 | 1.4e-44 | 38.1% |
+| Sentinel-5P NO₂ | 70.7% | +3.3 | 1.7e-14 | 58.0% |
+| Sentinel-5P CO | 81.1% | +2.6 | 7.2e-05 | 81.9% |
+| Sentinel-5P AAI | 99.8% | +6.8 | 0.75 | 99.9% |
 
 **SO₂ is blind in the season it exists to observe.** It retrieves on 0.1% of December days against
-93.5% in July. Retrieval requires ultraviolet signal, and
+91.0% in July. Retrieval requires ultraviolet signal, and
 at 38–43°N in December the solar zenith angle leaves too little; this is a geometric floor,
 not a cloud accident. The direct tracer for the region's dominant winter source is
-unavailable throughout that source's season. Additionally, 32.7% of the
+unavailable throughout that source's season. Additionally, 29.8% of the
 retrievals that do occur are negative, sitting below the noise floor — clipping them at zero
 would bias the coal tracer upward across a third of its observations.
 
@@ -140,13 +161,15 @@ absorption depth; both survive winter geometry and cloud, and neither shows targ
 missingness. MAIAC (visible/near-infrared) and the ultraviolet absorption retrievals do not.
 
 **The two clean features are complementary to the contaminated ones.** AOD and AAI are both
-present on 64.5% of station-days; AAI alone covers a further 35.3%; neither
+present on 62.8% of station-days; AAI alone covers a further 36.9%; neither
 is available on 0.1%. Usable satellite coverage therefore rises from
-64.5% to 99.9%, and the coverage AAI
+62.8% to 99.9%, and the coverage AAI
 adds is concentrated precisely where MAIAC fails.
 
 Consequently missingness is **modelled, never dropped**. Valid-pixel counts are promoted to
-features in their own right. Section 6 shows they earn 4.1% of
-total SHAP attribution — comparable to the 5.1% contributed by the
+features in their own right. They are retained for Task F but **excluded from Task N** — see
+Section 5.3, where an ablation showed retrieval-count features to be city-specific rather than
+transferable. Section 6 reports attribution for the features actually used, which is
+total SHAP attribution — comparable to the 9.0% contributed by the
 full chemistry-transport model — confirming that *when* a retrieval failed carries
 information about the atmosphere.

@@ -10,17 +10,107 @@ Task N and Task F reported separately throughout.
 | best spatial baseline (kriging) | {{p3n_ordinary_kriging_rmse}} | — | {{p3n_ordinary_kriging_r2}} |
 | training-pool mean (constant) | {{p3n_training_pool_mean_rmse}} | — | {{p3n_training_pool_mean_r2}} |
 | CAMS, pooled debias | {{taskn_cams_rmse}} | {{taskn_cams_mae}} | {{taskn_cams_r2}} |
-| LightGBM, static only | {{taskn_static_only_rmse}} | {{taskn_static_only_mae}} | {{taskn_static_only_r2}} |
-| LightGBM, deployable | {{taskn_deployable_rmse}} | {{taskn_deployable_mae}} | {{taskn_deployable_r2}} |
-| LightGBM, retrospective | {{taskn_retrospective_rmse}} | {{taskn_retrospective_mae}} | {{taskn_retrospective_r2}} |
+| LightGBM, static only | {{taskn_static_only_rmse}} ± {{taskn_static_only_rmse_sd}} | {{taskn_static_only_mae}} | {{taskn_static_only_r2}} |
+| LightGBM, deployable | {{taskn_deployable_rmse}} ± {{taskn_deployable_rmse_sd}} | {{taskn_deployable_mae}} | {{taskn_deployable_r2}} |
+| LightGBM, retrospective | {{taskn_retrospective_rmse}} ± {{taskn_retrospective_rmse_sd}} | {{taskn_retrospective_mae}} | {{taskn_retrospective_r2}} |
 
-**The learned model beats every baseline, and its R² is {{taskn_retrospective_r2}}.** Both
-statements are load-bearing. It improves on pooled-debiased CAMS by
-{{taskn_cams_rmse}} → {{taskn_retrospective_rmse}} µg/m³ and on the best spatial
-interpolator by a wider margin. It also explains almost none of the variance in a
-never-seen city. We report this as the result: predicting urban PM2.5 at a location with no
-local monitor, from a training set of five other cities, is close to unsolved in this
-region, and the benchmark exists to make that measurable rather than to conceal it.
+Learned-model RMSE is given as **mean ± standard deviation over {{n_seeds}} seeds**, where the
+resampled quantity is the whole leave-city-out protocol per seed. Baseline rungs are
+deterministic and carry no seed dispersion. Section 3.6 rule 5 requires this of every
+submission to the benchmark; it is applied here to the reference implementation as well.
+
+**Two numbers are needed to describe this result honestly, and they point in opposite
+directions.**
+
+*Between cities, the model retains some signal.* Pooled over all evaluation rows — variance
+measured against the global mean — it explains **R² = {{r2_pooled_global}}**. Part of the
+contrast between a Dushanbe and a Bishkek is learnable from geography, satellite retrievals
+and neighbouring monitors.
+
+*Within a city, it is inconsistent.* The headline **R² = {{taskn_retrospective_r2}}** is the
+**mean of the {{n_loco_folds}} per-fold R² values**, each computed against *that city's own*
+mean. Scored this way the model must explain day-to-day variation inside a city it has never
+seen. The spread is wide — **{{r2_fold_min}} to {{r2_fold_max}}**, with
+{{n_folds_negative_r2}} of {{n_loco_folds}} folds negative (Section 6.1c). It succeeds in some
+held-out cities and does worse than a flat line through the city's own mean in others, and the
+average of those outcomes is near zero.
+
+The two statistics are not in conflict; they answer different questions, and only the second
+is the task this benchmark defines. The correct summary is that **the model captures some
+between-city variation and within-city skill that does not generalise across cities.** A
+reader given only the pooled figure would substantially overestimate what it does.
+
+**The learned model has the lowest RMSE of any admissible method, and that ranking is not
+robust.** Both halves matter and both are reported.
+
+Scored on identical rows at identical resolution it reaches
+{{taskn_retrospective_rmse}} ± {{taskn_retrospective_rmse_sd}} µg/m³ against
+{{best_legal_baseline_rmse}} µg/m³ for the strongest legal rung (`{{best_legal_baseline}}`),
+a margin of {{legal_baseline_margin}} µg/m³, and it leads all {{n_legal_baselines}} legal
+rungs on the fold mean.
+
+But a fold mean is an average over {{n_loco_folds}} numbers, and the per-city differences are
+much larger than the average of them. Against inverse-distance weighting the model is better
+in {{n_folds_beat_idw}} of {{n_loco_folds}} cities, with per-fold differences ranging from
+−10.73 to +5.10 µg/m³. A paired test over the {{n_cities}} cities gives
+***p* = {{idw_paired_p}}** — the margin is **not statistically distinguishable from zero** at
+the unit of generalisation this benchmark is built on. Removing any single city and
+recomputing, the model still leads inverse-distance weighting in
+{{idw_loco_leads}} of {{n_loco_folds}} subsets; in the remaining one the ordering reverses.
+
+The margin is, however, **{{idw_margin_seed_sd}}× the seed standard deviation**
+({{taskn_retrospective_rmse_sd}} µg/m³), so it is not an artefact of random initialisation —
+it is fold-to-fold heterogeneity, not run-to-run noise. Restricting to the five
+reference-grade cities and excluding the low-cost Khujand fold, the model leads more clearly
+({{model_rmse_ref_only}} against {{idw_rmse_ref_only}} µg/m³).
+
+**The defensible claim is therefore "lowest RMSE among admissible methods on this fold set",
+not "better than spatial interpolation".** With {{n_cities}} cities the benchmark cannot
+separate those two statements, and Section 6.2b makes the same point about the CAMS
+comparison. Full robustness table: `t7_05_ranking_robustness.csv`.
+
+For reference, a constant equal to *the held-out city's own test-block mean* scores
+{{daily_constant_rmse}} µg/m³. **That predictor is not legal and is not a baseline.** Under
+leave-city-out the held-out city contributes no training label anywhere in the record, so its
+mean cannot be known at prediction time; it is reported as a diagnostic floor — the share of
+error that is pure within-city day-to-day variance — and the model is within
+{{oracle_gap_abs}} µg/m³ of it. An earlier version of this manuscript compared the model
+against that oracle and reported it as losing to "a constant". That comparison was invalid,
+and the correction is stated here rather than quietly dropped.
+
+Three corrections to this comparison were needed, and each mattered:
+
+1. Earlier drafts placed daily model scores beside baselines scored on *hourly* observations.
+   Averaging removes within-day variance, so hourly RMSE is structurally larger; the apparent
+   margin was arithmetic, not skill.
+2. The comparison predated benchmark v{{benchmark_version}}, in which the two Dushanbe records
+   were found to be one instrument and merged (Section 2). Every fold's RMSE rose once the
+   duplicate was gone.
+3. The constant used was an oracle, as above.
+
+## 6.1b The baseline ladder at a single resolution
+
+Every rung below is scored on **the same daily evaluation rows as the learned model**
+(local-calendar daily means, ≥18 hours, the frozen 2024 test block). Table 6.1 above and the
+hourly ladder in Section 3 are not comparable to each other and are no longer presented as one
+ladder.
+
+| Model (daily, leave-city-out) | RMSE µg/m³ |
+|---|---:|
+{{daily_ladder_rows}}
+
+## 6.1c Per-fold R², including the negative folds
+
+Section 3.6 requires per-city reporting from every submission to this benchmark. The same rule
+is applied here.
+
+| Held-out city | R² (vs that city's own mean) |
+|---|---:|
+{{per_fold_r2_rows}}
+
+{{n_folds_negative_r2}} of {{n_loco_folds}} folds are negative: in those cities the model is
+worse than predicting the city's own average. Averaging them into a single figure conceals
+that, which is why both the spread and the mean are reported.
 
 ## 6.2 Per-city results and the Diebold–Mariano tests
 
@@ -28,16 +118,53 @@ Pooling six cities into one number hides the finding.
 
 | Held-out city | LightGBM RMSE | CAMS RMSE | DM statistic | *p* |
 |---|---:|---:|---:|---:|
-| Almaty | {{rmse_lgbm_almaty}} | {{rmse_cams_almaty}} | {{dm_almaty_stat}} | {{dm_almaty_p}} |
-| Ashgabat | {{rmse_lgbm_ashgabat}} | {{rmse_cams_ashgabat}} | {{dm_ashgabat_stat}} | {{dm_ashgabat_p}} |
-| Bishkek | {{rmse_lgbm_bishkek}} | {{rmse_cams_bishkek}} | {{dm_bishkek_stat}} | {{dm_bishkek_p}} |
-| Dushanbe | {{rmse_lgbm_dushanbe}} | {{rmse_cams_dushanbe}} | {{dm_dushanbe_stat}} | {{dm_dushanbe_p}} |
-| Khujand (zero-shot) | {{rmse_lgbm_khujand}} | {{rmse_cams_khujand}} | {{dm_khujand_stat}} | {{dm_khujand_p}} |
-| Tashkent | {{rmse_lgbm_tashkent}} | {{rmse_cams_tashkent}} | {{dm_tashkent_stat}} | {{dm_tashkent_p}} |
+| Almaty | {{rmse_lgbm_almaty}} ± {{rmse_lgbm_almaty_sd}} | {{rmse_cams_almaty}} | {{dm_almaty_stat}} | {{dm_almaty_p}} |
+| Ashgabat | {{rmse_lgbm_ashgabat}} ± {{rmse_lgbm_ashgabat_sd}} | {{rmse_cams_ashgabat}} | {{dm_ashgabat_stat}} | {{dm_ashgabat_p}} |
+| Bishkek | {{rmse_lgbm_bishkek}} ± {{rmse_lgbm_bishkek_sd}} | {{rmse_cams_bishkek}} | {{dm_bishkek_stat}} | {{dm_bishkek_p}} |
+| Dushanbe | {{rmse_lgbm_dushanbe}} ± {{rmse_lgbm_dushanbe_sd}} | {{rmse_cams_dushanbe}} | {{dm_dushanbe_stat}} | {{dm_dushanbe_p}} |
+| Khujand (zero-shot) | {{rmse_lgbm_khujand}} ± {{rmse_lgbm_khujand_sd}} | {{rmse_cams_khujand}} | {{dm_khujand_stat}} | {{dm_khujand_p}} |
+| Tashkent | {{rmse_lgbm_tashkent}} ± {{rmse_lgbm_tashkent_sd}} | {{rmse_cams_tashkent}} | {{dm_tashkent_stat}} | {{dm_tashkent_p}} |
 | **pooled** (n = {{dm_pooled_n}}) | **{{rmse_lgbm_pooled}}** | **{{rmse_cams_pooled}}** | **{{dm_pooled_stat}}** | **{{dm_pooled_p}}** |
 
 Tests use Newey–West HAC variance with the Harvey–Leybourne–Newbold small-sample
-correction. Negative statistics favour the learned model.
+correction. Negative statistics favour the learned model. Six folds are tested, so per-fold
+*p*-values are additionally reported with a Holm step-down correction in
+`t6_07_per_fold_holm.csv`; **{{n_sig_holm}} of {{n_loco_folds}} survive it at α = 0.05.**
+
+### 6.2b Which *p*-value is the paper's claim
+
+The pooled row above treats {{dm_pooled_n}} station-days from {{n_cities}} cities as
+independent observations. They are not, in either dimension: the loss differential has
+first-order autocorrelation {{acf_lag1}} within station, and station-days cluster within
+cities that contribute very unequal row counts. **That pooled figure is reported for
+continuity with the per-fold rows above and is not the paper's inferential claim.**
+
+The estimand is the reduction in squared error at *a city with no local training labels*, so
+the unit of generalisation is the **city** — as Section 5.4 already argues, and as the
+leave-city-out protocol implies. The primary analysis therefore aggregates to one value per
+city and tests those {{n_cities}} numbers.
+
+| | Test | Unit | *n* | *p* |
+|---|---|---|---:|---:|
+| **Primary** | paired *t* on city means | city | {{n_cities}} | **{{sig_primary_t_p}}** |
+| **Primary** | exact sign-flip permutation | city | {{n_cities}} | **{{sig_primary_perm_p}}** |
+| Sensitivity | station-day, independence assumed | station-day | {{dm_pooled_n}} | {{sig_naive_p}} |
+| Sensitivity | station-day, Newey–West HAC (lag 60 d) | station-day | {{dm_pooled_n}} | {{sig_hac60_p}} |
+| Sensitivity | cluster bootstrap over cities | city | {{n_cities}} | {{sig_boot_p}} |
+
+With {{n_cities}} clusters, cluster-robust asymptotics are unreliable — the cluster-robust
+variance estimator is materially downward-biased below roughly 30–50 clusters
+(Cameron and Miller, 2015). Two remedies appropriate at this cluster count are reported
+together: a *t*-test on {{n_cities}} city means with {{sig_primary_df}} degrees of freedom,
+and an exact sign-flip permutation test that assumes no distribution at all. The permutation
+test's smallest attainable two-sided *p*-value is {{sig_perm_floor}}, a floor imposed by
+having only {{n_cities}} cities; we state it rather than let a reader mistake it for evidence.
+
+**The honest reading is that the evidence is suggestive but does not reach conventional
+significance under the unit of generalisation this benchmark is built around.** Corrections
+for serial dependence alone leave the station-day result significant; treating cities as the
+unit does not. We report both and let the divergence stand, because it is a real property of
+a study with six cities, not a defect to be resolved by choosing the smaller number.
 
 **The pooled improvement is significant ({{dm_pooled_p}}); only {{dm_n_sig}} of
 {{dm_n_folds}} individual folds are.** Bishkek ({{dm_bishkek_p}}) and Tashkent
@@ -78,9 +205,21 @@ the mechanism behind the RMSE/exceedance divergence of Section 4.3.
 
 ## 6.3 Task F — forecasting at monitored stations
 
-| Feature set | RMSE (µg/m³) | R² |
+**What Task F is, precisely.** The learned Task F model predicts the **daily** mean at a
+monitored station from that station's own history at lags of 1, 2 and 7 days plus 7- and
+30-day rolling means. Its shortest lag is one day, so it is a **single-horizon, next-day
+(24 h) forecast evaluated at daily resolution**.
+
+It is therefore **not comparable to the Task F baseline ladder in Section 3**, which is
+resolved across three horizons (24, 48 and 72 h) and scored on hourly observations
+({{taskf_baseline_n_obs}} observations, against {{taskf_model_n}} daily rows for the model).
+Earlier drafts placed the two in one table. They measure different things at different
+resolutions, and the baseline row has been removed rather than rescaled: no honest rescaling
+exists, because the model does not produce 48 h or 72 h forecasts at all. Extending it to the
+full horizon set is left as future work and is not claimed here.
+
+| Feature set (daily, next-day horizon) | RMSE (µg/m³) | R² |
 |---|---:|---:|
-| best Task F baseline (same-hour 7-day mean) | {{p3f_same_hour_mean_7d_rmse}} | {{p3f_same_hour_mean_7d_r2}} |
 | LightGBM, static only | {{taskf_static_only_rmse}} | {{taskf_static_only_r2}} |
 | LightGBM, deployable | {{taskf_deployable_rmse}} | {{taskf_deployable_r2}} |
 | LightGBM, retrospective | {{taskf_retrospective_rmse}} | {{taskf_retrospective_r2}} |
@@ -107,7 +246,6 @@ Mean absolute SHAP over the test block, by feature family:
 | calendar | {{shap_calendar_pct}}% |
 | satellite | {{shap_satellite_pct}}% |
 | CAMS forecast | {{shap_cams_forecast_pct}}% |
-| satellite missingness | {{shap_satellite_missingness_pct}}% |
 
 **Spatial interpolation drives the model, not the satellite record.** The single largest
 feature is `{{shap_top_feature}}` at {{shap_top_value}} mean absolute SHAP — inverse-distance
@@ -123,10 +261,11 @@ inert — {{shap_satellite_pct}}% is not nothing, and Section 5.5 shows the depl
 loses little — but a reader would be entitled to expect, from a study built on five
 remote-sensing products, that those products carried the prediction. They do not.
 
-Two further readings follow. First, **satellite missingness earns
-{{shap_satellite_missingness_pct}}% — comparable to the {{shap_cams_forecast_pct}}%
-contributed by the entire chemistry-transport model.** Whether a retrieval failed carries
-nearly as much information as what the atmospheric model predicted, which vindicates
+Two further readings follow. First, **satellite retrieval-count features no longer appear at
+all**: an ablation on the validation block (Section 5.3) found them city-specific rather than
+transferable, and they are excluded from Task N. They remain in Task F, where the held-out
+entity is a time block rather than a city. Whether a retrieval failed still carries real
+information, which vindicates
 modelling missingness rather than dropping it (Section 2.4) and simultaneously indicates how
 little the retrieved values themselves add. Second, calendar features at
 {{shap_calendar_pct}}% confirm that a large part of the signal is seasonal regularity that
@@ -138,23 +277,38 @@ baseline with positive R².
 ![Figure 4](figures/fig4_shap_by_family.png)
 
 **Figure 4.** Feature attribution by family, as a share of total mean |SHAP|. Satellite
-families are hatched. Spatial neighbour features dominate; the five satellite products
-together contribute less than static geography.
+families are hatched. On benchmark v1.1.0 the five satellite products together carry the
+largest share ({{shap_satellite_pct}}%), ahead of spatial neighbour features
+({{shap_spatial_neighbour_pct}}%) — a reversal of the pre-deduplication ordering discussed in
+Section 7.4.
 
 ## 6.5 Summary of what is and is not established
 
 Established:
 
-- The learned model beats pooled-debiased CAMS across the {{n_loco_folds}}-fold leave-city-out
-  protocol, pooled *p* = {{dm_pooled_p}}.
+- **The benchmark itself**: {{n_stations}} instruments across {{n_cities}} cities, splits
+  frozen and hash-verified, every reported number regenerated by one command.
 - Deployability costs almost nothing: {{taskn_deployable_rmse}} vs
-  {{taskn_retrospective_rmse}} µg/m³.
-- Zero-shot transfer to a city with no training rows beats CAMS significantly
-  ({{dm_khujand_p}}).
+  {{taskn_retrospective_rmse}} µg/m³. Restricting to features available at inference time is
+  close to free, which is the one comfortable result here.
+- The task is hard in a way the protocol makes visible. Under leave-city-out, a tuned
+  gradient-boosting model with satellite, meteorological and spatial features does **not**
+  improve on each city's own mean.
 
-Not established:
+Not established — and previously claimed:
 
-- Per-city superiority. {{dm_n_sig}} of {{dm_n_folds}} folds reach significance;
-  {{dm_fold_favouring_cams}} does not favour the model at all.
-- Useful absolute accuracy at unmonitored locations. R² = {{taskn_retrospective_r2}}.
-- That satellite remote sensing drives the result. Section 6.4 shows it does not.
+- **That the learned model beats pooled-debiased CAMS.** Under the city-level analysis this
+  protocol implies, it does not: paired *t* *p* = {{sig_primary_t_p}}, exact permutation
+  *p* = {{sig_primary_perm_p}}. Only {{n_sig_holm}} of {{n_loco_folds}} folds survive Holm
+  correction. The pooled station-day *p*-value reported in earlier drafts assumed an
+  independence the data does not have.
+- **That leading the ladder means the model is *useful* at unmonitored locations.** It has the
+  lowest RMSE of any admissible method ({{taskn_retrospective_rmse}} µg/m³), but mean per-fold
+  R² = {{taskn_retrospective_r2}}, spread {{r2_fold_min}} to {{r2_fold_max}}, with
+  {{n_folds_negative_r2}} of {{n_loco_folds}} folds negative. Lowest error and demonstrated
+  within-city skill are different claims; only the first is established.
+- **That spatial interpolation rather than satellite data drives the result.** That ordering
+  reversed once the duplicated Dushanbe instrument was merged (Section 7.4). Satellite
+  products now carry {{shap_satellite_pct}}% against {{shap_spatial_neighbour_pct}}% for
+  spatial neighbours. Neither ordering should be treated as robust: it inverted on the
+  removal of a single station.

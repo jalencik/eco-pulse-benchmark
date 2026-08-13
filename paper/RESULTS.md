@@ -12,28 +12,28 @@ Test block 2024. Five seeds; every model is deterministic, so seed variance is *
 
 | model               |   rmse |    mae |   bias |     r2 |   f1_exceed |     n |
 |:--------------------|-------:|-------:|-------:|-------:|------------:|------:|
-| same_hour_mean_7d   | 34.477 | 19.064 | -0.037 |  0.176 |       0.852 | 44899 |
-| climatology_mean    | 38.154 | 23.974 |  6.58  | -0.091 |       0.795 | 45120 |
-| diurnal_persistence | 40.267 | 20.757 | -0.09  | -0.14  |       0.859 | 43659 |
-| persistence         | 40.267 | 20.757 | -0.09  | -0.14  |       0.859 | 43659 |
+| same_hour_mean_7d   | 32.299 | 17.927 |  0.076 |  0.154 |       0.836 | 38618 |
+| climatology_mean    | 36.24  | 22.936 |  7.136 | -0.15  |       0.769 | 38786 |
+| diurnal_persistence | 37.758 | 19.48  | -0.06  | -0.176 |       0.846 | 37512 |
+| persistence         | 37.758 | 19.48  | -0.06  | -0.176 |       0.846 | 37512 |
 
 ### t+48 h
 
 | model               |   rmse |    mae |   bias |     r2 |   f1_exceed |     n |
 |:--------------------|-------:|-------:|-------:|-------:|------------:|------:|
-| same_hour_mean_7d   | 35.779 | 19.979 | -0.147 |  0.121 |       0.838 | 44692 |
-| climatology_mean    | 38.154 | 23.974 |  6.58  | -0.091 |       0.795 | 45120 |
-| diurnal_persistence | 43.826 | 22.954 |  0.045 | -0.333 |       0.822 | 43176 |
-| persistence         | 43.826 | 22.954 |  0.045 | -0.333 |       0.822 | 43176 |
+| same_hour_mean_7d   | 33.418 | 18.712 |  0.02  |  0.102 |       0.821 | 38461 |
+| climatology_mean    | 36.24  | 22.936 |  7.136 | -0.15  |       0.769 | 38786 |
+| diurnal_persistence | 41.089 | 21.63  |  0.084 | -0.372 |       0.804 | 37104 |
+| persistence         | 41.089 | 21.63  |  0.084 | -0.372 |       0.804 | 37104 |
 
 ### t+72 h
 
 | model               |   rmse |    mae |   bias |     r2 |   f1_exceed |     n |
 |:--------------------|-------:|-------:|-------:|-------:|------------:|------:|
-| same_hour_mean_7d   | 36.491 | 20.502 | -0.256 |  0.092 |       0.83  | 44491 |
-| climatology_mean    | 38.154 | 23.974 |  6.58  | -0.091 |       0.795 | 45120 |
-| diurnal_persistence | 44.259 | 23.61  |  0.183 | -0.422 |       0.793 | 42806 |
-| persistence         | 44.259 | 23.61  |  0.183 | -0.422 |       0.793 | 42806 |
+| same_hour_mean_7d   | 33.974 | 19.111 | -0.041 |  0.076 |       0.81  | 38302 |
+| climatology_mean    | 36.24  | 22.936 |  7.136 | -0.15  |       0.769 | 38786 |
+| diurnal_persistence | 41.574 | 22.195 |  0.219 | -0.479 |       0.772 | 36796 |
+| persistence         | 41.574 | 22.195 |  0.219 | -0.479 |       0.772 | 36796 |
 
 ## Task F — RMSE by city and horizon
 
@@ -46,7 +46,7 @@ Per-city numbers are reported individually. Averaging six cities with different 
 | Almaty   |              25.93 |                 26.74 |         26.74 |               22.72 |
 | Ashgabat |              30.13 |                 37.23 |         37.23 |               31.18 |
 | Bishkek  |              41.32 |                 34.51 |         34.51 |               27.25 |
-| Dushanbe |              46.97 |                 52.39 |         52.39 |               44.9  |
+| Dushanbe |              46.22 |                 51.98 |         51.98 |               44.44 |
 | Tashkent |              37.59 |                 38.33 |         38.33 |               35.9  |
 
 ### t+48 h (RMSE, µg/m³)
@@ -56,7 +56,7 @@ Per-city numbers are reported individually. Averaging six cities with different 
 | Almaty   |              25.93 |                 29.54 |         29.54 |               23.36 |
 | Ashgabat |              30.13 |                 39.5  |         39.5  |               32.27 |
 | Bishkek  |              41.32 |                 35.22 |         35.22 |               27.66 |
-| Dushanbe |              46.97 |                 56.99 |         56.99 |               47.02 |
+| Dushanbe |              46.22 |                 56.47 |         56.47 |               46.46 |
 | Tashkent |              37.59 |                 44.72 |         44.72 |               37.35 |
 
 ### t+72 h (RMSE, µg/m³)
@@ -66,7 +66,7 @@ Per-city numbers are reported individually. Averaging six cities with different 
 | Almaty   |              25.93 |                 29.7  |         29.7  |               23.4  |
 | Ashgabat |              30.13 |                 38.17 |         38.17 |               32.84 |
 | Bishkek  |              41.32 |                 37    |         37    |               27.79 |
-| Dushanbe |              46.97 |                 57.01 |         57.01 |               48.43 |
+| Dushanbe |              46.22 |                 56.34 |         56.34 |               47.79 |
 | Tashkent |              37.59 |                 46.66 |         46.66 |               38.05 |
 
 ## Task N — nowcasting, leave-city-out
@@ -77,21 +77,21 @@ Each fold holds out one city entirely; the held-out city contributes no training
 
 | model              |   rmse |    mae |   bias |     r2 |   f1_exceed |     n |
 |:-------------------|-------:|-------:|-------:|-------:|------------:|------:|
-| ordinary_kriging   | 40.916 | 24.54  | -3.495 | -0.14  |       0.728 | 59635 |
-| training_pool_mean | 43.091 | 30.665 |  6.028 | -0.271 |       0.764 | 59676 |
-| idw_k5_p2          | 43.653 | 26.07  | -0.209 | -0.317 |       0.762 | 59635 |
-| nearest_monitor    | 48.027 | 27.528 | -3.429 | -0.711 |       0.737 | 59635 |
+| ordinary_kriging   | 39.71  | 24.327 |  0.106 | -0.222 |       0.736 | 53301 |
+| training_pool_mean | 40.688 | 29.554 |  6.724 | -0.242 |       0.741 | 53342 |
+| idw_k5_p2          | 40.858 | 24.349 |  0.829 | -0.262 |       0.775 | 53301 |
+| nearest_monitor    | 46.663 | 26.703 | -0.939 | -0.79  |       0.753 | 53301 |
 
 ### RMSE by held-out city (µg/m³)
 
 | held_out_city   |   idw_k5_p2 |   nearest_monitor |   ordinary_kriging |   training_pool_mean |
 |:----------------|------------:|------------------:|-------------------:|---------------------:|
-| Almaty          |       29.65 |             35.44 |              27.68 |                33.9  |
-| Ashgabat        |       45.29 |             62.04 |              36.21 |                34.3  |
-| Bishkek         |       35.14 |             34.63 |              38.16 |                40.61 |
-| Dushanbe        |       55.44 |             57.06 |              54.36 |                54.32 |
-| Khujand         |       43.51 |             46.89 |              40.04 |                43.3  |
-| Tashkent        |       41.23 |             44.21 |              36.49 |                40.68 |
+| Almaty          |       29.53 |             35.44 |              28.85 |                32.74 |
+| Ashgabat        |       40.79 |             62.04 |              39.17 |                33.34 |
+| Bishkek         |       34.9  |             34.63 |              39.82 |                38.72 |
+| Dushanbe        |       54.95 |             56.55 |              53.6  |                53.41 |
+| Khujand         |       42.48 |             46.89 |              40.02 |                43.12 |
+| Tashkent        |       40.85 |             44.21 |              36.48 |                40.38 |
 
 ### Kriging fallback rate
 
@@ -100,7 +100,7 @@ Share of predictions where the kriging system was singular and the model silentl
 | held_out_city   |   fallback_rate |
 |:----------------|----------------:|
 | Almaty          |          0.0014 |
-| Ashgabat        |          0.0002 |
+| Ashgabat        |          0.0023 |
 | Bishkek         |          0.0001 |
 | Dushanbe        |          0.0023 |
 | Khujand         |          0.0024 |
@@ -110,39 +110,39 @@ Share of predictions where the kriging system was singular and the model silentl
 
 Newey–West HAC variance with truncation lag h−1, plus the Harvey–Leybourne–Newbold small-sample correction. A lower RMSE with p ≥ 0.05 is **not** an improvement.
 
-- comparisons: **108**
-- significant at p < 0.05: **70** (65%)
-- exact ties (identical forecasts): **18**
+- comparisons: **90**
+- significant at p < 0.05: **60** (67%)
+- exact ties (identical forecasts): **15**
 
 ### By model pair
 
 |    | model_a             | model_b             |   n_comparisons |   n_significant |   median_p |
 |---:|:--------------------|:--------------------|----------------:|----------------:|-----------:|
-|  0 | climatology_mean    | diurnal_persistence |              18 |              14 |     0.0068 |
-|  1 | climatology_mean    | persistence         |              18 |              14 |     0.0068 |
-|  2 | climatology_mean    | same_hour_mean_7d   |              18 |               6 |     0.1107 |
-|  3 | diurnal_persistence | persistence         |              18 |               0 |     1      |
-|  4 | diurnal_persistence | same_hour_mean_7d   |              18 |              18 |     0.0005 |
-|  5 | persistence         | same_hour_mean_7d   |              18 |              18 |     0.0005 |
+|  0 | climatology_mean    | diurnal_persistence |              15 |              12 |     0.0078 |
+|  1 | climatology_mean    | persistence         |              15 |              12 |     0.0078 |
+|  2 | climatology_mean    | same_hour_mean_7d   |              15 |               6 |     0.0909 |
+|  3 | diurnal_persistence | persistence         |              15 |               0 |     1      |
+|  4 | diurnal_persistence | same_hour_mean_7d   |              15 |              15 |     0.0003 |
+|  5 | persistence         | same_hour_mean_7d   |              15 |              15 |     0.0003 |
 
 ## Diebold–Mariano — Task N
 
 Newey–West HAC variance with truncation lag h−1, plus the Harvey–Leybourne–Newbold small-sample correction. A lower RMSE with p ≥ 0.05 is **not** an improvement.
 
-- comparisons: **48**
-- significant at p < 0.05: **32** (67%)
+- comparisons: **42**
+- significant at p < 0.05: **30** (71%)
 - exact ties (identical forecasts): **0**
 
 ### By model pair
 
 |    | model_a          | model_b            |   n_comparisons |   n_significant |   median_p |
 |---:|:-----------------|:-------------------|----------------:|----------------:|-----------:|
-|  0 | idw_k5_p2        | nearest_monitor    |               8 |               7 |     0.0004 |
-|  1 | idw_k5_p2        | ordinary_kriging   |               8 |               5 |     0.0038 |
-|  2 | idw_k5_p2        | training_pool_mean |               8 |               3 |     0.1738 |
-|  3 | nearest_monitor  | ordinary_kriging   |               8 |               8 |     0.0002 |
-|  4 | nearest_monitor  | training_pool_mean |               8 |               5 |     0.0399 |
-|  5 | ordinary_kriging | training_pool_mean |               8 |               4 |     0.0573 |
+|  0 | idw_k5_p2        | nearest_monitor    |               7 |               6 |     0.0002 |
+|  1 | idw_k5_p2        | ordinary_kriging   |               7 |               4 |     0.0001 |
+|  2 | idw_k5_p2        | training_pool_mean |               7 |               4 |     0.0485 |
+|  3 | nearest_monitor  | ordinary_kriging   |               7 |               7 |     0.0001 |
+|  4 | nearest_monitor  | training_pool_mean |               7 |               5 |     0.0188 |
+|  5 | ordinary_kriging | training_pool_mean |               7 |               4 |     0.0024 |
 
 ## Known caveats that travel with these numbers
 

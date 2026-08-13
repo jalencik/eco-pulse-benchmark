@@ -6,8 +6,8 @@ requested in prose.
 
 ## 3.1 What is frozen
 
-`benchmark/splits/splits.json` fixes 8 stations across 6 cities, the
-three temporal blocks, 6 leave-city-out folds and 4
+`benchmark/splits/splits.json` fixes 7 stations across 6 cities, the
+three temporal blocks, 6 leave-city-out folds and 2
 leave-station-out folds. It is accompanied by `splits.sha256`. The checksum is verified in
 CI and by `make reproduce`; any edit to the split file fails the build.
 
@@ -99,11 +99,35 @@ zero-shot wherever it appears.
 ## 3.7 Reproduction
 
 `make reproduce` runs the pipeline end to end: lint, type check, the full test suite,
-checksum verification, split regeneration, the baseline ladder, table regeneration and
-manuscript rendering — in that order, because splits are frozen and hash-verified before
-any model sees data. Every number in this paper is produced by that command. No figure in
-the manuscript is typed by hand; Section 7.5 describes the mechanism and the drift it
-caught. The command is idempotent: a second run leaves the working tree unchanged.
+checksum verification, split regeneration, the baseline ladder, **the model layer** (untuned
+and tuned gradient boosting, the CAMS variants, and the significance analysis), table
+regeneration and manuscript rendering — in that order, because splits are hash-verified
+before any model reads data. Every number in this paper is produced by that command. No
+figure in the manuscript is typed by hand; Section 7.5 describes the mechanism and the drift
+it caught. The command is idempotent: a second run reproduces all
+29 result tables **byte-identically**, verified by SHA-256.
+
+**A reproducibility failure this paper had to fix in itself.** Until benchmark v1.1.0 the
+model layer was *absent* from `make reproduce`. Its four producers wrote files under names
+that were then renamed by hand into the names the manuscript cites, so the command
+regenerated only the Section 3 baseline tables and still exited 0 — while every headline
+table sat unchanged on disk. The claim "every number is produced by that command" was
+therefore false when first published, not because any number was fabricated (all of them
+regenerate exactly) but because the chain that was supposed to guarantee it had a gap. Each
+producer now writes the name the paper cites, the rename step is gone, and a test asserts
+that every table read by the manuscript has a producer inside the reproduction chain. We
+report this because a reproducibility claim that has never been executed end to end is
+exactly the kind of claim this benchmark exists to make checkable.
+
+**On the ordering of the freeze.** The splits carry a signed timestamp and are immutable by
+test. What the repository can prove is that **the modelling results reported here were
+produced after the splits were frozen and hash-verified**. It cannot prove the stronger
+claim, made in earlier drafts, that no model had been fitted on any data before the freeze:
+model *code* is committed roughly twelve hours before the freeze timestamp, no result
+artefact is under version control from that period, and the split builder was committed in
+the same commit as the splits. We therefore state the weaker claim, which the evidence
+supports, and flag the stronger one as unverifiable. A future benchmark version should
+record run manifests with content hashes so the ordering is provable rather than asserted.
 
 **What that command does and does not require.** The frozen splits are committed, so
 *verifying* the benchmark needs neither credentials nor a rebuild — `sha256sum -c

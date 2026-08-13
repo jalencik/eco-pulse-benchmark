@@ -27,9 +27,10 @@
 | B2 | SNIPPET | yes | Dié Tang, Yu Zhan, Fumo Yang | 2024 | Atmospheric Research | `10.1016/j.atmosres.2024.107261` |
 | C1 | SNIPPET | yes | Shrey Gupta et al. | 2024 | Lecture Notes in Computer Science | `10.1007/978-3-031-70378-2_24` |
 | S:M12 | SNIPPET | yes | Yixuan Zheng et al. | 2015 | Atmospheric Environment | `10.1016/j.atmosenv.2015.06.046` |
+| S:M13 | SNIPPET | yes | A. Colin Cameron, Douglas L. Miller | 2015 | Journal of Human Resources | `10.3368/jhr.50.2.317` |
 | S:M2 | SNIPPET | yes | Hanna Meyer et al. | 2019 | Ecological Modelling | `10.1016/j.ecolmodel.2019.108815` |
 | S:M4 | SNIPPET | yes | David I. Harvey, Stephen J. Leybourne, Paul Newbold | 1997 | International Journal of Forecasting | `10.1016/s0169-2070(96)00719-4` |
 | A3 | UNRESOLVED | no | — | — | *not indexed; closest rejected: Mapping PM2.5 Sources and Emission Management Op* | — |
 | A9 | UNRESOLVED | no | — | — | *not indexed; closest rejected: Interpretable Multi-Horizon Machine Learning Fra* | — |
 
-**29 records resolved via API.** ABSTRACT=6, FULL=13, SNIPPET=8, UNRESOLVED=2. 26 carry an authoritative DOI; 19 reached abstract depth or better.
+**30 records resolved via API.** ABSTRACT=6, FULL=13, SNIPPET=9, UNRESOLVED=2. 27 carry an authoritative DOI; 19 reached abstract depth or better.

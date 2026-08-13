@@ -1,0 +1,8 @@
+analysis,test,unit,n,statistic,p,ci_lo,ci_hi,note
+PRIMARY,paired t-test on city means,city,6,-1.7575615700442093,0.13915985024470703,-237.01787806936028,44.522632481427635,df = 5; cluster-robust asymptotics unreliable at G = 6
+PRIMARY,exact sign-flip permutation on city means,city,6,-96.24762279396633,0.125,,,all 2^6 = 64 sign assignments; smallest attainable two-sided p = 0.03125
+SENSITIVITY,"station-day, independence assumed (as originally published)",station-day,2214,-6.31821571185106,2.646005060012336e-10,-133.27516658269948,-70.1651110841141,INVALID -- ignores serial and cross-sectional dependence; shown for comparison only
+SENSITIVITY,"station-day, Newey-West HAC (Bartlett, lag 8 d)",station-day,2214,-4.274761708807507,1.9134182978963507e-05,-148.35934019583647,-55.080937470977105,corrects serial dependence only; still treats cities as independent
+SENSITIVITY,"station-day, Newey-West HAC (Bartlett, lag 20 d)",station-day,2214,-3.521415199012425,0.00042924993613200116,-158.33699905749813,-45.10327860931544,corrects serial dependence only; still treats cities as independent
+SENSITIVITY,"station-day, Newey-West HAC (Bartlett, lag 60 d)",station-day,2214,-2.8491138330058945,0.004384119141001169,-171.6967995774722,-31.74347808934138,corrects serial dependence only; still treats cities as independent
+SENSITIVITY,"cluster bootstrap over cities (10,000 resamples)",city,6,-96.24762279396633,0.0428,-196.50553597366175,-2.896665011605023,percentile CI; only 6 distinct clusters to resample

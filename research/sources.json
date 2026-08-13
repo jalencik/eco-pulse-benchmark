@@ -693,5 +693,26 @@
     "ref": "S:M12",
     "query": "Estimating ground-level PM2.5 using aerosol optical depth and meteorological parameters",
     "depth": "SNIPPET"
+  },
+  {
+    "title": "A Practitioner's Guide to Cluster-Robust Inference",
+    "year": 2015,
+    "doi": "10.3368/jhr.50.2.317",
+    "venue": "Journal of Human Resources",
+    "authors": [
+      "A. Colin Cameron",
+      "Douglas L. Miller"
+    ],
+    "is_oa": false,
+    "cited_by": 0,
+    "source_api": "crossref",
+    "apis": [
+      "crossref"
+    ],
+    "merge_conflicts": [],
+    "match_score": 1.0,
+    "ref": "S:M13",
+    "query": "A Practitioner's Guide to Cluster-Robust Inference",
+    "depth": "SNIPPET"
   }
 ]

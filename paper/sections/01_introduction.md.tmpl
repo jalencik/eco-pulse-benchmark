@@ -46,7 +46,7 @@ differences precisely. AirDelhi (Chauhan et al., 2023) offers a second precedent
 fine-grained particulate benchmarking, confined to a single city.
 
 **C1 — a benchmark.** {{n_stations}} stations across {{n_cities}} cities. Splits were frozen
-and hashed before a single model was fitted: blocked-temporal with a derived purge gap,
+and hashed before the results reported here were produced: blocked-temporal with a derived purge gap,
 leave-city-out over {{n_loco_folds}} folds, and leave-station-out where station density
 allows it ({{n_lso_folds}} folds; {{lso_ineligible}} hold one instrument each and are named
 ineligible, not quietly dropped). A test enforces immutability. It fails for the
@@ -93,13 +93,25 @@ nearly opposite orders. Smoothing toward the mean lowers squared error while des
 variance needed to tell a bad day from a good one, so a model wins one metric by losing the
 other. Report either alone and the ladder comes out backwards for the other task.
 
-**The first positive leave-city-out R² came from removing two handicaps, not from a better
-model.** Tuned gradient boosting with spatial neighbour encodings reaches R²
-{{taskn_retrospective_r2}} at RMSE {{taskn_retrospective_rmse}}, against
-{{taskn_cams_rmse}} for bias-corrected CAMS, Diebold–Mariano {{dm_pooled_stat}} at p
-{{dm_pooled_p}}. The same architecture untuned and stripped of neighbours scored RMSE
-{{untuned_retrospective_rmse}} and R² {{untuned_retrospective_r2}}. Worse than the baseline
-it now beats.
+**The headline modelling result is mixed, and both halves are reported.** Tuned gradient
+boosting with spatial neighbour encodings reaches RMSE {{taskn_retrospective_rmse}} ±
+{{taskn_retrospective_rmse_sd}} µg/m³ at unmonitored locations, ahead of every admissible
+baseline — including inverse-distance weighting at {{best_legal_baseline_rmse}} µg/m³, a
+margin of {{legal_baseline_margin}} µg/m³. That is a real result on error.
+
+It is not a result on skill. Mean per-fold R² is {{taskn_retrospective_r2}}, ranging
+{{r2_fold_min}} to {{r2_fold_max}}, with {{n_folds_negative_r2}} of {{n_loco_folds}} folds
+negative — in those cities the model does worse than a flat line through the city's own mean.
+Ranking first on RMSE while explaining little within-city variation is not a contradiction:
+most of the achievable error reduction in this region is in getting a city's *level* right,
+which is precisely what a benchmark built on whole-city holdout is designed to expose.
+
+Its comparison against bias-corrected CAMS ({{taskn_cams_rmse}} µg/m³) is not significant
+under the unit of generalisation this protocol is built on: a paired test over
+{{n_cities}} city means gives *p* = {{sig_primary_t_p}}, and an exact permutation test
+{{sig_primary_perm_p}}. Per-fold Diebold–Mariano tests do clear 0.05 individually, but six
+tests are run and **only {{n_sig_holm}} of {{n_loco_folds}} survive Holm correction**. We
+report the corrected count, not the raw one.
 
 ## 1.4 What this paper does not claim
 

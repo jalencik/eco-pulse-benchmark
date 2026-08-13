@@ -28,23 +28,32 @@ reported under random cross-validation, which places observations from the same 
 both sides of the split, answering a question about interpolation while appearing to answer
 one about unmonitored locations.
 
-We present a reproducible benchmark over 8 reference instruments in
-6 cities, 2018-11-27 to 2024-12-31. Splits are frozen and checksummed
-before any model is fitted: blocked-temporal with a purge gap derived as 240
+We present a reproducible benchmark over 7 instruments in
+6 cities -- 5 reference-grade US-embassy monitors and
+2 low-cost sensors in Khujand -- 2018-11-27 to 2024-12-31. Splits are frozen and checksummed
+before the reported results were produced: blocked-temporal with a purge gap of 240
 hours from the maximum feature lag and horizon, plus leave-city-out over 6
 folds. Nowcasting at unmonitored sites and forecasting at monitored stations are defined
 separately and never pooled. Ground observations are fused with satellite retrievals,
 chemistry-transport forecasts, reanalysis meteorology and static geography, each carrying a
 measured acquisition latency that governs admissibility.
 
-Against a mandatory baseline ladder, tuned gradient boosting attains R²
-0.07 (RMSE 25.70, MAE
-17.38 µg/m³), improving on bias-corrected CAMS
-(31.09 µg/m³) at Diebold–Mariano *p* < 0.0001. Three results are
+Against a mandatory baseline ladder scored at a single temporal resolution, tuned gradient
+boosting reaches RMSE 28.01 ± 0.35 µg/m³ at
+unmonitored locations, the lowest of all 6 admissible baselines including
+inverse-distance weighting (29.44 µg/m³) — though that ordering is not
+statistically separable (paired *p* = 0.586) and reverses if one city is removed.
+The advantage over
+bias-corrected CAMS is **not statistically significant** once the city — the unit this
+protocol generalises over — is the unit of analysis (paired *t* on 6 city means,
+*p* = 0.1392; exact permutation *p* = 0.1250), and mean per-fold
+R² is -0.04 with 3 of 6 folds
+negative: the model ranks first on error while explaining little within-city day-to-day
+variation. Further results are
 reported against interest: no credential-free nowcaster beat a constant always-exceed
-classifier at a 64.8% base rate; attribution is dominated by spatial neighbour
-features (32.5%) over satellite products
-(16.6%); and measured latency invalidated three of five initial
+classifier at a 61.8% base rate; attribution is dominated by satellite products
+(26.6%) over spatial neighbour features
+(20.4%); and measured latency invalidated three of five initial
 availability assumptions. The benchmark's contribution is the protocol it forecloses.
 
 **Keywords:** air quality; PM2.5; Central Asia; machine learning benchmark; spatial
@@ -99,10 +108,10 @@ and diverge on pollutant, target, temporal protocol and region. Section 3 states
 differences precisely. AirDelhi (Chauhan et al., 2023) offers a second precedent for
 fine-grained particulate benchmarking, confined to a single city.
 
-**C1 — a benchmark.** 8 stations across 6 cities. Splits were frozen
-and hashed before a single model was fitted: blocked-temporal with a derived purge gap,
+**C1 — a benchmark.** 7 stations across 6 cities. Splits were frozen
+and hashed before the results reported here were produced: blocked-temporal with a derived purge gap,
 leave-city-out over 6 folds, and leave-station-out where station density
-allows it (4 folds; Almaty, Ashgabat, Bishkek, Tashkent hold one instrument each and are named
+allows it (2 folds; Almaty, Ashgabat, Bishkek, Dushanbe, Tashkent hold one instrument each and are named
 ineligible, not quietly dropped). A test enforces immutability. It fails for the
 authors exactly as it fails for anyone else.
 
@@ -138,7 +147,7 @@ the WHO 24-hour guideline on most days of the year, so a classifier that never v
 correct most of the time. Chronic pollution, not modelling skill, sets that floor. Beating
 it is the only evidence that a model has learned something past the regional mean. Raw CAMS,
 a full chemistry-transport model, is improved simply by subtracting a per-city constant, and
-even after that correction it reaches only R² -0.22. Across two
+even after that correction it reaches only R² -0.11. Across two
 phases, every baseline we tried sat below the accuracy of predicting the held-out city's own
 mean.
 
@@ -147,13 +156,25 @@ nearly opposite orders. Smoothing toward the mean lowers squared error while des
 variance needed to tell a bad day from a good one, so a model wins one metric by losing the
 other. Report either alone and the ladder comes out backwards for the other task.
 
-**The first positive leave-city-out R² came from removing two handicaps, not from a better
-model.** Tuned gradient boosting with spatial neighbour encodings reaches R²
-0.07 at RMSE 25.70, against
-31.09 for bias-corrected CAMS, Diebold–Mariano -4.52 at p
-< 0.0001. The same architecture untuned and stripped of neighbours scored RMSE
-31.99 and R² -0.64. Worse than the baseline
-it now beats.
+**The headline modelling result is mixed, and both halves are reported.** Tuned gradient
+boosting with spatial neighbour encodings reaches RMSE 28.01 ±
+0.35 µg/m³ at unmonitored locations, ahead of every admissible
+baseline — including inverse-distance weighting at 29.44 µg/m³, a
+margin of 1.43 µg/m³. That is a real result on error.
+
+It is not a result on skill. Mean per-fold R² is -0.04, ranging
+-0.55 to 0.52, with 3 of 6 folds
+negative — in those cities the model does worse than a flat line through the city's own mean.
+Ranking first on RMSE while explaining little within-city variation is not a contradiction:
+most of the achievable error reduction in this region is in getting a city's *level* right,
+which is precisely what a benchmark built on whole-city holdout is designed to expose.
+
+Its comparison against bias-corrected CAMS (29.77 µg/m³) is not significant
+under the unit of generalisation this protocol is built on: a paired test over
+6 city means gives *p* = 0.1392, and an exact permutation test
+0.1250. Per-fold Diebold–Mariano tests do clear 0.05 individually, but six
+tests are run and **only 3 of 6 survive Holm correction**. We
+report the corrected count, not the raw one.
 
 ## 1.4 What this paper does not claim
 
@@ -185,13 +206,17 @@ the city. Section 7 carries this as an open item.
 
 ## 2.1 Ground truth
 
-Reference PM2.5 comes from 8 instruments across 6 cities: Almaty,
-Ashgabat, Bishkek, Dushanbe, Khujand and Tashkent. Six of the eight are US diplomatic-post
-reference monitors, which are the only consistent multi-country reference in the region and
-the sole route to any measurement in Turkmenistan.
+PM2.5 comes from 7 instruments across 6 cities: Almaty,
+Ashgabat, Bishkek, Dushanbe, Khujand and Tashkent. **5 are
+US diplomatic-post reference monitors and 2 are Clarity low-cost
+sensors (Khujand)** — see Section 7.2. The embassy monitors are the only consistent
+multi-country reference in the region and the sole route to any measurement in Turkmenistan.
 
 That network is now closed. The US State Department ended its global embassy air quality
-programme in March 2025, and six of our eight stations terminate on exactly 2025-03-04.
+programme in March 2025. Five of the twelve contributing source feeds stop on 2025-03-04, and
+after co-published feeds are merged **2 of 7
+benchmark stations (8881, Bishkek) end there**; the rest survive through a
+longer-lived feed.
 Reporting states that seventeen years of archive were subsequently removed from the
 originating platform. The record this benchmark curates is therefore finite, closed, and
 partially deleted at source — which raises rather than lowers the value of freezing it.
@@ -201,11 +226,28 @@ tuned to improve a count. Seven rules cover physical range, flatlining, zero-run
 sanity, duplicate identity, timezone correctness and completeness. Two produced findings
 worth reporting.
 
-*Duplicate identity.* The embassy monitors are published twice — once by StateAir, once by
-AirNow — under distinct identifiers 57 m apart in Bishkek and 40 m in Ashgabat. Exact
-coordinate matching does not catch this. Under leave-station-out the held-out station would
-have been the same physical device as one in training. Detection is therefore distance-based
-at 150 m, with a wide margin: the two genuinely distinct Dushanbe sites are 6.06 km apart.
+*Duplicate identity, and the case distance could not see.* The embassy monitors are published
+twice — once by StateAir, once by AirNow — under distinct identifiers 57 m apart in Bishkek
+and 40 m in Ashgabat. Exact coordinate matching does not catch this. Under leave-station-out
+the held-out station would have been the same physical device as one in training. Detection is
+therefore distance-based at 150 m.
+
+**A distance rule cannot catch the inverse case, and this benchmark contained one.** Dushanbe
+was published by the same two programmes, but its two records carry coordinates **6.06 km
+apart**, so the 150 m rule passed them and an earlier version of this manuscript cited that
+separation as evidence the sites were distinct. They are not. Over the 33,462 hours in which
+both report, **94.0% of readings are bit-identical**, and of the remainder 99.9% match exactly
+at a five-hour offset — Dushanbe is UTC+5, so those are the same measurements timestamped in
+local time rather than UTC. **99.99% of overlapping hours are the same reading.** The
+comparable Khujand pair, 14.4 km apart, is bit-identical on 0.3% of hours.
+
+A second rule (Q5c) was therefore added: flag any station pair whose overlapping observations
+are bit-identical on more than half of samples, regardless of separation. Two independent
+instruments do not agree to floating point. The Dushanbe records are merged under the same
+precedence-and-gap-fill rule already applied to Bishkek and Ashgabat, giving
+7 instruments rather than eight, and the benchmark is versioned **1.1.0** to mark
+that the split changed. Sections 6 and 7 report how the modelling results moved as a result;
+they moved against the model.
 
 *Timezone correctness.* Metadata offsets are not trusted. Each station's diurnal composite is
 cross-correlated against a regional reference, and an initial implementation rejected both
@@ -300,17 +342,17 @@ subset on which the association can be tested at all.
 
 | Feature | Retrieval | Δ median PM2.5 on missing days | *p* | Retrieval on worst decile |
 |---|---:|---:|---:|---:|
-| Sentinel-5P SO₂ | 59.2% | **+10.6** | 6.6e-128 | **26.3%** |
-| MAIAC AOD | 64.6% | +4.8 | 3.8e-33 | 45.3% |
-| Sentinel-5P NO₂ | 71.6% | +3.0 | 1.3e-12 | 60.0% |
-| Sentinel-5P CO | 82.7% | -0.4 | 0.24 | 85.8% |
-| Sentinel-5P AAI | 99.8% | +1.5 | 0.46 | 100.0% |
+| Sentinel-5P SO₂ | 57.4% | **+10.3** | 1.6e-138 | **14.0%** |
+| MAIAC AOD | 62.9% | +5.6 | 1.4e-44 | 38.1% |
+| Sentinel-5P NO₂ | 70.7% | +3.3 | 1.7e-14 | 58.0% |
+| Sentinel-5P CO | 81.1% | +2.6 | 7.2e-05 | 81.9% |
+| Sentinel-5P AAI | 99.8% | +6.8 | 0.75 | 99.9% |
 
 **SO₂ is blind in the season it exists to observe.** It retrieves on 0.1% of December days against
-93.5% in July. Retrieval requires ultraviolet signal, and
+91.0% in July. Retrieval requires ultraviolet signal, and
 at 38–43°N in December the solar zenith angle leaves too little; this is a geometric floor,
 not a cloud accident. The direct tracer for the region's dominant winter source is
-unavailable throughout that source's season. Additionally, 32.7% of the
+unavailable throughout that source's season. Additionally, 29.8% of the
 retrievals that do occur are negative, sitting below the noise floor — clipping them at zero
 would bias the coal tracer upward across a third of its observations.
 
@@ -323,14 +365,16 @@ absorption depth; both survive winter geometry and cloud, and neither shows targ
 missingness. MAIAC (visible/near-infrared) and the ultraviolet absorption retrievals do not.
 
 **The two clean features are complementary to the contaminated ones.** AOD and AAI are both
-present on 64.5% of station-days; AAI alone covers a further 35.3%; neither
+present on 62.8% of station-days; AAI alone covers a further 36.9%; neither
 is available on 0.1%. Usable satellite coverage therefore rises from
-64.5% to 99.9%, and the coverage AAI
+62.8% to 99.9%, and the coverage AAI
 adds is concentrated precisely where MAIAC fails.
 
 Consequently missingness is **modelled, never dropped**. Valid-pixel counts are promoted to
-features in their own right. Section 6 shows they earn 4.1% of
-total SHAP attribution — comparable to the 5.1% contributed by the
+features in their own right. They are retained for Task F but **excluded from Task N** — see
+Section 5.3, where an ablation showed retrieval-count features to be city-specific rather than
+transferable. Section 6 reports attribution for the features actually used, which is
+total SHAP attribution — comparable to the 9.0% contributed by the
 full chemistry-transport model — confirming that *when* a retrieval failed carries
 information about the atmosphere.
 
@@ -344,8 +388,8 @@ requested in prose.
 
 ## 3.1 What is frozen
 
-`benchmark/splits/splits.json` fixes 8 stations across 6 cities, the
-three temporal blocks, 6 leave-city-out folds and 4
+`benchmark/splits/splits.json` fixes 7 stations across 6 cities, the
+three temporal blocks, 6 leave-city-out folds and 2
 leave-station-out folds. It is accompanied by `splits.sha256`. The checksum is verified in
 CI and by `make reproduce`; any edit to the split file fails the build.
 
@@ -437,11 +481,35 @@ zero-shot wherever it appears.
 ## 3.7 Reproduction
 
 `make reproduce` runs the pipeline end to end: lint, type check, the full test suite,
-checksum verification, split regeneration, the baseline ladder, table regeneration and
-manuscript rendering — in that order, because splits are frozen and hash-verified before
-any model sees data. Every number in this paper is produced by that command. No figure in
-the manuscript is typed by hand; Section 7.5 describes the mechanism and the drift it
-caught. The command is idempotent: a second run leaves the working tree unchanged.
+checksum verification, split regeneration, the baseline ladder, **the model layer** (untuned
+and tuned gradient boosting, the CAMS variants, and the significance analysis), table
+regeneration and manuscript rendering — in that order, because splits are hash-verified
+before any model reads data. Every number in this paper is produced by that command. No
+figure in the manuscript is typed by hand; Section 7.5 describes the mechanism and the drift
+it caught. The command is idempotent: a second run reproduces all
+29 result tables **byte-identically**, verified by SHA-256.
+
+**A reproducibility failure this paper had to fix in itself.** Until benchmark v1.1.0 the
+model layer was *absent* from `make reproduce`. Its four producers wrote files under names
+that were then renamed by hand into the names the manuscript cites, so the command
+regenerated only the Section 3 baseline tables and still exited 0 — while every headline
+table sat unchanged on disk. The claim "every number is produced by that command" was
+therefore false when first published, not because any number was fabricated (all of them
+regenerate exactly) but because the chain that was supposed to guarantee it had a gap. Each
+producer now writes the name the paper cites, the rename step is gone, and a test asserts
+that every table read by the manuscript has a producer inside the reproduction chain. We
+report this because a reproducibility claim that has never been executed end to end is
+exactly the kind of claim this benchmark exists to make checkable.
+
+**On the ordering of the freeze.** The splits carry a signed timestamp and are immutable by
+test. What the repository can prove is that **the modelling results reported here were
+produced after the splits were frozen and hash-verified**. It cannot prove the stronger
+claim, made in earlier drafts, that no model had been fitted on any data before the freeze:
+model *code* is committed roughly twelve hours before the freeze timestamp, no result
+artefact is under version control from that period, and the split builder was committed in
+the same commit as the splits. We therefore state the weaker claim, which the evidence
+supports, and flag the stronger one as unverifiable. A future benchmark version should
+record run manifests with content hashes so the ordering is provable rather than asserted.
 
 **What that command does and does not require.** The frozen splits are committed, so
 *verifying* the benchmark needs neither credentials nor a rebuild — `sha256sum -c
@@ -485,10 +553,10 @@ Test block 2024, horizons t+24 h, t+48 h, t+72 h, pooled across stations.
 
 | Model | RMSE (µg/m³) | R² |
 |---|---:|---:|
-| persistence, y(t) | 42.78 | -0.30 |
-| diurnal persistence, y(t−24 h) | 42.78 | -0.30 |
-| climatology (station mean) | 38.15 | -0.09 |
-| same-hour 7-day mean | 35.58 | 0.13 |
+| persistence, y(t) | 40.14 | -0.34 |
+| diurnal persistence, y(t−24 h) | 40.14 | -0.34 |
+| climatology (station mean) | 36.24 | -0.15 |
+| same-hour 7-day mean | 33.23 | 0.11 |
 
 **Persistence and diurnal persistence are numerically identical, and this is correct.** All
 three evaluated horizons are multiples of 24 h, so "the same hour yesterday" and "lag-24
@@ -499,10 +567,10 @@ ladder in which two rungs coincide at the evaluated horizons is a property of th
 grid that a reader needs in order to interpret the table.
 
 Degradation with lead time is visible only in the persistence family
-(40.27 → 44.26 µg/m³ from t+24 h to t+72 h).
-Climatology is flat by construction at 38.15 µg/m³, since it
+(37.76 → 41.57 µg/m³ from t+24 h to t+72 h).
+Climatology is flat by construction at 36.24 µg/m³, since it
 does not read the recent past. **Only the same-hour 7-day mean achieves positive R²**
-(0.13); every other rung is worse than predicting the test-block
+(0.11); every other rung is worse than predicting the test-block
 mean.
 
 **Figure 2** shows the full Task N ladder, including the tuned model of Section 5 for
@@ -521,10 +589,10 @@ remaining five cities.
 
 | Model | RMSE (µg/m³) | R² | Exceedance F1 | Peirce skill |
 |---|---:|---:|---:|---:|
-| nearest monitor | 48.03 | -0.71 | 0.737 | 0.414 |
-| IDW (k=5, p=2) | 43.65 | -0.32 | 0.762 | 0.317 |
-| training-pool mean | 43.09 | -0.27 | 0.764 | 0.000 |
-| ordinary kriging | 40.92 | -0.14 | 0.728 | 0.295 |
+| nearest monitor | 46.66 | -0.79 | 0.753 | 0.436 |
+| IDW (k=5, p=2) | 40.86 | -0.26 | 0.775 | 0.378 |
+| training-pool mean | 40.69 | -0.24 | 0.741 | 0.000 |
+| ordinary kriging | 39.71 | -0.22 | 0.736 | 0.296 |
 
 **Every spatial baseline has negative R².** Interpolating between Central Asian cities
 hundreds of kilometres apart is worse than predicting a constant. This is the honest floor
@@ -533,13 +601,13 @@ rather than impressive.
 
 **The training-pool mean is an explicit rung, not an afterthought.** It is a constant: the
 mean of all training-block labels. It was promoted to the ladder after we observed that it
-outranks two of the three genuine interpolators on RMSE (43.09 vs
-43.65 and 48.03). Any model that does not clear a
+outranks two of the three genuine interpolators on RMSE (40.69 vs
+40.86 and 46.66). Any model that does not clear a
 constant has not demonstrated spatial skill, and without this rung in the table the reader
 cannot check that.
 
-Kriging attains the best RMSE (40.92) and the **worst** exceedance
-F1 (0.728). Optimising squared error pulls predictions toward the
+Kriging attains the best RMSE (39.71) and the **worst** exceedance
+F1 (0.736). Optimising squared error pulls predictions toward the
 mean, which suppresses exactly the excursions the exceedance metric scores. Reporting one
 number without the other would support two opposite conclusions about the same model. We
 additionally report the kriging fallback rate: where the system is singular the
@@ -550,11 +618,11 @@ substantially IDW underneath is a reporting error rather than a modelling one.
 
 The WHO 2021 24-hour guideline is 15 µg/m³, scored on local-calendar daily means because
 that is what the guideline defines. In this region the exceedance base rate is
-**64.8%** — exceedance is the common case, not the rare one.
+**61.8%** — exceedance is the common case, not the rare one.
 
 A classifier that predicts "exceeds" unconditionally therefore scores F1 =
-**0.764**. The training-pool mean — a constant, carrying no information
-whatsoever — scores 0.764, and is the **highest-F1 model in the
+**0.741**. The training-pool mean — a constant, carrying no information
+whatsoever — scores 0.741, and is the **highest-F1 model in the
 entire Task N ladder**. Its Peirce skill is 0.000, exactly zero, as
 it must be for any constant.
 
@@ -568,7 +636,7 @@ respectable. We therefore report, alongside every exceedance F1:
 - `peirce_skill` — TPR − FPR, which is base-rate independent and **zero for any constant**
 
 Peirce skill separates the ladder in the way F1 does not: nearest monitor
-(0.414) and IDW (0.317) carry genuine discriminative
+(0.436) and IDW (0.378) carry genuine discriminative
 information, while the constant carries none, and the F1 column ranks them in the opposite
 order.
 
@@ -581,21 +649,21 @@ wearing a forecast label.
 
 | Variant | RMSE (µg/m³) | R² | Bias (µg/m³) |
 |---|---:|---:|---:|
-| raw | 37.21 | -0.42 | -22.79 |
-| locally debiased | 31.10 | -0.12 | -0.38 |
-| pooled debiased | 32.57 | -0.22 | -0.38 |
+| raw | 35.27 | -0.39 | -21.34 |
+| locally debiased | 30.35 | -0.18 | -2.71 |
+| pooled debiased | 30.68 | -0.11 | -2.71 |
 
-**Raw CAMS under-predicts by -22.79 µg/m³** — a large systematic deficit
+**Raw CAMS under-predicts by -21.34 µg/m³** — a large systematic deficit
 consistent with an emissions inventory that does not capture residential coal and biomass
 combustion at Central Asian intensity. Removing that bias improves RMSE substantially
-(37.21 → 31.10) while R² remains negative
-(-0.12): the correction fixes the level, not the timing.
+(35.27 → 30.35) while R² remains negative
+(-0.18): the correction fixes the level, not the timing.
 
 The two debiasing variants are distinguished by protocol. **Local debiasing is admissible
 only in Task F**, since it fits a per-city offset on that city's training labels. Under
 leave-city-out no such labels exist, so Task N uses the pooled correction fitted with the
 held-out city excluded. The pooled variant is the weaker of the two
-(32.57 vs 31.10), and reporting the local
+(30.68 vs 30.35), and reporting the local
 figure under a leave-city-out heading would overstate the baseline the learned model must
 beat — making the model's margin in Section 6 look smaller than it is, in this direction,
 but the protocol violation is the same either way. A test asserts that a bias fitted on the
@@ -653,31 +721,44 @@ configuration. The tuning protocol follows established guidance for tree ensembl
 No hyperparameter, feature-set choice, or early-stopping decision is made
 against test-block performance.
 
-Tuning was not cosmetic. Untuned defaults produce a Task N leave-city-out RMSE of
-31.99 µg/m³ with R² = -0.64 — worse than the
-training-pool-mean constant of Section 4. Tuned, the same feature set reaches
-25.70 µg/m³ at R² = 0.07.
+The untuned and tuned configurations are reported side by side below. **They differ in four
+respects, not one, and the gap between them must not be read as the effect of hyperparameter
+tuning alone.** An earlier version of this manuscript described them as sharing "the same
+feature set". That was incorrect. The differences are:
+
+| | Untuned (`train_gbdt.py`) | Tuned (`train_phase5.py`) |
+|---|---|---|
+| features | tier columns only | tier columns **+ 3 spatial neighbour features** |
+| trees | 600 | 800 |
+| training rows | train block only (to 2022-12-31) | train block **+ validation block** (to 2023-12-21) |
+| hyperparameters | library defaults | grid search, 16 combinations |
+
+Because the feature set, the tree count and the training window all change together, the
+untuned-to-tuned difference is a **combined** effect. This paper does not run the ablation
+that would separate them, and no causal attribution to tuning is claimed.
 
 | Feature set | Untuned RMSE | Tuned RMSE | Untuned R² | Tuned R² |
 |---|---:|---:|---:|---:|
-| static only | 33.22 | 28.31 | -1.03 | -0.24 |
-| deployable | 31.15 | 25.75 | -0.57 | 0.04 |
-| retrospective | 31.99 | 25.70 | -0.64 | 0.07 |
+| static only | 32.19 | 28.63 | -0.73 | -0.15 |
+| deployable | 29.25 | 28.56 | -0.21 | -0.09 |
+| retrospective | 29.51 | 28.01 | -0.25 | -0.04 |
 
-An untuned GBDT would have supported the conclusion that gradient boosting cannot beat a
-constant on this task. That conclusion would have been an artefact of the defaults, and it
-is the reason the untuned column is retained in the paper rather than discarded once better
-numbers existed.
+The untuned column is retained because it was once used to argue that a poor result would
+have been an artefact of library defaults. On benchmark v1.1.0 that argument no longer holds:
+the tuned configuration now leads every admissible baseline (Section 6.1), while both
+configurations explain little within-city day-to-day variation. The honest statement is that
+the combined feature-plus-window-plus-hyperparameter change improves RMSE, and that RMSE
+leadership is not by itself evidence of skill.
 
 ## 5.4 Seeds and variance
 
 Every configuration is run with five seeds and reported as mean ± standard deviation. Seed
-variance is small: the maximum across configurations is 0.24 µg/m³ for
-Task F and 0.85 µg/m³ for Task N.
+variance is small: the maximum across configurations is 0.25 µg/m³ for
+Task F and 1.79 µg/m³ for Task N.
 
 **Fold-to-fold variance is an order of magnitude larger than seed variance.** The standard
 deviation of Task N RMSE across the 6 leave-city-out folds is
-7.74 µg/m³, against 0.85 µg/m³ across seeds. Which
+11.38 µg/m³, against 1.79 µg/m³ across seeds. Which
 city is held out dominates which seed was drawn. A study reporting seed error bars alone
 would communicate a precision this benchmark does not have, and per-city results are
 therefore mandatory (Section 3.6).
@@ -690,12 +771,12 @@ deployable:
 
 | Task | Deployable | Retrospective | Cost |
 |---|---:|---:|---:|
-| N (leave-city-out) | 25.75 | 25.70 | small |
-| F (forecasting) | 21.48 | 20.94 | small |
+| N (leave-city-out) | 28.56 | 28.01 | small |
+| F (forecasting) | 21.58 | 21.54 | small |
 
-**The cost is negligible in both tasks** — 25.75 against
-25.70 µg/m³ under leave-city-out, well inside the fold-to-fold spread
-of 7.74 µg/m³. This is a positive result for deployment and a
+**The cost is negligible in both tasks** — 28.56 against
+28.01 µg/m³ under leave-city-out, well inside the fold-to-fold spread
+of 11.38 µg/m³. This is a positive result for deployment and a
 deflationary one for the satellite features: products that arrive too late to be operational
 are also contributing little when they are available. Section 6.4 shows why.
 
@@ -710,20 +791,121 @@ Task N and Task F reported separately throughout.
 
 | Model | RMSE (µg/m³) | MAE | R² |
 |---|---:|---:|---:|
-| best spatial baseline (kriging) | 40.92 | — | -0.14 |
-| training-pool mean (constant) | 43.09 | — | -0.27 |
-| CAMS, pooled debias | 31.09 | 23.29 | -0.30 |
-| LightGBM, static only | 28.31 | 19.22 | -0.24 |
-| LightGBM, deployable | 25.75 | 17.25 | 0.04 |
-| LightGBM, retrospective | 25.70 | 17.38 | 0.07 |
+| best spatial baseline (kriging) | 39.71 | — | -0.22 |
+| training-pool mean (constant) | 40.69 | — | -0.24 |
+| CAMS, pooled debias | 29.77 | 21.19 | -0.14 |
+| LightGBM, static only | 28.63 ± 0.17 | 18.39 | -0.15 |
+| LightGBM, deployable | 28.56 ± 0.52 | 17.72 | -0.09 |
+| LightGBM, retrospective | 28.01 ± 0.35 | 17.81 | -0.04 |
 
-**The learned model beats every baseline, and its R² is 0.07.** Both
-statements are load-bearing. It improves on pooled-debiased CAMS by
-31.09 → 25.70 µg/m³ and on the best spatial
-interpolator by a wider margin. It also explains almost none of the variance in a
-never-seen city. We report this as the result: predicting urban PM2.5 at a location with no
-local monitor, from a training set of five other cities, is close to unsolved in this
-region, and the benchmark exists to make that measurable rather than to conceal it.
+Learned-model RMSE is given as **mean ± standard deviation over 5 seeds**, where the
+resampled quantity is the whole leave-city-out protocol per seed. Baseline rungs are
+deterministic and carry no seed dispersion. Section 3.6 rule 5 requires this of every
+submission to the benchmark; it is applied here to the reference implementation as well.
+
+**Two numbers are needed to describe this result honestly, and they point in opposite
+directions.**
+
+*Between cities, the model retains some signal.* Pooled over all evaluation rows — variance
+measured against the global mean — it explains **R² = 0.13**. Part of the
+contrast between a Dushanbe and a Bishkek is learnable from geography, satellite retrievals
+and neighbouring monitors.
+
+*Within a city, it is inconsistent.* The headline **R² = -0.04** is the
+**mean of the 6 per-fold R² values**, each computed against *that city's own*
+mean. Scored this way the model must explain day-to-day variation inside a city it has never
+seen. The spread is wide — **-0.55 to 0.52**, with
+3 of 6 folds negative (Section 6.1c). It succeeds in some
+held-out cities and does worse than a flat line through the city's own mean in others, and the
+average of those outcomes is near zero.
+
+The two statistics are not in conflict; they answer different questions, and only the second
+is the task this benchmark defines. The correct summary is that **the model captures some
+between-city variation and within-city skill that does not generalise across cities.** A
+reader given only the pooled figure would substantially overestimate what it does.
+
+**The learned model has the lowest RMSE of any admissible method, and that ranking is not
+robust.** Both halves matter and both are reported.
+
+Scored on identical rows at identical resolution it reaches
+28.01 ± 0.35 µg/m³ against
+29.44 µg/m³ for the strongest legal rung (`idw_k5_p2`),
+a margin of 1.43 µg/m³, and it leads all 6 legal
+rungs on the fold mean.
+
+But a fold mean is an average over 6 numbers, and the per-city differences are
+much larger than the average of them. Against inverse-distance weighting the model is better
+in 4 of 6 cities, with per-fold differences ranging from
+−10.73 to +5.10 µg/m³. A paired test over the 6 cities gives
+***p* = 0.586** — the margin is **not statistically distinguishable from zero** at
+the unit of generalisation this benchmark is built on. Removing any single city and
+recomputing, the model still leads inverse-distance weighting in
+5 of 6 subsets; in the remaining one the ordering reverses.
+
+The margin is, however, **4.1× the seed standard deviation**
+(0.35 µg/m³), so it is not an artefact of random initialisation —
+it is fold-to-fold heterogeneity, not run-to-run noise. Restricting to the five
+reference-grade cities and excluding the low-cost Khujand fold, the model leads more clearly
+(25.84 against 28.51 µg/m³).
+
+**The defensible claim is therefore "lowest RMSE among admissible methods on this fold set",
+not "better than spatial interpolation".** With 6 cities the benchmark cannot
+separate those two statements, and Section 6.2b makes the same point about the CAMS
+comparison. Full robustness table: `t7_05_ranking_robustness.csv`.
+
+For reference, a constant equal to *the held-out city's own test-block mean* scores
+28.12 µg/m³. **That predictor is not legal and is not a baseline.** Under
+leave-city-out the held-out city contributes no training label anywhere in the record, so its
+mean cannot be known at prediction time; it is reported as a diagnostic floor — the share of
+error that is pure within-city day-to-day variance — and the model is within
+0.11 µg/m³ of it. An earlier version of this manuscript compared the model
+against that oracle and reported it as losing to "a constant". That comparison was invalid,
+and the correction is stated here rather than quietly dropped.
+
+Three corrections to this comparison were needed, and each mattered:
+
+1. Earlier drafts placed daily model scores beside baselines scored on *hourly* observations.
+   Averaging removes within-day variance, so hourly RMSE is structurally larger; the apparent
+   margin was arithmetic, not skill.
+2. The comparison predated benchmark v1.1.0, in which the two Dushanbe records
+   were found to be one instrument and merged (Section 2). Every fold's RMSE rose once the
+   duplicate was gone.
+3. The constant used was an oracle, as above.
+
+## 6.1b The baseline ladder at a single resolution
+
+Every rung below is scored on **the same daily evaluation rows as the learned model**
+(local-calendar daily means, ≥18 hours, the frozen 2024 test block). Table 6.1 above and the
+hourly ladder in Section 3 are not comparable to each other and are no longer presented as one
+ladder.
+
+| Model (daily, leave-city-out) | RMSE µg/m³ |
+|---|---:|
+| nearest_monitor | 33.50 |
+| training_pool_mean | 32.75 |
+| train_global_mean | 32.70 |
+| train_global_median | 30.99 |
+| ordinary_kriging | 29.75 |
+| idw_k5_p2 | 29.44 |
+| **LightGBM, retrospective (log target)** | **28.01** |
+
+## 6.1c Per-fold R², including the negative folds
+
+Section 3.6 requires per-city reporting from every submission to this benchmark. The same rule
+is applied here.
+
+| Held-out city | R² (vs that city's own mean) |
+|---|---:|
+| Bishkek | -0.549 |
+| Dushanbe | -0.341 |
+| Ashgabat | -0.247 |
+| Khujand | +0.128 |
+| Tashkent | +0.323 |
+| Almaty | +0.517 |
+
+3 of 6 folds are negative: in those cities the model is
+worse than predicting the city's own average. Averaging them into a single figure conceals
+that, which is why both the spread and the mean are reported.
 
 ## 6.2 Per-city results and the Diebold–Mariano tests
 
@@ -731,28 +913,65 @@ Pooling six cities into one number hides the finding.
 
 | Held-out city | LightGBM RMSE | CAMS RMSE | DM statistic | *p* |
 |---|---:|---:|---:|---:|
-| Almaty | 15.73 | 25.69 | -5.48 | 0.0000 |
-| Ashgabat | 21.34 | 20.75 | 0.35 | 0.7271 |
-| Bishkek | 20.92 | 23.64 | -1.87 | 0.0630 |
-| Dushanbe | 38.58 | 48.81 | -2.82 | 0.0050 |
-| Khujand (zero-shot) | 31.55 | 39.08 | -2.51 | 0.0124 |
-| Tashkent | 26.35 | 28.56 | -1.57 | 0.1180 |
-| **pooled** (n = 2480) | **28.97** | **35.68** | **-4.52** | **< 0.0001** |
+| Almaty | 15.30 ± 1.31 | 23.25 | -4.06 | 0.0001 |
+| Ashgabat | 20.74 ± 0.20 | 18.83 | 1.17 | 0.2420 |
+| Bishkek | 20.21 ± 0.39 | 20.03 | 0.15 | 0.8805 |
+| Dushanbe | 46.94 ± 0.79 | 47.96 | -2.65 | 0.0085 |
+| Khujand (zero-shot) | 38.81 ± 0.12 | 39.90 | -2.03 | 0.0430 |
+| Tashkent | 25.46 ± 0.60 | 28.63 | -2.82 | 0.0050 |
+| **pooled** (n = 2214) | **31.49** | **33.07** | **-4.38** | **< 0.0001** |
 
 Tests use Newey–West HAC variance with the Harvey–Leybourne–Newbold small-sample
-correction. Negative statistics favour the learned model.
+correction. Negative statistics favour the learned model. Six folds are tested, so per-fold
+*p*-values are additionally reported with a Holm step-down correction in
+`t6_07_per_fold_holm.csv`; **3 of 6 survive it at α = 0.05.**
 
-**The pooled improvement is significant (< 0.0001); only 3 of
-6 individual folds are.** Bishkek (0.0630) and Tashkent
-(0.1180) show lower RMSE that does not clear significance, and we do not describe
-those as improvements. **Ashgabat favours CAMS outright**
-(21.34 vs 20.75 µg/m³, DM statistic
-0.35, *p* = 0.7271) — the sign is reversed and the result is far
+### 6.2b Which *p*-value is the paper's claim
+
+The pooled row above treats 2214 station-days from 6 cities as
+independent observations. They are not, in either dimension: the loss differential has
+first-order autocorrelation 0.25 within station, and station-days cluster within
+cities that contribute very unequal row counts. **That pooled figure is reported for
+continuity with the per-fold rows above and is not the paper's inferential claim.**
+
+The estimand is the reduction in squared error at *a city with no local training labels*, so
+the unit of generalisation is the **city** — as Section 5.4 already argues, and as the
+leave-city-out protocol implies. The primary analysis therefore aggregates to one value per
+city and tests those 6 numbers.
+
+| | Test | Unit | *n* | *p* |
+|---|---|---|---:|---:|
+| **Primary** | paired *t* on city means | city | 6 | **0.1392** |
+| **Primary** | exact sign-flip permutation | city | 6 | **0.1250** |
+| Sensitivity | station-day, independence assumed | station-day | 2214 | 2.6e-10 |
+| Sensitivity | station-day, Newey–West HAC (lag 60 d) | station-day | 2214 | 0.0044 |
+| Sensitivity | cluster bootstrap over cities | city | 6 | 0.0428 |
+
+With 6 clusters, cluster-robust asymptotics are unreliable — the cluster-robust
+variance estimator is materially downward-biased below roughly 30–50 clusters
+(Cameron and Miller, 2015). Two remedies appropriate at this cluster count are reported
+together: a *t*-test on 6 city means with 5 degrees of freedom,
+and an exact sign-flip permutation test that assumes no distribution at all. The permutation
+test's smallest attainable two-sided *p*-value is 0.03125, a floor imposed by
+having only 6 cities; we state it rather than let a reader mistake it for evidence.
+
+**The honest reading is that the evidence is suggestive but does not reach conventional
+significance under the unit of generalisation this benchmark is built around.** Corrections
+for serial dependence alone leave the station-day result significant; treating cities as the
+unit does not. We report both and let the divergence stand, because it is a real property of
+a study with six cities, not a defect to be resolved by choosing the smaller number.
+
+**The pooled improvement is significant (< 0.0001); only 4 of
+6 individual folds are.** Bishkek (0.8805) and Tashkent
+(0.0050) show lower RMSE that does not clear significance, and we do not describe
+those as improvements. **Ashgabat, Bishkek favours CAMS outright**
+(20.74 vs 18.83 µg/m³, DM statistic
+1.17, *p* = 0.2420) — the sign is reversed and the result is far
 from significant, so the honest summary is that the two are indistinguishable there rather
 than that CAMS wins.
 
-**Khujand, the zero-shot fold, is significant (0.0124)** at
-31.55 µg/m³ against CAMS at 39.08. A city with no training
+**Khujand, the zero-shot fold, is significant (0.0430)** at
+38.81 µg/m³ against CAMS at 39.90. A city with no training
 rows at all is predicted better than by the operational chemistry-transport model. It
 remains among the hardest folds in absolute terms, second only to Dushanbe.
 
@@ -761,7 +980,7 @@ and an early implementation passed `horizon_hours = 1` for the nowcasting task, 
 disables the HAC correction entirely and inflated *p*-values by roughly seven orders of
 magnitude. We now report the full sensitivity sweep: across truncation lags of
 0 to 60 hours the pooled conclusion is stable, with all comparisons significant
-(yes) and a worst-case *p* of 0.0019.
+(yes) and a worst-case *p* of 0.0056.
 
 **Figure 3** gives the per-city comparison against debiased CAMS, and **Figure 5** the
 observed-versus-predicted scatter with the 1:1 line. The compression toward the mean
@@ -781,18 +1000,30 @@ the mechanism behind the RMSE/exceedance divergence of Section 4.3.
 
 ## 6.3 Task F — forecasting at monitored stations
 
-| Feature set | RMSE (µg/m³) | R² |
-|---|---:|---:|
-| best Task F baseline (same-hour 7-day mean) | 35.58 | 0.13 |
-| LightGBM, static only | 23.08 | 0.57 |
-| LightGBM, deployable | 21.48 | 0.63 |
-| LightGBM, retrospective | 20.94 | 0.65 |
+**What Task F is, precisely.** The learned Task F model predicts the **daily** mean at a
+monitored station from that station's own history at lags of 1, 2 and 7 days plus 7- and
+30-day rolling means. Its shortest lag is one day, so it is a **single-horizon, next-day
+(24 h) forecast evaluated at daily resolution**.
 
-Task F is the easier problem and the numbers say so: R² = 0.65 against
-0.07 for Task N. **These two figures must never be quoted together as
+It is therefore **not comparable to the Task F baseline ladder in Section 3**, which is
+resolved across three horizons (24, 48 and 72 h) and scored on hourly observations
+(115,381 observations, against 2,214 daily rows for the model).
+Earlier drafts placed the two in one table. They measure different things at different
+resolutions, and the baseline row has been removed rather than rescaled: no honest rescaling
+exists, because the model does not produce 48 h or 72 h forecasts at all. Extending it to the
+full horizon set is left as future work and is not claimed here.
+
+| Feature set (daily, next-day horizon) | RMSE (µg/m³) | R² |
+|---|---:|---:|
+| LightGBM, static only | 22.03 | 0.58 |
+| LightGBM, deployable | 21.58 | 0.59 |
+| LightGBM, retrospective | 21.54 | 0.60 |
+
+Task F is the easier problem and the numbers say so: R² = 0.60 against
+-0.04 for Task N. **These two figures must never be quoted together as
 though they described one system.** The Task F model may read the station's own recent
 history; the Task N model is predicting a city it has never seen. Reporting
-20.94 µg/m³ as "the model's accuracy" would describe a capability the
+21.54 µg/m³ as "the model's accuracy" would describe a capability the
 deployment does not have at unmonitored locations, which is the case the artefact exists to
 serve.
 
@@ -805,34 +1036,34 @@ Mean absolute SHAP over the test block, by feature family:
 
 | Family | Share of total attribution |
 |---|---:|
-| spatial neighbour | **32.5%** |
-| static geography | 25.1% |
-| calendar | 16.8% |
-| satellite | 16.6% |
-| CAMS forecast | 5.1% |
-| satellite missingness | 4.1% |
+| spatial neighbour | **20.4%** |
+| static geography | 21.8% |
+| calendar | 22.2% |
+| satellite | 26.6% |
+| CAMS forecast | 9.0% |
 
 **Spatial interpolation drives the model, not the satellite record.** The single largest
-feature is `nbr_idw` at 11.54 mean absolute SHAP — inverse-distance
+feature is `doy_cos` at 0.18 mean absolute SHAP — inverse-distance
 weighted neighbour concentration — more than twice the second-ranked feature
-(`doy_cos`, 4.84). Spatial neighbours and static geography
+(`nbr_idw`, 0.12). Spatial neighbours and static geography
 together account for
-32.5% + 25.1% of attribution, while the
-five satellite products contribute 16.6% between them.
+20.4% + 21.8% of attribution, while the
+five satellite products contribute 26.6% between them.
 
 This is the paper's least comfortable result and we state it plainly: **the model is largely
 a well-tuned spatial interpolator with geographic priors.** The satellite features are not
-inert — 16.6% is not nothing, and Section 5.5 shows the deployable set
+inert — 26.6% is not nothing, and Section 5.5 shows the deployable set
 loses little — but a reader would be entitled to expect, from a study built on five
 remote-sensing products, that those products carried the prediction. They do not.
 
-Two further readings follow. First, **satellite missingness earns
-4.1% — comparable to the 5.1%
-contributed by the entire chemistry-transport model.** Whether a retrieval failed carries
-nearly as much information as what the atmospheric model predicted, which vindicates
+Two further readings follow. First, **satellite retrieval-count features no longer appear at
+all**: an ablation on the validation block (Section 5.3) found them city-specific rather than
+transferable, and they are excluded from Task N. They remain in Task F, where the held-out
+entity is a time block rather than a city. Whether a retrieval failed still carries real
+information, which vindicates
 modelling missingness rather than dropping it (Section 2.4) and simultaneously indicates how
 little the retrieved values themselves add. Second, calendar features at
-16.8% confirm that a large part of the signal is seasonal regularity that
+22.2% confirm that a large part of the signal is seasonal regularity that
 any climatology captures — consistent with the same-hour 7-day mean being the only Task F
 baseline with positive R².
 
@@ -841,26 +1072,41 @@ baseline with positive R².
 ![Figure 4](figures/fig4_shap_by_family.png)
 
 **Figure 4.** Feature attribution by family, as a share of total mean |SHAP|. Satellite
-families are hatched. Spatial neighbour features dominate; the five satellite products
-together contribute less than static geography.
+families are hatched. On benchmark v1.1.0 the five satellite products together carry the
+largest share (26.6%), ahead of spatial neighbour features
+(20.4%) — a reversal of the pre-deduplication ordering discussed in
+Section 7.4.
 
 ## 6.5 Summary of what is and is not established
 
 Established:
 
-- The learned model beats pooled-debiased CAMS across the 6-fold leave-city-out
-  protocol, pooled *p* = < 0.0001.
-- Deployability costs almost nothing: 25.75 vs
-  25.70 µg/m³.
-- Zero-shot transfer to a city with no training rows beats CAMS significantly
-  (0.0124).
+- **The benchmark itself**: 7 instruments across 6 cities, splits
+  frozen and hash-verified, every reported number regenerated by one command.
+- Deployability costs almost nothing: 28.56 vs
+  28.01 µg/m³. Restricting to features available at inference time is
+  close to free, which is the one comfortable result here.
+- The task is hard in a way the protocol makes visible. Under leave-city-out, a tuned
+  gradient-boosting model with satellite, meteorological and spatial features does **not**
+  improve on each city's own mean.
 
-Not established:
+Not established — and previously claimed:
 
-- Per-city superiority. 3 of 6 folds reach significance;
-  Ashgabat does not favour the model at all.
-- Useful absolute accuracy at unmonitored locations. R² = 0.07.
-- That satellite remote sensing drives the result. Section 6.4 shows it does not.
+- **That the learned model beats pooled-debiased CAMS.** Under the city-level analysis this
+  protocol implies, it does not: paired *t* *p* = 0.1392, exact permutation
+  *p* = 0.1250. Only 3 of 6 folds survive Holm
+  correction. The pooled station-day *p*-value reported in earlier drafts assumed an
+  independence the data does not have.
+- **That leading the ladder means the model is *useful* at unmonitored locations.** It has the
+  lowest RMSE of any admissible method (28.01 µg/m³), but mean per-fold
+  R² = -0.04, spread -0.55 to 0.52, with
+  3 of 6 folds negative. Lowest error and demonstrated
+  within-city skill are different claims; only the first is established.
+- **That spatial interpolation rather than satellite data drives the result.** That ordering
+  reversed once the duplicated Dushanbe instrument was merged (Section 7.4). Satellite
+  products now carry 26.6% against 20.4% for
+  spatial neighbours. Neither ordering should be treated as robust: it inverted on the
+  removal of a single station.
 
 ---
 
@@ -885,15 +1131,15 @@ paper.
 The implication is uncomfortable and irreducible. For Bishkek in the test block there is no
 single ground truth. Choosing the other provider's feed would shift the reported error by
 roughly the margin that separates our models from each other. Bishkek's DM result
-(*p* = 0.0630, not significant) should be read with that in view, and we claim no
+(*p* = 0.8805, not significant) should be read with that in view, and we claim no
 improvement there. Merging the feeds, which we do, reduces variance. It cannot manufacture a
 label the two publishers agree on. **This limits the data source, not the pipeline, and no
 modelling choice removes it.**
 
 ## 7.2 Leave-station-out covers a minority of the benchmark
 
-4 leave-station-out folds exist and they span two cities.
-**Almaty, Ashgabat, Bishkek, Tashkent each hold a single instrument**, so within-city station holdout is
+2 leave-station-out folds exist and they span two cities.
+**Almaty, Ashgabat, Bishkek, Dushanbe, Tashkent each hold a single instrument**, so within-city station holdout is
 undefined there.
 
 The consequence runs deeper than reduced coverage. The Q6 timezone check compares
@@ -905,7 +1151,23 @@ assumption.
 
 A related constraint sits upstream: 306 candidate stations were excluded for insufficient
 span, almost all of them low-cost units whose measurement uncertainty is well documented
-(Zheng et al., 2018). Admitting them would have traded reference-grade labels for coverage.
+(Zheng et al., 2018).
+
+That exclusion was not applied uniformly, and the exception matters. **Khujand's two
+instruments are Clarity low-cost sensors** (`is_monitor = false` in the OpenAQ census), not
+reference-grade monitors. Every other city in the benchmark is a US-embassy BAM/FEM-class
+monitor published by AirNow or StateAir. Khujand is therefore the one city whose labels carry
+the measurement uncertainty the paragraph above cites Zheng et al. (2018) for, and it is also
+the city that contributes no training rows -- so its fold reports low-cost labels scored
+against a model that never saw them.
+
+Two consequences are stated plainly rather than left implicit. First, results for the Khujand
+fold are not comparable in kind to the other five and should not be read as a reference-grade
+generalisation test. Second, the pre-registered 2-year span rule is satisfied
+for these two stations only by counting observations after the benchmark record ends: inside
+the window their spans are **1.09 y and 1.07 y**,
+against a stated minimum of 2 y. Admitting them was a coverage decision, and it
+is recorded here as one.
 
 Leave-city-out stays the primary spatial protocol for one reason: it is available for all
 6 cities. Leave-station-out is reported where possible and supports no headline
@@ -913,13 +1175,13 @@ claim.
 
 ## 7.3 The model does not beat CAMS everywhere
 
-3 of 6 leave-city-out folds reach significance. In
-**Ashgabat the sign is reversed**: LightGBM 21.34 µg/m³
-against CAMS 20.75 µg/m³, DM statistic 0.35,
-*p* = 0.7271. Read correctly, the two are indistinguishable there. CAMS does not
+4 of 6 leave-city-out folds reach significance. In
+**Ashgabat, Bishkek the sign is reversed**: LightGBM 20.74 µg/m³
+against CAMS 18.83 µg/m³, DM statistic 1.17,
+*p* = 0.2420. Read correctly, the two are indistinguishable there. CAMS does not
 win. The honest summary of the fold set is that the pooled result (< 0.0001) rests on
-Almaty, Dushanbe and Khujand, while Bishkek (0.0630) and Tashkent
-(0.1180) post lower RMSE that never clears significance.
+Almaty, Dushanbe and Khujand, while Bishkek (0.8805) and Tashkent
+(0.0050) post lower RMSE that never clears significance.
 
 Khujand carrying part of the pooled result is worth pausing on, since it is the fold with no
 training label at all. Zero-shot transfer into an unmonitored city is not where a reader
@@ -933,31 +1195,39 @@ outside any plausible interpolation radius. Under exactly those conditions a
 chemistry-transport model with a physical emissions inventory is a strong comparator. It
 should be.
 
-## 7.4 The satellite record is not what carries the model
+## 7.4 What carries the model, and how that changed
 
-Section 6.4 is the result we would most like to have come out differently. Spatial neighbour
-features account for 32.5% of attribution and static geography a
-further 25.1%. The five satellite products together account for
-16.6%. The top single feature is `nbr_idw`,
-inverse-distance-weighted neighbour concentration, at more than twice the second-ranked
-feature.
+Section 6.4 reports mean absolute SHAP by feature family. On benchmark v1.1.0 the five
+satellite products together account for **26.6%** of attribution, spatial
+neighbour features for 20.4%, and static geography a further
+21.8%. The top single feature is `doy_cos`.
 
-**A study assembled around five remote-sensing products turns out, on inspection, to be
-largely a well-tuned spatial interpolator with geographic priors.** Three qualifications
-follow, none of which overturn that.
+**This reverses the ordering reported in earlier drafts of this work, and the reason is
+instructive rather than incidental.** Under benchmark v1.0.0 the two Dushanbe records were
+treated as separate stations when they are one instrument republished twice (Section 2,
+D-012). Every other city therefore had an additional neighbour at effectively zero distance
+from an existing one, which inflated the apparent value of spatial interpolation. Once the
+duplicate is merged, satellite attribution overtakes it.
+
+The earlier claim — that a study assembled around remote sensing was "really" a spatial
+interpolator — was an artefact of a duplicated station. We state that plainly because it was
+published as a finding reported against interest, and it is no longer supported. Three
+qualifications on the current ordering follow.
 
 1. *This is a property of the protocol as much as of the products.* Leave-city-out asks for
    a concentration where no monitor exists. Neighbour information is the most direct route
    to that answer, and satellite columns are a weak proxy for surface concentration under
    any protocol whatsoever.
-2. *Missingness outperforms the values.* Satellite missingness earns
-   4.1%, comparable to the 5.1%
-   contributed by the entire chemistry-transport forecast. *Whether* a retrieval failed is
-   nearly as informative as what CAMS predicted. That is a finding about retrieval physics,
+2. *Missingness is informative but does not transfer between cities.* Retrieval-count
+   features were promoted to predictors on the evidence that missingness is target-correlated.
+   A validation-block ablation (Section 5.3) then showed they **hurt** leave-city-out
+   generalisation, because retrieval success depends on local surface brightness, snow cover
+   and solar geometry — properties of a particular city. They are excluded from Task N and
+   retained for Task F. That is a finding about retrieval physics,
    and at the same time a measure of how little the retrieved values contribute.
 3. *SO₂ is structurally absent in the season it exists to observe.* Retrieval needs
    ultraviolet signal; at these latitudes in December it falls to 0.1% against
-   93.5% in July. The direct tracer for the region's dominant winter source is
+   91.0% in July. The direct tracer for the region's dominant winter source is
    unavailable throughout that source's season, so its low attribution is partly a
    measurement-geometry artefact, not evidence that SO₂ carries no information.
 
@@ -974,7 +1244,7 @@ checks a sample of manuscript figures directly against the CSVs, bypassing the i
 The mechanism earned its place during drafting. Section 2's missingness statistics were
 originally transcribed from a console output. When they were finally banked to a table, the
 transcribed values proved wrong: SO₂ retrieval had been written as 61.5% against a
-recomputed 59.2%, and four further figures were off in the same direction.
+recomputed 57.4%, and four further figures were off in the same direction.
 The errors were small and none of them changed a conclusion, which is exactly why no reader
 would ever have caught them. Regenerating the table also exposed that the two Section 2
 tables had no producer script at all and could not be rebuilt by `make reproduce`. Both have
@@ -986,11 +1256,12 @@ one now.
   termination of the US diplomatic-post monitoring programme. **No result in this paper
   speaks to current conditions**, and the benchmark cannot be extended forward from this
   source.
-- **Kazakhstan contributes one city.** Astana failed the completeness rule at 42.8%. The
+- **Kazakhstan contributes one city.** Astana failed the completeness rule at
+  42.8% against a required 60%. The
   largest country in the region is represented by Almaty alone.
 - **Six cities is a small spatial sample.** Fold-to-fold standard deviation
-  (7.74 µg/m³) exceeds seed standard deviation
-  (0.85 µg/m³) by roughly an order of magnitude. Conclusions are far more
+  (11.38 µg/m³) exceeds seed standard deviation
+  (1.79 µg/m³) by roughly an order of magnitude. Conclusions are far more
   sensitive to which cities are in the set than to any training randomness.
 - **ERA5 is oracle-only and incompletely retrieved.** Its measured latency (163 h) exceeds
   every evaluated horizon, so it cannot enter the deployable set. The multi-year retrieval
@@ -1024,34 +1295,40 @@ most immediate piece of follow-up work, and it needs a parallel NRT archive we d
 
 ## 7.8 What the benchmark is for
 
-The headline modelling result is modest. R² = 0.07 at unmonitored
+The headline modelling result is modest. R² = -0.04 at unmonitored
 locations, a significant but not transformative improvement over CAMS, and an attribution
 profile dominated by spatial interpolation. We consider that the appropriate outcome.
 
 The contribution is the fixed evaluation. Before this benchmark existed, a Central Asian air
 quality result could be reported on a random split, with reanalysis features unavailable at
 inference time, against no baseline ladder, scored with an exceedance F1 that a constant
-already achieves (0.764 at a 64.8% base rate, because the region's
+already achieves (0.741 at a 61.8% base rate, because the region's
 air is bad on most days, not because the classifier is good). Every one of those
 choices would have produced a more impressive paper than this one. The splits are frozen and
 checksummed. The protocol violations are enforced by failing tests rather than requested in
 prose. The numbers above are what survives that. A future model that genuinely improves on
-25.70 µg/m³ under this protocol will have demonstrated something
+28.01 µg/m³ under this protocol will have demonstrated something
 real.
 
 ---
 
 # 8. Conclusion
 
-We built the benchmark this region did not have. 8 reference instruments across
-6 cities, splits frozen and checksummed before any model was fitted, two tasks
+We built the benchmark this region did not have. 7 instruments across
+6 cities (5 reference-grade, 2 low-cost), splits frozen and checksummed before the reported results were produced, two tasks
 kept separate, and a baseline ladder that every future submission has to climb. The splits
 are immutable by test, and that test fails for us exactly as it fails for anyone else.
 
-The modelling result is deliberately modest. Tuned gradient boosting reaches R²
-0.07 at unmonitored locations, RMSE 25.70 µg/m³
-against 31.09 for bias-corrected CAMS, significant at
-*p* < 0.0001. We consider a modest number the correct outcome. Every protocol choice
+The modelling result is modest and is reported without inflation. Tuned gradient boosting
+reaches RMSE 28.01 ± 0.35 µg/m³ at
+unmonitored locations, the lowest of any admissible baseline including inverse-distance
+weighting (29.44 µg/m³) — but that ordering is not statistically
+separable (paired *p* = 0.586) and is not robust to removing a single city. Its
+advantage over bias-corrected CAMS is likewise **not
+statistically significant** when the city is the unit of analysis
+(*p* = 0.1392), and mean per-fold R² is -0.04 with
+3 of 6 folds negative. Lowest error and demonstrated
+skill are not the same claim, and only the first is supported here. Every protocol choice
 available to us would have produced a larger one: a random split, reanalysis features
 unavailable at inference, no baseline ladder, an exceedance F1 that a constant classifier
 already achieves. The number reported here is what survives after those escapes are closed
@@ -1060,20 +1337,24 @@ by failing tests.
 Three findings run against the study's own framing and are reported anyway. A trivial
 always-exceed classifier is not beaten by any credential-free nowcaster, because these
 cities exceed the WHO 24-hour guideline on most days — a fact about the region, not about
-the models. Attribution is carried by spatial interpolation
-(32.5%), not by the five satellite products
-(16.6%) the work was assembled around. And measured acquisition latency
+the models. Attribution is carried chiefly by the five satellite
+products (26.6%) rather than by spatial interpolation
+(20.4%) — a reversal of the ordering reported before the duplicate
+Dushanbe instrument was found and merged (Section 7.4). And measured acquisition latency
 invalidated three of five initial availability assumptions, one of them by a factor of
 roughly 4,600.
 
-**For practitioners.** Public-health early-warning systems in the region should not be
-sized on the assumption that satellite retrieval drives skill. On this evidence, dense
-ground monitoring buys more than additional remote-sensing products, and the single most
+**For practitioners.** The clearest practical signal in this work is not an ordering of
+feature families — that ordering proved fragile, reversing once a single duplicated
+instrument was removed. It is that with 7 instruments across 6
+cities, a learned model does not beat knowing a city's own average, and the attribution
+ranking is unstable to one station. Both point the same way: the binding constraint is
+network density, not modelling technique or choice of remote-sensing product. The single most
 valuable investment for Central Asian air quality modelling is more stations — particularly
 in Turkmenistan, which has none, and Kazakhstan, which contributes one city here.
 
 **For the field.** The benchmark's value is that it forecloses the shortcuts. A future
-model that genuinely improves on 25.70 µg/m³ under this protocol will
+model that genuinely improves on 28.01 µg/m³ under this protocol will
 have demonstrated something real, and the comparison will be like-for-like because the
 splits cannot move. Priorities for extension, in order: additional cities to reduce the
 fold-to-fold variance that presently exceeds seed variance by an order of magnitude; a
@@ -1107,10 +1388,14 @@ an OpenAQ key. Satellite products are public: MAIAC AOD (MCD19A2.061) and Sentin
 Atmosphere Data Store and Climate Data Store respectively.
 
 **Note on permanence.** The US State Department terminated its global diplomatic-post air
-quality programme in March 2025 and six of the eight stations end on 2025-03-04. The record
-curated here is finite and partly withdrawn at source, which is a reason to archive this
-benchmark rather than an argument against it. Authors intending to cite it should reference
-the frozen checksum, not the branch head.
+quality programme in March 2025. Five of the twelve contributing source feeds stop on
+2025-03-04 — every StateAir feed, plus Bishkek's AirNow feed — and at benchmark-station
+level, after co-published feeds are merged, **2 of
+7 stations (8881, Bishkek) end there**; the others survive
+through their longer-lived feed. An earlier version of this statement said "six of the
+eight", which was wrong in both terms. The record curated here is finite and partly withdrawn
+at source, which is a reason to archive this benchmark rather than an argument against it.
+Authors intending to cite it should reference the frozen checksum, not the branch head.
 
 ## 9.2 Declaration of generative AI in the writing process
 
@@ -1169,6 +1454,7 @@ Generated by `paper/scripts/stitch.py` from `research/sources.json`. Every entry
 - **[B4]** George I. Austin, Itsik Pe’er and Tal Korem (2025). *Distributional bias compromises leave-one-out cross-validation*. Science Advances. https://doi.org/10.1126/sciadv.adx6976
 - **[A7]** Jamie Banks, Bernd Heinold and Kerstin Schepanski (2022). *Impacts of the Desiccation of the Aral Sea on the Central Asian Dust Life‐Cycle*. Journal of Geophysical Research Atmospheres. https://doi.org/10.1029/2022jd036618
 - **[B1]** Clara Betancourt et al. (2021). *AQ-Bench: a benchmark dataset for machine learning on global air quality metrics*. Earth system science data. https://doi.org/10.5194/essd-13-3013-2021
+- **[S:M13]** A. Colin Cameron and Douglas L. Miller (2015). *A Practitioner's Guide to Cluster-Robust Inference*. Journal of Human Resources. https://doi.org/10.3368/jhr.50.2.317
 - **[B5]** Sachin Chauhan et al. (2023). *AirDelhi: Fine-Grained Spatio-Temporal Particulate Matter Dataset From Delhi For ML based Modeling*. Neural Information Processing Systems. https://doi.org/10.52202/075280-3298
 - **[A4]** Xiangyue Chen et al. (2021). *Validation and comparison of high-resolution MAIAC aerosol products over Central Asia*. Atmospheric Environment. https://doi.org/10.1016/j.atmosenv.2021.118273
 - **[S:M3]** Francis X. Diebold and Roberto S. Mariano (1994). *Comparing Predictive Accuracy*. National Bureau of Economic Research. https://doi.org/10.3386/t0169
