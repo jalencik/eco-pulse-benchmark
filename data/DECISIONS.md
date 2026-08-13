@@ -309,3 +309,80 @@ forgotten. Related: `STATUS.md` risk R3.
   (`stations x days`) understated the true count by ~80x and would have declared an
   over-ceiling request safe. Compositing also avoids weighting each day by how many orbits
   happened to cover it.
+
+### D-011 — Q5c: duplicate detection by value identity, not distance
+- **Date:** 2026-08-13
+- **Decision:** add a pre-registered rule `Q5c` that flags any station pair whose overlapping
+  observations are **bit-identical on more than 50% of samples**, regardless of separation.
+- **Reason:** Q5b keys on distance (150 m) and therefore catches only the republication case
+  where the two records agree on position. It cannot see the inverse — one instrument
+  published twice under coordinates that *disagree* — which is what happened in Dushanbe
+  (see D-012). Two independent instruments never agree to floating point on any appreciable
+  share of samples, so value identity is the invariant that actually holds.
+- **Threshold, set from measurement rather than tuned:**
+
+  | pair | resolution | exact-match rate |
+  |---|---|---:|
+  | Dushanbe 8684/9769 (true duplicate) | hourly | **94.0%** |
+  | Khujand 1894632/1924313 (true distinct) | hourly | 0.3% |
+  | unrelated station pairs (coincidence floor) | hourly | 2.6% |
+
+  Hourly PM2.5 is frequently reported as rounded integers, so unrelated stations do collide
+  on a small share of hours — measured at 2.6%. Daily means (averages of ~24 floats)
+  essentially never collide, and the same pairs show 0.0% at daily resolution. **50% sits in
+  the middle of the 36x gap between coincidence and duplication and is safe at either
+  resolution.** An earlier draft used 2%, which was calibrated on daily data and produced
+  two false positives on hourly data; the failure is recorded here rather than quietly fixed.
+- **Effect on n:** one new pair detected (Dushanbe). See D-012.
+- **Direction of bias if wrong:** too low a threshold merges genuinely distinct stations,
+  shrinking the benchmark and destroying real spatial signal. Too high leaves a duplicate in
+  place, which is the error this rule exists to prevent. The measured 36x margin means the
+  choice is not delicate.
+- **Enforced by:** `tests/test_qc_rules.py::TestQ5DuplicateStations` (3 cases, including the
+  Khujand negative control).
+
+### D-012 — Dushanbe 8684/9769 merged as one instrument; benchmark v1.1.0
+- **Date:** 2026-08-13
+- **Decision:** merge Dushanbe `8684` (AirNow) and `9769` (StateAir) into a single station
+  under the **D-008 rule — precedence and gap-fill, never averaging**. Primary is `8684`
+  (49,305 observations vs 36,243). Benchmark version **1.0.0 → 1.1.0**.
+- **Reason:** they are one US-embassy monitor republished by two programmes — the identical
+  defect D-003 caught in Bishkek (57 m) and Ashgabat (40 m). It was missed here because the
+  two records carry coordinates **6.06 km apart**, so the distance rule passed them. Evidence
+  over the 33,462 overlapping hours (2019-10-28 → 2025-03-04):
+
+  - **31,458 hours (94.01%) are bit-identical**;
+  - of the remaining 2,004, **2,001 (99.9%) satisfy `9769(t) == 8684(t+5)`** — Dushanbe is
+    UTC+5, so these are the same readings stamped in local time instead of UTC;
+  - **99.99% of all overlapping hours are therefore the same measurement**;
+  - the Khujand control pair, 14.4 km apart, is bit-identical on 0.3% of hours.
+
+  `data/interim/station_census.csv` confirms the provenance directly: `9769` is
+  "StateAir Dushanbe / US Diplomatic Post: Dushanbe", `8684` is "AirNow / Dushanbe".
+- **A prior claim this retracts.** D-003 justified the 150 m radius by citing this very pair
+  as its safety margin ("the two real Dushanbe sites are 6.06 km apart, ~40x the threshold"),
+  and `tests/test_qc_rules.py` encoded that belief in a test asserting they were "genuinely
+  distinct" — whose own fixture named the two providers as StateAir and AirNow. **The
+  negative control was a positive case.** The threshold was validated against the case it
+  was missing. The test has been corrected and now documents this.
+- **Effect on n:** stations **8 → 7**; merged Dushanbe holds **52,086** observations
+  (49,305 primary + 2,781 gap-filled from the secondary — the merge retains more data than
+  either feed alone). Cities unchanged at 6. **Leave-station-out loses its two Dushanbe
+  folds**, leaving Khujand's two.
+- **Alternative considered:** dropping `9769` outright. Rejected — it discards 2,781 hours
+  the primary does not cover, and it would be a second, inconsistent rule for the same defect
+  D-008 already resolved by merging. Averaging was rejected for D-008's original reason:
+  averaging two copies of one measurement reduces no noise and, where the copies disagree,
+  fabricates a third value no device produced.
+- **Direction of bias if wrong:** if the two records were genuinely distinct instruments,
+  merging destroys real within-city spatial variation and removes a leave-station-out fold.
+  The 99.99% identity makes this implausible, and per-hour provenance is retained in
+  `panel_sources.parquet` so the merge can be undone analytically.
+- **Second defect surfaced by the same evidence — a 2023 timezone break.** The +5 h offset
+  hours are not spread evenly: 2020 shows 1 misaligned hour in 6,813, while **2023 shows
+  2,003 in 4,797 (41.8%)**. D-006's timezone check reported "Dushanbe x2 ... agreed at
+  lag +0 h, r = 0.99-1.00" — it was comparing a station against itself, and its diurnal
+  composite averaged over all years, diluting a 41.8% single-year break until it vanished.
+  The merge resolves the practical consequence (one series now, primary-precedence), but the
+  underlying lesson stands: **within-city timing agreement is not evidence of correctness
+  when the two series may be the same instrument.**

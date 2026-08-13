@@ -88,6 +88,38 @@ They are the calibration anchor for judging everything else, so any disagreement
 embassy monitor and a co-located OpenAQ sensor is a finding to investigate, not an
 inconvenience to average away.
 
+**Scope of that claim — corrected 2026-08-13.** The sentence above applies to the US-embassy
+feeds (AirNow and StateAir), which is **five of the benchmark's seven instruments**. It does
+**not** apply to Khujand. Both Khujand stations (`1894632`, `1924313`) are **Clarity low-cost
+sensors**, carrying `is_monitor = false` in the OpenAQ census, and the manuscript previously
+described all instruments as reference-grade. Per-instrument provenance:
+
+| station | city | provider | `is_monitor` | grade |
+|---|---|---|---|---|
+| 8876 | Almaty | AirNow | true | reference |
+| Bishkek (merged 8225+8827) | Bishkek | StateAir + AirNow | true | reference |
+| Ashgabat (merged 8870+8170) | Ashgabat | StateAir + AirNow | true | reference |
+| Dushanbe (merged 8684+9769) | Dushanbe | AirNow + StateAir | true | reference |
+| 8881 | Tashkent | StateAir | true | reference |
+| 1894632 | Khujand | **Clarity** | **false** | **low-cost** |
+| 1924313 | Khujand | **Clarity** | **false** | **low-cost** |
+
+Across the whole census the mapping is exact: AirNow and StateAir are `is_monitor = true`;
+Clarity (135 stations) and AirGradient (173) are `is_monitor = false`.
+
+Two consequences are carried into the paper rather than left here. First, Khujand is the
+benchmark's zero-shot fold *and* its only low-cost city, so that fold's labels carry the
+measurement uncertainty the exclusion of 306 low-cost stations was designed to avoid. Second,
+both Khujand stations satisfy the pre-registered 2-year Q7 span rule only by counting
+observations after the benchmark record ends; inside the window their spans are 1.09 y and
+1.07 y.
+
+**Dushanbe is one instrument, not two** (D-012, benchmark v1.1.0). `8684` (AirNow) and `9769`
+(StateAir) are the same US-embassy monitor republished under coordinates 6.06 km apart:
+99.99% of their 33,462 overlapping hours are the identical reading. They are merged under the
+D-008 precedence-and-gap-fill rule. The benchmark holds **7 instruments across 6 cities**, not
+8.
+
 ### GT-3 — National networks (Uzhydromet, Kazhydromet)
 
 Status: **availability unknown.** Phase 1 will document what is actually retrievable

@@ -36,3 +36,20 @@ runs/*.sqlite-journal
 Thumbs.db
 .vscode/
 .idea/
+
+# Private brief and internal audit trail — kept locally, not published.
+# `message.txt` is the author's own working brief; `review/` holds adversarial reviewer
+# reports and large before/after snapshots produced during the QC repair. Both were useful
+# internally and neither belongs in a public release attached to a submission: the reviewer
+# reports argue positions the authors do not hold, and reading them out of context would
+# misrepresent the work. The scientific record they produced is public in the places it
+# belongs -- data/DECISIONS.md (decisions D-001..D-012) and the manuscript itself.
+message.txt
+review/
+
+# Also internal, for the same reason. `JOURNAL_STRATEGY.md` records venue selection together
+# with the team's financial position and APC-waiver case -- personal information that has no
+# place in a public repository attached to a submission. `next.md` is an engineering handoff
+# that references the quarantined audit trail above.
+JOURNAL_STRATEGY.md
+next.md
