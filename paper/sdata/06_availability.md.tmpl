@@ -1,0 +1,59 @@
+## Data Availability
+
+The frozen benchmark — split definitions, checksums and reference result tables — is
+deposited at **[DOI PENDING DEPOSIT]** under a CC BY 4.0 licence, as version
+{{benchmark_version}} of `eco-pulse-ca`. The archive contents and record structure are
+described in Data Records.
+
+> **Submission note, to be resolved before submission.** The archive has not yet been
+> deposited and no DOI has been minted. Scientific Data requires deposition in a
+> community-recognised or generalist repository with a persistent identifier; a source-control
+> URL does not satisfy this. **No DOI is asserted here, and this placeholder must be replaced
+> with a real identifier before the manuscript is submitted.** Zenodo is the intended
+> repository. Deposition is required from the second round of peer review onward.
+
+**Underlying observations.** Ground PM2.5 observations are redistributed from the OpenAQ
+archive (openaq.org) and originate with the US Department of State AirNow and StateAir
+programmes and with Clarity. Satellite retrievals are Sentinel-5P (CO, NO₂, SO₂, absorbing
+aerosol index) and MODIS MAIAC AOD; chemistry-transport forecasts are Copernicus CAMS; and
+reanalysis meteorology is ERA5. Each source, its access route, its licence status and its
+measured acquisition latency are recorded in `data/MANIFEST.md`.
+
+**Not redistributed.** The derived ground-truth panel is not included in the deposit, because
+per-station licence terms across contributing OpenAQ providers are heterogeneous and have not
+been transcribed for every provider; redistributing it would assert a licence that has not
+been verified. `data/MANIFEST.md` records the provenance, and two documented commands rebuild
+the panel from the archive given an OpenAQ API key. The split definitions and reference
+results are fully self-contained and verifiable without it.
+
+## Code Availability
+
+All code used to build the benchmark, run the reference implementation, produce every table
+and figure, and render this manuscript is openly available at
+`https://github.com/jalencik/eco-pulse-benchmark`, archived at the deposit above, under an
+MIT licence.
+
+**Environment.** Python 3.12 (pinned `>=3.12,<3.13`), with numpy, pandas, scipy,
+scikit-learn, LightGBM, pyarrow and matplotlib. Exact versions are pinned in
+`pyproject.toml`; `python tasks.py setup` creates the environment.
+
+**Reproduction.** A single command runs the whole chain — lint, type check, the full test
+suite, checksum verification, split regeneration, baseline ladder, model layer, table
+regeneration and manuscript rendering:
+
+```
+make reproduce        # or, where make is unavailable:  python tasks.py reproduce
+```
+
+The command is deterministic: two consecutive runs reproduce all {{n_generated_tables}}
+result tables byte-identically under SHA-256. Verifying the frozen splits requires neither
+credentials nor a rebuild (`sha256sum -c splits.sha256`), and the test suite runs offline
+against committed fixtures. Regenerating the reference results additionally requires the
+ground-truth panel described above.
+
+**Custom code of note.** The quality-control rules (`src/ecopulse_ca/qc/`), split builder
+(`src/ecopulse_ca/splits/`), Diebold–Mariano implementation with Harvey–Leybourne–Newbold
+correction (`src/ecopulse_ca/eval/`), and the primary/sensitivity inference
+(`scripts/build_significance.py`) are original to this work. {{n_tests}} automated tests
+enforce split immutability, absence of leakage, table provenance and manuscript-number
+consistency.

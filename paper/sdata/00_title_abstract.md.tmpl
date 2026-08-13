@@ -1,0 +1,29 @@
+# A quality-controlled PM2.5 dataset with frozen cross-city evaluation splits for six Central Asian cities
+
+**Jaloliddin Musayev**<sup>1,\*</sup>, **Asadbek Abdivayitov**<sup>2</sup>,
+**Ozodbek Yo'ldashev**<sup>3</sup>
+
+<sup>1</sup> International House Tashkent Academic Lyceum, Tashkent, Uzbekistan
+<sup>2</sup> First Specialized Boarding School, Karshi, Uzbekistan
+<sup>3</sup> National University of Uzbekistan, Tashkent, Uzbekistan
+
+<sup>\*</sup> Corresponding author: jaloliddin2009applicant@gmail.com
+ORCID 0009-0003-0210-3687
+
+---
+
+## Abstract
+
+We present a quality-controlled dataset of daily PM2.5 observations from {{n_stations}}
+instruments in {{n_cities}} Central Asian cities — Almaty, Ashgabat, Bishkek, Dushanbe,
+Khujand and Tashkent — covering {{train_start}} to {{test_end}}. Records were screened by
+seven pre-registered quality rules, deduplicated and timezone-verified;
+{{n_reference_instruments}} instruments are US embassy reference monitors and
+{{n_lowcost_instruments}} are low-cost sensors, labelled as such. Each station-day is paired
+with satellite retrievals, chemistry-transport forecasts, reanalysis meteorology and static
+geography, and every predictor carries a measured acquisition latency indicating whether it
+could be known at prediction time. The release includes frozen, checksummed evaluation splits
+— blocked-temporal with a {{purge_hours}}-hour purge, and leave-city-out over
+{{n_loco_folds}} folds — with a baseline ladder and reference model outputs. Errors grow with
+a city's mean concentration, so the data support work on cross-city generalisation, satellite
+and ground fusion, sensor comparison, and reproducible benchmarking.

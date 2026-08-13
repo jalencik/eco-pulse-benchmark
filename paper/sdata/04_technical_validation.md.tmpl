@@ -1,0 +1,210 @@
+## Technical Validation
+
+Validation is reported in three layers: the quality control applied to the observations, the
+integrity of the split definitions, and the behaviour of a reference implementation evaluated
+under the protocol. The third layer is included because a benchmark whose reference
+implementation has never been run is not validated — but its results are presented as
+evidence about the *task*, not as a claim of method performance.
+
+### Observation quality control
+
+Seven pre-registered rules (Q1–Q7) were declared in `data/DECISIONS.md` before the data were
+inspected, each recording its effect on *n* and the direction of bias if the rule is wrong.
+Two produced findings that changed the benchmark.
+
+**Duplicate identity — and the case a distance rule cannot see.** The US embassy monitors are
+published twice, by StateAir and by AirNow, under separate identifiers. Where the two records
+agree on position (Bishkek, 57 m; Ashgabat, 40 m) a 150 m co-location rule catches them.
+Where they disagree it does not. Dushanbe's two records sit **6.06 km apart** and were
+initially treated as distinct sites — the manuscript even cited that separation as evidence
+they were distinct.
+
+They are not. Over the {{dushanbe_overlap_hours}} hours in which both report,
+**{{dushanbe_identical_pct}}% of readings are bit-identical**, and of the remainder
+{{dushanbe_lag5_pct}}% match exactly at a five-hour offset — Dushanbe is UTC+5, so those are
+the same measurements timestamped in local time rather than UTC. Taken together
+**{{dushanbe_explained_pct}}% of overlapping hours are the same reading**. The comparable
+Khujand pair, 14.4 km apart, is bit-identical on {{khujand_identical_pct}}% of hours.
+
+A value-identity rule (Q5c) was therefore added: flag any station pair whose overlapping
+observations are bit-identical on more than half of samples, regardless of separation. Two
+independent instruments do not agree to floating point. The threshold sits in the middle of
+a measured 36× gap between coincidence ({{identity_coincidence_pct}}% for unrelated station
+pairs, an artefact of hourly values being reported as rounded integers) and duplication.
+
+The Dushanbe records are merged under the same precedence-and-gap-fill rule already applied to
+Bishkek and Ashgabat — never averaging, because averaging two copies of one measurement
+reduces no noise and fabricates a third value where they differ. The benchmark holds
+**{{n_stations}} instruments across {{n_cities}} cities**, and the version was raised to
+{{benchmark_version}} to mark that the splits changed.
+
+**Timezone correctness.** Metadata offsets are not trusted; each station's diurnal composite
+is cross-correlated against a regional reference. An initial implementation rejected both
+Khujand sensors for an apparent 12-hour shift, which investigation showed to be an artefact:
+the regional reference self-correlates at r = +0.71 under a 12-hour rotation, because Central
+Asian urban PM2.5 is bimodal with peaks roughly half a day apart. The check now reports lag
+identifiability and flags rather than rejects when the hypothesis cannot be distinguished.
+
+A limitation of this check must be stated. It compares stations against city peers, and only
+{{n_cities_multi_station}} cities hold more than one instrument. **A constant, lifelong
+offset at a single-instrument city is undetectable by any check in this suite.**
+
+### Instrument grade
+
+{{n_reference_instruments}} of {{n_stations}} instruments are US diplomatic-post monitors
+published by AirNow or StateAir (`is_monitor = true` in the OpenAQ census). These are
+BAM/FEM-class beta-attenuation instruments operated under the programme's documented QA
+regime, and they are the region's only consistent multi-country reference.
+**The {{n_lowcost_instruments}} Khujand instruments are Clarity Node-S low-cost optical
+sensors** (`is_monitor = false`), which use light scattering rather than gravimetric-equivalent
+measurement and carry the humidity- and composition-dependent uncertainty documented for that
+class (Zheng et al., 2018). This matters more than a metadata note, because
+Khujand is the benchmark's zero-label fold: the city contributes no training row anywhere in
+the record, making it the harshest spatial test the benchmark contains *and* the one city
+whose labels carry low-cost measurement uncertainty (Zheng et al., 2018).
+
+Both Khujand instruments also satisfy the pre-registered {{q7_min_years}}-year span rule only
+by counting observations after the benchmark record ends; inside the window their spans are
+{{khujand_a_span_in_window}} y and {{khujand_b_span_in_window}} y. Admitting them was a
+coverage decision, and it is recorded as one.
+
+### Split integrity
+
+- **Immutability.** `splits.sha256` is compared against a fresh build on every test run. The
+  test fails for the authors exactly as it fails for anyone else; changing a split requires
+  raising the version, recording the reason, and regenerating every published number.
+- **Purge sufficiency.** `purge_hours` = {{purge_hours}} = `max_lag_hours`
+  ({{max_lag_hours}}) + `max_horizon_hours` ({{max_horizon_hours}}), verified arithmetically
+  at both boundaries so that no training row's feature window reaches into the evaluation
+  block.
+- **Fold disjointness.** Automated assertions verify that no leave-city-out fold trains on any
+  station in its held-out city, that no leave-station-out fold trains on its held-out station,
+  that every evaluated row falls inside the test block, and that each fold evaluates only its
+  own city.
+- **Tuning isolation.** Hyperparameters are selected on the validation block; a test parses
+  the tuning function and fails if it references the test block at all.
+- **Baseline isolation.** The CAMS bias correction is fitted on the training block only, and
+  the pooled variant excludes the held-out city from its own correction — otherwise the
+  reference every model is measured against would itself contain test information.
+
+### Reference implementation behaviour
+
+Scored at a single temporal resolution on the frozen test block, over {{n_seeds}} seeds:
+
+| Model (leave-city-out, daily) | RMSE µg/m³ |
+|---|---:|
+{{daily_ladder_rows}}
+
+**The tuned reference model leads every admissible baseline, and explains little within-city
+variation.** It scores {{taskn_retrospective_rmse}} ± {{taskn_retrospective_rmse_sd}} µg/m³
+against {{best_legal_baseline_rmse}} µg/m³ for the strongest legal rung
+(`{{best_legal_baseline}}`), ahead of all {{n_legal_baselines}} of them **on the fold mean**.
+That ordering is not robust: the paired difference over {{n_cities}} cities is not
+statistically separable (*p* = {{idw_paired_p}}), per-fold differences span −10.73 to
++5.10 µg/m³, and removing one city reverses the lead in one of {{n_loco_folds}} subsets. The
+margin is {{idw_margin_seed_sd}}× the seed standard deviation, so it is fold heterogeneity
+rather than run-to-run noise (`t7_05_ranking_robustness.csv`). A constant equal to
+the held-out city's own test-block mean scores {{daily_constant_rmse}} µg/m³, but that
+predictor uses test labels and is **not legal** under leave-city-out; it is reported as a
+diagnostic floor only. Mean per-fold R² is
+{{taskn_retrospective_r2}}, with a spread of {{r2_fold_min}} to {{r2_fold_max}} and
+{{n_folds_negative_r2}} of {{n_loco_folds}} folds negative. Pooled against the global mean,
+R² = {{r2_pooled_global}} — the model captures some between-city variation and no within-city
+day-to-day variation, and a reader given only the pooled figure would substantially
+overestimate what it does.
+
+Baselines are scored at the same daily resolution on the same evaluation rows; an hourly
+RMSE is structurally larger than a daily one and the two are never compared.
+
+### Where the data are hard
+
+![Figure 2](figures/figS2_error_structure.png)
+
+**Figure 2.** Leave-city-out error against the held-out city's mean PM2.5. Left: fold RMSE
+rises with city concentration (Spearman rho = +0.94). Right: mean bias falls monotonically
+from +14.9 µg/m³ in Bishkek, the cleanest city, to −25.1 µg/m³ in Dushanbe, the most polluted.
+
+A model trained on five cities and applied to a sixth predicts toward the concentrations it
+was trained on: cleaner cities are over-predicted and more polluted ones under-predicted. The
+same pattern holds within the concentration range — bias is +10.3 µg/m³ on days below the WHO
+24-hour guideline and −90.5 µg/m³ above six times it, where RMSE reaches 99.5 µg/m³. Winter
+(DJF) RMSE is 50.3 µg/m³ against 16.5 µg/m³ in summer.
+
+This is a property of the region and the network rather than of one model, and it is the
+clearest thing the dataset shows: **transferring a PM2.5 model to an unmonitored Central Asian
+city fails first on the city's overall level, not on its day-to-day pattern.** Per-fold,
+per-band and per-season figures are in `t7_01`–`t7_03`.
+
+### Statistical validation
+
+The comparison against bias-corrected CAMS is reported under a primary analysis declared on
+scientific grounds, with sensitivity analyses, rather than by selecting a favourable test.
+
+The estimand is the reduction in squared error **at a city with no local training labels**, so
+the unit of generalisation is the city. Aggregating to one value per city gives
+{{n_cities}} observations.
+
+| | Test | Unit | *n* | *p* |
+|---|---|---|---:|---:|
+| **Primary** | paired *t* on city means | city | {{n_cities}} | **{{sig_primary_t_p}}** |
+| **Primary** | exact sign-flip permutation | city | {{n_cities}} | **{{sig_primary_perm_p}}** |
+| Sensitivity | station-day, independence assumed | station-day | {{dm_pooled_n}} | {{sig_naive_p}} |
+| Sensitivity | station-day, Newey–West HAC (lag 60 d) | station-day | {{dm_pooled_n}} | {{sig_hac60_p}} |
+| Sensitivity | cluster bootstrap over cities | city | {{n_cities}} | {{sig_boot_p}} |
+
+The loss differential is serially correlated within station (first-order autocorrelation
+{{acf_lag1}}), so the independence-assuming figure is reported only for comparison with
+earlier drafts and is not a valid inference. With {{n_cities}} clusters, cluster-robust
+asymptotics are also unreliable — the variance estimator is materially downward-biased below
+roughly 30–50 clusters (Cameron and Miller, 2015) — which is why an exact permutation test is
+reported alongside. Its smallest attainable two-sided *p*-value is {{sig_perm_floor}}, a floor
+imposed by having only {{n_cities}} cities, stated so that it is not mistaken for evidence.
+
+Per-fold Diebold–Mariano tests are additionally Holm-corrected for {{n_loco_folds}}
+comparisons; **{{n_sig_holm}} of {{n_loco_folds}} survive at α = 0.05.**
+
+**The evidence does not support a claim that the reference model outperforms bias-corrected
+CAMS under the unit of generalisation this benchmark is built around.** That is reported as
+the result.
+
+### Evaluation protocol, and a disclosure
+
+The test block was scored under **two** frozen configurations. Both selections were made on
+the validation block; neither used test performance as a criterion. The history is given in
+full so a reader can judge it rather than take it on trust.
+
+**Freeze 1 — target transform.** Daily PM2.5 in this record has skew 2.79 and excess kurtosis
+13.5, so squared error on the raw scale is dominated by a few extreme days. Four formulations
+(raw, log1p, and residual-against-interpolator variants of each) were compared across three
+model families on validation only. `log1p` won for every family. Frozen, then scored once on
+test: fold-mean RMSE fell from 30.24 to 28.05 µg/m³.
+
+**Freeze 2 — feature exclusion.** A validation ablation indicated that satellite
+retrieval-count features harmed leave-city-out generalisation, which is mechanistically
+plausible: retrieval success depends on local surface brightness, snow cover and solar
+geometry, all city-specific. Frozen, then scored once on test: **the validation gain of
+1.75 µg/m³ did not replicate, delivering 0.045 µg/m³.**
+
+**That non-replication is reported rather than removed.** Reverting the configuration after
+seeing its test result would have made the test set a selection criterion, which is the
+practice the frozen protocol exists to prevent. The exclusion therefore stands, and the
+finding — that validation-based feature selection over six cities does not reliably transfer —
+is itself information for anyone reusing these splits.
+
+No city, station, date or evaluation period was excluded at any point on the basis of its
+effect on a score. `scripts/experiment_model_search.py` and
+`scripts/experiment_ablation_ensemble.py` never read the test block, which is enforced by
+`tests/test_frozen_configuration.py`.
+
+### Reproducibility
+
+A single command regenerates every reported number from the frozen splits. Two consecutive
+runs reproduce all {{n_generated_tables}} result tables **byte-identically**, verified by
+SHA-256. The manuscript is rendered from templates whose numeric fields are substituted from
+a machine-extracted mapping, so no reported figure is typed by hand, and a test re-extracts
+from the CSVs and fails if any figure has drifted.
+
+The reference implementation is deterministic: Section 5's per-seed RMSEs and Section 6's
+per-seed predictions agree to floating point across all
+{{n_loco_folds}}×{{n_seeds}} fold-seed pairs, and the ensemble satisfies the convexity bound
+relating it to its members in every fold.

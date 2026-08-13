@@ -1,0 +1,87 @@
+## Usage Notes
+
+### How to score a method on this benchmark
+
+1. Read `splits.json`. It is self-contained: station table, temporal blocks, and both fold
+   definitions.
+2. Fit only on the rows a fold permits. For leave-city-out, no observation from the held-out
+   city may enter training — including indirectly, through a neighbour feature or a bias
+   correction estimated on that city.
+3. Predict on the test block ({{test_start}} to {{test_end}}) and score against the daily
+   target: local-calendar daily mean PM2.5, requiring at least 18 hours of observations.
+4. Report **per city, not pooled**, with dispersion across at least the
+   {{seeds_list}} seeds.
+5. Compare against `t3_06_task_n_baselines_daily.csv`, which is scored on the same rows at
+   the same resolution.
+
+### Six rules the benchmark asks of every submission
+
+These are the reporting conditions under which numbers from different methods remain
+comparable. They are applied to the reference implementation in this paper as well.
+
+1. **State the task.** Task N (nowcasting at unmonitored sites) and Task F (forecasting at
+   monitored stations) are different problems with different admissible features. Never pool
+   them, and never quote a Task F number as a general accuracy.
+2. **State the tier.** `static_only`, `deployable` and `retrospective` differ in whether a
+   predictor could exist at prediction time. A retrospective number is not a deployment claim.
+3. **Report per city.** A pooled figure over {{n_cities}} cities of unequal size hides which
+   cities fail.
+4. **State the truncation lag** used in any Diebold–Mariano test, and report a sensitivity
+   sweep. A verdict that flips with the lag choice is not a verdict.
+5. **Report seed dispersion.** At least mean and standard deviation over the declared seeds.
+6. **State the unit of analysis** for any significance claim, and justify it. Station-days are
+   not independent observations.
+
+### Pitfalls this benchmark is designed to expose
+
+**Temporal resolution is not a free choice.** RMSE computed on hourly observations is
+structurally larger than RMSE on daily means of the same data, because averaging removes
+within-day variance. An hourly baseline placed beside a daily model produces an apparent
+margin that is arithmetic, not skill. This paper made that error and corrected it; the daily
+ladder exists so that the comparison is unambiguous.
+
+**Two aggregations of R² answer different questions.** Mean per-fold R², computed against each
+city's own mean, measures within-city day-to-day skill. Pooled R² against the global mean
+largely measures whether cities differ from each other, which is far easier. Report which one
+you mean. On this benchmark the reference model scores {{taskn_retrospective_r2}} on the first
+and {{r2_pooled_global}} on the second.
+
+**Exceedance F1 has a high floor.** These cities clear the WHO 24-hour guideline on most days,
+so a classifier that always predicts "exceeds" scores F1 = {{p3_trivial_f1}} at a base rate of
+{{p3_base_rate}}%. Peirce skill score is reported alongside because it is zero for that
+classifier by construction.
+
+**A single station can move the conclusions.** Merging one duplicated instrument changed every
+fold's RMSE and reversed the ordering of feature-attribution families. Attribution rankings on
+a {{n_stations}}-instrument benchmark should be treated as unstable, and this paper's own
+earlier claim about them is retracted in Technical Validation.
+
+### Known limitations
+
+- **Six cities.** The spatial sample is small, and it bounds every inference: with
+  {{n_cities}} clusters, no significance procedure can attain a two-sided *p* below
+  {{sig_perm_floor}} without distributional assumptions the data do not support.
+- **Two of {{n_stations}} instruments are low-cost**, and they constitute the zero-label
+  Khujand fold. Results for that fold are not comparable in kind to the other five.
+- **Single-instrument cities cannot be timing-audited.** A constant lifelong offset at Almaty,
+  Tashkent, Bishkek or Ashgabat would be invisible to every check in the suite.
+- **The record ends with the source.** The US diplomatic-post programme terminated
+  2025-03-04. No result here speaks to current conditions, and the benchmark cannot be
+  extended forward from this source.
+- **Kazakhstan contributes one city.** Astana failed the completeness rule at
+  {{astana_completeness_pct}}% against a required {{q7_min_completeness_pct}}%.
+- **Task F is single-horizon.** The learned Task F model predicts next-day daily means and
+  does not produce the 48 h or 72 h horizons its Section 3 baselines cover; the two are not
+  comparable and are not tabled together.
+- **The ground-truth panel is not redistributed.** Split definitions and reference results are
+  self-contained and verifiable offline, but regenerating results from raw observations
+  requires rebuilding the panel from the OpenAQ archive with an API key.
+
+### Intended reuse
+
+The benchmark is designed for methods comparison, not for producing exposure estimates. Any
+method that yields a PM2.5 estimate — statistical, physical or learned — can be scored on
+these splits and placed against the baseline ladder without re-deriving a protocol. Because
+`t6_01_predictions_task_n.csv` banks row-level and per-seed predictions, an alternative loss
+function, aggregation or significance procedure can be applied to the reference implementation
+without retraining it.
