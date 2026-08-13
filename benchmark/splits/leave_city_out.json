@@ -10,11 +10,10 @@
       "train_stations": [
         "1894632",
         "1924313",
-        "8684",
         "8881",
-        "9769",
         "Ashgabat",
-        "Bishkek"
+        "Bishkek",
+        "Dushanbe"
       ]
     },
     {
@@ -27,11 +26,10 @@
       "train_stations": [
         "1894632",
         "1924313",
-        "8684",
         "8876",
         "8881",
-        "9769",
-        "Bishkek"
+        "Bishkek",
+        "Dushanbe"
       ]
     },
     {
@@ -44,19 +42,17 @@
       "train_stations": [
         "1894632",
         "1924313",
-        "8684",
         "8876",
         "8881",
-        "9769",
-        "Ashgabat"
+        "Ashgabat",
+        "Dushanbe"
       ]
     },
     {
       "fold": 3,
       "held_out_city": "Dushanbe",
       "held_out_stations": [
-        "8684",
-        "9769"
+        "Dushanbe"
       ],
       "n_train_cities": 5,
       "train_stations": [
@@ -77,12 +73,11 @@
       ],
       "n_train_cities": 5,
       "train_stations": [
-        "8684",
         "8876",
         "8881",
-        "9769",
         "Ashgabat",
-        "Bishkek"
+        "Bishkek",
+        "Dushanbe"
       ]
     },
     {
@@ -95,11 +90,10 @@
       "train_stations": [
         "1894632",
         "1924313",
-        "8684",
         "8876",
-        "9769",
         "Ashgabat",
-        "Bishkek"
+        "Bishkek",
+        "Dushanbe"
       ]
     }
   ]

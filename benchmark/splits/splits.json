@@ -1,5 +1,5 @@
 {
-  "benchmark_version": "1.0.0",
+  "benchmark_version": "1.1.0",
   "combined_headline": {
     "description": "unseen city x unseen period: leave_city_out folds evaluated only on the test block",
     "spatial": "leave_city_out",
@@ -30,11 +30,10 @@
       "train_stations": [
         "1894632",
         "1924313",
-        "8684",
         "8881",
-        "9769",
         "Ashgabat",
-        "Bishkek"
+        "Bishkek",
+        "Dushanbe"
       ]
     },
     {
@@ -47,11 +46,10 @@
       "train_stations": [
         "1894632",
         "1924313",
-        "8684",
         "8876",
         "8881",
-        "9769",
-        "Bishkek"
+        "Bishkek",
+        "Dushanbe"
       ]
     },
     {
@@ -64,19 +62,17 @@
       "train_stations": [
         "1894632",
         "1924313",
-        "8684",
         "8876",
         "8881",
-        "9769",
-        "Ashgabat"
+        "Ashgabat",
+        "Dushanbe"
       ]
     },
     {
       "fold": 3,
       "held_out_city": "Dushanbe",
       "held_out_stations": [
-        "8684",
-        "9769"
+        "Dushanbe"
       ],
       "n_train_cities": 5,
       "train_stations": [
@@ -97,12 +93,11 @@
       ],
       "n_train_cities": 5,
       "train_stations": [
-        "8684",
         "8876",
         "8881",
-        "9769",
         "Ashgabat",
-        "Bishkek"
+        "Bishkek",
+        "Dushanbe"
       ]
     },
     {
@@ -115,35 +110,18 @@
       "train_stations": [
         "1894632",
         "1924313",
-        "8684",
         "8876",
-        "9769",
         "Ashgabat",
-        "Bishkek"
+        "Bishkek",
+        "Dushanbe"
       ]
     }
   ],
   "leave_station_out": {
     "folds": [
       {
-        "city": "Dushanbe",
-        "fold": 0,
-        "held_out_station": "8684",
-        "train_stations": [
-          "9769"
-        ]
-      },
-      {
-        "city": "Dushanbe",
-        "fold": 1,
-        "held_out_station": "9769",
-        "train_stations": [
-          "8684"
-        ]
-      },
-      {
         "city": "Khujand",
-        "fold": 2,
+        "fold": 0,
         "held_out_station": "1894632",
         "train_stations": [
           "1924313"
@@ -151,7 +129,7 @@
       },
       {
         "city": "Khujand",
-        "fold": 3,
+        "fold": 1,
         "held_out_station": "1924313",
         "train_stations": [
           "1894632"
@@ -162,6 +140,7 @@
       "Almaty",
       "Ashgabat",
       "Bishkek",
+      "Dushanbe",
       "Tashkent"
     ]
   },
@@ -196,15 +175,8 @@
       "city": "Dushanbe",
       "latitude": 38.557671,
       "longitude": 68.775917,
-      "n_observations": 49305,
-      "station_id": "8684"
-    },
-    {
-      "city": "Dushanbe",
-      "latitude": 38.579708,
-      "longitude": 68.712176,
-      "n_observations": 36243,
-      "station_id": "9769"
+      "n_observations": 52086,
+      "station_id": "Dushanbe"
     },
     {
       "city": "Khujand",

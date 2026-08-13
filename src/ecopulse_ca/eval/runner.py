@@ -162,8 +162,16 @@ def run_task_n(
     blocks: Blocks,
     tz_of: dict[str, str],
     seed: int = 0,
+    return_predictions: bool = False,
 ) -> pd.DataFrame:
-    """Leave-city-out nowcasting. The held-out city contributes no training label."""
+    """Leave-city-out nowcasting. The held-out city contributes no training label.
+
+    With `return_predictions=True` the raw hourly (timestamp, prediction) rows are returned
+    instead of the per-station metric summary. `scripts/build_daily_baselines.py` needs them
+    to aggregate the baselines to the daily resolution the models are scored at -- the hourly
+    summary cannot be converted after the fact, and comparing hourly baseline RMSE against
+    daily model RMSE is what made the reported margin ~5x too large.
+    """
     meta = {
         s["station_id"]: StationMeta(
             s["station_id"], s["latitude"], s["longitude"], s["city"], True
@@ -171,6 +179,7 @@ def run_task_n(
         for s in splits["stations"]
     }
     rows = []
+    raw: list[pd.DataFrame] = []
     for fold in splits["leave_city_out"]:
         train_ids = [s for s in fold["train_stations"] if s in panel.columns]
         held_ids = [s for s in fold["held_out_stations"] if s in panel.columns]
@@ -192,6 +201,21 @@ def run_task_n(
                     for ts in obs.index
                 ]
                 pred = pd.Series(preds, index=obs.index, dtype=float)
+
+                if return_predictions:
+                    raw.append(
+                        pd.DataFrame(
+                            {
+                                "held_out_city": fold["held_out_city"],
+                                "station_id": held,
+                                "model": name,
+                                "timestamp": obs.index,
+                                "observed": obs.to_numpy(),
+                                "prediction": pred.to_numpy(),
+                            }
+                        )
+                    )
+                    continue
 
                 reg = regression_metrics(obs, pred)
                 exc = exceedance_metrics(obs, pred, WHO_2021_PM25_24H, tz_of.get(held))
@@ -221,4 +245,6 @@ def run_task_n(
                 if fallback is not None:
                     row["kriging_fallback_rate"] = round(float(fallback), 4)
                 rows.append(row)
+    if return_predictions:
+        return pd.concat(raw, ignore_index=True) if raw else pd.DataFrame()
     return pd.DataFrame(rows)

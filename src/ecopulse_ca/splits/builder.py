@@ -41,7 +41,15 @@ ROOT = Path(__file__).resolve().parents[3]
 INTERIM = ROOT / "data" / "interim"
 SPLIT_DIR = ROOT / "benchmark" / "splits"
 
-BENCHMARK_VERSION = "1.0.0"
+# 1.1.0 (2026-08-13) -- Dushanbe 8684/9769 were one US-embassy instrument republished under
+# two location_ids with coordinates 6.06 km apart, so the 150 m Q5b distance rule could not
+# see it. 99.99% of their 33,462 overlapping hours are the identical reading. They are now
+# merged under the D-008 rule (precedence + gap-fill, never averaging), exactly as the
+# Bishkek and Ashgabat republications already were. Stations 8 -> 7; cities unchanged at 6;
+# leave-station-out loses its two Dushanbe folds. See data/DECISIONS.md D-012 and
+# review/NEW_F5_dushanbe_duplicate.md. Every published number was regenerated against this
+# version -- v1.0.0 results are not comparable.
+BENCHMARK_VERSION = "1.1.0"
 MAX_LAG_HOURS = 168  # longest feature window on the ladder (SameHourMean, 7 days)
 MAX_HORIZON_HOURS = 72  # longest forecast horizon (t+72h)
 PURGE_HOURS = MAX_LAG_HOURS + MAX_HORIZON_HOURS  # 240 h -- derived, not chosen

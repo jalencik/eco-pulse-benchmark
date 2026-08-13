@@ -18,6 +18,7 @@ from ecopulse_ca.qc.rules import (
     q3_zero_run,
     q4_unit_sanity,
     q5_duplicate_stations,
+    q5c_value_identity,
     q7_completeness,
 )
 from tests.conftest import synthetic_pm25
@@ -156,10 +157,17 @@ class TestQ5DuplicateStations:
         assert [f.rule for f in findings] == ["Q5b"]
         assert "probably one instrument" in findings[0].detail
 
-    def test_genuinely_distinct_sites_6km_apart_not_flagged(self):
-        """The two Dushanbe sites are 6.06 km apart and are genuinely different stations.
+    def test_sites_6km_apart_not_flagged_by_distance(self):
+        """Q5b must not flag a 6.06 km separation on distance alone.
 
         Pairs with the test above: the threshold must separate 57 m from 6 km.
+
+        NOTE: this asserts only what Q5b is for. It does NOT assert that the two Dushanbe
+        records are distinct instruments -- they are not. `location_id` 8684 (AirNow,
+        "Dushanbe") and 9769 (StateAir, "US Diplomatic Post: Dushanbe") are one embassy
+        monitor republished under a stale coordinate, and 73.7% of their overlapping daily
+        values are bit-identical. Distance cannot see that; `q5c_value_identity` catches it.
+        See TestQ5cValueIdentity below and review/NEW_F5_dushanbe_duplicate.md.
         """
         census = pd.DataFrame(
             [
@@ -178,6 +186,63 @@ class TestQ5DuplicateStations:
             ]
         )
         assert q5_duplicate_stations(census) == []
+
+    def test_value_identity_catches_what_distance_cannot(self):
+        """The Dushanbe pair, reduced to its essential shape.
+
+        One hourly series published under two ids; the second drops one hour on some days,
+        so the daily means agree exactly most of the time and differ slightly otherwise.
+        Q5b is blind to this because the registered coordinates are 6 km apart.
+        """
+        n = 120
+        rng = np.random.default_rng(0)
+        base = pd.Series(rng.gamma(3.0, 15.0, n))
+        shifted = base.copy()
+        shifted.iloc[::4] += 3.0  # a quarter of days differ, as with a dropped hour
+        panel = pd.concat(
+            [
+                pd.DataFrame({"station_id": "8684", "datetime": range(n), "value": base}),
+                pd.DataFrame({"station_id": "9769", "datetime": range(n), "value": shifted}),
+            ]
+        )
+        findings = q5c_value_identity(panel)
+        assert [f.rule for f in findings] == ["Q5c"]
+        assert findings[0].verdict == "reject"
+        assert findings[0].n_flagged == 90  # 3 of every 4 days identical
+
+    def test_value_identity_clears_a_genuinely_distinct_pair(self):
+        """The Khujand control: two real instruments 14.4 km apart match on 0 of 265 days."""
+        n = 120
+        rng = np.random.default_rng(1)
+        panel = pd.concat(
+            [
+                pd.DataFrame(
+                    {
+                        "station_id": "1894632",
+                        "datetime": range(n),
+                        "value": rng.gamma(3.0, 15.0, n),
+                    }
+                ),
+                pd.DataFrame(
+                    {
+                        "station_id": "1924313",
+                        "datetime": range(n),
+                        "value": rng.gamma(3.0, 15.0, n),
+                    }
+                ),
+            ]
+        )
+        assert q5c_value_identity(panel) == []
+
+    def test_value_identity_ignores_thin_overlap(self):
+        """Below `min_overlap` a coincidence is not evidence; say nothing rather than guess."""
+        panel = pd.concat(
+            [
+                pd.DataFrame({"station_id": "a", "datetime": range(5), "value": [1.0] * 5}),
+                pd.DataFrame({"station_id": "b", "datetime": range(5), "value": [1.0] * 5}),
+            ]
+        )
+        assert q5c_value_identity(panel) == []
 
     def test_haversine_matches_known_distance(self):
         # ~111.19 km per degree of latitude at the equator.

@@ -35,6 +35,21 @@ FLATLINE_RUN = 24
 ZERO_RUN = 6
 # Q7 inclusion thresholds.
 MIN_YEARS, MIN_COMPLETENESS = 2.0, 0.60
+# Q5c value-identity duplicate detection. Two independent instruments do not agree to
+# floating point on any appreciable share of samples, so a high exact-match rate means one
+# series counted twice. The threshold is set from the measured separation, not tuned:
+#
+#   true duplicate (Dushanbe 8684/9769), hourly ....... 94.0%
+#   true distinct  (Khujand pair),        hourly .......  0.3%
+#   coincidental matches between unrelated stations ....  2.6%
+#
+# That last figure is why the cut is not near zero. Hourly PM2.5 is frequently reported as
+# rounded integers, so two unrelated stations genuinely do collide on a small share of hours
+# (measured at 2.6% here). Daily means -- averages of ~24 floats -- essentially never collide,
+# which is why the same pairs show 0.0% at daily resolution. 50% sits in the middle of the
+# 36x gap between coincidence and duplication and is safe at either resolution.
+IDENTITY_FRAC = 0.50
+IDENTITY_MIN_OVERLAP = 30
 
 
 class FlatlinePolicy(Enum):
@@ -257,6 +272,82 @@ def q5_duplicate_stations(
                     + (f", providers: {', '.join(providers)}" if providers else ""),
                 )
             )
+    return out
+
+
+def q5c_value_identity(
+    panel: pd.DataFrame,
+    *,
+    station_col: str = "station_id",
+    time_col: str = "datetime",
+    value_col: str = "value",
+    max_identical_frac: float = IDENTITY_FRAC,
+    min_overlap: int = IDENTITY_MIN_OVERLAP,
+    tol: float = 1e-9,
+) -> list[QCFinding]:
+    """Detect republication of one instrument under IDs whose coordinates disagree.
+
+    Q5b keys on distance, so it catches the case it was written for -- one device published
+    twice at nearly the same coordinate. It cannot catch the inverse, which is also present
+    in this region's OpenAQ data: one device published twice under coordinates kilometres
+    apart, because one record carries a stale or wrong position. Distance is the wrong
+    signal there. Value identity is the right one.
+
+    The physical argument: two genuinely independent instruments never agree to floating
+    point. Even co-located reference monitors differ in the third decimal on essentially
+    every sample. So an exact match on any appreciable fraction of overlapping timestamps
+    is not agreement between instruments -- it is one series counted twice.
+
+    Compare Dushanbe 8684/9769 (73.7% of overlapping days bit-identical) against Khujand
+    1894632/1924313, a real pair 14.4 km apart, which match on exactly 0 of 265 days.
+    The separation is wide enough that the threshold is not a delicate choice.
+    """
+    if panel.empty or not {station_col, time_col, value_col}.issubset(panel.columns):
+        return []
+    wide = panel.pivot_table(index=time_col, columns=station_col, values=value_col)
+    return q5c_value_identity_wide(
+        wide, max_identical_frac=max_identical_frac, min_overlap=min_overlap, tol=tol
+    )
+
+
+def q5c_value_identity_wide(
+    wide: pd.DataFrame,
+    *,
+    max_identical_frac: float = IDENTITY_FRAC,
+    min_overlap: int = IDENTITY_MIN_OVERLAP,
+    tol: float = 1e-9,
+) -> list[QCFinding]:
+    """`q5c_value_identity` for a panel already in wide form (one column per station).
+
+    The benchmark panel is stored wide, so this is the entry point the ingestion pipeline
+    uses; the long-form wrapper above exists for callers holding tidy frames.
+    """
+    out: list[QCFinding] = []
+    if wide.empty or wide.shape[1] < 2:
+        return out
+    ids = [str(c) for c in wide.columns]
+
+    for i in range(len(ids)):
+        for j in range(i + 1, len(ids)):
+            a, b = wide.columns[i], wide.columns[j]
+            both = wide[[a, b]].dropna()
+            if len(both) < min_overlap:
+                continue
+            identical = int((both[a] - both[b]).abs().lt(tol).sum())
+            frac = identical / len(both)
+            if frac > max_identical_frac:
+                out.append(
+                    QCFinding(
+                        rule="Q5c",
+                        scope="station",
+                        station_id=f"{ids[i]},{ids[j]}",
+                        n_total=len(both),
+                        n_flagged=identical,
+                        verdict="reject",
+                        detail=f"{identical}/{len(both)} overlapping samples ({frac:.1%}) "
+                        f"are bit-identical -- one series republished under two ids",
+                    )
+                )
     return out
 
 

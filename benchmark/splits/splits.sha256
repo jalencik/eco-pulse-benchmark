@@ -1,6 +1,6 @@
-544a044c2037c6e6707883b468fcda3b3ba334a3d6cde86d6fcc582f6f9e0c6c  splits.json
-# benchmark_version 1.0.0
-# frozen 2026-07-29T08:20:39Z
+bedd3947e14676ec771c7db88b5b0b707b36b03c8dd28e79b25db2a62104f7d3  splits.json
+# benchmark_version 1.1.0
+# frozen 2026-08-13T11:28:32Z
 # IMMUTABLE. If this hash changes, tests/test_splits_immutable.py fails.
 # Poor predictor coverage in a frozen city is REPORTED, never fixed by refreezing.
 # Verify with:  sha256sum -c splits.sha256
