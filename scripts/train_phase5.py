@@ -1,5 +1,31 @@
 """Phase 5 with tuning: Task N (leave-city-out) and Task F (blocked-temporal), separately.
 
+TARGET TRANSFORM -- frozen 2026-08-13, selected on VALIDATION ONLY
+-----------------------------------------------------------------
+The model fits `log1p(PM2.5)` and inverts with `expm1` before scoring. Metrics are computed
+on the raw ug/m3 scale, so they stay comparable with every baseline.
+
+Rationale, stated before the choice was made: daily PM2.5 in this record has skew 2.79 and
+excess kurtosis 13.5 (median 29.9, p99 159.4, max 378.7). Squared error on the raw scale is
+therefore dominated by a handful of extreme days, and the fit is driven by the tail rather
+than the bulk. On log1p the same target has skew 0.20 and excess kurtosis -0.06.
+
+Selected by `scripts/experiment_model_search.py`, which scores leave-city-out folds on the
+**validation block only** and never reads the test block. Validation fold-mean RMSE:
+
+    lgbm log            37.79   <- selected
+    rf   log_residual   38.49
+    rf   log            38.71
+    lgbm log_residual   39.09
+    lgbm raw            41.44   <- previous production configuration
+    lgbm idw_residual   42.74
+    ridge (any form)    45-49
+
+The transform helps every model family tested, which is what distinguishes a real effect from
+a lucky draw. Residual-against-IDW formulations were also tested, on the hypothesis that the
+learner was re-deriving an interpolation it already had as a feature; they did not help
+LightGBM, so that hypothesis is not supported and the simpler transform is kept.
+
 Hyperparameters are selected on the 2023 VALIDATION block and then frozen. The test block
 is scored once per configuration -- the spec forbids tuning on test.
 """
@@ -66,11 +92,18 @@ def mk(seed, p):
 
 
 def tune(tr, va, feats):
-    """Select on VALIDATION only. Test is never consulted here."""
+    """Select on VALIDATION only. Test is never consulted here.
+
+    Fits the SAME log1p objective the production model uses. Selecting hyperparameters under
+    one objective and then fitting under another would pick a configuration for a problem the
+    model does not solve; the scoring is still RMSE on the raw ug/m3 scale, so the selection
+    criterion is unchanged.
+    """
     best, best_rmse = GRID[0], np.inf
     for p in GRID:
-        m = mk(0, p).fit(tr[feats], tr.pm25)
-        r = regression_metrics(va.pm25, pd.Series(m.predict(va[feats]), index=va.index))
+        m = mk(0, p).fit(tr[feats], np.log1p(tr.pm25))
+        _pv = np.clip(np.expm1(m.predict(va[feats])), 0.0, None)
+        r = regression_metrics(va.pm25, pd.Series(_pv, index=va.index))
         if np.isfinite(r.rmse) and r.rmse < best_rmse:
             best, best_rmse = p, r.rmse
     return best, best_rmse
@@ -87,11 +120,37 @@ cams["station_id"] = cams.station_id.astype(str)
 cams["date"] = pd.to_datetime(cams.time).dt.normalize()
 bias = fit_bias(cams, daily_obs, tr_end)
 
+
+# ---- Task N feature exclusion, frozen 2026-08-13 (second freeze) ---------------------
+# Satellite retrieval-count features (`*_valid_px`) are EXCLUDED from Task N. Rationale,
+# stated before the test block was scored under this configuration: retrieval success depends
+# on local surface brightness, snow cover, cloud climatology and solar geometry, all of which
+# are properties of a PARTICULAR CITY. Under leave-city-out the model sees missingness
+# patterns from the training cities that do not describe the held-out one, so the family
+# invites a city-specific artefact rather than a transferable signal.
+#
+# Selected by scripts/experiment_ablation_ensemble.py on the VALIDATION block only. Validation
+# fold-mean RMSE 37.79 (all features) -> 36.03 (dropped), improving 4 of 6 folds
+# (Bishkek -5.99, Almaty -2.97, Ashgabat -1.21, Khujand -0.91; Dushanbe +0.51,
+# Tashkent +0.05). Ensembling with a random forest did NOT help (37.99 vs 37.74) and a
+# training-fitted calibration offset helped only marginally (-0.37, inside fold noise across
+# the ~31 configurations tried), so neither was adopted.
+#
+# They remain available for Task F, where the held-out entity is a time block rather than a
+# city and the argument above does not apply.
+MISSINGNESS_COLS = [c for c in df.columns if "valid_px" in str(c)]
+
+
+def taskn_features(tier):
+    """Tier columns minus the city-specific satellite-missingness family."""
+    return [c for c in feature_columns(df, tier) if c not in MISSINGNESS_COLS]
+
+
 rows = []
 # ================= TASK N: leave-city-out, NO local lags =================
 print("\n=== TASK N (leave-city-out) -- spatial features only, no local lags ===", flush=True)
 for tier in TIERS:
-    base = feature_columns(df, tier)
+    base = taskn_features(tier)
     for fold in splits["leave_city_out"]:
         held = fold["held_out_city"]
         sp = build_spatial_features(df, coords, exclude_city=held)
@@ -103,8 +162,10 @@ for tier in TIERS:
             continue
         p, vrmse = tune(tr, va, feats)
         for seed in SEEDS:
-            m = mk(seed, p).fit(pd.concat([tr, va])[feats], pd.concat([tr, va]).pm25)
-            r = regression_metrics(te.pm25, pd.Series(m.predict(te[feats]), index=te.index))
+            _fit = pd.concat([tr, va])
+            m = mk(seed, p).fit(_fit[feats], np.log1p(_fit.pm25))
+            _p = np.clip(np.expm1(m.predict(te[feats])), 0.0, None)
+            r = regression_metrics(te.pm25, pd.Series(_p, index=te.index))
             rows.append(
                 {
                     "task": "N",
@@ -151,8 +212,10 @@ for tier in TIERS:
     te = lagged[(lagged.date >= te_lo) & (lagged.date <= te_hi) & lagged.pm25.notna()]
     p, vrmse = tune(tr, va, feats)
     for seed in SEEDS:
-        m = mk(seed, p).fit(pd.concat([tr, va])[feats], pd.concat([tr, va]).pm25)
-        r = regression_metrics(te.pm25, pd.Series(m.predict(te[feats]), index=te.index))
+        _fit = pd.concat([tr, va])
+        m = mk(seed, p).fit(_fit[feats], np.log1p(_fit.pm25))
+        _p = np.clip(np.expm1(m.predict(te[feats])), 0.0, None)
+        r = regression_metrics(te.pm25, pd.Series(_p, index=te.index))
         rows.append(
             {
                 "task": "F",
@@ -169,7 +232,11 @@ for tier in TIERS:
     print(f"  {tier} done  params={p}", flush=True)
 
 res = pd.DataFrame(rows)
-res.to_csv(ROOT / "paper/tables/phase5_tuned.csv", index=False)
+# Writes the TRACKED filename directly. It previously wrote `phase5_tuned.csv`, which was
+# renamed by hand to `t5_02_loco_tuned.csv` in 99b9a13 -- and that rename silently broke
+# phase6_analysis.py, whose input then no longer existed on any clone. Producers now emit the
+# name the paper cites, so there is no rename step left to lose.
+res.to_csv(ROOT / "paper/tables/t5_02_loco_tuned.csv", index=False)
 print("\n" + "=" * 76)
 print("TASK N -- leave-city-out (spatial features only)")
 print("=" * 76)

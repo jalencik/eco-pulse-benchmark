@@ -80,6 +80,15 @@ for tier in TIERS:
                 colsample_bytree=0.8,
                 random_state=seed,
                 verbose=-1,
+                # Bit-exact reproduction. Without these, LightGBM's histogram construction
+                # sums gradients in thread-completion order, so predictions can differ in the
+                # last floating-point places between runs. Mean-based metrics absorb that, but
+                # `median_ae` picks a single element and can flip when two are near-tied --
+                # which is exactly what a reproduction check caught here: 28 of 29 tables were
+                # byte-identical and one median differed in the fourth significant figure.
+                deterministic=True,
+                force_row_wise=True,
+                num_threads=1,
             )
             m.fit(tr[feats], tr.pm25)
             pred = pd.Series(m.predict(te[feats]), index=te.index)
@@ -120,7 +129,7 @@ for tier in TIERS:
             )
 
 res = pd.DataFrame(rows)
-res.to_csv(ROOT / "paper/tables/phase5_loco.csv", index=False)
+res.to_csv(ROOT / "paper/tables/t5_01_loco_untuned.csv", index=False)
 print("\n" + "=" * 78)
 print("LEAVE-ONE-CITY-OUT, test block 2024, daily mean PM2.5")
 print("=" * 78)

@@ -8,7 +8,7 @@
 # `make` is not installed on the Windows dev machine. The same targets run there with
 # `python tasks.py <target>` — identical commands, since both go through the same table.
 
-.PHONY: help setup lint typecheck test test-fast reproduce clean splits baselines paper
+.PHONY: help setup lint typecheck test test-fast reproduce clean splits baselines models paper
 
 PY := python
 
@@ -20,6 +20,7 @@ help:
 	@echo "test-fast  - pytest excluding network + slow"
 	@echo "splits     - build and freeze benchmark splits"
 	@echo "baselines  - run credential-free baseline ladder (5 seeds)"
+	@echo "models     - GBDT + tuned LOCO + CAMS variants + DM/SHAP analysis"
 	@echo "paper      - regenerate every table and re-render the manuscript"
 	@echo "reproduce  - clean-checkout end-to-end regeneration of every reported number"
 
@@ -44,12 +45,15 @@ splits:
 baselines:
 	$(PY) tasks.py baselines
 
+models:
+	$(PY) tasks.py models
+
 paper:
 	$(PY) tasks.py paper
 
 # The single command that must regenerate every number in the paper from a clean checkout.
 # Order matters: splits are frozen and hash-verified BEFORE any model sees data.
-reproduce: lint typecheck test splits baselines paper
+reproduce: lint typecheck test splits baselines models paper
 	@echo "reproduce: complete. Verify benchmark/splits/splits.sha256 is unchanged."
 
 clean:

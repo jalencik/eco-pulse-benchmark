@@ -64,6 +64,30 @@ TARGETS: dict[str, list[list[str]]] = {
     # package holds only __init__.py. `reproduce` therefore could not have run to
     # completion, and the error surfaced the first time it was executed end to end.
     "baselines": [[PY, "scripts/run_baselines.py"]],
+    # The model layer was ABSENT from `reproduce` until 2026-08-13. Its four producers wrote
+    # phase5_*/phase6_* filenames that were renamed by hand to t4_*/t5_*/t6_* in 99b9a13, so
+    # `reproduce` regenerated only the t3_* family and still exited 0 -- mtimes showed t4/t5/t6
+    # frozen at Jul 30 while the command ran on Aug 3 and Aug 13. Every producer now writes the
+    # tracked filename directly, and the chain runs them. Order is a real dependency:
+    # phase6_analysis.py reads t5_02, so train_phase5.py must precede it.
+    "models": [
+        [PY, "scripts/train_gbdt.py"],
+        [PY, "scripts/train_phase5.py"],
+        [PY, "scripts/build_cams_variants.py"],
+        [PY, "scripts/phase6_analysis.py"],
+        # Both read t6_01, so they must follow phase6_analysis.py.
+        # build_daily_baselines re-scores the Task N ladder at DAILY resolution on the models'
+        # own evaluation rows; the hourly table is not comparable to daily model scores.
+        # build_significance computes the primary (city-level) and sensitivity inference.
+        [PY, "scripts/build_daily_baselines.py"],
+        [PY, "scripts/build_significance.py"],
+        # Reporting analyses on the FROZEN predictions -- error decomposition by fold,
+        # concentration regime and season, the feature audit, and whether the ladder ranking
+        # survives removing one city. None of these change the configuration.
+        [PY, "scripts/build_error_analysis.py"],
+        [PY, "scripts/build_feature_audit.py"],
+        [PY, "scripts/build_robustness.py"],
+    ],
     "paper": [
         [PY, "scripts/build_r7_tables.py"],
         [PY, "scripts/build_merge_divergence.py"],
@@ -78,6 +102,7 @@ TARGETS: dict[str, list[list[str]]] = {
         # number does. (The PDF build is deliberately NOT here: it is a submission
         # deliverable, not part of reproducing the numbers.)
         [PY, "scripts/build_figures.py"],
+        [PY, "scripts/build_sdata_figures.py"],
         [PY, "paper/scripts/extract_numbers.py"],
         [PY, "paper/scripts/render.py"],
         [PY, "paper/scripts/stitch.py"],
@@ -85,12 +110,18 @@ TARGETS: dict[str, list[list[str]]] = {
         # editorial system rejects a non-conforming file rather than truncating it, and
         # a one-word edit breaks the limit silently.
         [PY, "scripts/check_highlights.py"],
+        # The Scientific Data Data Descriptor is built from the SAME numbers.json as the
+        # research-article manuscript, so the two documents cannot disagree about a figure.
+        # build_sdata.py exits non-zero if a required section is missing or a placeholder
+        # survives; check_sdata_limits.py guards the 170/700/110 submission limits.
+        [PY, "scripts/build_sdata.py"],
+        [PY, "scripts/check_sdata_limits.py"],
     ],
 }
 
 # Mirrors the Makefile's `reproduce` dependency chain. Splits are frozen and hash-verified
 # before any model touches data — the order is load-bearing, not cosmetic.
-REPRODUCE_CHAIN = ("lint", "typecheck", "test", "splits", "baselines", "paper")
+REPRODUCE_CHAIN = ("lint", "typecheck", "test", "splits", "baselines", "models", "paper")
 TARGETS["reproduce"] = [cmd for t in REPRODUCE_CHAIN for cmd in TARGETS[t]]
 
 
