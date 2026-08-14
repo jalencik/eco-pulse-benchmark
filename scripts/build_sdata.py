@@ -1,6 +1,6 @@
 """Render and stitch the Scientific Data Data Descriptor from paper/sdata/*.md.tmpl.
 
-Why this is a separate document from `paper/final_manuscript.md`
+Why this is a separate document from `paper/extended_technical_report.md`
 ---------------------------------------------------------------
 Scientific Data does not accept a research-article structure. It requires Background and
 Summary, Methods, Data Records, Technical Validation, Usage Notes and Code Availability, with

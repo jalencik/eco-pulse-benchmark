@@ -21,7 +21,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 SEC = ROOT / "paper" / "sections"
-MANUSCRIPT = ROOT / "paper" / "final_manuscript.md"
+MANUSCRIPT = ROOT / "paper" / "extended_technical_report.md"
 SOURCES = ROOT / "research" / "sources.json"
 STITCH = ROOT / "paper" / "scripts" / "stitch.py"
 

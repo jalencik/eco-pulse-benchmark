@@ -191,8 +191,16 @@ a location with no local monitor?
 
 **Leave-station-out** (2 folds). Available only where a city holds more than one
 instrument. Almaty, Ashgabat, Bishkek, Dushanbe, Tashkent hold one instrument each and are named ineligible rather than
-quietly dropped. Following AQ-Bench (Betancourt et al., 2021), this protocol supports no
-headline claim.
+quietly dropped.
+
+**Both remaining folds are the Khujand pair, and both of those instruments are low-cost
+sensors.** Merging the two co-published Dushanbe records into one instrument (see above)
+removed the only reference-grade city holding more than one device, so within-city station
+holdout is now evaluated *exclusively* on the Clarity pair. This protocol therefore says
+nothing about generalisation across the reference-monitor network, and it supports no headline
+claim in this paper — a position AQ-Bench (Betancourt et al., 2021) takes for leave-one-out
+protocols generally. The folds are retained because they are well defined and may be useful to
+a method specifically targeting low-cost sensor transfer.
 
 ### Reference implementation
 
@@ -641,9 +649,20 @@ rather than to the latest version. Results reported against this benchmark shoul
 together with the `splits.sha256` checksum, so that a score is attributable to one frozen
 split definition.
 
-**Underlying observations.** Ground PM2.5 observations are redistributed from the OpenAQ
-archive (openaq.org) and originate with the US Department of State AirNow and StateAir
-programmes and with Clarity. Satellite retrievals are Sentinel-5P (CO, NO₂, SO₂, absorbing
+**What the deposit does and does not contain.** The archive holds the benchmark's *derived*
+artefacts: split definitions, checksums, reference result tables, row-level predictions and
+the full pipeline code. **It does not contain the underlying hourly PM2.5 observations**, and
+the split definitions are not a substitute for them — they are station identifiers, fold
+membership and time bounds, not measurements.
+
+Ground PM2.5 observations are accessed through the OpenAQ archive (openaq.org) and originate
+with the US Department of State AirNow and StateAir programmes and with Clarity. OpenAQ
+records a per-location attribution block naming the originating body, and those attributions
+are reproduced in `data/MANIFEST.md`. **We have not transcribed and verified the
+redistribution terms for every contributing provider, and we therefore make no claim either
+way as to whether these observations may be redistributed.** Rather than assert a permission
+we have not established, the observations are left at source, where the providers' own terms
+govern access. Satellite retrievals are Sentinel-5P (CO, NO₂, SO₂, absorbing
 aerosol index) and MODIS MAIAC AOD; chemistry-transport forecasts are Copernicus CAMS; and
 reanalysis meteorology is ERA5. Each source, its access route, its licence status and its
 measured acquisition latency are recorded in `data/MANIFEST.md`.

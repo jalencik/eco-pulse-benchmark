@@ -1,4 +1,10 @@
-"""Render paper/final_manuscript.md to a submission PDF.
+"""Render paper/extended_technical_report.md to a PDF technical report.
+
+The output is deliberately NOT named after the Data Descriptor. It is the longer
+research-article treatment of the same benchmark, carrying the same verified numbers from the
+same numbers.json, and it exists for the preprint and fallback venues. The Data Descriptor
+submitted to Scientific Data is paper/sdata_descriptor.md. Two documents with similar names
+inside one public deposit read as a duplicate submission, so the filename states the role.
 
 Run:  python scripts/build_pdf.py [--in PATH] [--out PATH]
 
@@ -29,8 +35,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_IN = ROOT / "paper" / "final_manuscript.md"
-DEFAULT_OUT = ROOT / "paper" / "final_manuscript.pdf"
+DEFAULT_IN = ROOT / "paper" / "extended_technical_report.md"
+DEFAULT_OUT = ROOT / "paper" / "extended_technical_report.pdf"
 
 # Candidate DejaVu locations: bundled with matplotlib (a project dependency), then the
 # usual system paths. Checked in order; the first hit wins.

@@ -119,7 +119,7 @@ def test_no_doi_placeholder_survives_anywhere(doc):
 def test_descriptor_and_manuscript_agree_on_shared_figures(doc):
     """Both documents render from one numbers.json, so shared keys must match in the text."""
     nums = json.loads(NUMBERS.read_text(encoding="utf-8"))
-    manuscript = (ROOT / "paper" / "final_manuscript.md").read_text(encoding="utf-8")
+    manuscript = (ROOT / "paper" / "extended_technical_report.md").read_text(encoding="utf-8")
     for key in (
         "n_stations",
         "n_cities",
