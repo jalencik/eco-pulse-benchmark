@@ -10,9 +10,10 @@ and nothing writes it.
 
 This script reconstructs it from the same inputs and the same library functions the rest of
 the pipeline uses (`ecopulse_ca.models.cams_baseline`). It is a RECONSTRUCTION, not the
-original code, which is lost. Whether the reconstruction is faithful is decided by comparing
-its output against the banked file -- see `--check`, and the provenance note in
-review/DEFECT_REGISTER.md. Nothing here is tuned to make the numbers match.
+original code, which is lost. Whether the reconstruction is faithful is decided independently:
+its per-station `debiased_pooled` RMSEs, aggregated to city, match `t6_02`'s separately
+produced `rmse_cams` column to 3.55e-15 across all six folds. `--check` compares against the
+banked file. Nothing here is tuned to make the numbers match.
 
 Evaluation set: the frozen 2024 test block, per station, joining daily observed PM2.5 to the
 CAMS forecast. This is deliberately NOT inner-joined against the model feature table, which

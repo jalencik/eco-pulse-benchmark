@@ -5,7 +5,7 @@ Run:  python scripts/check_sdata_limits.py
 Scientific Data enforces a 170-word abstract, a 700-word Background and Summary, and a
 110-character title. The editorial system queries a non-conforming manuscript rather than
 truncating it, and a query costs weeks -- which is the entire reason this venue was chosen
-over Environmental Modelling & Software. See JOURNAL_STRATEGY.md.
+over a journal with a first-review round measured in months.
 
 The abstract currently sits one word under its limit. A single added clause breaks it
 silently, exactly as a one-word edit breaks the Elsevier highlights guarded by

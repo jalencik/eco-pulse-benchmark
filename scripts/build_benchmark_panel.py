@@ -54,7 +54,7 @@ def main() -> int:
     # margin. 99.99% of the 33,462 overlapping hours are the identical reading (94.0% aligned,
     # and 99.9% of the rest identical at exactly the +5 h Dushanbe UTC offset).
     # These pairs merge under the SAME D-008 rule as Q5b: precedence and gap-fill, never
-    # averaging. See review/NEW_F5_dushanbe_duplicate.md.
+    # averaging. Evidence and thresholds: data/DECISIONS.md D-011 and D-012.
     seen = {frozenset(p) for p in pairs}
     for f in q5c_value_identity_wide(panel[[c for c in panel.columns]]):
         ids = f.station_id.split(",")

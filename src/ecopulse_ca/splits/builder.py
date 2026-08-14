@@ -46,9 +46,9 @@ SPLIT_DIR = ROOT / "benchmark" / "splits"
 # see it. 99.99% of their 33,462 overlapping hours are the identical reading. They are now
 # merged under the D-008 rule (precedence + gap-fill, never averaging), exactly as the
 # Bishkek and Ashgabat republications already were. Stations 8 -> 7; cities unchanged at 6;
-# leave-station-out loses its two Dushanbe folds. See data/DECISIONS.md D-012 and
-# review/NEW_F5_dushanbe_duplicate.md. Every published number was regenerated against this
-# version -- v1.0.0 results are not comparable.
+# leave-station-out loses its two Dushanbe folds. See data/DECISIONS.md D-011 and D-012.
+# Every published number was regenerated against this version -- v1.0.0 results are not
+# comparable.
 BENCHMARK_VERSION = "1.1.0"
 MAX_LAG_HOURS = 168  # longest feature window on the ladder (SameHourMean, 7 days)
 MAX_HORIZON_HOURS = 72  # longest forecast horizon (t+72h)

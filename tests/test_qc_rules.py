@@ -167,7 +167,7 @@ class TestQ5DuplicateStations:
         "Dushanbe") and 9769 (StateAir, "US Diplomatic Post: Dushanbe") are one embassy
         monitor republished under a stale coordinate, and 73.7% of their overlapping daily
         values are bit-identical. Distance cannot see that; `q5c_value_identity` catches it.
-        See TestQ5cValueIdentity below and review/NEW_F5_dushanbe_duplicate.md.
+        See TestQ5cValueIdentity below and data/DECISIONS.md D-011 / D-012.
         """
         census = pd.DataFrame(
             [
