@@ -23,6 +23,9 @@ DOC = ROOT / "paper" / "sdata_descriptor.md"
 NUMBERS = ROOT / "paper" / "numbers.json"
 PLACEHOLDER = re.compile(r"\{\{([a-zA-Z0-9_]+)\}\}")
 
+# Zenodo VERSION DOI for v1.1.0 (not the concept DOI). Reserved 2026-08-14.
+RESERVED_DOI = "10.5281/zenodo.21930669"
+
 # Required by the Scientific Data submission guidelines, in order.
 REQUIRED = [
     "Abstract",
@@ -85,21 +88,32 @@ def test_background_and_summary_within_700_words(doc):
 
 
 def test_data_availability_does_not_assert_an_unminted_doi(doc):
-    """A DOI that does not resolve is worse than an honest placeholder.
+    """Data Availability must cite the reserved DOI, and only that one.
 
-    Scientific Data requires deposition in a repository with a persistent identifier. Until
-    the deposit exists the manuscript must say so rather than print a plausible-looking
-    identifier that a reviewer will try to resolve.
+    A DOI that does not resolve is worse than an honest placeholder, so while the deposit was
+    pending this test required an explicit PENDING marker. The DOI has since been reserved on
+    Zenodo, so the guard now checks the opposite direction: the section must carry exactly the
+    reserved identifier, carry no leftover placeholder, and not introduce any other DOI that
+    has not been verified.
+
+    RESERVED_DOI is the *version* DOI for v1.1.0, not the concept DOI: a reported score must
+    be attributable to one frozen split definition.
     """
     section = doc.split("## Data Availability", 1)[1].split("\n## ", 1)[0]
-    minted = re.findall(r"10\.\d{4,9}/[^\s)\]]+", section)
-    if minted:
-        assert "PENDING" in section.upper(), (
-            f"an unverified DOI is asserted in Data Availability: {minted}"
-        )
-    assert "PENDING DEPOSIT" in section.upper() or minted, (
-        "Data Availability must either cite a real DOI or state that deposition is pending"
+    assert RESERVED_DOI in section, (
+        f"Data Availability does not cite the reserved DOI {RESERVED_DOI}"
     )
+    assert "PENDING" not in section.upper(), (
+        "a placeholder survives in Data Availability alongside a real DOI"
+    )
+    others = {d.rstrip(".,)") for d in re.findall(r"10\.\d{4,9}/[^\s)\]*]+", section)}
+    others.discard(RESERVED_DOI)
+    assert not others, f"unverified DOI(s) asserted in Data Availability: {sorted(others)}"
+
+
+def test_no_doi_placeholder_survives_anywhere(doc):
+    """The placeholder must be gone from the whole document, not just Data Availability."""
+    assert "DOI PENDING DEPOSIT" not in doc
 
 
 def test_descriptor_and_manuscript_agree_on_shared_figures(doc):

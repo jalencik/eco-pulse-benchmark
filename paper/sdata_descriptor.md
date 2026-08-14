@@ -17,7 +17,8 @@ ORCID 0009-0003-0210-3687
 We present a quality-controlled dataset of daily PM2.5 observations from 7
 instruments in 6 Central Asian cities — Almaty, Ashgabat, Bishkek, Dushanbe,
 Khujand and Tashkent — covering 2018-11-27 to 2024-12-31. Records were screened by
-seven pre-registered quality rules, deduplicated and timezone-verified;
+seven pre-registered quality rules, plus one added during validation after it revealed a
+duplicated instrument, then deduplicated and timezone-verified;
 5 instruments are US embassy reference monitors and
 2 are low-cost sensors, labelled as such. Each station-day is paired
 with satellite retrievals, chemistry-transport forecasts, reanalysis meteorology and static
@@ -328,9 +329,12 @@ evidence about the *task*, not as a claim of method performance.
 
 ### Observation quality control
 
-Seven pre-registered rules (Q1–Q7) were declared in `data/DECISIONS.md` before the data were
-inspected, each recording its effect on *n* and the direction of bias if the rule is wrong.
-Two produced findings that changed the benchmark.
+Seven rules (Q1–Q7) were declared in `data/DECISIONS.md` **before the data were inspected**,
+each recording its effect on *n* and the direction of bias if the rule is wrong. Two produced
+findings that changed the benchmark. **One further rule, Q5c, was not pre-registered**: it was
+added during validation, after the pre-registered rules had passed a station pair that
+inspection showed to be a single instrument. That sequence is described below rather than
+presented as foresight.
 
 **Duplicate identity — and the case a distance rule cannot see.** The US embassy monitors are
 published twice, by StateAir and by AirNow, under separate identifiers. Where the two records
@@ -628,16 +632,14 @@ without retraining it.
 ## Data Availability
 
 The frozen benchmark — split definitions, checksums and reference result tables — is
-deposited at **[DOI PENDING DEPOSIT]** under a CC BY 4.0 licence, as version
+deposited in Zenodo at **https://doi.org/10.5281/zenodo.21930669** under a CC BY 4.0 licence, as version
 1.1.0 of `eco-pulse-ca`. The archive contents and record structure are
 described in Data Records.
 
-> **Submission note, to be resolved before submission.** The archive has not yet been
-> deposited and no DOI has been minted. Scientific Data requires deposition in a
-> community-recognised or generalist repository with a persistent identifier; a source-control
-> URL does not satisfy this. **No DOI is asserted here, and this placeholder must be replaced
-> with a real identifier before the manuscript is submitted.** Zenodo is the intended
-> repository. Deposition is required from the second round of peer review onward.
+The identifier above is the **version** DOI, which resolves to this release specifically
+rather than to the latest version. Results reported against this benchmark should cite it,
+together with the `splits.sha256` checksum, so that a score is attributable to one frozen
+split definition.
 
 **Underlying observations.** Ground PM2.5 observations are redistributed from the OpenAQ
 archive (openaq.org) and originate with the US Department of State AirNow and StateAir
@@ -681,7 +683,7 @@ ground-truth panel described above.
 **Custom code of note.** The quality-control rules (`src/ecopulse_ca/qc/`), split builder
 (`src/ecopulse_ca/splits/`), Diebold–Mariano implementation with Harvey–Leybourne–Newbold
 correction (`src/ecopulse_ca/eval/`), and the primary/sensitivity inference
-(`scripts/build_significance.py`) are original to this work. 581 automated tests
+(`scripts/build_significance.py`) are original to this work. 582 automated tests
 enforce split immutability, absence of leakage, table provenance and manuscript-number
 consistency.
 

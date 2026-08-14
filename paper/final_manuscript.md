@@ -1366,15 +1366,16 @@ post-2025 ground-truth source to replace the reference network that closed on 20
 # 9. Declarations
 
 > **Before submission:** every co-author must read and approve the final manuscript, and
-> ORCID iDs should be registered for all three (Elsevier requires one for the corresponding
-> author). Both are listed in `SUBMISSION.md`.
+> ORCID iDs should be registered for all three co-authors.
 
 ## 9.1 Data availability
 
 The benchmark definition — station set, temporal blocks, leave-city-out and
-leave-station-out folds — is openly available at
-`https://github.com/jalencik/eco-pulse-benchmark` under `benchmark/splits/`, together
-with the SHA-256 checksum that fixes it. All analysis code, the baseline ladder, and the
+leave-station-out folds — is archived in Zenodo at **https://doi.org/10.5281/zenodo.21930669**
+(version 1.1.0, CC BY 4.0), together with the SHA-256 checksum that fixes
+it. The working repository is `https://github.com/jalencik/eco-pulse-benchmark`; cite the
+Zenodo version DOI rather than the branch head, so a reported score is attributable to one
+frozen split definition. All analysis code, the baseline ladder, and the
 scripts that regenerate every table and figure in this manuscript are in the same
 repository. A single command (`make reproduce`) regenerates every reported number from the
 frozen splits.

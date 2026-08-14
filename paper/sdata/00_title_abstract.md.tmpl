@@ -17,7 +17,8 @@ ORCID 0009-0003-0210-3687
 We present a quality-controlled dataset of daily PM2.5 observations from {{n_stations}}
 instruments in {{n_cities}} Central Asian cities — Almaty, Ashgabat, Bishkek, Dushanbe,
 Khujand and Tashkent — covering {{train_start}} to {{test_end}}. Records were screened by
-seven pre-registered quality rules, deduplicated and timezone-verified;
+seven pre-registered quality rules, plus one added during validation after it revealed a
+duplicated instrument, then deduplicated and timezone-verified;
 {{n_reference_instruments}} instruments are US embassy reference monitors and
 {{n_lowcost_instruments}} are low-cost sensors, labelled as such. Each station-day is paired
 with satellite retrievals, chemistry-transport forecasts, reanalysis meteorology and static

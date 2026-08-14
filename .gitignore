@@ -53,3 +53,17 @@ review/
 # that references the quarantined audit trail above.
 JOURNAL_STRATEGY.md
 next.md
+
+# Internal project-management documents. Superseded or venue-specific, and misleading to a
+# reader of the public repository: SUBMISSION.md still described an arXiv -> Environmental
+# Modelling & Software route, and STATUS.md / PLAN.md / PAPER_CLAIM.md still described the
+# project as being at "Phase 0". ECO_PULSY_INTEGRATION.md documents a separate application.
+# All remain on disk; the current state is in the manuscripts and data/DECISIONS.md.
+SUBMISSION.md
+STATUS.md
+PLAN.md
+PAPER_CLAIM.md
+ECO_PULSY_INTEGRATION.md
+
+# Generated release artefacts. The Zenodo ZIP is built from a commit, never committed to it.
+dist/
