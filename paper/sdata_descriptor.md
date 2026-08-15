@@ -111,6 +111,15 @@ Hourly PM2.5 was retrieved from the OpenAQ v3 archive for all stations within th
 bounding box. 317 candidate stations were assessed. Inclusion required, as pre-registered
 before the data were inspected:
 
+**These are preliminary data.** The reference-grade observations originate with the US EPA
+AirNow programme, which states that its observational data "are not fully verified or
+validated" and "should be considered preliminary", and that they "are not subjected to the
+full validation used to officially submit and certify data in EPA's regulatory database".
+Fully validated regulatory data are held in EPA's Air Quality System and were not used here.
+The quality-control suite below is therefore applied to preliminary data and does not
+substitute for the originating agencies' validation. Any result computed on this benchmark
+inherits that status.
+
 - **Q7 span and completeness** — at least 2 years of record and
   60% completeness within it. This is the rule that excludes 306
   stations, almost all low-cost units, and that excludes Astana at
@@ -177,8 +186,9 @@ benchmark version, recording the reason in `data/DECISIONS.md`, and regenerating
 published number — deliberately more work than editing a JSON file.
 
 **Temporal blocks.** Train, a purge, validation, a second purge, test, and a reserved
-post-test block. The test block is calendar 2024, the last full year with reference
-coverage before the US diplomatic-post programme ended on 2025-03-04. Each purge is
+post-test block. The test block is calendar 2024, the last full year of reference
+coverage in the frozen panel: every StateAir feed stops on 2025-03-04, when that publication
+channel closed. Each purge is
 240 hours, derived rather than chosen:
 `purge_hours = max_lag_hours (168) + max_horizon_hours
 (72)`, so that no training row's feature window can reach into the block
@@ -247,14 +257,22 @@ The benchmark is deposited as a single versioned archive, **`eco-pulse-ca` v1.1.
 Every file below is plain text (JSON or CSV) and carries a SHA-256 digest in
 `splits.sha256`, which the test suite verifies on every run.
 
-![Figure 1](figures/figS1_coverage.png)
+![Figure 1](figures/fig1_study_area.png)
 
-**Figure 1.** Monthly hourly-completeness for each of the 7 benchmark stations,
+**Figure 1.** The 7 benchmark instruments across 6 Central Asian
+cities. Marker style distinguishes the 5 US diplomatic-post
+reference monitors from the 2 Clarity low-cost sensors at Khujand.
+Leave-city-out withholds every instrument in one city at a time, so the spacing between
+cities — not between instruments — sets the extrapolation distance each fold demands.
+
+![Figure 2](figures/figS1_coverage.png)
+
+**Figure 2.** Monthly hourly-completeness for each of the 7 benchmark stations,
 from first to last observation. Dashed boxes mark the validation (2023-01-11 to
 2023-12-21) and test (2024-01-01 to 2024-12-31) blocks. Two features of the record are
 visible directly: both Khujand sensors begin only in late 2023, after the training block
-closes, which is what makes Khujand a zero-label fold; and most stations stop in early 2025
-when the US diplomatic-post programme ended.
+closes, which is what makes Khujand a zero-label fold; and most stations stop on 2025-03-04,
+when the StateAir publication channel closed.
 
 ### The frozen benchmark definition
 
@@ -378,7 +396,7 @@ Asian urban PM2.5 is bimodal with peaks roughly half a day apart. The check now 
 identifiability and flags rather than rejects when the hypothesis cannot be distinguished.
 
 A limitation of this check must be stated. It compares stations against city peers, and only
-1 cities hold more than one instrument. **A constant, lifelong
+Khujand holds more than one instrument. **A constant, lifelong
 offset at a single-instrument city is undetectable by any check in this suite.**
 
 ### Instrument grade
@@ -456,9 +474,9 @@ RMSE is structurally larger than a daily one and the two are never compared.
 
 ### Where the data are hard
 
-![Figure 2](figures/figS2_error_structure.png)
+![Figure 3](figures/figS2_error_structure.png)
 
-**Figure 2.** Leave-city-out error against the held-out city's mean PM2.5. Left: fold RMSE
+**Figure 3.** Leave-city-out error against the held-out city's mean PM2.5. Left: fold RMSE
 rises with city concentration (Spearman rho = +0.94). Right: mean bias falls monotonically
 from +14.9 µg/m³ in Bishkek, the cleanest city, to −25.1 µg/m³ in Dushanbe, the most polluted.
 
@@ -615,17 +633,24 @@ earlier claim about them is retracted in Technical Validation.
   Khujand fold. Results for that fold are not comparable in kind to the other five.
 - **Single-instrument cities cannot be timing-audited.** A constant lifelong offset at Almaty,
   Tashkent, Bishkek or Ashgabat would be invisible to every check in the suite.
-- **The record ends with the source.** The US diplomatic-post programme terminated
-  2025-03-04. No result here speaks to current conditions, and the benchmark cannot be
-  extended forward from this source.
+- **The record ends before the source does.** Every StateAir feed stops on 2025-03-04, when
+  that publication channel closed, and the frozen panel ends there. The monitors themselves
+  did not all stop: as of 2026-08-14 the same US diplomatic-post instruments are still
+  republished through AirNow at Ashgabat (to 2025-09-24), Almaty (to 2025-11-14) and Dushanbe
+  (still reporting), while Bishkek, Tashkent and Astana ceased on 2025-03-04. No result here
+  speaks to current conditions, but the record *can* be extended forward for the three cities
+  whose AirNow feed continued — doing so would change the benchmark and requires a version
+  bump, not a silent refresh.
 - **Kazakhstan contributes one city.** Astana failed the completeness rule at
   42.8% against a required 60%.
 - **Task F is single-horizon.** The learned Task F model predicts next-day daily means and
   does not produce the 48 h or 72 h horizons its Section 3 baselines cover; the two are not
   comparable and are not tabled together.
 - **The ground-truth panel is not redistributed.** Split definitions and reference results are
-  self-contained and verifiable offline, but regenerating results from raw observations
-  requires rebuilding the panel from the OpenAQ archive with an API key.
+  self-contained and verifiable offline. Regenerating results from raw observations requires
+  rebuilding the panel from the OpenAQ archive, whose per-location records are downloadable
+  anonymously from its open-data bucket on Amazon S3; the v3 API route additionally needs a
+  free key.
 
 ### Intended reuse
 
@@ -656,23 +681,49 @@ the split definitions are not a substitute for them — they are station identif
 membership and time bounds, not measurements.
 
 Ground PM2.5 observations are accessed through the OpenAQ archive (openaq.org) and originate
-with the US Department of State AirNow and StateAir programmes and with Clarity. OpenAQ
-records a per-location attribution block naming the originating body, and those attributions
-are reproduced in `data/MANIFEST.md`. **We have not transcribed and verified the
-redistribution terms for every contributing provider, and we therefore make no claim either
-way as to whether these observations may be redistributed.** Rather than assert a permission
-we have not established, the observations are left at source, where the providers' own terms
-govern access. Satellite retrievals are Sentinel-5P (CO, NO₂, SO₂, absorbing
+with the US Department of State AirNow and StateAir programmes and with Clarity.
+
+**Licence status, verified 2026-08-14.** Per-location licence records were retrieved from
+OpenAQ's `/v3/locations` endpoint and are tabulated in full in `data/MANIFEST.md`. Six of the
+ten source feeds carry an explicit licence permitting redistribution: the four AirNow feeds
+are recorded as *US Public Domain* and the two Clarity feeds as *CC0 1.0*, both with
+redistribution and modification allowed and attribution not required. These six account for
+63.6% of contributing observation-hours. **The four StateAir feeds (Ashgabat, Bishkek,
+Dushanbe, Tashkent) carry no licence record at all** — the field is null, and the absence is
+systematic: across all 33 StateAir providers, none of their 36 locations carries one. The
+absence tracks the provider *label* rather than the data. OpenAQ's issue tracker documents a
+single location ingested under both the AirNow and StateAir labels, alternating between them,
+and that location today carries the AirNow label and a US Public Domain licence; the licence
+follows the label. We therefore treat the null as unassigned metadata rather than a withheld
+permission, while recording that no licence record has been issued for these four feeds.
+
+The Department of State's archived *Data Use Statement* for its air-quality programme requires
+that products relying on the data give attribution to the Department and indicate that the
+data "are not fully verified or validated", and asks that the data "not be altered in any way
+and be disseminated as received". Its stated scope is the Mission China programme and the
+`stateair.net` portal, neither of which served these four Central Asian feeds, and the portal
+that did serve them published no equivalent statement. We nonetheless attribute the
+observations to the U.S. Department of State and carry the verification caveat, and we treat
+the final clause as a further reason not to redistribute a merged, quality-controlled,
+daily-aggregated panel. `data/MANIFEST.md` sets out the full evidence and its limits. Satellite retrievals are Sentinel-5P (CO, NO₂, SO₂, absorbing
 aerosol index) and MODIS MAIAC AOD; chemistry-transport forecasts are Copernicus CAMS; and
 reanalysis meteorology is ERA5. Each source, its access route, its licence status and its
 measured acquisition latency are recorded in `data/MANIFEST.md`.
 
-**Not redistributed.** The derived ground-truth panel is not included in the deposit, because
-per-station licence terms across contributing OpenAQ providers are heterogeneous and have not
-been transcribed for every provider; redistributing it would assert a licence that has not
-been verified. `data/MANIFEST.md` records the provenance, and two documented commands rebuild
-the panel from the archive given an OpenAQ API key. The split definitions and reference
-results are fully self-contained and verifiable without it.
+**Why the panel is not deposited here.** Licence terms are heterogeneous across the ten source
+feeds, and for the four StateAir feeds no licence has been recorded by the platform that
+serves them. Depositing the merged panel under a single licence would assert uniform
+permission that the evidence does not support for every feed, so the observations are left at
+source. This is a statement about provenance, not about availability.
+
+**Every observation used here is publicly retrievable, without credentials.** All ten source
+feeds — the four StateAir feeds included — are published in OpenAQ's open-data archive on
+Amazon S3 (`s3://openaq-data-archive/records/csv.gz/locationid={id}/`), registered with the
+AWS Registry of Open Data and downloadable anonymously; retrieval of each benchmark feed was
+verified there on 2026-08-14. The same records are available through the OpenAQ v3 API with a
+free key. `data/MANIFEST.md` lists every source location identifier, and two documented
+commands rebuild the panel. The split definitions and reference results are fully
+self-contained and verifiable without any of this.
 
 ## Code Availability
 
@@ -707,6 +758,20 @@ enforce split immutability, absence of leakage, table provenance and manuscript-
 consistency.
 
 
+## References
+
+1. Clara Betancourt et al. (2021). *AQ-Bench: a benchmark dataset for machine learning on global air quality metrics*. Earth system science data. https://doi.org/10.5194/essd-13-3013-2021
+2. A. Colin Cameron and Douglas L. Miller (2015). *A Practitioner's Guide to Cluster-Robust Inference*. Journal of Human Resources. https://doi.org/10.3368/jhr.50.2.317
+3. Sachin Chauhan et al. (2023). *AirDelhi: Fine-Grained Spatio-Temporal Particulate Matter Dataset From Delhi For ML based Modeling*. Neural Information Processing Systems. https://doi.org/10.52202/075280-3298
+4. Stefanos Papagiannis et al. (2024). *Air quality challenges in Central Asian urban areas: a PM2.5 source apportionment analysis in Dushanbe, Tajikistan*. Environmental Science and Pollution Research. https://doi.org/10.1007/s11356-024-33833-6
+5. Kazbek Tursun et al. (2025). *Dominant sources of PM2.5 in Kazakhstan's urban cities: A PMF and HYSPLIT-based study for air quality management in Central Asia*. Urban Climate. https://doi.org/10.1016/j.uclim.2025.102706
+6. Tongshu Zheng et al. (2018). *Field evaluation of low-cost particulate matter sensors in high- and low-concentration environments*. Atmospheric measurement techniques. https://doi.org/10.5194/amt-11-4823-2018
+
+### Data Citations
+
+D1. OpenAQ Inc. (2025). *OpenAQ air quality data platform*, API v3. Accessed 2026-07-29. https://openaq.org
+
+
 ## Author Contributions
 
 **Jaloliddin Musayev:** Conceptualisation; Methodology; Software; Validation; Formal
@@ -722,6 +787,14 @@ All authors read and approved the submitted manuscript.
 ## Competing Interests
 
 The authors declare no competing interests.
+
+## Acknowledgements
+
+We thank the OpenAQ project for maintaining open access to the underlying observations, and
+the US Department of State AirNow and StateAir programmes, whose diplomatic-post monitors
+constitute the reference-grade portion of this record. We note that the StateAir publication
+channel closed on 2025-03-04, that coverage in the region has contracted sharply since, and
+that no comparable open reference network has replaced it.
 
 ## Funding
 
@@ -742,30 +815,8 @@ the manuscript at build time; an automated test re-extracts from the source CSVs
 any figure has drifted. Prose-level editing performed with AI assistance is recorded openly in
 the repository's commit history.
 
-## Acknowledgements
-
-We thank the OpenAQ project for maintaining open access to the underlying observations, and
-the US Department of State AirNow and StateAir programmes, whose diplomatic-post monitors
-constitute the reference-grade portion of this record. We note that the programme was
-terminated in March 2025 and that no comparable open reference network has replaced it in
-this region.
-
 ## Data and Code Citation
 
 Users of this benchmark should cite the archived version and its checksum, not a
 version-control branch head, so that a reported score is attributable to a specific frozen
 split. The benchmark version described here is **1.1.0**.
-
-
-## References
-
-1. Clara Betancourt et al. (2021). *AQ-Bench: a benchmark dataset for machine learning on global air quality metrics*. Earth system science data. https://doi.org/10.5194/essd-13-3013-2021
-2. A. Colin Cameron and Douglas L. Miller (2015). *A Practitioner's Guide to Cluster-Robust Inference*. Journal of Human Resources. https://doi.org/10.3368/jhr.50.2.317
-3. Sachin Chauhan et al. (2023). *AirDelhi: Fine-Grained Spatio-Temporal Particulate Matter Dataset From Delhi For ML based Modeling*. Neural Information Processing Systems. https://doi.org/10.52202/075280-3298
-4. Stefanos Papagiannis et al. (2024). *Air quality challenges in Central Asian urban areas: a PM2.5 source apportionment analysis in Dushanbe, Tajikistan*. Environmental Science and Pollution Research. https://doi.org/10.1007/s11356-024-33833-6
-5. Kazbek Tursun et al. (2025). *Dominant sources of PM2.5 in Kazakhstan's urban cities: A PMF and HYSPLIT-based study for air quality management in Central Asia*. Urban Climate. https://doi.org/10.1016/j.uclim.2025.102706
-6. Tongshu Zheng et al. (2018). *Field evaluation of low-cost particulate matter sensors in high- and low-concentration environments*. Atmospheric measurement techniques. https://doi.org/10.5194/amt-11-4823-2018
-
-### Data Citations
-
-D1. OpenAQ Inc. (2025). *OpenAQ air quality data platform*, API v3. Accessed 2026-07-29. https://openaq.org
