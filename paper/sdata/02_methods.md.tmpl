@@ -15,6 +15,15 @@ Hourly PM2.5 was retrieved from the OpenAQ v3 archive for all stations within th
 bounding box. 317 candidate stations were assessed. Inclusion required, as pre-registered
 before the data were inspected:
 
+**These are preliminary data.** The reference-grade observations originate with the US EPA
+AirNow programme, which states that its observational data "are not fully verified or
+validated" and "should be considered preliminary", and that they "are not subjected to the
+full validation used to officially submit and certify data in EPA's regulatory database".
+Fully validated regulatory data are held in EPA's Air Quality System and were not used here.
+The quality-control suite below is therefore applied to preliminary data and does not
+substitute for the originating agencies' validation. Any result computed on this benchmark
+inherits that status.
+
 - **Q7 span and completeness** — at least {{q7_min_years}} years of record and
   {{q7_min_completeness_pct}}% completeness within it. This is the rule that excludes 306
   stations, almost all low-cost units, and that excludes Astana at
@@ -81,8 +90,9 @@ benchmark version, recording the reason in `data/DECISIONS.md`, and regenerating
 published number — deliberately more work than editing a JSON file.
 
 **Temporal blocks.** Train, a purge, validation, a second purge, test, and a reserved
-post-test block. The test block is calendar {{test_year}}, the last full year with reference
-coverage before the US diplomatic-post programme ended on 2025-03-04. Each purge is
+post-test block. The test block is calendar {{test_year}}, the last full year of reference
+coverage in the frozen panel: every StateAir feed stops on 2025-03-04, when that publication
+channel closed. Each purge is
 {{purge_hours}} hours, derived rather than chosen:
 `purge_hours = max_lag_hours ({{max_lag_hours}}) + max_horizon_hours
 ({{max_horizon_hours}})`, so that no training row's feature window can reach into the block

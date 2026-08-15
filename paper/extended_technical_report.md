@@ -210,14 +210,20 @@ US diplomatic-post reference monitors and 2 are Clarity low-cost
 sensors (Khujand)** — see Section 7.2. The embassy monitors are the only consistent
 multi-country reference in the region and the sole route to any measurement in Turkmenistan.
 
-That network is now closed. The US State Department ended its global embassy air quality
-programme in March 2025. Five of the twelve contributing source feeds stop on 2025-03-04, and
-after co-published feeds are merged **2 of 7
-benchmark stations (8881, Bishkek) end there**; the rest survive through a
-longer-lived feed.
+That network contracted sharply in March 2025, when the StateAir publication channel closed.
+Five of the twelve contributing source feeds stop on 2025-03-04, and after co-published feeds
+are merged **2 of 7 benchmark stations
+(8881, Bishkek) end there**; the rest survive through a longer-lived feed.
 Reporting states that seventeen years of archive were subsequently removed from the
-originating platform. The record this benchmark curates is therefore finite, closed, and
-partially deleted at source — which raises rather than lowers the value of freezing it.
+originating platform.
+
+The closure was not uniform, and an earlier claim here that the programme had simply ended is
+withdrawn. A live query on 2026-08-14 found three of the same diplomatic-post monitors still
+republished through the AirNow provider after the StateAir channel closed — Ashgabat to
+2025-09-24, Almaty to 2025-11-14, and Dushanbe still reporting — with measurements retrieved
+and verified rather than inferred from metadata. The record this benchmark curates is
+nevertheless fixed: the panel is frozen, the test year is 2024, and extending it
+would change the benchmark and require a version bump rather than a refresh.
 
 **Quality control was pre-registered before the data were inspected**, so no rule could be
 tuned to improve a count. Seven rules cover physical range, flatlining, zero-runs, unit
@@ -1250,10 +1256,13 @@ one now.
 
 ## 7.6 Scope of the record
 
-- **The reference network is closed.** Six of eight stations end on 2025-03-04 with the
-  termination of the US diplomatic-post monitoring programme. **No result in this paper
-  speaks to current conditions**, and the benchmark cannot be extended forward from this
-  source.
+- **The record ends before the source does.** Six of eight stations end on 2025-03-04, when
+  the StateAir publication channel closed. **No result in this paper speaks to current
+  conditions.** The monitors did not all stop, though: as of 2026-08-14 the same
+  diplomatic-post instruments are still republished through AirNow at Ashgabat (to
+  2025-09-24), Almaty (to 2025-11-14) and Dushanbe (still reporting). The record *can*
+  therefore be extended for those cities, but doing so would change the benchmark and
+  requires a version bump, not a silent refresh.
 - **Kazakhstan contributes one city.** Astana failed the completeness rule at
   42.8% against a required 60%. The
   largest country in the region is represented by Almaty alone.

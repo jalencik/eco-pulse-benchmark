@@ -8,14 +8,20 @@ US diplomatic-post reference monitors and 2 are Clarity low-cost
 sensors (Khujand)** — see Section 7.2. The embassy monitors are the only consistent
 multi-country reference in the region and the sole route to any measurement in Turkmenistan.
 
-That network is now closed. The US State Department ended its global embassy air quality
-programme in March 2025. Five of the twelve contributing source feeds stop on 2025-03-04, and
-after co-published feeds are merged **2 of 7
-benchmark stations (8881, Bishkek) end there**; the rest survive through a
-longer-lived feed.
+That network contracted sharply in March 2025, when the StateAir publication channel closed.
+Five of the twelve contributing source feeds stop on 2025-03-04, and after co-published feeds
+are merged **2 of 7 benchmark stations
+(8881, Bishkek) end there**; the rest survive through a longer-lived feed.
 Reporting states that seventeen years of archive were subsequently removed from the
-originating platform. The record this benchmark curates is therefore finite, closed, and
-partially deleted at source — which raises rather than lowers the value of freezing it.
+originating platform.
+
+The closure was not uniform, and an earlier claim here that the programme had simply ended is
+withdrawn. A live query on 2026-08-14 found three of the same diplomatic-post monitors still
+republished through the AirNow provider after the StateAir channel closed — Ashgabat to
+2025-09-24, Almaty to 2025-11-14, and Dushanbe still reporting — with measurements retrieved
+and verified rather than inferred from metadata. The record this benchmark curates is
+nevertheless fixed: the panel is frozen, the test year is 2024, and extending it
+would change the benchmark and require a version bump rather than a refresh.
 
 **Quality control was pre-registered before the data were inspected**, so no rule could be
 tuned to improve a count. Seven rules cover physical range, flatlining, zero-runs, unit

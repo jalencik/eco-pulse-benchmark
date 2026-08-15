@@ -140,10 +140,13 @@ one now.
 
 ## 7.6 Scope of the record
 
-- **The reference network is closed.** Six of eight stations end on 2025-03-04 with the
-  termination of the US diplomatic-post monitoring programme. **No result in this paper
-  speaks to current conditions**, and the benchmark cannot be extended forward from this
-  source.
+- **The record ends before the source does.** Six of eight stations end on 2025-03-04, when
+  the StateAir publication channel closed. **No result in this paper speaks to current
+  conditions.** The monitors did not all stop, though: as of 2026-08-14 the same
+  diplomatic-post instruments are still republished through AirNow at Ashgabat (to
+  2025-09-24), Almaty (to 2025-11-14) and Dushanbe (still reporting). The record *can*
+  therefore be extended for those cities, but doing so would change the benchmark and
+  requires a version bump, not a silent refresh.
 - **Kazakhstan contributes one city.** Astana failed the completeness rule at
   42.8% against a required 60%. The
   largest country in the region is represented by Almaty alone.

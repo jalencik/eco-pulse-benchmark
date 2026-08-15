@@ -4,14 +4,22 @@ The benchmark is deposited as a single versioned archive, **`eco-pulse-ca` v{{be
 Every file below is plain text (JSON or CSV) and carries a SHA-256 digest in
 `splits.sha256`, which the test suite verifies on every run.
 
-![Figure 1](figures/figS1_coverage.png)
+![Figure 1](figures/fig1_study_area.png)
 
-**Figure 1.** Monthly hourly-completeness for each of the {{n_stations}} benchmark stations,
+**Figure 1.** The {{n_stations}} benchmark instruments across {{n_cities}} Central Asian
+cities. Marker style distinguishes the {{n_reference_instruments}} US diplomatic-post
+reference monitors from the {{n_lowcost_instruments}} Clarity low-cost sensors at Khujand.
+Leave-city-out withholds every instrument in one city at a time, so the spacing between
+cities — not between instruments — sets the extrapolation distance each fold demands.
+
+![Figure 2](figures/figS1_coverage.png)
+
+**Figure 2.** Monthly hourly-completeness for each of the {{n_stations}} benchmark stations,
 from first to last observation. Dashed boxes mark the validation ({{val_start}} to
 {{val_end}}) and test ({{test_start}} to {{test_end}}) blocks. Two features of the record are
 visible directly: both Khujand sensors begin only in late 2023, after the training block
-closes, which is what makes Khujand a zero-label fold; and most stations stop in early 2025
-when the US diplomatic-post programme ended.
+closes, which is what makes Khujand a zero-label fold; and most stations stop on 2025-03-04,
+when the StateAir publication channel closed.
 
 ### The frozen benchmark definition
 

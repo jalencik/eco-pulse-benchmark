@@ -258,6 +258,11 @@ forgotten. Related: `STATUS.md` risk R3.
 - **Decision:** the held-out temporal block is calendar year 2024.
 - **Reason:** user decision. It is the last full year with reference-grade coverage before
   the US embassy programme ended on 2025-03-04 (risk R9).
+- **Wording corrected 2026-08-15.** What ended on 2025-03-04 was the **StateAir publication
+  channel**, not the monitoring programme as a whole. A live query that day found Ashgabat
+  republished through AirNow to 2025-09-24, Almaty to 2025-11-14 and Dushanbe still
+  reporting. The decision stands unchanged — the "alternative considered" below already
+  reflected the true post-shutdown coverage — but "the programme ended" overstated it.
 - **Effect on n:** all 8 stations and all 6 cities have 2024 data; per-station completeness
   in 2024 ranges **0.722 – 0.946**.
 - **Alternative considered:** a post-shutdown block (2025–2026). Rejected — only Dushanbe

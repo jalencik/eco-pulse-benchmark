@@ -17,23 +17,49 @@ the split definitions are not a substitute for them — they are station identif
 membership and time bounds, not measurements.
 
 Ground PM2.5 observations are accessed through the OpenAQ archive (openaq.org) and originate
-with the US Department of State AirNow and StateAir programmes and with Clarity. OpenAQ
-records a per-location attribution block naming the originating body, and those attributions
-are reproduced in `data/MANIFEST.md`. **We have not transcribed and verified the
-redistribution terms for every contributing provider, and we therefore make no claim either
-way as to whether these observations may be redistributed.** Rather than assert a permission
-we have not established, the observations are left at source, where the providers' own terms
-govern access. Satellite retrievals are Sentinel-5P (CO, NO₂, SO₂, absorbing
+with the US Department of State AirNow and StateAir programmes and with Clarity.
+
+**Licence status, verified 2026-08-14.** Per-location licence records were retrieved from
+OpenAQ's `/v3/locations` endpoint and are tabulated in full in `data/MANIFEST.md`. Six of the
+ten source feeds carry an explicit licence permitting redistribution: the four AirNow feeds
+are recorded as *US Public Domain* and the two Clarity feeds as *CC0 1.0*, both with
+redistribution and modification allowed and attribution not required. These six account for
+63.6% of contributing observation-hours. **The four StateAir feeds (Ashgabat, Bishkek,
+Dushanbe, Tashkent) carry no licence record at all** — the field is null, and the absence is
+systematic: across all 33 StateAir providers, none of their 36 locations carries one. The
+absence tracks the provider *label* rather than the data. OpenAQ's issue tracker documents a
+single location ingested under both the AirNow and StateAir labels, alternating between them,
+and that location today carries the AirNow label and a US Public Domain licence; the licence
+follows the label. We therefore treat the null as unassigned metadata rather than a withheld
+permission, while recording that no licence record has been issued for these four feeds.
+
+The Department of State's archived *Data Use Statement* for its air-quality programme requires
+that products relying on the data give attribution to the Department and indicate that the
+data "are not fully verified or validated", and asks that the data "not be altered in any way
+and be disseminated as received". Its stated scope is the Mission China programme and the
+`stateair.net` portal, neither of which served these four Central Asian feeds, and the portal
+that did serve them published no equivalent statement. We nonetheless attribute the
+observations to the U.S. Department of State and carry the verification caveat, and we treat
+the final clause as a further reason not to redistribute a merged, quality-controlled,
+daily-aggregated panel. `data/MANIFEST.md` sets out the full evidence and its limits. Satellite retrievals are Sentinel-5P (CO, NO₂, SO₂, absorbing
 aerosol index) and MODIS MAIAC AOD; chemistry-transport forecasts are Copernicus CAMS; and
 reanalysis meteorology is ERA5. Each source, its access route, its licence status and its
 measured acquisition latency are recorded in `data/MANIFEST.md`.
 
-**Not redistributed.** The derived ground-truth panel is not included in the deposit, because
-per-station licence terms across contributing OpenAQ providers are heterogeneous and have not
-been transcribed for every provider; redistributing it would assert a licence that has not
-been verified. `data/MANIFEST.md` records the provenance, and two documented commands rebuild
-the panel from the archive given an OpenAQ API key. The split definitions and reference
-results are fully self-contained and verifiable without it.
+**Why the panel is not deposited here.** Licence terms are heterogeneous across the ten source
+feeds, and for the four StateAir feeds no licence has been recorded by the platform that
+serves them. Depositing the merged panel under a single licence would assert uniform
+permission that the evidence does not support for every feed, so the observations are left at
+source. This is a statement about provenance, not about availability.
+
+**Every observation used here is publicly retrievable, without credentials.** All ten source
+feeds — the four StateAir feeds included — are published in OpenAQ's open-data archive on
+Amazon S3 (`s3://openaq-data-archive/records/csv.gz/locationid={id}/`), registered with the
+AWS Registry of Open Data and downloadable anonymously; retrieval of each benchmark feed was
+verified there on 2026-08-14. The same records are available through the OpenAQ v3 API with a
+free key. `data/MANIFEST.md` lists every source location identifier, and two documented
+commands rebuild the panel. The split definitions and reference results are fully
+self-contained and verifiable without any of this.
 
 ## Code Availability
 
