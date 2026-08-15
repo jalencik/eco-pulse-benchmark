@@ -8,7 +8,7 @@
 # `make` is not installed on the Windows dev machine. The same targets run there with
 # `python tasks.py <target>` — identical commands, since both go through the same table.
 
-.PHONY: help setup lint typecheck test test-fast reproduce clean splits baselines models paper
+.PHONY: help setup lint typecheck test test-fast reproduce clean splits baselines models paper pdf
 
 PY := python
 
@@ -22,6 +22,7 @@ help:
 	@echo "baselines  - run credential-free baseline ladder (5 seeds)"
 	@echo "models     - GBDT + tuned LOCO + CAMS variants + DM/SHAP analysis"
 	@echo "paper      - regenerate every table and re-render the manuscript"
+	@echo "pdf        - render the Data Descriptor to the single PDF Scientific Data wants"
 	@echo "reproduce  - clean-checkout end-to-end regeneration of every reported number"
 
 setup:
@@ -50,6 +51,11 @@ models:
 
 paper:
 	$(PY) tasks.py paper
+
+# Deliberately outside `reproduce`: the PDF is a submission deliverable, not a reported
+# number. It stays a target so the submitted artefact is still rebuildable by command.
+pdf:
+	$(PY) tasks.py pdf
 
 # The single command that must regenerate every number in the paper from a clean checkout.
 # Order matters: splits are frozen and hash-verified BEFORE any model sees data.

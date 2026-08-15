@@ -134,7 +134,13 @@ def main() -> int:
                        - {(_surname(r), str(r.get("year"))) for r in used})
     if unmatched:
         print(f"  WARNING: unmatched in-text citations: {unmatched}")
-    parts.append("\n".join(refs) + "\n")
+
+    # Scientific Data's section order (submission guidelines, checked 2026-08-15) places
+    # References directly after Code Availability and *before* Author Contributions, not at
+    # the end of the document. Insert rather than append, so the declarations keep trailing.
+    rendered = [s for s in ORDER if s in present]
+    refs_pos = rendered.index("07_declarations") if "07_declarations" in rendered else len(parts)
+    parts.insert(refs_pos, "\n".join(refs) + "\n")
 
     doc = "\n\n".join(parts)
     leftover = sorted(set(PLACEHOLDER.findall(doc)))

@@ -117,6 +117,11 @@ TARGETS: dict[str, list[list[str]]] = {
         [PY, "scripts/build_sdata.py"],
         [PY, "scripts/check_sdata_limits.py"],
     ],
+    # Scientific Data wants a single PDF of the main article in the first review round. It is
+    # a submission deliverable rather than a number, which is why it sits outside `reproduce`
+    # -- but it stays a script so the submitted artefact is never the one file in the project
+    # that nothing can rebuild. Run after `paper`.
+    "pdf": [[PY, "paper/scripts/build_pdf.py"]],
 }
 
 # Mirrors the Makefile's `reproduce` dependency chain. Splits are frozen and hash-verified
