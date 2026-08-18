@@ -74,7 +74,6 @@ def main() -> int:
     va_hi = pd.Timestamp(B["val"]["end"]).tz_localize(None)
 
     coords = {s["station_id"]: (s["latitude"], s["longitude"]) for s in splits["stations"]}
-    city_of = {s["station_id"]: s["city"] for s in splits["stations"]}
     df, _ = build_feature_table(splits)
 
     cities = sorted({s["city"] for s in splits["stations"]})
@@ -95,10 +94,26 @@ def main() -> int:
         y_tr, y_va = tr.pm25.to_numpy(float), va.pm25.to_numpy(float)
 
         # Reference rungs, same rows, for context.
-        rows.append({"fold": held, "n": len(va), "model": "idw_direct", "form": "-", "seed": 0,
-                     "rmse": rmse(y_va, np.where(np.isfinite(idw_va), idw_va, np.nanmean(y_tr)))})
-        rows.append({"fold": held, "n": len(va), "model": "train_global_mean", "form": "-",
-                     "seed": 0, "rmse": rmse(y_va, np.full(len(y_va), y_tr.mean()))})
+        rows.append(
+            {
+                "fold": held,
+                "n": len(va),
+                "model": "idw_direct",
+                "form": "-",
+                "seed": 0,
+                "rmse": rmse(y_va, np.where(np.isfinite(idw_va), idw_va, np.nanmean(y_tr))),
+            }
+        )
+        rows.append(
+            {
+                "fold": held,
+                "n": len(va),
+                "model": "train_global_mean",
+                "form": "-",
+                "seed": 0,
+                "rmse": rmse(y_va, np.full(len(y_va), y_tr.mean())),
+            }
+        )
 
         for form in ("raw", "log", "idw_residual", "log_residual"):
             if form == "raw":
@@ -113,28 +128,39 @@ def main() -> int:
                 base_tr = np.where(np.isfinite(idw_tr), idw_tr, y_tr.mean())
                 base_va = np.where(np.isfinite(idw_va), idw_va, y_tr.mean())
                 tgt_tr = y_tr - base_tr
-                inv = lambda p, i, b=base_va: p + b
+
+                def inv(p, i, b=base_va):
+                    return p + b
             else:
                 base_tr = np.clip(np.where(np.isfinite(idw_tr), idw_tr, y_tr.mean()), 0, None)
                 base_va = np.clip(np.where(np.isfinite(idw_va), idw_va, y_tr.mean()), 0, None)
                 tgt_tr = np.log1p(y_tr) - np.log1p(base_tr)
-                inv = lambda p, i, b=base_va: np.expm1(p + np.log1p(b))
+
+                def inv(p, i, b=base_va):
+                    return np.expm1(p + np.log1p(b))
 
             for name in ("lgbm", "ridge", "rf"):
                 for seed in SEEDS:
                     if name == "lgbm":
                         m = lgb.LGBMRegressor(
-                            n_estimators=800, learning_rate=0.03, num_leaves=31,
-                            min_child_samples=20, colsample_bytree=0.7, subsample=0.8,
-                            subsample_freq=1, random_state=seed, verbose=-1)
+                            n_estimators=800,
+                            learning_rate=0.03,
+                            num_leaves=31,
+                            min_child_samples=20,
+                            colsample_bytree=0.7,
+                            subsample=0.8,
+                            subsample_freq=1,
+                            random_state=seed,
+                            verbose=-1,
+                        )
                     elif name == "ridge":
                         if seed:  # deterministic
                             continue
                         m = make_pipeline(StandardScaler(), Ridge(alpha=10.0))
                     else:
                         m = RandomForestRegressor(
-                            n_estimators=300, min_samples_leaf=5, n_jobs=-1,
-                            random_state=seed)
+                            n_estimators=300, min_samples_leaf=5, n_jobs=-1, random_state=seed
+                        )
 
                     X_tr = tr[feats].astype(float).fillna(tr[feats].astype(float).median())
                     X_va = va[feats].astype(float).fillna(tr[feats].astype(float).median())
@@ -142,8 +168,16 @@ def main() -> int:
                     pred = inv(np.asarray(m.predict(X_va), dtype=float), idw_va)
                     pred = np.where(np.isfinite(pred), pred, y_tr.mean())
                     pred = np.clip(pred, 0.0, None)  # negative PM2.5 is unphysical
-                    rows.append({"fold": held, "n": len(va), "model": name, "form": form,
-                                 "seed": seed, "rmse": rmse(y_va, pred)})
+                    rows.append(
+                        {
+                            "fold": held,
+                            "n": len(va),
+                            "model": name,
+                            "form": form,
+                            "seed": seed,
+                            "rmse": rmse(y_va, pred),
+                        }
+                    )
         print(f"  {held}: done ({len(va)} validation rows)", flush=True)
 
     out = pd.DataFrame(rows)

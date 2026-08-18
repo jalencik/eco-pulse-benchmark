@@ -10,10 +10,9 @@ from __future__ import annotations
 import json
 import pathlib
 import re
+import sys as _sys
 
 import pandas as pd
-
-import sys as _sys
 
 _sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / "src"))
 from ecopulse_ca.qc.rules import MIN_YEARS
@@ -58,7 +57,8 @@ _ref_cities = {r.city for r in _rows.itertuples() if str(r.is_monitor) == "True"
 _low_cities = {
     s["city"]
     for s in sp["stations"]
-    if str(s["station_id"]) in set(_census.loc[~_census.is_monitor.astype(str).eq("True"), "location_id"])
+    if str(s["station_id"])
+    in set(_census.loc[~_census.is_monitor.astype(str).eq("True"), "location_id"])
 }
 _n_low = sum(
     1
@@ -73,9 +73,7 @@ put("q7_min_years", MIN_YEARS, 0)
 
 # Khujand's span INSIDE the benchmark window. The pre-registered Q7 rule is satisfied for
 # these two only by counting data after the record ends, which is reserved and never used.
-_test_end = pd.Timestamp(
-    [b for b in sp["temporal_blocks"] if b["name"] == "test"][0]["end"]
-)
+_test_end = pd.Timestamp([b for b in sp["temporal_blocks"] if b["name"] == "test"][0]["end"])
 _k = _census[_census.city == "Khujand"].sort_values("location_id")
 _spans = [
     (min(pd.Timestamp(r.datetime_last), _test_end) - pd.Timestamp(r.datetime_first)).days / 365.25
@@ -309,7 +307,8 @@ if _rob_f.exists():
     _t5b = pd.read_csv(T / "t5_02_loco_tuned.csv")
     _mb = (
         _t5b.query("task == 'N' and tier == 'retrospective' and model == 'lgbm_tuned'")
-        .groupby("held_out_city").rmse.mean()
+        .groupby("held_out_city")
+        .rmse.mean()
     )
     _ref = [c for c in _mb.index if c not in set(_low_cities)]
     put("model_rmse_ref_only", float(_mb[_ref].mean()))
@@ -412,10 +411,16 @@ for _key, _fn in [
     _p = _sd / _fn
     put(_key, f"{_p.stat().st_size:,}" if _p.exists() else "n/a")
 for _t in (
-    "t3_01_task_f_baselines_hourly", "t3_02_task_n_baselines_hourly",
-    "t3_06_task_n_baselines_daily", "t4_01_cams_baseline_variants",
-    "t5_01_loco_untuned", "t5_02_loco_tuned", "t6_01_predictions_task_n",
-    "t6_02_dm_lgbm_vs_cams", "t6_06_significance", "t6_07_per_fold_holm",
+    "t3_01_task_f_baselines_hourly",
+    "t3_02_task_n_baselines_hourly",
+    "t3_06_task_n_baselines_daily",
+    "t4_01_cams_baseline_variants",
+    "t5_01_loco_untuned",
+    "t5_02_loco_tuned",
+    "t6_01_predictions_task_n",
+    "t6_02_dm_lgbm_vs_cams",
+    "t6_06_significance",
+    "t6_07_per_fold_holm",
 ):
     _p = T / f"{_t}.csv"
     put(f"rows_{_t[:5]}", f"{len(pd.read_csv(_p)):,}" if _p.exists() else "n/a")
@@ -427,21 +432,22 @@ for _s in sp["stations"]:
 put("n_cities_multi_station", sum(1 for v in _percity.values() if v > 1), 0)
 
 # How many BENCHMARK stations actually end at the diplomatic-post shutdown. The manuscript
-# said "six of the eight"; at source-feed level it is 5 of 12, and at benchmark-station level
-# -- after merging, which is the level the sentence is about -- it is fewer still, because a
-# merged station survives as long as its longest-lived feed.
+# said "six of the eight"; at source-feed level it is 5 of the 10 feeds that survive Q7
+# (D-005), and at benchmark-station level -- after merging, which is the level the sentence
+# is about -- it is fewer still, because a merged station survives as long as its
+# longest-lived feed.
 _SHUTDOWN = pd.Timestamp("2025-03-05", tz="UTC")
-if _panel_p_pre := (ROOT / "data/interim/benchmark_panel.parquet"):
-    if _panel_p_pre.exists():
-        _pp = pd.read_parquet(_panel_p_pre)
-        _pp.columns = [str(c) for c in _pp.columns]
-        _ends = {c: _pp[c].dropna().index.max() for c in _pp.columns}
-        _n_end = sum(1 for v in _ends.values() if pd.notna(v) and v < _SHUTDOWN)
-        put("n_stations_ending_at_shutdown", _n_end, 0)
-        put(
-            "stations_ending_at_shutdown",
-            ", ".join(sorted(c for c, v in _ends.items() if pd.notna(v) and v < _SHUTDOWN)),
-        )
+_panel_p_pre = ROOT / "data/interim/benchmark_panel.parquet"
+if _panel_p_pre.exists():
+    _pp = pd.read_parquet(_panel_p_pre)
+    _pp.columns = [str(c) for c in _pp.columns]
+    _ends = {c: _pp[c].dropna().index.max() for c in _pp.columns}
+    _n_end = sum(1 for v in _ends.values() if pd.notna(v) and v < _SHUTDOWN)
+    put("n_stations_ending_at_shutdown", _n_end, 0)
+    put(
+        "stations_ending_at_shutdown",
+        ", ".join(sorted(c for c, v in _ends.items() if pd.notna(v) and v < _SHUTDOWN)),
+    )
 
 # Duplicate-detection evidence, recomputed from the hourly panel rather than quoted.
 _panel_p = ROOT / "data/interim/benchmark_panel.parquet"
@@ -472,9 +478,13 @@ if _panel_p.exists():
 # --collect-only is cheap; a typed count would be stale the moment a test is added.
 try:
     import subprocess as _sub
+
     _r = _sub.run(
         [_sys.executable, "-m", "pytest", "--collect-only", "-q", "-m", "not network"],
-        cwd=ROOT, capture_output=True, text=True, timeout=180,
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        timeout=180,
     )
     _m = re.search(r"(\d+)\s+tests? collected", _r.stdout)
     put("n_tests", _m.group(1) if _m else "n/a")

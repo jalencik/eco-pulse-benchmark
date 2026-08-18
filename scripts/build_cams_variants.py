@@ -68,8 +68,10 @@ def build() -> pd.DataFrame:
         if sub.empty:
             continue
         sub = sub[(sub.date >= te_lo) & (sub.date <= te_hi)]
-        j = sub.assign(d=sub.date.dt.date).set_index("d").join(
-            pd.DataFrame({"obs": obs}), how="inner"
+        j = (
+            sub.assign(d=sub.date.dt.date)
+            .set_index("d")
+            .join(pd.DataFrame({"obs": obs}), how="inner")
         )
         j = j.dropna(subset=["obs", "cams_pm25_forecast"])
         if j.empty:
@@ -115,7 +117,9 @@ def main() -> int:
         key = ["city", "station", "variant"]
         merged = old.merge(new, on=key, suffixes=("_old", "_new"), how="outer", indicator=True)
         unmatched = merged[merged._merge != "both"]
-        print(f"rows: banked={len(old)} rebuilt={len(new)} matched={(merged._merge=='both').sum()}")
+        print(
+            f"rows: banked={len(old)} rebuilt={len(new)} matched={(merged._merge == 'both').sum()}"
+        )
         if len(unmatched):
             print(f"UNMATCHED KEYS: {len(unmatched)}")
             print(unmatched[key + ["_merge"]].to_string(index=False))
@@ -126,7 +130,9 @@ def main() -> int:
                 d = (both[f"{col}_old"] - both[f"{col}_new"]).abs().max()
                 print(f"  {col:<6} max|delta| = {d:.6g}")
                 worst = max(worst, float(d))
-        print(f"\n=> {'REPRODUCES' if worst < 1e-9 and not len(unmatched) else 'DOES NOT REPRODUCE'}")
+        print(
+            f"\n=> {'REPRODUCES' if worst < 1e-9 and not len(unmatched) else 'DOES NOT REPRODUCE'}"
+        )
         return 0 if (worst < 1e-9 and not len(unmatched)) else 1
 
     df.to_csv(OUT, index=False)

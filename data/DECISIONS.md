@@ -208,6 +208,16 @@ forgotten. Related: `STATUS.md` risk R3.
   so no within-city check is possible. **A constant, lifelong offset at Almaty, Tashkent,
   Bishkek or Ashgabat is undetectable by any check in this suite**, and is reported as such
   rather than left implicit.
+- **Superseded by D-012, and it got worse, not better.** The count above was written when
+  Dushanbe was believed to hold two instruments. D-012 established that Dushanbe `8684` and
+  `9769` are one embassy monitor republished twice (99.99% of overlapping hours are the same
+  measurement), so the Dushanbe "within-city" comparison was a device checked against itself
+  and cannot count as validation. After the merge, **Khujand is the only city holding two
+  genuinely distinct instruments**, so the substantive within-city check covers 2 of 7
+  stations, not 4 of 8, and the set of cities where a constant lifelong offset is
+  undetectable grows to **five: Almaty, Tashkent, Bishkek, Ashgabat and Dushanbe**. The
+  Data Descriptor states the post-merge version; this entry is left unedited as the dated
+  record of what was believed on 2026-07-29.
 - **Regime finding worth carrying into the paper:** the informational labels split the
   region into more than one regime — Dushanbe, Khujand and Tashkent are dilution-driven
   (afternoon minimum); Bishkek and Ashgabat are evening-source-driven (pre-dawn minimum,

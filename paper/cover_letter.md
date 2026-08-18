@@ -56,8 +56,9 @@ permitting redistribution (US Public Domain, CC0 1.0), and two more are demonstr
 measurements as licensed feeds. For the remaining two — the diplomatic-post feeds at Bishkek
 and Tashkent — no licence record has been issued by the platform that serves them, and the
 only US Department of State air-quality data-use statement we could locate is scoped to a
-different programme. We have written to the Department for clarification and have not yet
-received a reply. Accordingly the deposit contains the derived benchmark artefacts and the
+different programme. We have written to the Department at its published air-quality address
+(`airpollution@state.gov`) requesting clarification, and as of 2026-08-18 have not received a
+reply. Accordingly the deposit contains the derived benchmark artefacts and the
 complete pipeline code, but **not** the underlying observations, which remain publicly
 retrievable at source without credentials. The Data Availability statement sets this out, and
 `data/MANIFEST.md` documents the evidence and its limits per feed. We will update the

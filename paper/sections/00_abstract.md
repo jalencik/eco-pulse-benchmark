@@ -11,7 +11,8 @@ honestly-evaluated transfer baseline**
 <sup>3</sup> National University of Uzbekistan, Tashkent, Uzbekistan
 
 <sup>\*</sup> Corresponding author: jaloliddin2009applicant@gmail.com
-ORCID 0009-0003-0210-3687
+ORCID iDs: Jaloliddin Musayev 0009-0003-0210-3687; Asadbek Abdivayitov 0009-0006-3484-3438;
+Ozodbek Yo'ldashev — to be supplied before submission.
 
 ---
 

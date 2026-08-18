@@ -11,7 +11,8 @@ honestly-evaluated transfer baseline**
 <sup>3</sup> National University of Uzbekistan, Tashkent, Uzbekistan
 
 <sup>\*</sup> Corresponding author: jaloliddin2009applicant@gmail.com
-ORCID 0009-0003-0210-3687
+ORCID iDs: Jaloliddin Musayev 0009-0003-0210-3687; Asadbek Abdivayitov 0009-0006-3484-3438;
+Ozodbek Yo'ldashev — to be supplied before submission.
 
 ---
 
@@ -211,7 +212,7 @@ sensors (Khujand)** — see Section 7.2. The embassy monitors are the only consi
 multi-country reference in the region and the sole route to any measurement in Turkmenistan.
 
 That network contracted sharply in March 2025, when the StateAir publication channel closed.
-Five of the twelve contributing source feeds stop on 2025-03-04, and after co-published feeds
+Five of the ten contributing source feeds stop on 2025-03-04, and after co-published feeds
 are merged **2 of 7 benchmark stations
 (8881, Bishkek) end there**; the rest survive through a longer-lived feed.
 Reporting states that seventeen years of archive were subsequently removed from the
@@ -1256,9 +1257,12 @@ one now.
 
 ## 7.6 Scope of the record
 
-- **The record ends before the source does.** Six of eight stations end on 2025-03-04, when
-  the StateAir publication channel closed. **No result in this paper speaks to current
-  conditions.** The monitors did not all stop, though: as of 2026-08-14 the same
+- **The record ends before the source does.** Five of the ten contributing source feeds stop
+  on 2025-03-04, when the StateAir publication channel closed, and at benchmark-station level
+  **2 of 7 stations
+  (8881, Bishkek) end there**; the rest survive through a longer-lived feed.
+  **No result in this paper speaks to current conditions.** The monitors did not all stop,
+  though: as of 2026-08-14 the same
   diplomatic-post instruments are still republished through AirNow at Ashgabat (to
   2025-09-24), Almaty (to 2025-11-14) and Dushanbe (still reporting). The record *can*
   therefore be extended for those cities, but doing so would change the benchmark and
@@ -1366,14 +1370,16 @@ have demonstrated something real, and the comparison will be like-for-like becau
 splits cannot move. Priorities for extension, in order: additional cities to reduce the
 fold-to-fold variance that presently exceeds seed variance by an order of magnitude; a
 parallel near-real-time satellite archive to quantify train/serve skew; and a
-post-2025 ground-truth source to replace the reference network that closed on 2025-03-04.
+post-2025 ground-truth source to replace the publication channel that closed on 2025-03-04.
 
 ---
 
 # 9. Declarations
 
-> **Before submission:** every co-author must read and approve the final manuscript, and
-> ORCID iDs should be registered for all three co-authors.
+> **Before submission:** ORCID iDs are on file for Jaloliddin Musayev and Asadbek
+> Abdivayitov; one remains to be supplied for Ozodbek Yo'ldashev. Each co-author's written
+> approval of the final manuscript, author order and contribution statement must be held on
+> file by the corresponding author.
 
 ## 9.1 Data availability
 
@@ -1396,7 +1402,7 @@ an OpenAQ key. Satellite products are public: MAIAC AOD (MCD19A2.061) and Sentin
 Atmosphere Data Store and Climate Data Store respectively.
 
 **Note on permanence.** The US State Department terminated its global diplomatic-post air
-quality programme in March 2025. Five of the twelve contributing source feeds stop on
+quality programme in March 2025. Five of the ten contributing source feeds stop on
 2025-03-04 — every StateAir feed, plus Bishkek's AirNow feed — and at benchmark-station
 level, after co-published feeds are merged, **2 of
 7 stations (8881, Bishkek) end there**; the others survive

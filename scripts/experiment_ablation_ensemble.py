@@ -74,8 +74,16 @@ def fit_predict(model, X_tr, y_tr, X_va):
 
 def lgbm(seed):
     return lgb.LGBMRegressor(
-        n_estimators=800, learning_rate=0.03, num_leaves=31, min_child_samples=20,
-        colsample_bytree=0.7, subsample=0.8, subsample_freq=1, random_state=seed, verbose=-1)
+        n_estimators=800,
+        learning_rate=0.03,
+        num_leaves=31,
+        min_child_samples=20,
+        colsample_bytree=0.7,
+        subsample=0.8,
+        subsample_freq=1,
+        random_state=seed,
+        verbose=-1,
+    )
 
 
 def main() -> int:
@@ -102,7 +110,9 @@ def main() -> int:
         y_tr, y_va = tr.pm25.to_numpy(float), va.pm25.to_numpy(float)
         med = tr[feats].astype(float).median()
 
-        def X(frame, cols):
+        def X(frame, cols, med=med):
+            # med is bound per fold as a default argument: X is only ever called inside the
+            # iteration that defined it, and the explicit binding keeps that true.
             return frame[cols].astype(float).fillna(med[cols])
 
         # ---- 1. ABLATION -------------------------------------------------------------
@@ -115,29 +125,53 @@ def main() -> int:
                 continue
             for seed in SEEDS:
                 p = fit_predict(lgbm(seed), X(tr, cols), y_tr, X(va, cols))
-                abl.append({"fold": held, "config": label, "n_features": len(cols),
-                            "seed": seed, "rmse": rmse(y_va, p)})
+                abl.append(
+                    {
+                        "fold": held,
+                        "config": label,
+                        "n_features": len(cols),
+                        "seed": seed,
+                        "rmse": rmse(y_va, p),
+                    }
+                )
 
         # ---- 2. ENSEMBLE + 3. CALIBRATION --------------------------------------------
         pl = np.mean([fit_predict(lgbm(s), X(tr, feats), y_tr, X(va, feats)) for s in SEEDS], 0)
-        pr = np.mean([
-            fit_predict(RandomForestRegressor(n_estimators=300, min_samples_leaf=5,
-                                              n_jobs=-1, random_state=s),
-                        X(tr, feats), y_tr, X(va, feats)) for s in SEEDS], 0)
+        pr = np.mean(
+            [
+                fit_predict(
+                    RandomForestRegressor(
+                        n_estimators=300, min_samples_leaf=5, n_jobs=-1, random_state=s
+                    ),
+                    X(tr, feats),
+                    y_tr,
+                    X(va, feats),
+                )
+                for s in SEEDS
+            ],
+            0,
+        )
         # In-sample training predictions give a TRAINING-ONLY calibration scalar. Fitting it
         # on validation would make the validation score self-referential.
         pl_tr = np.mean([fit_predict(lgbm(s), X(tr, feats), y_tr, X(tr, feats)) for s in SEEDS], 0)
         scale = float(y_tr.mean() / max(pl_tr.mean(), 1e-9))
         offset = float(y_tr.mean() - pl_tr.mean())
         for label, pred in (
-            ("lgbm", pl), ("rf", pr),
+            ("lgbm", pl),
+            ("rf", pr),
             ("ens_mean", 0.5 * pl + 0.5 * pr),
             ("ens_70_30", 0.7 * pl + 0.3 * pr),
             ("lgbm_scaled", np.clip(pl * scale, 0, None)),
             ("lgbm_offset", np.clip(pl + offset, 0, None)),
         ):
-            ens.append({"fold": held, "config": label, "rmse": rmse(y_va, pred),
-                        "bias": float(np.mean(pred - y_va))})
+            ens.append(
+                {
+                    "fold": held,
+                    "config": label,
+                    "rmse": rmse(y_va, pred),
+                    "bias": float(np.mean(pred - y_va)),
+                }
+            )
 
         # ---- 4. TEMPORAL CV (rolling origin, still validation-scored) -----------------
         for cut in ("2020-12-31", "2021-12-31", "2022-12-31"):
@@ -146,26 +180,36 @@ def main() -> int:
             if len(tsub) < 200:
                 continue
             p = fit_predict(lgbm(0), X(tsub, feats), tsub.pm25.to_numpy(float), X(va, feats))
-            tcv.append({"fold": held, "train_through": cut, "n_train": len(tsub),
-                        "rmse": rmse(y_va, p)})
+            tcv.append(
+                {"fold": held, "train_through": cut, "n_train": len(tsub), "rmse": rmse(y_va, p)}
+            )
         print(f"  {held}: done", flush=True)
 
-    for frame, path, name in ((abl, OUT_ABL, "ablation"), (ens, OUT_ENS, "ensemble/calibration"),
-                              (tcv, OUT_TCV, "temporal CV")):
+    for frame, path, _name in (
+        (abl, OUT_ABL, "ablation"),
+        (ens, OUT_ENS, "ensemble/calibration"),
+        (tcv, OUT_TCV, "temporal CV"),
+    ):
         pd.DataFrame(frame).to_csv(path, index=False)
         print(f"wrote {path.name} ({len(frame)} rows)")
 
     a = pd.DataFrame(abl)
     print("\n=== ABLATION (validation fold-mean RMSE) ===")
-    for k, v in (a.groupby("config").apply(
-            lambda g: g.groupby("fold").rmse.mean().mean(), include_groups=False)
-            .sort_values().items()):
+    for k, v in (
+        a.groupby("config")
+        .apply(lambda g: g.groupby("fold").rmse.mean().mean(), include_groups=False)
+        .sort_values()
+        .items()
+    ):
         print(f"  {k:<32} {v:8.3f}")
     e = pd.DataFrame(ens)
     print("\n=== ENSEMBLE / CALIBRATION (validation fold-mean RMSE) ===")
-    for k, v in (e.groupby("config").apply(
-            lambda g: g.groupby("fold").rmse.mean().mean(), include_groups=False)
-            .sort_values().items()):
+    for k, v in (
+        e.groupby("config")
+        .apply(lambda g: g.groupby("fold").rmse.mean().mean(), include_groups=False)
+        .sort_values()
+        .items()
+    ):
         print(f"  {k:<32} {v:8.3f}")
     t = pd.DataFrame(tcv)
     if len(t):

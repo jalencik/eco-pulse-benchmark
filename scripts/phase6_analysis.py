@@ -115,9 +115,7 @@ for fold in splits["leave_city_out"]:
     # identical seed on identical data. Reproducing Section 5's fit requires reproducing its
     # row order. Verified by tests/test_phase5_phase6_agreement.py.
     tr_block = sp[(sp.city != held) & (sp.date <= tr_end) & sp.pm25.notna()]
-    va_block = sp[
-        (sp.city != held) & (sp.date >= va_lo) & (sp.date <= va_hi) & sp.pm25.notna()
-    ]
+    va_block = sp[(sp.city != held) & (sp.date >= va_lo) & (sp.date <= va_hi) & sp.pm25.notna()]
     tr = pd.concat([tr_block, va_block])
     te = sp[(sp.city == held) & (sp.date >= te_lo) & (sp.date <= te_hi) & sp.pm25.notna()]
     if len(tr) < 200 or len(te) < 30:

@@ -44,8 +44,17 @@ a genuine recent rollout, valuable for future work but not for a multi-year spli
 
 ### Per-feed licence matrix — retrieved from OpenAQ `/v3/locations/{id}`, 2026-08-14
 
-Raw API responses are archived under `review/licence_evidence/`. Licence definitions come
-from `/v3/licenses`; the flags below are OpenAQ's own fields, not our interpretation.
+Licence definitions come from `/v3/licenses`; the flags below are OpenAQ's own fields, not
+our interpretation.
+
+**Where the raw evidence is.** The verbatim API responses behind this table
+(`openaq_locations_2026-08-14.json`, `stateair_raw_2026-08-14.json`, and the independent
+re-query `reverify_2026-08-14.json`) are retained by the authors but are **not** part of this
+repository — `review/` is excluded by `.gitignore`. Every row below is reproducible without
+them: re-querying `https://api.openaq.org/v3/locations/{feed}` with any free OpenAQ key
+returns the same `licenses[]` block. The archived copies are available on request, and the
+StateAir null-licence finding in particular is stated here so it can be checked against the
+live API rather than taken on trust.
 
 | feed | city | provider | OpenAQ licence | redistribution | attribution | modification |
 |---|---|---|---|---|---|---|
@@ -97,9 +106,11 @@ distributed without permission" (state.gov, *Copyright Information*, accessed 20
 
 Both original hosts are dead (`stateair.net` refuses connections; `dosairnowdata.org` no
 longer resolves), but the Internet Archive preserves them. The official
-`USDOS_AQDataUseStatement.pdf` was recovered and is archived at
-`review/licence_evidence/USDOS_AQDataUseStatement_archived20140512.pdf`. Verbatim, the
-operative clauses:
+`USDOS_AQDataUseStatement.pdf` was recovered from the Internet Archive capture of
+2014-05-12 and is retained by the authors (in `review/licence_evidence/`, which is outside
+this repository). The capture is public and independently retrievable through the Wayback
+Machine, so the quotation below can be verified at source rather than against our copy.
+Verbatim, the operative clauses:
 
 > "State Air observational data are not fully verified or validated; these data are subject
 > to change, error, and correction. **The data and information are in no way official.**"
@@ -164,6 +175,16 @@ the global programme. Both are questions only the Department can answer. **Absen
 prohibition is not a grant, and these four feeds are recorded as unresolved rather than
 restricted: no evidence anywhere indicates redistribution is forbidden.**
 
+**Enquiry sent, unanswered.** The corresponding author reports having written to the
+Department's published air-quality address, `airpollution@state.gov`, requesting clarification
+of the licence status of the diplomatic-post feeds. **No reply had been received as of
+2026-08-18.** The sent message is held by the corresponding author and is the evidence for this
+statement; it is not reproduced here. Should a reply arrive, it supersedes the inference above
+and this manifest must be updated. Two further contacts exist for the AirNow-labelled feeds,
+recorded here so the route is documented rather than rediscovered: the AirNow Data Management
+Center, `dmc@airnowtech.org`, and the AirNow Program Manager, `white.johne@epa.gov` — both
+published in the EPA AirNow Data Exchange Guidelines (August 2025). Neither has been contacted.
+
 **Second public-source sweep, 2026-08-15 — negative.** A further search targeted specifically
 at Tashkent and Bishkek returned no affirmative evidence:
 
@@ -190,9 +211,18 @@ By contributing hours, **63.6%** of the ground-truth panel carries an explicit O
 redistribution grant (51.0% US Public Domain, 12.6% CC0) and **36.4%** rests on the DoS
 policy above.
 
-**Reference monitors end March 2025 *in this panel*.** Six of nine stop at exactly
-`2025-03-04`, when the StateAir publication channel closed. The last full year of reference
-coverage in the frozen panel is **2024**. See risk R9 and `research/GAP.md`.
+**Reference monitors end March 2025.** Six of the **nine census-level distinct instruments**
+(the Q5b-deduplicated population above, before Q7 rejection and before co-published feeds are
+merged) stop at exactly `2025-03-04`, when the StateAir publication channel closed. The last
+full year of reference coverage in the frozen panel is **2024**. See risk R9 and
+`research/GAP.md`.
+
+**Do not read that as a benchmark-level count.** The denominator matters here, and getting it
+wrong is what produced the retracted "six of the eight stations" claim. At the level of the
+frozen benchmark the figures are: **5 of the 10 contributing source feeds** stop on
+2025-03-04, and after merging, **2 of the 7 benchmark stations** (`8881`, Bishkek) end there.
+Those two are the numbers the manuscript uses, and they are derived in
+`paper/scripts/extract_numbers.py` rather than typed.
 
 **Corrected 2026-08-14 — the programme did not end uniformly.** A live OpenAQ query on that
 date shows three of these US diplomatic-post monitors still republished through the AirNow

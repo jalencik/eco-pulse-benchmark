@@ -153,3 +153,16 @@ HAC truncation lags and a cluster bootstrap. With {{n_cities}} clusters an exact
 permutation test is reported alongside the parametric one, and its attainable floor is stated.
 Per-fold tests are Holm-corrected for multiplicity. Full detail and results are in Technical
 Validation.
+
+### Software and generative-AI assistance
+
+Analysis code is Python 3.12; exact dependencies and versions are given in Code Availability.
+A generative AI assistant (Anthropic Claude, via Claude Code) was used during this work for
+software implementation, data-pipeline construction, statistical tooling, and drafting and
+editing of manuscript text. This is not AI-assisted copy editing, so it is declared rather
+than exempt. The methodological decisions the dataset rests on — the pre-registration of the
+quality rules, the choice to freeze and checksum the splits before any model was run, the
+leave-city-out protocol, the treatment of informative missingness, and every retraction
+recorded in `data/DECISIONS.md` — were made by the authors, who verified every reported figure
+against the regenerated result tables and take full responsibility for the content. See
+*Use of Generative AI* for the full declaration.

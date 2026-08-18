@@ -41,7 +41,6 @@ Neither is "the significant one". Both are reported with the same prominence.
 from __future__ import annotations
 
 import itertools
-import json
 import pathlib
 import sys
 
@@ -217,7 +216,7 @@ def main() -> int:
         if r["analysis"] != "SENSITIVITY":
             continue
         print(f"  {r['test']:<62} p = {r['p']:.3g}")
-    print(f"\nper-city mean loss differential (negative favours the model):")
+    print("\nper-city mean loss differential (negative favours the model):")
     for c, v in city_means.items():
         print(f"  {c:<10} {v:+10.2f}")
     print(f"\nHolm-adjusted per-fold: {int(folds.sig_holm_05.sum())}/{m} significant at 0.05")

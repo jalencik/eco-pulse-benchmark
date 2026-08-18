@@ -38,7 +38,6 @@ import json
 import pathlib
 import sys
 
-import numpy as np
 import pandas as pd
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]

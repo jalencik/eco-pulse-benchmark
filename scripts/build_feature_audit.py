@@ -64,22 +64,30 @@ def main() -> int:
         if f not in sp.columns:
             continue
         col = pd.to_numeric(sp[f], errors="coerce")
-        tier = ("static_only" if f in tiers["static_only"]
-                else "deployable" if f in tiers["deployable"]
-                else "retrospective" if f in tiers["retrospective"]
-                else "spatial")
-        rows.append({
-            "feature": f,
-            "family": family(f),
-            "lowest_tier": tier,
-            "deployable": tier in ("static_only", "deployable", "spatial"),
-            "missing_pct_all": float(col.isna().mean() * 100),
-            "missing_pct_test": float(col[test_mask].isna().mean() * 100),
-            "n_unique": int(col.nunique(dropna=True)),
-            "std": float(col.std()),
-            "constant": bool(col.nunique(dropna=True) <= 1),
-            "corr_with_target": float(col.corr(sp.pm25)) if col.std() > 0 else np.nan,
-        })
+        tier = (
+            "static_only"
+            if f in tiers["static_only"]
+            else "deployable"
+            if f in tiers["deployable"]
+            else "retrospective"
+            if f in tiers["retrospective"]
+            else "spatial"
+        )
+        n_unique = int(col.nunique(dropna=True))
+        rows.append(
+            {
+                "feature": f,
+                "family": family(f),
+                "lowest_tier": tier,
+                "deployable": tier in ("static_only", "deployable", "spatial"),
+                "missing_pct_all": float(col.isna().mean() * 100),
+                "missing_pct_test": float(col[test_mask].isna().mean() * 100),
+                "n_unique": n_unique,
+                "std": float(col.std()),
+                "constant": bool(n_unique <= 1),
+                "corr_with_target": float(col.corr(sp.pm25)) if col.std() > 0 else np.nan,
+            }
+        )
     out = pd.DataFrame(rows)
 
     # redundancy: highest absolute correlation with any OTHER feature
@@ -93,8 +101,15 @@ def main() -> int:
 
     print(f"wrote {OUT.name} ({len(out)} features)\n")
     print("=== FEATURE AUDIT ===")
-    cols = ["feature", "family", "lowest_tier", "missing_pct_all", "missing_pct_test",
-            "corr_with_target", "max_abs_corr_other"]
+    cols = [
+        "feature",
+        "family",
+        "lowest_tier",
+        "missing_pct_all",
+        "missing_pct_test",
+        "corr_with_target",
+        "max_abs_corr_other",
+    ]
     print(out[cols].round(3).to_string(index=False))
 
     print("\n=== FLAGS ===")

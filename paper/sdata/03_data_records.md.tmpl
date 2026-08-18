@@ -18,8 +18,11 @@ cities — not between instruments — sets the extrapolation distance each fold
 from first to last observation. Dashed boxes mark the validation ({{val_start}} to
 {{val_end}}) and test ({{test_start}} to {{test_end}}) blocks. Two features of the record are
 visible directly: both Khujand sensors begin only in late 2023, after the training block
-closes, which is what makes Khujand a zero-label fold; and most stations stop on 2025-03-04,
-when the StateAir publication channel closed.
+closes, which is what makes Khujand a zero-label fold; and the record ends unevenly, with
+{{n_stations_ending_at_shutdown}} of {{n_stations}} stations
+({{stations_ending_at_shutdown}}) stopping at the StateAir closure on 2025-03-04 while the
+remainder continue past it through a longer-lived feed. All of that lies beyond the test
+block and none of it is used.
 
 ### The frozen benchmark definition
 

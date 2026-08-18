@@ -65,5 +65,9 @@ PLAN.md
 PAPER_CLAIM.md
 ECO_PULSY_INTEGRATION.md
 
+# Internal release/integrity audit working documents. Same reason as review/: these record
+# process (author consent chasing, admissions framing, defect triage), not science.
+audit/
+
 # Generated release artefacts. The Zenodo ZIP is built from a commit, never committed to it.
 dist/

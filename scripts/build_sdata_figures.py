@@ -47,14 +47,21 @@ def coverage_figure() -> None:
     M = M.reindex(sorted(M.columns), axis=1)
 
     fig, ax = plt.subplots(figsize=(11, 3.6))
-    im = ax.imshow(M.to_numpy(dtype=float), aspect="auto", cmap="viridis",
-                   vmin=0, vmax=1, interpolation="nearest")
+    im = ax.imshow(
+        M.to_numpy(dtype=float),
+        aspect="auto",
+        cmap="viridis",
+        vmin=0,
+        vmax=1,
+        interpolation="nearest",
+    )
     ax.set_yticks(range(len(M)))
     ax.set_yticklabels(M.index, fontsize=8)
     step = max(1, len(M.columns) // 14)
     ax.set_xticks(range(0, len(M.columns), step))
-    ax.set_xticklabels([d.strftime("%Y-%m") for d in M.columns[::step]], rotation=45,
-                       ha="right", fontsize=7)
+    ax.set_xticklabels(
+        [d.strftime("%Y-%m") for d in M.columns[::step]], rotation=45, ha="right", fontsize=7
+    )
 
     # Shade the evaluation blocks rather than drawing bare lines: a reader needs to see the
     # SPAN each block covers, and white text on a pale colormap is unreadable.
@@ -65,12 +72,29 @@ def coverage_figure() -> None:
         x0 = float(np.searchsorted(M.columns, lo)) - 0.5
         x1 = float(np.searchsorted(M.columns, hi)) - 0.5
         ax.add_patch(
-            plt.Rectangle((x0, -0.5), x1 - x0, ymax + 0.5, fill=False,
-                          edgecolor=colour, lw=2.0, ls="--", zorder=5, clip_on=False)
+            plt.Rectangle(
+                (x0, -0.5),
+                x1 - x0,
+                ymax + 0.5,
+                fill=False,
+                edgecolor=colour,
+                lw=2.0,
+                ls="--",
+                zorder=5,
+                clip_on=False,
+            )
         )
-        ax.text((x0 + x1) / 2, -1.15, label, color=colour, ha="center", va="bottom",
-                fontsize=8, fontweight="bold",
-                bbox=dict(boxstyle="round,pad=0.15", fc="black", ec="none", alpha=0.55))
+        ax.text(
+            (x0 + x1) / 2,
+            -1.15,
+            label,
+            color=colour,
+            ha="center",
+            va="bottom",
+            fontsize=8,
+            fontweight="bold",
+            bbox=dict(boxstyle="round,pad=0.15", fc="black", ec="none", alpha=0.55),
+        )
 
     cb = fig.colorbar(im, ax=ax, pad=0.01, fraction=0.025)
     cb.set_label("hourly completeness", fontsize=8)
@@ -84,7 +108,6 @@ def coverage_figure() -> None:
 
 def error_structure_figure() -> None:
     """Fold error against city mean concentration -- the dataset's dominant error structure."""
-    pred = pd.read_csv(T / "t6_01_predictions_task_n.csv", dtype={"station_id": str})
     per = pd.read_csv(T / "t7_01_error_analysis_by_fold.csv")
 
     fig, axes = plt.subplots(1, 2, figsize=(10, 4))
@@ -92,8 +115,9 @@ def error_structure_figure() -> None:
     ax = axes[0]
     ax.scatter(per.obs_mean, per.rmse, s=70, c="#31688e", zorder=3)
     for _, r in per.iterrows():
-        ax.annotate(r.fold, (r.obs_mean, r.rmse), textcoords="offset points",
-                    xytext=(6, 4), fontsize=8)
+        ax.annotate(
+            r.fold, (r.obs_mean, r.rmse), textcoords="offset points", xytext=(6, 4), fontsize=8
+        )
     ax.set_xlabel("observed mean PM2.5 in held-out city (µg m$^{-3}$)")
     ax.set_ylabel("fold RMSE (µg m$^{-3}$)")
     ax.set_title("Error grows with city concentration", fontsize=10)
@@ -103,8 +127,9 @@ def error_structure_figure() -> None:
     ax.scatter(per.obs_mean, per.bias, s=70, c="#35b779", zorder=3)
     ax.axhline(0, color="k", lw=1, ls="--", zorder=2)
     for _, r in per.iterrows():
-        ax.annotate(r.fold, (r.obs_mean, r.bias), textcoords="offset points",
-                    xytext=(6, 4), fontsize=8)
+        ax.annotate(
+            r.fold, (r.obs_mean, r.bias), textcoords="offset points", xytext=(6, 4), fontsize=8
+        )
     ax.set_xlabel("observed mean PM2.5 in held-out city (µg m$^{-3}$)")
     ax.set_ylabel("mean bias (µg m$^{-3}$)")
     ax.set_title("Clean cities over-predicted, polluted under-predicted", fontsize=10)

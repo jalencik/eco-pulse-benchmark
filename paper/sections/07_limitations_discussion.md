@@ -140,9 +140,12 @@ one now.
 
 ## 7.6 Scope of the record
 
-- **The record ends before the source does.** Six of eight stations end on 2025-03-04, when
-  the StateAir publication channel closed. **No result in this paper speaks to current
-  conditions.** The monitors did not all stop, though: as of 2026-08-14 the same
+- **The record ends before the source does.** Five of the ten contributing source feeds stop
+  on 2025-03-04, when the StateAir publication channel closed, and at benchmark-station level
+  **2 of 7 stations
+  (8881, Bishkek) end there**; the rest survive through a longer-lived feed.
+  **No result in this paper speaks to current conditions.** The monitors did not all stop,
+  though: as of 2026-08-14 the same
   diplomatic-post instruments are still republished through AirNow at Ashgabat (to
   2025-09-24), Almaty (to 2025-11-14) and Dushanbe (still reporting). The record *can*
   therefore be extended for those cities, but doing so would change the benchmark and

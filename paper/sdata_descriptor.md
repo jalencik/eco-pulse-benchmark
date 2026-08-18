@@ -8,7 +8,9 @@
 <sup>3</sup> National University of Uzbekistan, Tashkent, Uzbekistan
 
 <sup>\*</sup> Corresponding author: jaloliddin2009applicant@gmail.com
-ORCID 0009-0003-0210-3687
+
+ORCID iDs: Jaloliddin Musayev 0009-0003-0210-3687; Asadbek Abdivayitov 0009-0006-3484-3438;
+Ozodbek Yo'ldashev — to be supplied before submission.
 
 ---
 
@@ -250,6 +252,19 @@ permutation test is reported alongside the parametric one, and its attainable fl
 Per-fold tests are Holm-corrected for multiplicity. Full detail and results are in Technical
 Validation.
 
+### Software and generative-AI assistance
+
+Analysis code is Python 3.12; exact dependencies and versions are given in Code Availability.
+A generative AI assistant (Anthropic Claude, via Claude Code) was used during this work for
+software implementation, data-pipeline construction, statistical tooling, and drafting and
+editing of manuscript text. This is not AI-assisted copy editing, so it is declared rather
+than exempt. The methodological decisions the dataset rests on — the pre-registration of the
+quality rules, the choice to freeze and checksum the splits before any model was run, the
+leave-city-out protocol, the treatment of informative missingness, and every retraction
+recorded in `data/DECISIONS.md` — were made by the authors, who verified every reported figure
+against the regenerated result tables and take full responsibility for the content. See
+*Use of Generative AI* for the full declaration.
+
 
 ## Data Records
 
@@ -271,8 +286,11 @@ cities — not between instruments — sets the extrapolation distance each fold
 from first to last observation. Dashed boxes mark the validation (2023-01-11 to
 2023-12-21) and test (2024-01-01 to 2024-12-31) blocks. Two features of the record are
 visible directly: both Khujand sensors begin only in late 2023, after the training block
-closes, which is what makes Khujand a zero-label fold; and most stations stop on 2025-03-04,
-when the StateAir publication channel closed.
+closes, which is what makes Khujand a zero-label fold; and the record ends unevenly, with
+2 of 7 stations
+(8881, Bishkek) stopping at the StateAir closure on 2025-03-04 while the
+remainder continue past it through a longer-lived feed. All of that lies beyond the test
+block and none of it is used.
 
 ### The frozen benchmark definition
 
@@ -631,10 +649,14 @@ earlier claim about them is retracted in Technical Validation.
   0.03125 without distributional assumptions the data do not support.
 - **Two of 7 instruments are low-cost**, and they constitute the zero-label
   Khujand fold. Results for that fold are not comparable in kind to the other five.
-- **Single-instrument cities cannot be timing-audited.** A constant lifelong offset at Almaty,
-  Tashkent, Bishkek or Ashgabat would be invisible to every check in the suite.
+- **Single-instrument cities cannot be timing-audited.** Only Khujand holds two genuinely
+  distinct instruments, so a constant lifelong offset at Almaty, Tashkent, Bishkek, Ashgabat
+  or Dushanbe would be invisible to every check in the suite. Dushanbe belongs on that list
+  only after the merge recorded in `DECISIONS.md` D-012, which established that its two
+  records were one instrument published twice.
 - **The record ends before the source does.** Every StateAir feed stops on 2025-03-04, when
-  that publication channel closed, and the frozen panel ends there. The monitors themselves
+  that publication channel closed, and the **evaluated** record ends with the 2024 test block.
+  Observations after it exist in the panel but are reserved and unused. The monitors themselves
   did not all stop: as of 2026-08-14 the same US diplomatic-post instruments are still
   republished through AirNow at Ashgabat (to 2025-09-24), Almaty (to 2025-11-14) and Dushanbe
   (still reporting), while Bishkek, Tashkent and Astana ceased on 2025-03-04. No result here

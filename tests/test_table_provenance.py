@@ -81,7 +81,10 @@ def test_reproduce_chain_includes_the_model_layer():
     tree = ast.parse(src)
     chain: tuple[str, ...] = ()
     for node in ast.walk(tree):
-        if isinstance(node, ast.Assign) and getattr(node.targets[0], "id", None) == "REPRODUCE_CHAIN":
+        if (
+            isinstance(node, ast.Assign)
+            and getattr(node.targets[0], "id", None) == "REPRODUCE_CHAIN"
+        ):
             chain = tuple(e.value for e in node.value.elts)
     assert chain, "REPRODUCE_CHAIN not found in tasks.py"
     assert "models" in chain, (

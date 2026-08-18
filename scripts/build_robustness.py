@@ -68,17 +68,29 @@ def main() -> int:
 
     print(f"wrote {OUT.name}\n")
     print("=== RANKING ROBUSTNESS vs each LEGAL baseline ===")
-    cols = ["rival", "model_rmse", "rival_rmse", "margin", "folds_model_better", "paired_p",
-            "loco_subsets_model_leads", "margin_over_seed_sd"]
+    cols = [
+        "rival",
+        "model_rmse",
+        "rival_rmse",
+        "margin",
+        "folds_model_better",
+        "paired_p",
+        "loco_subsets_model_leads",
+        "margin_over_seed_sd",
+    ]
     print(out[cols].round(3).to_string(index=False))
 
     strongest = out.iloc[0]
     print(f"\nAgainst the strongest rival ({strongest.rival}):")
-    print(f"  margin {strongest.margin:+.2f} ug/m3, paired p = {strongest.paired_p:.3f}, "
-          f"leads in {int(strongest.loco_subsets_model_leads)}/{int(strongest.n_folds)} "
-          f"leave-one-city-out subsets")
-    print(f"  seed SD = {seed_spread.std(ddof=1):.3f}; margin is "
-          f"{strongest.margin_over_seed_sd:.1f}x seed noise")
+    print(
+        f"  margin {strongest.margin:+.2f} ug/m3, paired p = {strongest.paired_p:.3f}, "
+        f"leads in {int(strongest.loco_subsets_model_leads)}/{int(strongest.n_folds)} "
+        f"leave-one-city-out subsets"
+    )
+    print(
+        f"  seed SD = {seed_spread.std(ddof=1):.3f}; margin is "
+        f"{strongest.margin_over_seed_sd:.1f}x seed noise"
+    )
     return 0
 
 

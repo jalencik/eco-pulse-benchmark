@@ -84,9 +84,7 @@ def main() -> int:
     # records the research-article manuscript uses -- and restricted to works this document
     # actually cites, so it is not padded with the longer article's bibliography.
     body = "\n\n".join(parts)
-    cited = set(
-        re.findall(r"\(([A-Z][\w'’-]+)(?: et al\.| and [A-Z][\w'’-]+)?, (\d{4})\)", body)
-    )
+    cited = set(re.findall(r"\(([A-Z][\w'’-]+)(?: et al\.| and [A-Z][\w'’-]+)?, (\d{4})\)", body))
     records = json.loads((ROOT / "research" / "sources.json").read_text(encoding="utf-8"))
 
     def _surname(rec: dict) -> str:
@@ -118,7 +116,9 @@ def main() -> int:
         return out
 
     refs = ["## References", ""]
-    for i, rec in enumerate(sorted(used, key=lambda r: (_surname(r).lower(), r.get("year") or 0)), 1):
+    for i, rec in enumerate(
+        sorted(used, key=lambda r: (_surname(r).lower(), r.get("year") or 0)), 1
+    ):
         refs.append(f"{i}. {_fmt(rec)}")
 
     # Data citations. Scientific Data requires datasets to be cited in their own right rather
@@ -130,8 +130,10 @@ def main() -> int:
         for i, key in enumerate(data_cited, 1):
             refs.append(f"D{i}. {DATA_SOURCES[key]}")
 
-    unmatched = sorted({(s, y) for s, y in cited if s not in DATA_SOURCES}
-                       - {(_surname(r), str(r.get("year"))) for r in used})
+    unmatched = sorted(
+        {(s, y) for s, y in cited if s not in DATA_SOURCES}
+        - {(_surname(r), str(r.get("year"))) for r in used}
+    )
     if unmatched:
         print(f"  WARNING: unmatched in-text citations: {unmatched}")
 

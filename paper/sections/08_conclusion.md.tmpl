@@ -45,4 +45,4 @@ have demonstrated something real, and the comparison will be like-for-like becau
 splits cannot move. Priorities for extension, in order: additional cities to reduce the
 fold-to-fold variance that presently exceeds seed variance by an order of magnitude; a
 parallel near-real-time satellite archive to quantify train/serve skew; and a
-post-2025 ground-truth source to replace the reference network that closed on 2025-03-04.
+post-2025 ground-truth source to replace the publication channel that closed on 2025-03-04.

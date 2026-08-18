@@ -84,7 +84,9 @@ def main(argv: list[str]) -> int:
 
     body = markdown.markdown(text, extensions=["tables", "fenced_code", "sane_lists"])
     body = _inline_images(body, src.parent)
-    html = f"<html><head><meta charset='utf-8'><style>{CSS}</style></head><body>{body}</body></html>"
+    html = (
+        f"<html><head><meta charset='utf-8'><style>{CSS}</style></head><body>{body}</body></html>"
+    )
 
     with out.open("wb") as fh:
         result = pisa.CreatePDF(html, dest=fh, encoding="utf-8")

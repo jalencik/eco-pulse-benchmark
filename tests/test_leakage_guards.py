@@ -77,9 +77,7 @@ def test_purge_gap_covers_the_declared_feature_lag(splits, blocks):
         f"purge {purge_h} h is shorter than max_lag {max_lag} + max_horizon {max_hor}"
     )
     for gap in ("purge_train_val", "purge_val_test"):
-        width_h = (
-            _ts(blocks[gap]["end"]) - _ts(blocks[gap]["start"])
-        ).total_seconds() / 3600 + 1
+        width_h = (_ts(blocks[gap]["end"]) - _ts(blocks[gap]["start"])).total_seconds() / 3600 + 1
         assert width_h * 24 >= 0  # width is in hours; the daily models consume whole days
         assert width_h >= 240 or width_h >= purge_h / 24, (
             f"{gap} width {width_h} h does not cover the declared purge"
@@ -116,9 +114,10 @@ def test_predictions_fall_entirely_inside_the_test_block(blocks):
     if not f.exists():
         pytest.skip("predictions not generated yet")
     pred = pd.read_csv(f, parse_dates=["date"])
-    lo, hi = _ts(blocks["test"]["start"]).tz_localize(None), _ts(
-        blocks["test"]["end"]
-    ).tz_localize(None)
+    lo, hi = (
+        _ts(blocks["test"]["start"]).tz_localize(None),
+        _ts(blocks["test"]["end"]).tz_localize(None),
+    )
     assert pred.date.min() >= lo, f"prediction dated {pred.date.min()} precedes the test block"
     assert pred.date.max() <= hi, f"prediction dated {pred.date.max()} follows the test block"
 
@@ -155,9 +154,7 @@ def test_tuning_never_consults_the_test_block():
 
     src = (ROOT / "scripts" / "train_phase5.py").read_text(encoding="utf-8")
     tree = ast.parse(src)
-    fn = next(
-        (n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == "tune"), None
-    )
+    fn = next((n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == "tune"), None)
     assert fn is not None, "train_phase5.py no longer defines tune()"
     names = {n.id for n in ast.walk(fn) if isinstance(n, ast.Name)}
     for forbidden in ("te", "te_lo", "te_hi"):
@@ -174,25 +171,22 @@ def test_cams_bias_is_fitted_on_the_training_block_only():
     A bias fitted over the full record would smuggle test-period information into the
     baseline itself, inflating the entire ladder without any model changing.
     """
-    src = (ROOT / "src" / "ecopulse_ca" / "models" / "cams_baseline.py").read_text(
-        encoding="utf-8"
-    )
+    src = (ROOT / "src" / "ecopulse_ca" / "models" / "cams_baseline.py").read_text(encoding="utf-8")
     assert "joined[joined.index <= train_end.date()]" in src, (
         "fit_bias no longer restricts to the training block"
     )
     for caller in ("scripts/train_phase5.py", "scripts/phase6_analysis.py"):
         text = (ROOT / caller).read_text(encoding="utf-8")
         if "fit_bias(" in text:
-            assert "fit_bias(cams, daily_obs, tr_end)" in text or "fit_bias(cams, observed, tr_end)" in text, (
-                f"{caller} calls fit_bias with something other than the train-block end"
-            )
+            assert (
+                "fit_bias(cams, daily_obs, tr_end)" in text
+                or "fit_bias(cams, observed, tr_end)" in text
+            ), f"{caller} calls fit_bias with something other than the train-block end"
 
 
 def test_pooled_debias_excludes_the_held_out_city():
     """Task N's CAMS variant must not use labels from the city it is scoring."""
-    src = (ROOT / "src" / "ecopulse_ca" / "models" / "cams_baseline.py").read_text(
-        encoding="utf-8"
-    )
+    src = (ROOT / "src" / "ecopulse_ca" / "models" / "cams_baseline.py").read_text(encoding="utf-8")
     body = src.split("def apply_pooled_debias(")[1]
     assert "if s not in held_out" in body, (
         "apply_pooled_debias no longer excludes held-out stations from the bias average"
