@@ -231,15 +231,8 @@ Worth reading before you report anything from it.
 - **Asadbek Abdivayitov:** data curation, investigation.
 - **Ozodbek Yo'ldashev:** supervision, review and editing.
 
-**On AI assistance.** I used Anthropic Claude (Claude Code) heavily while building this, for
-software implementation, the data pipeline, statistical tooling and for drafting and editing
-the manuscript text. I am saying that openly because it is true and because the commit
-history shows it anyway. What the AI did not do is choose the protocol. The pre-registration,
-the decision to freeze the splits before any model ran, the choice of leave-city-out as the
-headline, the call to keep missing-AOD rows instead of dropping them, and every retraction
-recorded in `data/DECISIONS.md` are mine, and I can defend each of them. Every reported
-number is machine-extracted from the banked result tables, and a test re-extracts from the
-source CSVs and fails if any number in the manuscript has drifted.
+Generative-AI use in preparing the software and manuscript text is disclosed in the paper
+itself (`paper/sdata_descriptor.md`, Declarations), per the target journal's policy.
 
 ## Licence
 
