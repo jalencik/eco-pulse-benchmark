@@ -11,8 +11,7 @@ baseline evaluated under whole-city holdout**
 <sup>3</sup> National University of Uzbekistan, Tashkent, Uzbekistan
 
 <sup>\*</sup> Corresponding author: jaloliddin2009applicant@gmail.com
-ORCID iDs: Jaloliddin Musayev 0009-0003-0210-3687; Asadbek Abdivayitov 0009-0006-3484-3438;
-Ozodbek Yo'ldashev — to be supplied before submission.
+ORCID iDs: Jaloliddin Musayev 0009-0003-0210-3687; Asadbek Abdivayitov 0009-0006-3484-3438.
 
 ---
 
@@ -52,7 +51,8 @@ classifier at a 61.8% base rate; no feature family dominates attribution, with s
 products (26.6%) ahead of calendar terms (22.2%), static
 geography (21.8%) and spatial neighbours
 (20.4%); and measured latency invalidated three of five initial
-availability assumptions. The benchmark's contribution is the protocol it forecloses.
+availability assumptions. The contribution is the fixed evaluation protocol, and the
+shortcuts fixing it forecloses.
 
 **Keywords:** air quality; PM2.5; Central Asia; machine learning benchmark; spatial
 cross-validation; leave-city-out; satellite remote sensing; reproducibility

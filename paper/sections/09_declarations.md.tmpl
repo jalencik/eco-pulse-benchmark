@@ -1,10 +1,5 @@
 # 9. Declarations
 
-> **Before submission:** ORCID iDs are on file for Jaloliddin Musayev and Asadbek
-> Abdivayitov; one remains to be supplied for Ozodbek Yo'ldashev. Each co-author's written
-> approval of the final manuscript, author order and contribution statement must be held on
-> file by the corresponding author.
-
 ## 9.1 Data availability
 
 The benchmark definition — station set, temporal blocks, leave-city-out and

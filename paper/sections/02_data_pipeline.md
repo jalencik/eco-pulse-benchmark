@@ -179,7 +179,7 @@ adds is concentrated precisely where MAIAC fails.
 Consequently missingness is **modelled, never dropped**. Valid-pixel counts are promoted to
 features in their own right. They are retained for Task F but **excluded from Task N** — see
 Section 5.3, where an ablation showed retrieval-count features to be city-specific rather than
-transferable. Section 6 reports attribution for the features actually used, which is
-total SHAP attribution — comparable to the 9.0% contributed by the
-full chemistry-transport model — confirming that *when* a retrieval failed carries
-information about the atmosphere.
+transferable. Section 6 reports attribution for the features actually used, so the
+retrieval-count features carry no Task N attribution at all: they were excluded from it. The
+evidence that *when* a retrieval failed carries information is their retention in Task F and
+the Section 5.3 ablation, not an attribution share.

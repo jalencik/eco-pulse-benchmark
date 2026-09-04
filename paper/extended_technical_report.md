@@ -11,8 +11,7 @@ baseline evaluated under whole-city holdout**
 <sup>3</sup> National University of Uzbekistan, Tashkent, Uzbekistan
 
 <sup>\*</sup> Corresponding author: jaloliddin2009applicant@gmail.com
-ORCID iDs: Jaloliddin Musayev 0009-0003-0210-3687; Asadbek Abdivayitov 0009-0006-3484-3438;
-Ozodbek Yo'ldashev — to be supplied before submission.
+ORCID iDs: Jaloliddin Musayev 0009-0003-0210-3687; Asadbek Abdivayitov 0009-0006-3484-3438.
 
 ---
 
@@ -52,7 +51,8 @@ classifier at a 61.8% base rate; no feature family dominates attribution, with s
 products (26.6%) ahead of calendar terms (22.2%), static
 geography (21.8%) and spatial neighbours
 (20.4%); and measured latency invalidated three of five initial
-availability assumptions. The benchmark's contribution is the protocol it forecloses.
+availability assumptions. The contribution is the fixed evaluation protocol, and the
+shortcuts fixing it forecloses.
 
 **Keywords:** air quality; PM2.5; Central Asia; machine learning benchmark; spatial
 cross-validation; leave-city-out; satellite remote sensing; reproducibility
@@ -384,10 +384,10 @@ adds is concentrated precisely where MAIAC fails.
 Consequently missingness is **modelled, never dropped**. Valid-pixel counts are promoted to
 features in their own right. They are retained for Task F but **excluded from Task N** — see
 Section 5.3, where an ablation showed retrieval-count features to be city-specific rather than
-transferable. Section 6 reports attribution for the features actually used, which is
-total SHAP attribution — comparable to the 9.0% contributed by the
-full chemistry-transport model — confirming that *when* a retrieval failed carries
-information about the atmosphere.
+transferable. Section 6 reports attribution for the features actually used, so the
+retrieval-count features carry no Task N attribution at all: they were excluded from it. The
+evidence that *when* a retrieval failed carries information is their retention in Task F and
+the Section 5.3 ablation, not an attribution share.
 
 ---
 
@@ -1417,11 +1417,6 @@ post-2025 ground-truth source to replace the publication channel that closed on 
 ---
 
 # 9. Declarations
-
-> **Before submission:** ORCID iDs are on file for Jaloliddin Musayev and Asadbek
-> Abdivayitov; one remains to be supplied for Ozodbek Yo'ldashev. Each co-author's written
-> approval of the final manuscript, author order and contribution statement must be held on
-> file by the corresponding author.
 
 ## 9.1 Data availability
 

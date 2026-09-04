@@ -27,9 +27,6 @@ venv/
 .ipynb_checkpoints/
 
 # Experiment logs — the SQLite DB is a local cache; the CSV export is committed
-runs/*.sqlite
-runs/*.sqlite-journal
-!runs/runs_export.csv
 
 # OS / editor
 .DS_Store

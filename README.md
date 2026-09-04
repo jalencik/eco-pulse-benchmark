@@ -112,7 +112,6 @@ once the ground-truth panel already exists on your machine.
 | Verify the frozen benchmark | `cd benchmark/splits && sha256sum -c splits.sha256` |
 | Run the full test suite (582 tests, offline fixtures) | `python tasks.py test` |
 | Lint and type-check | `python tasks.py lint && python tasks.py typecheck` |
-| Rebuild every table and re-render the manuscript | `python tasks.py paper` |
 
 The splits **are** the benchmark, and they are committed, so verifying them takes no rebuild
 and no key.
@@ -131,6 +130,10 @@ Then one command rebuilds every reported number end to end:
 ```bash
 make reproduce
 ```
+
+`python tasks.py paper` sits on the same side of that line. It rebuilds every table and
+re-renders both documents, and its first step reads the built panel, so it does not run from
+a clean clone either.
 
 Where `make` is missing, `python tasks.py reproduce` is the same chain. It runs lint,
 typecheck, tests, splits (frozen and hash-verified *before* any model sees data), baselines
@@ -159,7 +162,7 @@ test rather than a convention, because a convention does not fail the build.
 | **No lookahead in operational features** | ERA5 and CAMS reanalysis do not exist at prediction time. Results that use them are labelled reanalysis-oracle ablations, never deployed numbers. |
 | **Nothing dropped silently** | Every QC rule reports its **n-effect** into [`data/DECISIONS.md`](data/DECISIONS.md). |
 | **Timezones validated against physics** | Diurnal-shape cross-correlation instead of metadata, including detection of offsets that change mid-record. |
-| **Every number is traceable** | `run_id` plus git SHA plus config hash in the run log. |
+| **Every number is traceable** | `paper/numbers.json` is extracted from the banked CSVs and substituted into the prose at render time. `tests/test_manuscript_numbers.py` enforces that chain end to end, and `tests/test_table_provenance.py` fails if a published table has no producer inside `make reproduce`. |
 
 ## Two tasks, never mixed in one table
 
