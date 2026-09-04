@@ -91,6 +91,32 @@ SWEEPS: dict[str, str] = {
     "M11": "A unified approach to interpreting model predictions",
     "M12": "Estimating ground-level PM2.5 using aerosol optical depth and "
     "meteorological parameters",
+    # Cited twice in Section 6.2 for the small-cluster caveat. It was present in
+    # sources.json without a query behind it, so a clean resolver run dropped it and left
+    # two in-text citations pointing at nothing.
+    "M13": "A practitioner's guide to cluster-robust inference",
+    # Product and instrument papers for the four predictor families the results are built
+    # on. The manuscript used all four and cited none of them.
+    "M15": "MODIS Collection 6 MAIAC algorithm",
+    "M16": "TROPOMI on the ESA Sentinel-5 Precursor a GMES mission for global observations "
+    "of the atmospheric composition",
+    "M17": "The ERA5 global reanalysis",
+    # The gap argument in Section 1.1 turns on gridded products already covering the region.
+    "M18": "Monthly global estimates of fine particulate matter and their uncertainty",
+    # Section 3.6 mandates Diebold-Mariano for every submission. Diebold's own retrospective
+    # is the standard caveat on applying it to estimated models rather than given forecasts,
+    # and a referee with econometrics training will expect it.
+    "M14": "Comparing predictive accuracy twenty years later a personal perspective on the "
+    "use and abuse of Diebold-Mariano tests",
+    # Per-fold p-values are Holm-corrected; the procedure was never cited.
+    "M21": "A simple sequentially rejective multiple test procedure",
+    # M8 (Plantower field evaluation) was carrying the whole low-cost-sensor limitation for
+    # Khujand. These two cover the mechanism (humidity and composition bias in optical
+    # sizing) and the standard network-correction argument.
+    "M19": "Evaluation of a low-cost optical particle counter Alphasense OPC-N2 for ambient "
+    "air monitoring",
+    "M20": "Development and application of a United States wide correction for PM2.5 data "
+    "collected with the PurpleAir sensor",
 }
 
 # A fuzzy search returns the most-cited nearby paper, not the requested one. Accepting
@@ -117,6 +143,22 @@ REQUIRED: dict[str, set[str]] = {
     "M9": {"cams"},
     "A3": {"bishkek"},
     "B1": {"bench"},
+    # Without this M13 resolves to MacKinnon et al. (2023), "Cluster-robust inference: a
+    # guide to empirical practice", which shares every token but this one. The text cites
+    # Cameron and Miller (2015).
+    "M13": {"practitioner"},
+    # M14 shares a title stem with M3 ("Comparing Predictive Accuracy"); without this it
+    # collapses onto the 1995 paper it is the retrospective on.
+    "M14": {"twenty"},
+    "M15": {"maiac"},
+    "M16": {"tropomi"},
+    "M17": {"era5"},
+    # Distinguishes the 2021 monthly product from the 2016 combined-geophysical paper, which
+    # clears the token-share gate on its own.
+    "M18": {"monthly"},
+    "M19": {"alphasense"},
+    "M20": {"purpleair"},
+    "M21": {"sequentially"},
     "C1": {"transfer"},
     "C2": {"covariates"},
 }

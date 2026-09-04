@@ -44,7 +44,8 @@ open: Turkmenistan operates no national network, Kazakhstan releases data only t
 physically inside the country, and only Kyrgyzstan publishes in a fully open form
 (OpenAQ, 2025).
 
-Estimates are not what the region lacks. Global gridded products already assign PM2.5 values
+Estimates are not what the region lacks. Global gridded products
+(van Donkelaar et al., 2021) already assign PM2.5 values
 across Central Asia, and the epidemiological literature consumes them. What nobody can do is
 check those estimates, or set two methods against each other on identical terms. There is no
 open station-level benchmark for the region — no frozen splits, no declared protocol, no
@@ -167,7 +168,8 @@ that anything which cannot exist at prediction time is excluded from deployable 
 by test rather than by convention. Latency was measured rather than assumed; three of five
 initial estimates proved wrong, one by 774 days.
 
-- **Satellite.** Sentinel-5P CO, NO₂, SO₂ and absorbing aerosol index; MODIS MAIAC AOD.
+- **Satellite.** Sentinel-5P CO, NO₂, SO₂ and absorbing aerosol index (Veefkind et al.,
+  2012); MODIS MAIAC AOD (Lyapustin et al., 2018).
   Retrieval-quality fractions are carried as features, because missingness in these products is
   correlated with the target — SO₂ retrieves on 0.1% of December days against 92.6% in summer,
   a solar-geometry floor that blinds the direct winter coal tracer throughout the coal season.
@@ -175,7 +177,7 @@ initial estimates proved wrong, one by 774 days.
   extreme tail would invent the values that matter most.
 - **Chemistry transport.** Copernicus CAMS global PM2.5 forecast, used both as a feature and,
   bias-corrected, as a baseline.
-- **Reanalysis meteorology.** ERA5 single-level fields.
+- **Reanalysis meteorology.** ERA5 single-level fields (Hersbach et al., 2020).
 - **Static geography.** Elevation, terrain basin indices at multiple radii, VIIRS night-time
   lights, and population density.
 
@@ -249,7 +251,9 @@ cities, a pooled station-day test is not a valid inference; the primary analysis
 one value per city and tests those 6 observations, with sensitivity analyses across
 HAC truncation lags and a cluster bootstrap. With 6 clusters an exact sign-flip
 permutation test is reported alongside the parametric one, and its attainable floor is stated.
-Per-fold tests are Holm-corrected for multiplicity. Full detail and results are in Technical
+Per-fold tests are Holm-corrected for multiplicity (Holm, 1979), and are read as
+descriptive diagnostics rather than as the inferential claim, since both comparators are
+estimated models rather than given forecasts (Diebold, 2015). Full detail and results are in Technical
 Validation.
 
 ### Software and generative-AI assistance
@@ -534,8 +538,9 @@ roughly 30–50 clusters (Cameron and Miller, 2015) — which is why an exact pe
 reported alongside. Its smallest attainable two-sided *p*-value is 0.03125, a floor
 imposed by having only 6 cities, stated so that it is not mistaken for evidence.
 
-Per-fold Diebold–Mariano tests are additionally Holm-corrected for 6
-comparisons; **3 of 6 survive at α = 0.05.**
+Per-fold Diebold–Mariano tests are additionally Holm-corrected (Holm, 1979) for
+6 comparisons, the family being the per-fold comparisons of one model pair;
+**3 of 6 survive at α = 0.05.**
 
 **The evidence does not support a claim that the reference model outperforms bias-corrected
 CAMS under the unit of generalisation this benchmark is built around.** That is reported as
@@ -783,11 +788,15 @@ consistency.
 ## References
 
 1. Clara Betancourt et al. (2021). *AQ-Bench: a benchmark dataset for machine learning on global air quality metrics*. Earth system science data. https://doi.org/10.5194/essd-13-3013-2021
-2. A. Colin Cameron and Douglas L. Miller (2015). *A Practitioner's Guide to Cluster-Robust Inference*. Journal of Human Resources. https://doi.org/10.3368/jhr.50.2.317
-3. Sachin Chauhan et al. (2023). *AirDelhi: Fine-Grained Spatio-Temporal Particulate Matter Dataset From Delhi For ML based Modeling*. Neural Information Processing Systems. https://doi.org/10.52202/075280-3298
-4. Stefanos Papagiannis et al. (2024). *Air quality challenges in Central Asian urban areas: a PM2.5 source apportionment analysis in Dushanbe, Tajikistan*. Environmental Science and Pollution Research. https://doi.org/10.1007/s11356-024-33833-6
-5. Kazbek Tursun et al. (2025). *Dominant sources of PM2.5 in Kazakhstan's urban cities: A PMF and HYSPLIT-based study for air quality management in Central Asia*. Urban Climate. https://doi.org/10.1016/j.uclim.2025.102706
-6. Tongshu Zheng et al. (2018). *Field evaluation of low-cost particulate matter sensors in high- and low-concentration environments*. Atmospheric measurement techniques. https://doi.org/10.5194/amt-11-4823-2018
+2. A. Colin Cameron and Douglas L. Miller (2015). *A Practitioner’s Guide to Cluster-Robust Inference*. Journal of Human Resources. https://doi.org/10.3368/jhr.50.2.317
+3. Sachin Chauhan et al. (2023). *AirDelhi: Fine-Grained Spatio-Temporal Particulate Matter Dataset From Delhi For ML based Modeling*. Advances in Neural Information Processing Systems 36. https://doi.org/10.52202/075280-3298
+4. Francis X. Diebold (2015). *Comparing Predictive Accuracy, Twenty Years Later: A Personal Perspective on the Use and Abuse of Diebold–Mariano Tests*. Journal of Business and Economic Statistics. https://doi.org/10.1080/07350015.2014.983236
+5. Hans Hersbach et al. (2020). *The ERA5 global reanalysis*. Quarterly Journal of the Royal Meteorological Society. https://doi.org/10.1002/qj.3803
+6. Sture Holm (1979). *A Simple Sequentially Rejective Multiple Test Procedure*. Scandinavian Journal of Statistics. https://doi.org/10.2307/4615733
+7. Alexei Lyapustin et al. (2018). *MODIS Collection 6 MAIAC algorithm*. Atmospheric measurement techniques. https://doi.org/10.5194/amt-11-5741-2018
+8. Stefanos Papagiannis et al. (2024). *Air quality challenges in Central Asian urban areas: a PM2.5 source apportionment analysis in Dushanbe, Tajikistan*. Environmental Science and Pollution Research. https://doi.org/10.1007/s11356-024-33833-6
+9. Kazbek Tursun et al. (2025). *Dominant sources of PM2.5 in Kazakhstan's urban cities: A PMF and HYSPLIT-based study for air quality management in Central Asia*. Urban Climate. https://doi.org/10.1016/j.uclim.2025.102706
+10. Tongshu Zheng et al. (2018). *Field evaluation of low-cost particulate matter sensors in high- and low-concentration environments*. Atmospheric measurement techniques. https://doi.org/10.5194/amt-11-4823-2018
 
 ### Data Citations
 

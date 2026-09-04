@@ -74,7 +74,8 @@ base under those numbers is thin and unevenly open. Turkmenistan runs no nationa
 at all. Kazakhstan releases its data only to users physically inside the country. Only
 Kyrgyzstan publishes in a fully open form (OpenAQ, 2025).
 
-Estimates are not what the region lacks. Global gridded products already assign PM2.5 values
+Estimates are not what the region lacks. Global gridded products
+(van Donkelaar et al., 2021) already assign PM2.5 values
 across Central Asia, and the epidemiological literature consumes them. What nobody can do is
 check those estimates, or set two methods against each other on identical terms. There is no
 open station-level benchmark for the region. No frozen splits, no declared protocol, no
@@ -362,13 +363,17 @@ unavailable throughout that source's season. Additionally, 29.8% of the
 retrievals that do occur are negative, sitting below the noise floor — clipping them at zero
 would bias the coal tracer upward across a third of its observations.
 
-MAIAC has been validated specifically over Central Asia (Chen et al., 2021), which is why
-it was selected over coarser aerosol products.
+MAIAC (Lyapustin et al., 2018) has been validated specifically over Central Asia
+(Chen et al., 2021), which is why it was selected over coarser aerosol products. Its
+bright-surface retrieval matters here: much of the study region is high-albedo desert and
+seasonal snow, the conditions under which coarser algorithms lose the surface-aerosol
+separation.
 
 **The split between clean and contaminated features follows retrieval physics.** CO uses the
 2.3 µm shortwave-infrared band and AAI uses ultraviolet reflectance *ratios* rather than
-absorption depth; both survive winter geometry and cloud, and neither shows target-correlated
-missingness. MAIAC (visible/near-infrared) and the ultraviolet absorption retrievals do not.
+absorption depth (Veefkind et al., 2012); both survive winter geometry and cloud, and neither
+shows target-correlated missingness. MAIAC (visible/near-infrared) and the ultraviolet
+absorption retrievals do not.
 
 **The two clean features are complementary to the contaminated ones.** AOD and AAI are both
 present on 62.8% of station-days; AAI alone covers a further 36.9%; neither
@@ -926,9 +931,16 @@ Pooling six cities into one number hides the finding.
 | **pooled** (n = 2214) | **31.49** | **33.07** | **-4.38** | **< 0.0001** |
 
 Tests use Newey–West HAC variance with the Harvey–Leybourne–Newbold small-sample
-correction. Negative statistics favour the learned model. Six folds are tested, so per-fold
-*p*-values are additionally reported with a Holm step-down correction in
+correction. Negative statistics favour the learned model. One limitation of the test is
+stated here rather than left for a reader to raise: Diebold (2015) notes that the DM
+procedure was constructed to compare *given* forecasts, and that applying it to *estimated*
+models is its most common misuse. Both comparators here are estimated on training data, so
+the per-fold DM statistics below are read as descriptive diagnostics. The paper's inferential
+claim is the city-level test in Section 6.2b, not these. Six folds are tested, so per-fold
+*p*-values are additionally reported with a Holm step-down correction (Holm, 1979) in
 `t6_07_per_fold_holm.csv`; **3 of 6 survive it at α = 0.05.**
+The correction family is the 6 per-fold comparisons of the same model pair,
+declared here because a family chosen after seeing the *p*-values is not a correction.
 
 ### 6.2b Which *p*-value is the paper's claim
 
@@ -1165,15 +1177,26 @@ assumption.
 
 A related constraint sits upstream: 306 candidate stations were excluded for insufficient
 span, almost all of them low-cost units whose measurement uncertainty is well documented
-(Zheng et al., 2018).
+(Zheng et al., 2018; Crilley et al., 2018).
 
 That exclusion was not applied uniformly, and the exception matters. **Khujand's two
 instruments are Clarity low-cost sensors** (`is_monitor = false` in the OpenAQ census), not
 reference-grade monitors. Every other city in the benchmark is a US-embassy BAM/FEM-class
 monitor published by AirNow or StateAir. Khujand is therefore the one city whose labels carry
-the measurement uncertainty the paragraph above cites Zheng et al. (2018) for, and it is also
-the city that contributes no training rows -- so its fold reports low-cost labels scored
-against a model that never saw them.
+the measurement uncertainty the paragraph above cites, and it is also the city that
+contributes no training rows -- so its fold reports low-cost labels scored against a model
+that never saw them.
+
+The mechanism matters for where this benchmark sits. Optical sensors size particles by light
+scattering, so their response depends on humidity and on aerosol composition: Crilley et al.
+(2018) attribute the dominant positive bias in this sensor class to hygroscopic growth, and
+Barkjohn et al. (2021) show that removing the resulting bias needs a correction fitted
+against reference monitors across a network. Neither condition is met here. The published
+corrections are derived in humid, sulphate- and organic-dominated environments, and this
+region is arid and dust-dominated, so their coefficients do not transfer; and Khujand has no
+co-located reference instrument to fit a local correction against. We therefore report the
+Clarity readings as published, label the fold, and treat its errors as carrying an
+instrument-uncertainty component we cannot separate from model error.
 
 Two consequences follow. First, results for the Khujand
 fold are not comparable in kind to the other five and should not be read as a reference-grade
@@ -1486,18 +1509,25 @@ Generated by `paper/scripts/stitch.py` from `research/sources.json`. Every entry
 - **[B3]** Asmaa Alazmi and Hesham Rakha (2022). *Assessing and Validating the Ability of Machine Learning to Handle Unrefined Particle Air Pollution Mobile Monitoring Data Randomly, Spatially, and Spatiotemporally*. International Journal of Environmental Research and Public Health. https://doi.org/10.3390/ijerph191610098
 - **[B4]** George I. Austin, Itsik Pe’er and Tal Korem (2025). *Distributional bias compromises leave-one-out cross-validation*. Science Advances. https://doi.org/10.1126/sciadv.adx6976
 - **[A7]** Jamie Banks, Bernd Heinold and Kerstin Schepanski (2022). *Impacts of the Desiccation of the Aral Sea on the Central Asian Dust Life‐Cycle*. Journal of Geophysical Research Atmospheres. https://doi.org/10.1029/2022jd036618
+- **[S:M20]** Karoline K. Barkjohn, B. Gantt and Andrea L. Clements (2021). *Development and application of a United States-wide correction for PM 2.5 data collected with the PurpleAir sensor*. Atmospheric measurement techniques. https://doi.org/10.5194/amt-14-4617-2021
 - **[B1]** Clara Betancourt et al. (2021). *AQ-Bench: a benchmark dataset for machine learning on global air quality metrics*. Earth system science data. https://doi.org/10.5194/essd-13-3013-2021
-- **[S:M13]** A. Colin Cameron and Douglas L. Miller (2015). *A Practitioner's Guide to Cluster-Robust Inference*. Journal of Human Resources. https://doi.org/10.3368/jhr.50.2.317
-- **[B5]** Sachin Chauhan et al. (2023). *AirDelhi: Fine-Grained Spatio-Temporal Particulate Matter Dataset From Delhi For ML based Modeling*. Neural Information Processing Systems. https://doi.org/10.52202/075280-3298
+- **[S:M13]** A. Colin Cameron and Douglas L. Miller (2015). *A Practitioner’s Guide to Cluster-Robust Inference*. Journal of Human Resources. https://doi.org/10.3368/jhr.50.2.317
+- **[B5]** Sachin Chauhan et al. (2023). *AirDelhi: Fine-Grained Spatio-Temporal Particulate Matter Dataset From Delhi For ML based Modeling*. Advances in Neural Information Processing Systems 36. https://doi.org/10.52202/075280-3298
 - **[A4]** Xiangyue Chen et al. (2021). *Validation and comparison of high-resolution MAIAC aerosol products over Central Asia*. Atmospheric Environment. https://doi.org/10.1016/j.atmosenv.2021.118273
+- **[S:M19]** Leigh R. Crilley et al. (2018). *Evaluation of a low-cost optical particle counter (Alphasense OPC-N2) for ambient air monitoring*. Atmospheric measurement techniques. https://doi.org/10.5194/amt-11-709-2018
 - **[S:M3]** Francis X. Diebold and Roberto S. Mariano (1994). *Comparing Predictive Accuracy*. National Bureau of Economic Research. https://doi.org/10.3386/t0169
+- **[S:M14]** Francis X. Diebold (2015). *Comparing Predictive Accuracy, Twenty Years Later: A Personal Perspective on the Use and Abuse of Diebold–Mariano Tests*. Journal of Business and Economic Statistics. https://doi.org/10.1080/07350015.2014.983236
+- **[S:M18]** Aaron van Donkelaar et al. (2021). *Monthly Global Estimates of Fine Particulate Matter and Their Uncertainty*. Environmental Science & Technology. https://doi.org/10.1021/acs.est.1c05309
 - **[C1]** Shrey Gupta et al. (2024). *Spatial Transfer Learning for Estimating PM$$_{2.5}$$ in Data-Poor Regions*. Lecture Notes in Computer Science. https://doi.org/10.1007/978-3-031-70378-2_24
 - **[S:M4]** David I. Harvey, Stephen J. Leybourne and Paul Newbold (1997). *Testing the equality of prediction mean squared errors*. International Journal of Forecasting. https://doi.org/10.1016/s0169-2070(96)00719-4
+- **[S:M17]** Hans Hersbach et al. (2020). *The ERA5 global reanalysis*. Quarterly Journal of the Royal Meteorological Society. https://doi.org/10.1002/qj.3803
+- **[S:M21]** Sture Holm (1979). *A Simple Sequentially Rejective Multiple Test Procedure*. Scandinavian Journal of Statistics. https://doi.org/10.2307/4615733
 - **[S:M9]** Antje Inness et al. (2019). *The CAMS reanalysis of atmospheric composition*. Atmospheric chemistry and physics. https://doi.org/10.5194/acp-19-3515-2019
 - **[C2]** Xiaoye Jin et al. (2022). *Machine learning driven by environmental covariates to estimate high-resolution PM2.5 in data-poor regions*. PeerJ. https://doi.org/10.7717/peerj.13203
 - **[S:M10]** Guolin Ke et al. (2017). *LightGBM: A Highly Efficient Gradient Boosting Decision Tree*. HAL (Le Centre pour la Communication Scientifique Directe).
 - **[A8]** Jie Liu et al. (2025). *Characteristics of salt dust aerosols and their transport implications in the Aral Sea*. Scientific Reports. https://doi.org/10.1038/s41598-025-86880-5
 - **[S:M11]** Scott Lundberg and Su‐In Lee (2017). *A Unified Approach to Interpreting Model Predictions*. arXiv (Cornell University). https://doi.org/10.48550/arxiv.1705.07874
+- **[S:M15]** Alexei Lyapustin et al. (2018). *MODIS Collection 6 MAIAC algorithm*. Atmospheric measurement techniques. https://doi.org/10.5194/amt-11-5741-2018
 - **[C3]** Gideon Mazuruse et al. (2026). *Explainable PSO-optimised machine learning models for multi-pollutant air quality forecasting in major African cities with transfer learning*. Frontiers in Environmental Science. https://doi.org/10.3389/fenvs.2026.1828162
 - **[S:M2]** Hanna Meyer et al. (2019). *Importance of spatial predictor variable selection in machine learning applications – Moving from data reproduction to spatial prediction*. Ecological Modelling. https://doi.org/10.1016/j.ecolmodel.2019.108815
 - **[S:M5]** Whitney K. Newey and Kenneth D. West (1987). *A Simple, Positive Semi-Definite, Heteroskedasticity and Autocorrelation Consistent Covariance Matrix*. Econometrica. https://doi.org/10.2307/1913610
@@ -1508,6 +1538,7 @@ Generated by `paper/scripts/stitch.py` from `research/sources.json`. Every entry
 - **[B2]** Dié Tang, Yu Zhan and Fumo Yang (2024). *A review of machine learning for modeling air quality: Overlooked but important issues*. Atmospheric Research. https://doi.org/10.1016/j.atmosres.2024.107261
 - **[A2]** Madina Tursumbayeva et al. (2023). *Cities of Central Asia: New hotspots of air pollution in the world*. Atmospheric Environment. https://doi.org/10.1016/j.atmosenv.2023.119901
 - **[A5]** Kazbek Tursun et al. (2025). *Dominant sources of PM2.5 in Kazakhstan's urban cities: A PMF and HYSPLIT-based study for air quality management in Central Asia*. Urban Climate. https://doi.org/10.1016/j.uclim.2025.102706
+- **[S:M16]** Pepijn Veefkind et al. (2012). *TROPOMI on the ESA Sentinel-5 Precursor: A GMES mission for global observations of the atmospheric composition for climate, air quality and ozone layer applications*. Remote Sensing of Environment. https://doi.org/10.1016/j.rse.2011.09.027
 - **[S:M7]** Yongming Xu et al. (2018). *Evaluation of machine learning techniques with multiple remote sensing datasets in estimating monthly concentrations of ground-level PM2.5*. Environmental Pollution. https://doi.org/10.1016/j.envpol.2018.08.029
 - **[S:M12]** Yixuan Zheng et al. (2015). *Estimating ground-level PM2.5 concentrations over three megalopolises in China using satellite-derived aerosol optical depth measurements*. Atmospheric Environment. https://doi.org/10.1016/j.atmosenv.2015.06.046
 - **[S:M8]** Tongshu Zheng et al. (2018). *Field evaluation of low-cost particulate matter sensors in high- and low-concentration environments*. Atmospheric measurement techniques. https://doi.org/10.5194/amt-11-4823-2018

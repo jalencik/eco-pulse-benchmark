@@ -10,27 +10,35 @@
 | C2 | FULL | yes | Xiaoye Jin et al. | 2022 | PeerJ | `10.7717/peerj.13203` |
 | C4 | FULL | yes | Jianjun Ni et al. | 2022 | Applied Sciences | `10.3390/app12073597` |
 | S:M11 | FULL | yes | Scott Lundberg, Su‐In Lee | 2017 | arXiv (Cornell University) | `10.48550/arxiv.1705.07874` |
+| S:M15 | FULL | yes | Alexei Lyapustin et al. | 2018 | Atmospheric measurement techniques | `10.5194/amt-11-5741-2018` |
+| S:M17 | FULL | yes | Hans Hersbach et al. | 2020 | Quarterly Journal of the Royal Meteorological Society | `10.1002/qj.3803` |
+| S:M18 | FULL | yes | Aaron van Donkelaar et al. | 2021 | Environmental Science & Technology | `10.1021/acs.est.1c05309` |
+| S:M19 | FULL | yes | Leigh R. Crilley et al. | 2018 | Atmospheric measurement techniques | `10.5194/amt-11-709-2018` |
+| S:M20 | FULL | yes | Karoline K. Barkjohn, B. Gantt, Andrea L. Clements | 2021 | Atmospheric measurement techniques | `10.5194/amt-14-4617-2021` |
 | S:M3 | FULL | yes | Francis X. Diebold, Roberto S. Mariano | 1994 | National Bureau of Economic Research | `10.3386/t0169` |
 | S:M6 | FULL | yes | Philipp Probst, Marvin N. Wright, Anne‐Laure Boulesteix | 2019 | Wiley Interdisciplinary Reviews Data Mining and Knowledge Discovery | `10.1002/widm.1301` |
 | S:M7 | FULL | yes | Yongming Xu et al. | 2018 | Environmental Pollution | `10.1016/j.envpol.2018.08.029` |
 | S:M8 | FULL | yes | Tongshu Zheng et al. | 2018 | Atmospheric measurement techniques | `10.5194/amt-11-4823-2018` |
 | S:M9 | FULL | yes | Antje Inness et al. | 2019 | Atmospheric chemistry and physics | `10.5194/acp-19-3515-2019` |
 | B1 | ABSTRACT | yes | Clara Betancourt et al. | 2021 | Earth system science data | `10.5194/essd-13-3013-2021` |
-| B5 | ABSTRACT | yes | Sachin Chauhan et al. | 2023 | Neural Information Processing Systems | `10.52202/075280-3298` |
 | C3 | ABSTRACT | yes | Gideon Mazuruse et al. | 2026 | Frontiers in Environmental Science | `10.3389/fenvs.2026.1828162` |
 | S:M1 | ABSTRACT | yes | David R. Roberts et al. | 2016 | Ecography | `10.1111/ecog.02881` |
 | S:M10 | ABSTRACT | partial | Guolin Ke et al. | 2017 | HAL (Le Centre pour la Communication Scientifique Directe) | — |
+| S:M14 | ABSTRACT | yes | Francis X. Diebold | 2015 | Journal of Business and Economic Statistics | `10.1080/07350015.2014.983236` |
+| S:M21 | ABSTRACT | yes | Sture Holm | 1979 | Scandinavian Journal of Statistics | `10.2307/4615733` |
 | S:M5 | ABSTRACT | yes | Whitney K. Newey, Kenneth D. West | 1987 | Econometrica | `10.2307/1913610` |
 | A2 | SNIPPET | yes | Madina Tursumbayeva et al. | 2023 | Atmospheric Environment | `10.1016/j.atmosenv.2023.119901` |
 | A4 | SNIPPET | yes | Xiangyue Chen et al. | 2021 | Atmospheric Environment | `10.1016/j.atmosenv.2021.118273` |
 | A5 | SNIPPET | yes | Kazbek Tursun et al. | 2025 | Urban Climate | `10.1016/j.uclim.2025.102706` |
 | B2 | SNIPPET | yes | Dié Tang, Yu Zhan, Fumo Yang | 2024 | Atmospheric Research | `10.1016/j.atmosres.2024.107261` |
+| B5 | SNIPPET | yes | Sachin Chauhan et al. | 2023 | Advances in Neural Information Processing Systems 36 | `10.52202/075280-3298` |
 | C1 | SNIPPET | yes | Shrey Gupta et al. | 2024 | Lecture Notes in Computer Science | `10.1007/978-3-031-70378-2_24` |
 | S:M12 | SNIPPET | yes | Yixuan Zheng et al. | 2015 | Atmospheric Environment | `10.1016/j.atmosenv.2015.06.046` |
 | S:M13 | SNIPPET | yes | A. Colin Cameron, Douglas L. Miller | 2015 | Journal of Human Resources | `10.3368/jhr.50.2.317` |
+| S:M16 | SNIPPET | yes | Pepijn Veefkind et al. | 2012 | Remote Sensing of Environment | `10.1016/j.rse.2011.09.027` |
 | S:M2 | SNIPPET | yes | Hanna Meyer et al. | 2019 | Ecological Modelling | `10.1016/j.ecolmodel.2019.108815` |
 | S:M4 | SNIPPET | yes | David I. Harvey, Stephen J. Leybourne, Paul Newbold | 1997 | International Journal of Forecasting | `10.1016/s0169-2070(96)00719-4` |
 | A3 | UNRESOLVED | no | — | — | *not indexed; closest rejected: Mapping PM2.5 Sources and Emission Management Op* | — |
-| A9 | UNRESOLVED | no | — | — | *not indexed; closest rejected: Interpretable Multi-Horizon Machine Learning Fra* | — |
+| A9 | UNRESOLVED | no | — | — | *not indexed; closest rejected: Comparative assessment of PM2.5 pollution in Uzb* | — |
 
-**30 records resolved via API.** ABSTRACT=6, FULL=13, SNIPPET=9, UNRESOLVED=2. 27 carry an authoritative DOI; 19 reached abstract depth or better.
+**38 records resolved via API.** ABSTRACT=7, FULL=18, SNIPPET=11, UNRESOLVED=2. 35 carry an authoritative DOI; 25 reached abstract depth or better.

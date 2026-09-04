@@ -69,7 +69,8 @@ that anything which cannot exist at prediction time is excluded from deployable 
 by test rather than by convention. Latency was measured rather than assumed; three of five
 initial estimates proved wrong, one by 774 days.
 
-- **Satellite.** Sentinel-5P CO, NO₂, SO₂ and absorbing aerosol index; MODIS MAIAC AOD.
+- **Satellite.** Sentinel-5P CO, NO₂, SO₂ and absorbing aerosol index (Veefkind et al.,
+  2012); MODIS MAIAC AOD (Lyapustin et al., 2018).
   Retrieval-quality fractions are carried as features, because missingness in these products is
   correlated with the target — SO₂ retrieves on 0.1% of December days against 92.6% in summer,
   a solar-geometry floor that blinds the direct winter coal tracer throughout the coal season.
@@ -77,7 +78,7 @@ initial estimates proved wrong, one by 774 days.
   extreme tail would invent the values that matter most.
 - **Chemistry transport.** Copernicus CAMS global PM2.5 forecast, used both as a feature and,
   bias-corrected, as a baseline.
-- **Reanalysis meteorology.** ERA5 single-level fields.
+- **Reanalysis meteorology.** ERA5 single-level fields (Hersbach et al., 2020).
 - **Static geography.** Elevation, terrain basin indices at multiple radii, VIIRS night-time
   lights, and population density.
 
@@ -151,7 +152,9 @@ cities, a pooled station-day test is not a valid inference; the primary analysis
 one value per city and tests those {{n_cities}} observations, with sensitivity analyses across
 HAC truncation lags and a cluster bootstrap. With {{n_cities}} clusters an exact sign-flip
 permutation test is reported alongside the parametric one, and its attainable floor is stated.
-Per-fold tests are Holm-corrected for multiplicity. Full detail and results are in Technical
+Per-fold tests are Holm-corrected for multiplicity (Holm, 1979), and are read as
+descriptive diagnostics rather than as the inferential claim, since both comparators are
+estimated models rather than given forecasts (Diebold, 2015). Full detail and results are in Technical
 Validation.
 
 ### Software and generative-AI assistance

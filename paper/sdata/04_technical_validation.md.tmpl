@@ -163,8 +163,9 @@ roughly 30–50 clusters (Cameron and Miller, 2015) — which is why an exact pe
 reported alongside. Its smallest attainable two-sided *p*-value is {{sig_perm_floor}}, a floor
 imposed by having only {{n_cities}} cities, stated so that it is not mistaken for evidence.
 
-Per-fold Diebold–Mariano tests are additionally Holm-corrected for {{n_loco_folds}}
-comparisons; **{{n_sig_holm}} of {{n_loco_folds}} survive at α = 0.05.**
+Per-fold Diebold–Mariano tests are additionally Holm-corrected (Holm, 1979) for
+{{n_loco_folds}} comparisons, the family being the per-fold comparisons of one model pair;
+**{{n_sig_holm}} of {{n_loco_folds}} survive at α = 0.05.**
 
 **The evidence does not support a claim that the reference model outperforms bias-corrected
 CAMS under the unit of generalisation this benchmark is built around.** That is reported as

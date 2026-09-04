@@ -137,9 +137,16 @@ Pooling six cities into one number hides the finding.
 | **pooled** (n = 2214) | **31.49** | **33.07** | **-4.38** | **< 0.0001** |
 
 Tests use Newey–West HAC variance with the Harvey–Leybourne–Newbold small-sample
-correction. Negative statistics favour the learned model. Six folds are tested, so per-fold
-*p*-values are additionally reported with a Holm step-down correction in
+correction. Negative statistics favour the learned model. One limitation of the test is
+stated here rather than left for a reader to raise: Diebold (2015) notes that the DM
+procedure was constructed to compare *given* forecasts, and that applying it to *estimated*
+models is its most common misuse. Both comparators here are estimated on training data, so
+the per-fold DM statistics below are read as descriptive diagnostics. The paper's inferential
+claim is the city-level test in Section 6.2b, not these. Six folds are tested, so per-fold
+*p*-values are additionally reported with a Holm step-down correction (Holm, 1979) in
 `t6_07_per_fold_holm.csv`; **3 of 6 survive it at α = 0.05.**
+The correction family is the 6 per-fold comparisons of the same model pair,
+declared here because a family chosen after seeing the *p*-values is not a correction.
 
 ### 6.2b Which *p*-value is the paper's claim
 

@@ -158,13 +158,17 @@ unavailable throughout that source's season. Additionally, 29.8% of the
 retrievals that do occur are negative, sitting below the noise floor — clipping them at zero
 would bias the coal tracer upward across a third of its observations.
 
-MAIAC has been validated specifically over Central Asia (Chen et al., 2021), which is why
-it was selected over coarser aerosol products.
+MAIAC (Lyapustin et al., 2018) has been validated specifically over Central Asia
+(Chen et al., 2021), which is why it was selected over coarser aerosol products. Its
+bright-surface retrieval matters here: much of the study region is high-albedo desert and
+seasonal snow, the conditions under which coarser algorithms lose the surface-aerosol
+separation.
 
 **The split between clean and contaminated features follows retrieval physics.** CO uses the
 2.3 µm shortwave-infrared band and AAI uses ultraviolet reflectance *ratios* rather than
-absorption depth; both survive winter geometry and cloud, and neither shows target-correlated
-missingness. MAIAC (visible/near-infrared) and the ultraviolet absorption retrievals do not.
+absorption depth (Veefkind et al., 2012); both survive winter geometry and cloud, and neither
+shows target-correlated missingness. MAIAC (visible/near-infrared) and the ultraviolet
+absorption retrievals do not.
 
 **The two clean features are complementary to the contaminated ones.** AOD and AAI are both
 present on 62.8% of station-days; AAI alone covers a further 36.9%; neither

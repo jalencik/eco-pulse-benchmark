@@ -11,7 +11,8 @@ base under those numbers is thin and unevenly open. Turkmenistan runs no nationa
 at all. Kazakhstan releases its data only to users physically inside the country. Only
 Kyrgyzstan publishes in a fully open form (OpenAQ, 2025).
 
-Estimates are not what the region lacks. Global gridded products already assign PM2.5 values
+Estimates are not what the region lacks. Global gridded products
+(van Donkelaar et al., 2021) already assign PM2.5 values
 across Central Asia, and the epidemiological literature consumes them. What nobody can do is
 check those estimates, or set two methods against each other on identical terms. There is no
 open station-level benchmark for the region. No frozen splits, no declared protocol, no

@@ -39,15 +39,26 @@ assumption.
 
 A related constraint sits upstream: 306 candidate stations were excluded for insufficient
 span, almost all of them low-cost units whose measurement uncertainty is well documented
-(Zheng et al., 2018).
+(Zheng et al., 2018; Crilley et al., 2018).
 
 That exclusion was not applied uniformly, and the exception matters. **Khujand's two
 instruments are Clarity low-cost sensors** (`is_monitor = false` in the OpenAQ census), not
 reference-grade monitors. Every other city in the benchmark is a US-embassy BAM/FEM-class
 monitor published by AirNow or StateAir. Khujand is therefore the one city whose labels carry
-the measurement uncertainty the paragraph above cites Zheng et al. (2018) for, and it is also
-the city that contributes no training rows -- so its fold reports low-cost labels scored
-against a model that never saw them.
+the measurement uncertainty the paragraph above cites, and it is also the city that
+contributes no training rows -- so its fold reports low-cost labels scored against a model
+that never saw them.
+
+The mechanism matters for where this benchmark sits. Optical sensors size particles by light
+scattering, so their response depends on humidity and on aerosol composition: Crilley et al.
+(2018) attribute the dominant positive bias in this sensor class to hygroscopic growth, and
+Barkjohn et al. (2021) show that removing the resulting bias needs a correction fitted
+against reference monitors across a network. Neither condition is met here. The published
+corrections are derived in humid, sulphate- and organic-dominated environments, and this
+region is arid and dust-dominated, so their coefficients do not transfer; and Khujand has no
+co-located reference instrument to fit a local correction against. We therefore report the
+Clarity readings as published, label the fold, and treat its errors as carrying an
+instrument-uncertainty component we cannot separate from model error.
 
 Two consequences follow. First, results for the Khujand
 fold are not comparable in kind to the other five and should not be read as a reference-grade
