@@ -19,8 +19,8 @@ extract, n records.**
 | API version | v3 |
 | Endpoint | `https://api.openaq.org/v3/` |
 | Auth | `X-API-Key` header — see `REGISTRATION.md` |
-| Spatial extent | UZ, KZ, KG, TJ, TM (+ data-rich training pool, TBD) |
-| Temporal extent | Station spans 2018-07-27 → 2026-07-28 (census level); measurements not yet retrieved |
+| Spatial extent | UZ, KZ, KG, TJ, TM. The data-rich external training pool sketched at Phase 0 was not pursued; the frozen splits hold 7 instruments in 6 regional cities and no out-of-region stations |
+| Temporal extent | Station spans 2018-07-27 → 2026-07-28 at census level. Measurements were retrieved afterwards for the benchmark window 2018-11-27 → 2024-12-31; see the per-instrument table below |
 | Variables | `pm25` (µg/m³), station metadata, coordinates |
 | Licence | Per-location `licenses[]` block — **transcribed 2026-08-14, see the licence matrix below.** Not carried in `station_census.csv`; the earlier claim that it was is retracted |
 | Access date | **2026-07-28** (locations endpoint) |
@@ -270,17 +270,24 @@ reference record is more valuable than one curating a live feed anyone could re-
 
 ### GT-2 — US Embassy / State Department reference monitors
 
+**These monitors are not a separate retrieval path.** A direct AirNow/StateAir ingest was
+scoped at Phase 0 and never built: the embassy records reach this benchmark through GT-1, the
+OpenAQ archive, which republishes both the AirNow and the StateAir feeds. GT-2 is kept as a
+heading because the paper refers to these instruments as a group, not because a second source
+was retrieved. Its fields resolve to GT-1's:
+
 | Field | Value |
 |---|---|
-| Provider | US Dept. of State / AirNow |
-| Sites | Tashkent, Astana, Almaty, Bishkek, Dushanbe |
-| Spatial extent | 5 point locations |
-| Temporal extent | *pending* |
-| Variables | PM2.5 (µg/m³), QC flag |
-| Licence | *pending* |
-| Access date | *not yet accessed* |
-| Checksum | *pending* |
-| n records | *pending* |
+| Provider | US Dept. of State, published via AirNow and StateAir, retrieved through OpenAQ (GT-1) |
+| Sites in the benchmark | Almaty, Ashgabat, Bishkek, Dushanbe, Tashkent. Astana was censused and then failed Q7 completeness at 42.8% against the 60% floor |
+| Spatial extent | 5 of the benchmark's 6 cities; 5 of its 7 instruments |
+| Temporal extent | 2018-11-27 → 2024-12-31, the benchmark window. Five of the ten source feeds stop at 2025-03-04 with the StateAir channel |
+| Variables | PM2.5 (µg/m³) |
+| Licence | Per feed, not uniform. The four AirNow feeds are recorded *US Public Domain*; the four StateAir feeds carry no licence record at all. Full matrix in the licence section above |
+| Access date | With GT-1: census 2026-07-28 (locations endpoint), licence records transcribed 2026-08-14 |
+| Retrieval method | OpenAQ `/v3` measurements, cached and hashed under `data/raw/cache/` |
+| Checksum | Covered by GT-1's census digest and by `benchmark/splits/splits.sha256`, which fixes the derived artefact a reader actually scores against |
+| n records | 5 instruments contributing to the 247,075 retained hourly observations; per-instrument counts in the grade table below |
 
 **Why these matter disproportionately:** these are reference-grade (BAM/FEM-class)
 instruments with documented QA, in a region where most other signals are low-cost sensors.
@@ -328,10 +335,16 @@ limitation of the benchmark — not worked around.
 
 ---
 
-## Predictors (increment 2 — not yet acquired)
+## Predictors (increment 2)
 
-Listed so the manifest structure is fixed in advance. All are blocked on registrations in
-`REGISTRATION.md`.
+Scoped here before retrieval so the manifest structure was fixed in advance, and retrieved
+afterwards. PR-1, PR-2, PR-4 and PR-5 carry the results reported in the paper. Each one
+writes a provenance record next to its extract under `data/interim/` at build time, holding
+the collection id, band, buffer, reduction scale, period, station count, expected against
+returned row counts and any failed or incomplete chunks. Those records are build artefacts
+rather than committed files, because `data/interim/` is not redistributed for the licence
+reasons set out above; `python tasks.py reproduce` regenerates them. PR-3, PR-6 and PR-7 were
+scoped and are not used by any reported number.
 
 | ID | Source | Product | Role | Retrieval |
 |---|---|---|---|---|

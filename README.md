@@ -122,7 +122,7 @@ committed, for the licence reasons above. With an `OPENAQ_API_KEY` in `.env` (se
 [`REGISTRATION.md`](REGISTRATION.md)):
 
 ```bash
-python -m ecopulse_ca.ingest.openaq --census
+python -m ecopulse_ca.ingest.openaq --out data/interim/station_census.csv
 python scripts/pull_panel.py
 ```
 
@@ -219,9 +219,10 @@ Worth reading before you report anything from it.
   coverage gap, not an absence I hoped nobody would notice.
 - **Kazakhstan contributes one city.** Astana failed the completeness rule at 42.8% against
   a 60% floor, so the largest country in the region is represented by Almaty alone.
-- **Timezone correctness is unverifiable at four cities.** The within-city check needs two
-  instruments, so a constant lifelong offset at Almaty, Tashkent, Bishkek or Ashgabat would
-  not be caught by anything in this suite.
+- **Timezone correctness is unverifiable at five of the six cities.** The within-city check
+  needs two instruments in one city, and after the Dushanbe merge only Khujand has that. A
+  constant lifelong offset at Almaty, Tashkent, Bishkek, Ashgabat or Dushanbe would not be
+  caught by anything in this suite.
 
 ## Who built this
 

@@ -35,7 +35,7 @@ passes on a file that no other machine can reproduce.
 | Target history | **inadmissible** | admissible |
 | Spatial features | admissible (neighbours exclude the held-out city) | admissible |
 
-The separation is not stylistic. Under leave-city-out the held-out city contributes no
+Under leave-city-out the held-out city contributes no
 label, so a local autoregressive lag is undefined at inference — not merely optimistic, but
 unavailable. Under blocked-temporal forecasting the same lag is exactly what a deployed
 service holds. A single table containing both tasks would compare models with access to the

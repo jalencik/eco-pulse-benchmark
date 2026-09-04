@@ -26,6 +26,18 @@ def put(k: str, v, dp: int = 2) -> None:
     N[k] = f"{v:.{dp}f}" if isinstance(v, (int, float)) and not isinstance(v, bool) else str(v)
 
 
+def _and_list(items) -> str:
+    """Join names the way the sentence around them needs: "A", "A and B", "A, B and C".
+
+    These lists are substituted mid-sentence, so a bare ", ".join() renders as
+    "Ashgabat, Bishkek the sign is reversed".
+    """
+    xs = [str(x) for x in items]
+    if len(xs) < 2:
+        return "".join(xs)
+    return f"{', '.join(xs[:-1])} and {xs[-1]}"
+
+
 # ---- benchmark shape (from the frozen splits, not retyped) ----
 sp = json.loads((ROOT / "benchmark/splits/splits.json").read_text())
 put("n_stations", len(sp["stations"]), 0)
@@ -99,7 +111,7 @@ put("rmse_cams_pooled", pool.rmse_cams)
 folds = dm[dm.fold != "POOLED"]
 put("dm_n_sig", int(folds.sig.sum()), 0)
 put("dm_n_folds", len(folds), 0)
-put("dm_fold_favouring_cams", ", ".join(folds[folds.better == "b"].fold))
+put("dm_fold_favouring_cams", _and_list(folds[folds.better == "b"].fold))
 for _, r in folds.iterrows():
     f = r.fold.lower()
     put(f"dm_{f}_p", r.p, 4)

@@ -54,11 +54,10 @@ remaining five cities.
 | ordinary kriging | 39.71 | -0.22 | 0.736 | 0.296 |
 
 **Every spatial baseline has negative R².** Interpolating between Central Asian cities
-hundreds of kilometres apart is worse than predicting a constant. This is the honest floor
-the task sits on, and it is the reason the leave-city-out result in Section 6 is modest
-rather than impressive.
+hundreds of kilometres apart is worse than predicting a constant. That is the floor the
+task sits on, and it is why the leave-city-out result in Section 6 is modest.
 
-**The training-pool mean is an explicit rung, not an afterthought.** It is a constant: the
+**The training-pool mean is an explicit rung of the ladder.** It is a constant: the
 mean of all training-block labels. It was promoted to the ladder after we observed that it
 outranks two of the three genuine interpolators on RMSE (40.69 vs
 40.86 and 46.66). Any model that does not clear a
@@ -85,7 +84,7 @@ whatsoever — scores 0.741, and is the **highest-F1 model in the
 entire Task N ladder**. Its Peirce skill is 0.000, exactly zero, as
 it must be for any constant.
 
-This is not a curiosity about one table. It means a paper reporting only exceedance F1 on
+The consequence reaches past this table: a paper reporting only exceedance F1 on
 this region could present a constant as its best classifier and the number would look
 respectable. We therefore report, alongside every exceedance F1:
 

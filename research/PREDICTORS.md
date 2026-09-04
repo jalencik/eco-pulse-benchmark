@@ -127,9 +127,11 @@ valid pixels"* and *"over 300"* are different facts, and a test enforces it.
 
 ## Verification debt: read this before any deployment claim
 
-**All 18 latency figures are currently `verified=False`.** They are from memory, not from
-provider documentation. A recalled latency and a documented one look identical in a table,
-and only one is evidence.
+**This debt has since been paid, and the note is kept for the record.** When it was
+written every latency figure was recalled rather than documented, and a recalled latency and
+a documented one look identical in a table. Measurement closed the gap: `catalogue.py` now
+carries 18 entries at `verified=True` against 5 still `verified=False`, and measuring them
+invalidated three of the five original availability assumptions.
 
 `unverified(ALL_FEATURES)` enumerates them, and the count appears in the catalogue summary
 so the debt cannot quietly persist into a deployment claim. Before Phase 4 results are

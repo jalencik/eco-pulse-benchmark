@@ -49,7 +49,7 @@ the measurement uncertainty the paragraph above cites Zheng et al. (2018) for, a
 the city that contributes no training rows -- so its fold reports low-cost labels scored
 against a model that never saw them.
 
-Two consequences are stated plainly rather than left implicit. First, results for the Khujand
+Two consequences follow. First, results for the Khujand
 fold are not comparable in kind to the other five and should not be read as a reference-grade
 generalisation test. Second, the pre-registered 2-year span rule is satisfied
 for these two stations only by counting observations after the benchmark record ends: inside
@@ -63,18 +63,24 @@ claim.
 
 ## 7.3 The model does not beat CAMS everywhere
 
-4 of 6 leave-city-out folds reach significance. In
-**Ashgabat, Bishkek the sign is reversed**: LightGBM 20.74 µg/m³
-against CAMS 18.83 µg/m³, DM statistic 1.17,
-*p* = 0.2420. Read correctly, the two are indistinguishable there. CAMS does not
-win. The honest summary of the fold set is that the pooled result (< 0.0001) rests on
-Almaty, Dushanbe and Khujand, while Bishkek (0.8805) and Tashkent
-(0.0050) post lower RMSE that never clears significance.
+4 of 6 leave-city-out folds reach significance before correction
+and 3 after it. In **Ashgabat and Bishkek the sign is reversed**: at
+Ashgabat, LightGBM returns 20.74 µg/m³ against CAMS at
+18.83 µg/m³, DM statistic 1.17, *p* = 0.2420.
+Read correctly, the two are indistinguishable there. CAMS does not win. Across the fold
+set, the pooled result (< 0.0001) rests on
+Almaty, Tashkent (*p* = 0.0050) and Dushanbe, the three folds that survive Holm
+correction. Khujand is significant uncorrected and not after correction. Bishkek
+(*p* = 0.8805) returns a marginally higher RMSE than CAMS, not a lower one, and the
+difference is indistinguishable from zero either way.
 
-Khujand carrying part of the pooled result is worth pausing on, since it is the fold with no
-training label at all. Zero-shot transfer into an unmonitored city is not where a reader
-would expect the method to hold up best. It does, and we take that as the strongest evidence
-in the paper that the spatial machinery generalises instead of memorising.
+Khujand is worth pausing on even though the correction removes it, since it is the fold
+with no training label at all. Zero-shot transfer into an unmonitored city is not where a
+reader would expect the method to hold up best, and it does not collapse there: the fold is
+significant before Holm and the model's RMSE sits below the chemistry-transport model's. We
+draw the weaker of the two available conclusions from that. It is evidence that the spatial
+machinery is not simply memorising the training cities, and it is not evidence of an
+improvement, because a correction the paper itself imposes takes the improvement away.
 
 Ashgabat is the opposite case, and the one where the model has least to work with.
 Turkmenistan operates no national monitoring network, so the fold reduces to a single
@@ -100,7 +106,7 @@ duplicate is merged, satellite attribution overtakes it.
 The earlier claim — that a study assembled around remote sensing was "really" a spatial
 interpolator — was an artefact of a duplicated station. We state that plainly because it was
 published as a finding reported against interest, and it is no longer supported. Three
-qualifications on the current ordering follow.
+qualifications apply to the current ordering.
 
 1. *This is a property of the protocol as much as of the products.* Leave-city-out asks for
    a concentration where no monitor exists. Neighbour information is the most direct route
@@ -190,8 +196,10 @@ most immediate piece of follow-up work, and it needs a parallel NRT archive we d
 ## 7.8 What the benchmark is for
 
 The headline modelling result is modest. R² = -0.04 at unmonitored
-locations, a significant but not transformative improvement over CAMS, and an attribution
-profile dominated by spatial interpolation. We consider that the appropriate outcome.
+locations, no improvement over CAMS that separates from zero once cities rather than
+station-days are treated as the unit of generalisation (paired *t* *p* =
+0.1392; exact permutation *p* = 0.1250), and an attribution
+profile in which no feature family dominates. We consider that the appropriate outcome.
 
 The contribution is the fixed evaluation. Before this benchmark existed, a Central Asian air
 quality result could be reported on a random split, with reanalysis features unavailable at

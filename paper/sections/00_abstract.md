@@ -1,7 +1,7 @@
 # A Station-Level Air Quality Benchmark for Central Asia
 
-**Frozen leave-city-out splits, an operational-availability account, and an
-honestly-evaluated transfer baseline**
+**Frozen leave-city-out splits, an operational-availability account, and a transfer
+baseline evaluated under whole-city holdout**
 
 **Jaloliddin Musayev**<sup>1,\*</sup>, **Asadbek Abdivayitov**<sup>2</sup>,
 **Ozodbek Yo'ldashev**<sup>3</sup>
@@ -48,8 +48,9 @@ R² is -0.04 with 3 of 6 folds
 negative: the model ranks first on error while explaining little within-city day-to-day
 variation. Further results are
 reported against interest: no credential-free nowcaster beat a constant always-exceed
-classifier at a 61.8% base rate; attribution is dominated by satellite products
-(26.6%) over spatial neighbour features
+classifier at a 61.8% base rate; no feature family dominates attribution, with satellite
+products (26.6%) ahead of calendar terms (22.2%), static
+geography (21.8%) and spatial neighbours
 (20.4%); and measured latency invalidated three of five initial
 availability assumptions. The benchmark's contribution is the protocol it forecloses.
 

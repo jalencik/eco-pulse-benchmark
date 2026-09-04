@@ -20,13 +20,15 @@ unavailable at inference, no baseline ladder, an exceedance F1 that a constant c
 already achieves. The number reported here is what survives after those escapes are closed
 by failing tests.
 
-Three findings run against the study's own framing and are reported anyway. A trivial
+Three findings run against the study's own framing. A trivial
 always-exceed classifier is not beaten by any credential-free nowcaster, because these
 cities exceed the WHO 24-hour guideline on most days — a fact about the region, not about
-the models. Attribution is carried chiefly by the five satellite
-products (26.6%) rather than by spatial interpolation
-(20.4%) — a reversal of the ordering reported before the duplicate
-Dushanbe instrument was found and merged (Section 7.4). And measured acquisition latency
+the models. Attribution is spread almost evenly across feature
+families, with the five satellite products (26.6%) narrowly ahead of
+spatial interpolation (20.4%) rather than displaced by it. That
+ordering is the reverse of the one reported before the duplicate Dushanbe instrument was
+found and merged, and the margin between the two is small enough that we treat the ranking
+as provisional (Section 7.4). And measured acquisition latency
 invalidated three of five initial availability assumptions, one of them by a factor of
 roughly 4,600.
 

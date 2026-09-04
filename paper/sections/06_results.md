@@ -19,8 +19,7 @@ resampled quantity is the whole leave-city-out protocol per seed. Baseline rungs
 deterministic and carry no seed dispersion. Section 3.6 rule 5 requires this of every
 submission to the benchmark; it is applied here to the reference implementation as well.
 
-**Two numbers are needed to describe this result honestly, and they point in opposite
-directions.**
+**Two numbers describe this result, and they point in opposite directions.**
 
 *Between cities, the model retains some signal.* Pooled over all evaluation rows — variance
 measured against the global mean — it explains **R² = 0.13**. Part of the
@@ -78,7 +77,7 @@ error that is pure within-city day-to-day variance — and the model is within
 against that oracle and reported it as losing to "a constant". That comparison was invalid,
 and the correction is stated here rather than quietly dropped.
 
-Three corrections to this comparison were needed, and each mattered:
+Three corrections to this comparison were needed:
 
 1. Earlier drafts placed daily model scores beside baselines scored on *hourly* observations.
    Averaging removes within-day variance, so hourly RMSE is structurally larger; the apparent
@@ -171,28 +170,36 @@ and an exact sign-flip permutation test that assumes no distribution at all. The
 test's smallest attainable two-sided *p*-value is 0.03125, a floor imposed by
 having only 6 cities; we state it rather than let a reader mistake it for evidence.
 
-**The honest reading is that the evidence is suggestive but does not reach conventional
-significance under the unit of generalisation this benchmark is built around.** Corrections
+**The evidence is suggestive and does not reach conventional significance under the unit
+of generalisation this benchmark is built around.** Corrections
 for serial dependence alone leave the station-day result significant; treating cities as the
 unit does not. We report both and let the divergence stand, because it is a real property of
 a study with six cities, not a defect to be resolved by choosing the smaller number.
 
-**The pooled improvement is significant (< 0.0001); only 4 of
-6 individual folds are.** Bishkek (0.8805) and Tashkent
-(0.0050) show lower RMSE that does not clear significance, and we do not describe
-those as improvements. **Ashgabat, Bishkek favours CAMS outright**
-(20.74 vs 18.83 µg/m³, DM statistic
-1.17, *p* = 0.2420) — the sign is reversed and the result is far
-from significant, so the honest summary is that the two are indistinguishable there rather
-than that CAMS wins.
+**The pooled improvement is significant (< 0.0001); 4 of
+6 individual folds are, and 3 of those survive Holm correction.**
+Almaty, Tashkent (*p* = 0.0050) and Dushanbe hold after correction. Khujand
+(*p* = 0.0430) is significant uncorrected and is not after it, and we report it on
+that footing below.
 
-**Khujand, the zero-shot fold, is significant (0.0430)** at
-38.81 µg/m³ against CAMS at 39.90. A city with no training
-rows at all is predicted better than by the operational chemistry-transport model. It
-remains among the hardest folds in absolute terms, second only to Dushanbe.
+**In Ashgabat and Bishkek the sign is reversed and CAMS returns the lower RMSE.** At
+Ashgabat that is 18.83 against 20.74 µg/m³ (DM statistic
+1.17, *p* = 0.2420); at Bishkek the gap is smaller still and the
+test cannot separate it from zero (*p* = 0.8805). Neither reversal approaches
+significance, so the two methods are indistinguishable in those two cities rather than
+CAMS winning them.
 
-**Truncation-lag sensitivity.** The DM truncation lag is derived from the forecast horizon,
-and an early implementation passed `horizon_hours = 1` for the nowcasting task, which
+**Khujand, the zero-shot fold, clears significance before Holm correction
+(0.0430) and not after it** at 38.81 µg/m³ against CAMS at
+39.90. A city with no training rows anywhere in the record is predicted at
+least as well as the operational chemistry-transport model predicts it, which is the finding
+worth having. We stop short of calling it an improvement, because the correction removes it.
+It remains among the hardest folds in absolute terms, second only to Dushanbe.
+
+**Truncation-lag sensitivity.** The daily comparisons in Table 6.2 use the automatic
+Newey–West bandwidth, floor(4(n/100)^(2/9)), which at n = 2214 is 7 days. An
+earlier hourly implementation instead derived the lag from the forecast horizon and passed
+`horizon_hours = 1` for the nowcasting task, which
 disables the HAC correction entirely and inflated *p*-values by roughly seven orders of
 magnitude. We now report the full sensitivity sweep: across truncation lags of
 0 to 60 hours the pooled conclusion is stable, with all comparisons significant
@@ -258,19 +265,21 @@ Mean absolute SHAP over the test block, by feature family:
 | satellite | 26.6% |
 | CAMS forecast | 9.0% |
 
-**Spatial interpolation drives the model, not the satellite record.** The single largest
-feature is `doy_cos` at 0.18 mean absolute SHAP — inverse-distance
-weighted neighbour concentration — more than twice the second-ranked feature
-(`nbr_idw`, 0.12). Spatial neighbours and static geography
-together account for
-20.4% + 21.8% of attribution, while the
-five satellite products contribute 26.6% between them.
+**No feature family dominates.** The five satellite products carry the largest share of
+attribution at 26.6%, ahead of calendar terms (22.2%),
+static geography (21.8%) and spatial neighbours
+(20.4%). The single largest individual feature is
+`doy_cos` at 0.18 mean absolute SHAP, a calendar term, ahead of
+`nbr_idw` at 0.12, the inverse-distance weighted neighbour
+concentration.
 
-This is the paper's least comfortable result and we state it plainly: **the model is largely
-a well-tuned spatial interpolator with geographic priors.** The satellite features are not
-inert — 26.6% is not nothing, and Section 5.5 shows the deployable set
-loses little — but a reader would be entitled to expect, from a study built on five
-remote-sensing products, that those products carried the prediction. They do not.
+The spread across the top four families is narrower than the ranking suggests, and it is not
+stable enough to carry an interpretation on its own. Section 7.4 sets out why: on benchmark
+v1.0.0 this ordering came out the other way round, with spatial interpolation apparently
+ahead of the satellite record, and that ordering was an artefact of one duplicated station.
+Merging it moved every family. An attribution ranking computed on 7 instruments
+should be read as provisional, and the claim this paper previously drew from it is retracted
+in Section 7.4 rather than restated here.
 
 Two further readings follow. First, **satellite retrieval-count features no longer appear at
 all**: an ablation on the validation block (Section 5.3) found them city-specific rather than

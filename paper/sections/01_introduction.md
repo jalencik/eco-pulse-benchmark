@@ -75,7 +75,7 @@ deployable configurations by test rather than by convention.
 
 ## 1.3 Findings that shaped the work
 
-Three results recur, and each is worth stating before the methods.
+Three results shaped the work that follows.
 
 **A constant is hard to beat, and that says more about the region than about the models.**
 No credential-free nowcaster beat a trivial always-exceed predictor on health-relevant

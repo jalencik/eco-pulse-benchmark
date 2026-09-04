@@ -45,6 +45,9 @@ Thumbs.db
 # misrepresent the work. The scientific record they produced is public in the places it
 # belongs -- data/DECISIONS.md (decisions D-001..D-012) and the manuscript itself.
 message.txt
+message*.txt
+prompt.txt
+prompt*.txt
 review/
 
 # Also internal, for the same reason. `JOURNAL_STRATEGY.md` records venue selection together

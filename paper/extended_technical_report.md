@@ -1,7 +1,7 @@
 # A Station-Level Air Quality Benchmark for Central Asia
 
-**Frozen leave-city-out splits, an operational-availability account, and an
-honestly-evaluated transfer baseline**
+**Frozen leave-city-out splits, an operational-availability account, and a transfer
+baseline evaluated under whole-city holdout**
 
 **Jaloliddin Musayev**<sup>1,\*</sup>, **Asadbek Abdivayitov**<sup>2</sup>,
 **Ozodbek Yo'ldashev**<sup>3</sup>
@@ -48,8 +48,9 @@ R² is -0.04 with 3 of 6 folds
 negative: the model ranks first on error while explaining little within-city day-to-day
 variation. Further results are
 reported against interest: no credential-free nowcaster beat a constant always-exceed
-classifier at a 61.8% base rate; attribution is dominated by satellite products
-(26.6%) over spatial neighbour features
+classifier at a 61.8% base rate; no feature family dominates attribution, with satellite
+products (26.6%) ahead of calendar terms (22.2%), static
+geography (21.8%) and spatial neighbours
 (20.4%); and measured latency invalidated three of five initial
 availability assumptions. The benchmark's contribution is the protocol it forecloses.
 
@@ -137,7 +138,7 @@ deployable configurations by test rather than by convention.
 
 ## 1.3 Findings that shaped the work
 
-Three results recur, and each is worth stating before the methods.
+Three results shaped the work that follows.
 
 **A constant is hard to beat, and that says more about the region than about the models.**
 No credential-free nowcaster beat a trivial always-exceed predictor on health-relevant
@@ -422,7 +423,7 @@ passes on a file that no other machine can reproduce.
 | Target history | **inadmissible** | admissible |
 | Spatial features | admissible (neighbours exclude the held-out city) | admissible |
 
-The separation is not stylistic. Under leave-city-out the held-out city contributes no
+Under leave-city-out the held-out city contributes no
 label, so a local autoregressive lag is undefined at inference — not merely optimistic, but
 unavailable. Under blocked-temporal forecasting the same lag is exactly what a deployed
 service holds. A single table containing both tasks would compare models with access to the
@@ -600,11 +601,10 @@ remaining five cities.
 | ordinary kriging | 39.71 | -0.22 | 0.736 | 0.296 |
 
 **Every spatial baseline has negative R².** Interpolating between Central Asian cities
-hundreds of kilometres apart is worse than predicting a constant. This is the honest floor
-the task sits on, and it is the reason the leave-city-out result in Section 6 is modest
-rather than impressive.
+hundreds of kilometres apart is worse than predicting a constant. That is the floor the
+task sits on, and it is why the leave-city-out result in Section 6 is modest.
 
-**The training-pool mean is an explicit rung, not an afterthought.** It is a constant: the
+**The training-pool mean is an explicit rung of the ladder.** It is a constant: the
 mean of all training-block labels. It was promoted to the ladder after we observed that it
 outranks two of the three genuine interpolators on RMSE (40.69 vs
 40.86 and 46.66). Any model that does not clear a
@@ -631,7 +631,7 @@ whatsoever — scores 0.741, and is the **highest-F1 model in the
 entire Task N ladder**. Its Peirce skill is 0.000, exactly zero, as
 it must be for any constant.
 
-This is not a curiosity about one table. It means a paper reporting only exceedance F1 on
+The consequence reaches past this table: a paper reporting only exceedance F1 on
 this region could present a constant as its best classifier and the number would look
 respectable. We therefore report, alongside every exceedance F1:
 
@@ -751,9 +751,9 @@ that would separate them, and no causal attribution to tuning is claimed.
 The untuned column is retained because it was once used to argue that a poor result would
 have been an artefact of library defaults. On benchmark v1.1.0 that argument no longer holds:
 the tuned configuration now leads every admissible baseline (Section 6.1), while both
-configurations explain little within-city day-to-day variation. The honest statement is that
-the combined feature-plus-window-plus-hyperparameter change improves RMSE, and that RMSE
-leadership is not by itself evidence of skill.
+configurations explain little within-city day-to-day variation. The combined
+feature-plus-window-plus-hyperparameter change improves RMSE, and RMSE leadership is not by
+itself evidence of skill.
 
 ## 5.4 Seeds and variance
 
@@ -808,8 +808,7 @@ resampled quantity is the whole leave-city-out protocol per seed. Baseline rungs
 deterministic and carry no seed dispersion. Section 3.6 rule 5 requires this of every
 submission to the benchmark; it is applied here to the reference implementation as well.
 
-**Two numbers are needed to describe this result honestly, and they point in opposite
-directions.**
+**Two numbers describe this result, and they point in opposite directions.**
 
 *Between cities, the model retains some signal.* Pooled over all evaluation rows — variance
 measured against the global mean — it explains **R² = 0.13**. Part of the
@@ -867,7 +866,7 @@ error that is pure within-city day-to-day variance — and the model is within
 against that oracle and reported it as losing to "a constant". That comparison was invalid,
 and the correction is stated here rather than quietly dropped.
 
-Three corrections to this comparison were needed, and each mattered:
+Three corrections to this comparison were needed:
 
 1. Earlier drafts placed daily model scores beside baselines scored on *hourly* observations.
    Averaging removes within-day variance, so hourly RMSE is structurally larger; the apparent
@@ -960,28 +959,36 @@ and an exact sign-flip permutation test that assumes no distribution at all. The
 test's smallest attainable two-sided *p*-value is 0.03125, a floor imposed by
 having only 6 cities; we state it rather than let a reader mistake it for evidence.
 
-**The honest reading is that the evidence is suggestive but does not reach conventional
-significance under the unit of generalisation this benchmark is built around.** Corrections
+**The evidence is suggestive and does not reach conventional significance under the unit
+of generalisation this benchmark is built around.** Corrections
 for serial dependence alone leave the station-day result significant; treating cities as the
 unit does not. We report both and let the divergence stand, because it is a real property of
 a study with six cities, not a defect to be resolved by choosing the smaller number.
 
-**The pooled improvement is significant (< 0.0001); only 4 of
-6 individual folds are.** Bishkek (0.8805) and Tashkent
-(0.0050) show lower RMSE that does not clear significance, and we do not describe
-those as improvements. **Ashgabat, Bishkek favours CAMS outright**
-(20.74 vs 18.83 µg/m³, DM statistic
-1.17, *p* = 0.2420) — the sign is reversed and the result is far
-from significant, so the honest summary is that the two are indistinguishable there rather
-than that CAMS wins.
+**The pooled improvement is significant (< 0.0001); 4 of
+6 individual folds are, and 3 of those survive Holm correction.**
+Almaty, Tashkent (*p* = 0.0050) and Dushanbe hold after correction. Khujand
+(*p* = 0.0430) is significant uncorrected and is not after it, and we report it on
+that footing below.
 
-**Khujand, the zero-shot fold, is significant (0.0430)** at
-38.81 µg/m³ against CAMS at 39.90. A city with no training
-rows at all is predicted better than by the operational chemistry-transport model. It
-remains among the hardest folds in absolute terms, second only to Dushanbe.
+**In Ashgabat and Bishkek the sign is reversed and CAMS returns the lower RMSE.** At
+Ashgabat that is 18.83 against 20.74 µg/m³ (DM statistic
+1.17, *p* = 0.2420); at Bishkek the gap is smaller still and the
+test cannot separate it from zero (*p* = 0.8805). Neither reversal approaches
+significance, so the two methods are indistinguishable in those two cities rather than
+CAMS winning them.
 
-**Truncation-lag sensitivity.** The DM truncation lag is derived from the forecast horizon,
-and an early implementation passed `horizon_hours = 1` for the nowcasting task, which
+**Khujand, the zero-shot fold, clears significance before Holm correction
+(0.0430) and not after it** at 38.81 µg/m³ against CAMS at
+39.90. A city with no training rows anywhere in the record is predicted at
+least as well as the operational chemistry-transport model predicts it, which is the finding
+worth having. We stop short of calling it an improvement, because the correction removes it.
+It remains among the hardest folds in absolute terms, second only to Dushanbe.
+
+**Truncation-lag sensitivity.** The daily comparisons in Table 6.2 use the automatic
+Newey–West bandwidth, floor(4(n/100)^(2/9)), which at n = 2214 is 7 days. An
+earlier hourly implementation instead derived the lag from the forecast horizon and passed
+`horizon_hours = 1` for the nowcasting task, which
 disables the HAC correction entirely and inflated *p*-values by roughly seven orders of
 magnitude. We now report the full sensitivity sweep: across truncation lags of
 0 to 60 hours the pooled conclusion is stable, with all comparisons significant
@@ -1047,19 +1054,21 @@ Mean absolute SHAP over the test block, by feature family:
 | satellite | 26.6% |
 | CAMS forecast | 9.0% |
 
-**Spatial interpolation drives the model, not the satellite record.** The single largest
-feature is `doy_cos` at 0.18 mean absolute SHAP — inverse-distance
-weighted neighbour concentration — more than twice the second-ranked feature
-(`nbr_idw`, 0.12). Spatial neighbours and static geography
-together account for
-20.4% + 21.8% of attribution, while the
-five satellite products contribute 26.6% between them.
+**No feature family dominates.** The five satellite products carry the largest share of
+attribution at 26.6%, ahead of calendar terms (22.2%),
+static geography (21.8%) and spatial neighbours
+(20.4%). The single largest individual feature is
+`doy_cos` at 0.18 mean absolute SHAP, a calendar term, ahead of
+`nbr_idw` at 0.12, the inverse-distance weighted neighbour
+concentration.
 
-This is the paper's least comfortable result and we state it plainly: **the model is largely
-a well-tuned spatial interpolator with geographic priors.** The satellite features are not
-inert — 26.6% is not nothing, and Section 5.5 shows the deployable set
-loses little — but a reader would be entitled to expect, from a study built on five
-remote-sensing products, that those products carried the prediction. They do not.
+The spread across the top four families is narrower than the ranking suggests, and it is not
+stable enough to carry an interpretation on its own. Section 7.4 sets out why: on benchmark
+v1.0.0 this ordering came out the other way round, with spatial interpolation apparently
+ahead of the satellite record, and that ordering was an artefact of one duplicated station.
+Merging it moved every family. An attribution ranking computed on 7 instruments
+should be read as provisional, and the claim this paper previously drew from it is retracted
+in Section 7.4 rather than restated here.
 
 Two further readings follow. First, **satellite retrieval-count features no longer appear at
 all**: an ablation on the validation block (Section 5.3) found them city-specific rather than
@@ -1166,7 +1175,7 @@ the measurement uncertainty the paragraph above cites Zheng et al. (2018) for, a
 the city that contributes no training rows -- so its fold reports low-cost labels scored
 against a model that never saw them.
 
-Two consequences are stated plainly rather than left implicit. First, results for the Khujand
+Two consequences follow. First, results for the Khujand
 fold are not comparable in kind to the other five and should not be read as a reference-grade
 generalisation test. Second, the pre-registered 2-year span rule is satisfied
 for these two stations only by counting observations after the benchmark record ends: inside
@@ -1180,18 +1189,24 @@ claim.
 
 ## 7.3 The model does not beat CAMS everywhere
 
-4 of 6 leave-city-out folds reach significance. In
-**Ashgabat, Bishkek the sign is reversed**: LightGBM 20.74 µg/m³
-against CAMS 18.83 µg/m³, DM statistic 1.17,
-*p* = 0.2420. Read correctly, the two are indistinguishable there. CAMS does not
-win. The honest summary of the fold set is that the pooled result (< 0.0001) rests on
-Almaty, Dushanbe and Khujand, while Bishkek (0.8805) and Tashkent
-(0.0050) post lower RMSE that never clears significance.
+4 of 6 leave-city-out folds reach significance before correction
+and 3 after it. In **Ashgabat and Bishkek the sign is reversed**: at
+Ashgabat, LightGBM returns 20.74 µg/m³ against CAMS at
+18.83 µg/m³, DM statistic 1.17, *p* = 0.2420.
+Read correctly, the two are indistinguishable there. CAMS does not win. Across the fold
+set, the pooled result (< 0.0001) rests on
+Almaty, Tashkent (*p* = 0.0050) and Dushanbe, the three folds that survive Holm
+correction. Khujand is significant uncorrected and not after correction. Bishkek
+(*p* = 0.8805) returns a marginally higher RMSE than CAMS, not a lower one, and the
+difference is indistinguishable from zero either way.
 
-Khujand carrying part of the pooled result is worth pausing on, since it is the fold with no
-training label at all. Zero-shot transfer into an unmonitored city is not where a reader
-would expect the method to hold up best. It does, and we take that as the strongest evidence
-in the paper that the spatial machinery generalises instead of memorising.
+Khujand is worth pausing on even though the correction removes it, since it is the fold
+with no training label at all. Zero-shot transfer into an unmonitored city is not where a
+reader would expect the method to hold up best, and it does not collapse there: the fold is
+significant before Holm and the model's RMSE sits below the chemistry-transport model's. We
+draw the weaker of the two available conclusions from that. It is evidence that the spatial
+machinery is not simply memorising the training cities, and it is not evidence of an
+improvement, because a correction the paper itself imposes takes the improvement away.
 
 Ashgabat is the opposite case, and the one where the model has least to work with.
 Turkmenistan operates no national monitoring network, so the fold reduces to a single
@@ -1217,7 +1232,7 @@ duplicate is merged, satellite attribution overtakes it.
 The earlier claim — that a study assembled around remote sensing was "really" a spatial
 interpolator — was an artefact of a duplicated station. We state that plainly because it was
 published as a finding reported against interest, and it is no longer supported. Three
-qualifications on the current ordering follow.
+qualifications apply to the current ordering.
 
 1. *This is a property of the protocol as much as of the products.* Leave-city-out asks for
    a concentration where no monitor exists. Neighbour information is the most direct route
@@ -1307,8 +1322,10 @@ most immediate piece of follow-up work, and it needs a parallel NRT archive we d
 ## 7.8 What the benchmark is for
 
 The headline modelling result is modest. R² = -0.04 at unmonitored
-locations, a significant but not transformative improvement over CAMS, and an attribution
-profile dominated by spatial interpolation. We consider that the appropriate outcome.
+locations, no improvement over CAMS that separates from zero once cities rather than
+station-days are treated as the unit of generalisation (paired *t* *p* =
+0.1392; exact permutation *p* = 0.1250), and an attribution
+profile in which no feature family dominates. We consider that the appropriate outcome.
 
 The contribution is the fixed evaluation. Before this benchmark existed, a Central Asian air
 quality result could be reported on a random split, with reanalysis features unavailable at
@@ -1345,13 +1362,15 @@ unavailable at inference, no baseline ladder, an exceedance F1 that a constant c
 already achieves. The number reported here is what survives after those escapes are closed
 by failing tests.
 
-Three findings run against the study's own framing and are reported anyway. A trivial
+Three findings run against the study's own framing. A trivial
 always-exceed classifier is not beaten by any credential-free nowcaster, because these
 cities exceed the WHO 24-hour guideline on most days — a fact about the region, not about
-the models. Attribution is carried chiefly by the five satellite
-products (26.6%) rather than by spatial interpolation
-(20.4%) — a reversal of the ordering reported before the duplicate
-Dushanbe instrument was found and merged (Section 7.4). And measured acquisition latency
+the models. Attribution is spread almost evenly across feature
+families, with the five satellite products (26.6%) narrowly ahead of
+spatial interpolation (20.4%) rather than displaced by it. That
+ordering is the reverse of the one reported before the duplicate Dushanbe instrument was
+found and merged, and the margin between the two is small enough that we treat the ranking
+as provisional (Section 7.4). And measured acquisition latency
 invalidated three of five initial availability assumptions, one of them by a factor of
 roughly 4,600.
 

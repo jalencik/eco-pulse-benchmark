@@ -72,9 +72,9 @@ that would separate them, and no causal attribution to tuning is claimed.
 The untuned column is retained because it was once used to argue that a poor result would
 have been an artefact of library defaults. On benchmark v1.1.0 that argument no longer holds:
 the tuned configuration now leads every admissible baseline (Section 6.1), while both
-configurations explain little within-city day-to-day variation. The honest statement is that
-the combined feature-plus-window-plus-hyperparameter change improves RMSE, and that RMSE
-leadership is not by itself evidence of skill.
+configurations explain little within-city day-to-day variation. The combined
+feature-plus-window-plus-hyperparameter change improves RMSE, and RMSE leadership is not by
+itself evidence of skill.
 
 ## 5.4 Seeds and variance
 
