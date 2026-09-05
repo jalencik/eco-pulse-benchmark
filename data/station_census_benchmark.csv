@@ -1,0 +1,11 @@
+location_id,name,locality,country,latitude,longitude,timezone,is_monitor,is_mobile,provider,datetime_first,datetime_last,city,span_days,span_years,q7_span_ok_upper_bound
+8876,Almaty,N/A,KZ,43.252855,76.93118,Asia/Almaty,True,False,AirNow,2020-04-09 17:00:00+00:00,2025-11-14 11:00:00+00:00,Almaty,2044.75,5.598220396988364,True
+8170,US Diplomatic Post: Ashgabat,Ashgabat,TM,37.941857,58.387945,Asia/Ashgabat,True,False,StateAir Ashgabat,2019-10-20 22:00:00+00:00,2025-03-04 12:00:00+00:00,Ashgabat,1961.5833333333333,5.370522473191878,True
+8870,Ashgabat,N/A,TM,37.9415,58.3879,Asia/Ashgabat,True,False,AirNow,2019-10-28 19:00:00+00:00,2025-09-24 17:00:00+00:00,Ashgabat,2157.9166666666665,5.908053844398813,True
+8225,US Diplomatic Post: Bishkek,Bishkek,KG,42.8273,74.5833,Asia/Bishkek,True,False,StateAir Bishkek,2019-03-08 20:00:00+00:00,2025-03-04 11:00:00+00:00,Bishkek,2187.625,5.989390828199863,True
+8827,Bishkek,N/A,KG,42.827626,74.58384,Asia/Bishkek,True,False,AirNow,2019-10-28 19:00:00+00:00,2025-03-04 12:00:00+00:00,Bishkek,1953.7083333333333,5.348961898243212,True
+8684,Dushanbe,N/A,TJ,38.557671,68.775917,Asia/Dushanbe,True,False,AirNow,2019-10-28 19:00:00+00:00,2026-07-28 19:00:00+00:00,Dushanbe,2465.0,6.74880219028063,True
+9769,US Diplomatic Post: Dushanbe,Dushanbe,TJ,38.579708,68.712176,Asia/Dushanbe,True,False,StateAir Dushanbe,2019-10-20 23:00:00+00:00,2025-03-04 12:00:00+00:00,Dushanbe,1961.5416666666667,5.370408396075748,True
+1894632,Khujand,,TJ,40.30317,69.63906,Asia/Dushanbe,False,False,Clarity,2023-11-28 17:00:16+00:00,2026-05-02 05:06:42+00:00,Khujand,885.5044675925926,2.424379103607372,True
+1924313,Khujand,,TJ,40.26804,69.80165,Asia/Dushanbe,False,False,Clarity,2023-12-06 04:06:17+00:00,2026-05-02 04:49:25+00:00,Khujand,878.0299537037037,2.403914999873248,True
+8881,US Diplomatic Post: Tashkent,Tashkent,UZ,41.3672,69.2725,Asia/Tashkent,True,False,StateAir Tashkent,2018-11-27 22:00:00+00:00,2025-03-04 12:00:00+00:00,Tashkent,2288.583333333333,6.265799680584076,True

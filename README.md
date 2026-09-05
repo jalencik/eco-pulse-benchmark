@@ -50,8 +50,11 @@ establish. The three commands that rebuild the derived panel from the original a
 an OpenAQ key are in the reproduction section below and in `benchmark/README.md`.
 
 That being said, **verifying the benchmark needs no credentials and no rebuild.**
-`cd benchmark/splits && sha256sum -c splits.sha256` is enough, and the whole test suite runs
-offline.
+`cd benchmark/splits && sha256sum -c splits.sha256` is enough, and the test suite runs
+offline. A handful of tests regenerate intermediates that are derived from the licensed panel
+and are not redistributed; on a clone without that panel they skip and say why, and every
+other test runs. The count is printed by the suite itself rather than repeated here, because a
+number typed into this file went stale twice.
 
 ## Scoring a method on this benchmark
 
@@ -112,7 +115,7 @@ once the ground-truth panel already exists on your machine.
 | Goal | Command |
 |---|---|
 | Verify the frozen benchmark | `cd benchmark/splits && sha256sum -c splits.sha256` |
-| Run the full test suite (584 tests, offline fixtures) | `python tasks.py test` |
+| Run the full test suite (offline fixtures) | `python tasks.py test` |
 | Lint and type-check | `python tasks.py lint && python tasks.py typecheck` |
 
 The splits **are** the benchmark, and they are committed, so verifying them takes no rebuild
@@ -154,6 +157,12 @@ try it without the panel it fails with instructions instead of a bare traceback.
 `requirements-lock.txt` records the exact versions the committed tables were produced
 with, and is the file to install from (`pip install -r requirements-lock.txt`) when
 byte-identical regeneration is the goal rather than a working environment.
+
+Ten of the figures in `paper/numbers.json` can only be computed from the hourly panel or the
+QC output derived from it, neither of which is redistributed. On a clone without them
+`paper/scripts/extract_numbers.py` carries those ten forward from the committed extraction
+and prints a notice naming the count; every other figure is recomputed from the committed
+tables. The manuscript renders identically either way.
 
 `make reproduce` is idempotent. Running it again leaves the working tree clean, including
 `splits.sha256`, whose freeze timestamp is preserved when the hash has not changed.

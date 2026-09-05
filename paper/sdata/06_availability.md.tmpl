@@ -78,6 +78,12 @@ LightGBM, pyarrow and matplotlib. `pyproject.toml` declares compatible ranges;
 and is the file to install from when byte-identical regeneration is the goal.
 `python tasks.py setup` creates the environment.
 
+**Figures that need the panel.** Ten of the figures substituted into this document derive
+from the hourly panel or its QC output, neither of which is redistributed: the
+duplicate-detection shares, the shutdown-date station count and Astana's completeness. On a
+clone without the panel the extractor carries those ten forward from the committed extraction
+and says so in its output; every other figure is recomputed from the deposited tables.
+
 **Reproduction.** A single command runs the whole chain — lint, type check, the full test
 suite, checksum verification, split regeneration, baseline ladder, model layer, table
 regeneration and manuscript rendering:

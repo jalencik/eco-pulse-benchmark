@@ -26,6 +26,7 @@ extract, n records.**
 | Access date | **2026-07-28** (locations endpoint) |
 | Checksum | See `data/raw/cache/` — every response cached and hashed; census digest recorded at commit |
 | n records | **317 locations** (UZ 5, KZ 206, KG 97, TJ 7, TM 2) |
+| Committed subset | `data/station_census_benchmark.csv`: the rows for the benchmark's own stations, location metadata only (no measurements, no counts). The same facts as the per-instrument grade table below, in machine-readable form, so the number extractor derives instrument grade on a clone that lacks the full census |
 
 **Census result (locations endpoint only — no measurements retrieved):**
 

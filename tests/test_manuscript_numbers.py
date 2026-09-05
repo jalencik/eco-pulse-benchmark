@@ -138,7 +138,19 @@ class TestSectionTwoFiguresAreGenerated:
             assert numbers[f"r7_{short}_retrieval"] == f"{r7.loc[key, 'retrieval_pct']:.1f}"
 
     def test_r7_generator_output_is_reproducible(self):
-        """The table must be rebuildable; it originally had no producer at all."""
+        """The table must be rebuildable; it originally had no producer at all.
+
+        The producer reads the satellite extracts under data/interim/, which are not
+        redistributed (they are derived from the licensed ground-truth panel). On a clone
+        without them the test states that precondition and skips, rather than failing on a
+        machine where regeneration is not possible. It runs in full wherever the panel is.
+        """
+        panel = ROOT / "data" / "interim" / "benchmark_panel.parquet"
+        if not panel.exists():
+            pytest.skip(
+                "data/interim/benchmark_panel.parquet not present: build_r7_tables.py needs the "
+                "derived panel (see README, 'To regenerate the numbers from source')"
+            )
         path = TABLES / "t2_01_r7_missingness.csv"
         before = path.read_bytes()
         subprocess.run(

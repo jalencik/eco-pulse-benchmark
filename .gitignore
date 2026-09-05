@@ -11,6 +11,11 @@ data/interim/**
 data/processed/**
 !data/**/.gitkeep
 !data/**/*.md
+# The seven benchmark-station rows of the OpenAQ location census, metadata only (id,
+# city, provider, is_monitor, licence). These facts are already published in MANIFEST's
+# per-instrument table; committing them lets extract_numbers.py derive instrument grade
+# from a clean clone instead of failing on the gitignored full census.
+!data/station_census_benchmark.csv
 
 # BUT: the frozen benchmark splits ARE the deliverable and MUST be committed.
 !benchmark/splits/**

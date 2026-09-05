@@ -53,8 +53,17 @@ put("n_lso_folds", len(sp["leave_station_out"]["folds"]), 0)
 # previously called all instruments "reference"; Khujand's two are Clarity low-cost units
 # (is_monitor = false), which is the distinction the exclusion of 306 low-cost stations
 # turns on. Deriving it here means the count cannot drift from the data.
+# The full 317-row census is derived from the OpenAQ API and lives under data/interim/, which
+# is not redistributed. Everything this script needs from it concerns the benchmark's own
+# stations, and those rows - location metadata only - are committed as
+# data/station_census_benchmark.csv (see MANIFEST GT-1). Prefer the full census when present
+# so the two never disagree silently; fall back to the committed subset on a clean clone.
+_census_full = ROOT / "data/interim/station_census.csv"
+_census_path = _census_full if _census_full.exists() else ROOT / "data/station_census_benchmark.csv"
+if _census_path != _census_full:
+    print(f"  note: {_census_full.relative_to(ROOT)} absent; using committed benchmark subset")
 _census = pd.read_csv(
-    ROOT / "data/interim/station_census.csv",
+    _census_path,
     dtype={"location_id": str},
     keep_default_na=False,
     na_values=[""],
@@ -584,15 +593,29 @@ put("n_generated_tables", len(list(T.glob("t*_*.csv"))), 0)
 
 # Astana's completeness, parsed from the QC findings rather than typed into the prose. It was
 # the last hand-written scientific figure in the manuscript.
-_qc = pd.read_csv(ROOT / "data/interim/qc_findings.csv")
-_ast = _qc[(_qc.station_id.astype(str) == "7094") & (_qc.rule == "Q7")]
-if len(_ast):
-    _m = re.search(r"completeness=([\d.]+)%", str(_ast.detail.iloc[0]))
-    if _m:
-        put("astana_completeness_pct", float(_m.group(1)), 1)
-    _m2 = re.search(r"need (\d+)%", str(_ast.detail.iloc[0]))
-    if _m2:
-        put("q7_min_completeness_pct", int(_m2.group(1)), 0)
+_qc_f = ROOT / "data/interim/qc_findings.csv"
+if _qc_f.exists():
+    _qc = pd.read_csv(_qc_f)
+    _ast = _qc[(_qc.station_id.astype(str) == "7094") & (_qc.rule == "Q7")]
+    if len(_ast):
+        _m = re.search(r"completeness=([\d.]+)%", str(_ast.detail.iloc[0]))
+        if _m:
+            put("astana_completeness_pct", float(_m.group(1)), 1)
+        _m2 = re.search(r"need (\d+)%", str(_ast.detail.iloc[0]))
+        if _m2:
+            put("q7_min_completeness_pct", int(_m2.group(1)), 0)
+else:
+    # qc_findings.csv is a QC output derived from the licensed panel and is not redistributed.
+    # These two figures are carried forward from the committed extraction rather than typed,
+    # and the notice makes the carry-over visible in the build log. DECISIONS.md states the
+    # same completeness figure in prose, so a drift here would be caught there.
+    _prev_f = ROOT / "paper" / "numbers.json"
+    if _prev_f.exists():
+        _prev = json.loads(_prev_f.read_text(encoding="utf-8"))
+        for _k in ("astana_completeness_pct", "q7_min_completeness_pct"):
+            if _k in _prev:
+                N[_k] = _prev[_k]
+        print("  note: data/interim/qc_findings.csv absent; Astana completeness carried forward")
 
 _holm_f = T / "t6_07_per_fold_holm.csv"
 if _holm_f.exists():
@@ -696,6 +719,35 @@ try:
     put("n_tests", _m.group(1) if _m else "n/a")
 except Exception:
     put("n_tests", "n/a")
+
+# Figures that only the hourly measurement panel can produce. The panel is derived from the
+# licensed ground-truth feeds and is not redistributed, so on a clone these cannot be
+# recomputed. They are carried forward from the committed extraction, which was produced on
+# a machine that had the panel, and the notice below makes the carry-over visible in the
+# build log. The list is explicit so that adding a panel-derived figure without adding it
+# here fails the clean-clone check rather than silently rendering a stale value.
+PANEL_DERIVED = (
+    "dushanbe_identical_pct",
+    "dushanbe_lag5_pct",
+    "dushanbe_explained_pct",
+    "dushanbe_overlap_hours",
+    "khujand_identical_pct",
+    "identity_coincidence_pct",
+    "n_stations_ending_at_shutdown",
+    "stations_ending_at_shutdown",
+)
+_missing_panel_keys = [k for k in PANEL_DERIVED if k not in N]
+if _missing_panel_keys:
+    _prev_f = ROOT / "paper" / "numbers.json"
+    if _prev_f.exists():
+        _prev = json.loads(_prev_f.read_text(encoding="utf-8"))
+        _carried = [k for k in _missing_panel_keys if k in _prev]
+        for k in _carried:
+            N[k] = _prev[k]
+        print(
+            f"  note: data/interim/benchmark_panel.parquet absent; {len(_carried)} panel-derived "
+            "figures carried forward from the committed extraction"
+        )
 
 out = ROOT / "paper" / "numbers.json"
 out.write_text(json.dumps(dict(sorted(N.items())), indent=2), encoding="utf-8")
