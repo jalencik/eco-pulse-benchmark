@@ -1,10 +1,11 @@
-"""Render a built manuscript to the single PDF Scientific Data wants at first submission.
+"""Render a built manuscript to a single submission PDF.
 
 Run:  python paper/scripts/build_pdf.py            # the Data Descriptor
       python paper/scripts/build_pdf.py <in.md>    # any built markdown
 
-Scientific Data's submission guidelines (checked 2026-08-15) ask for "a single pdf file for
-the main article" in the first review round, and only require .docx/.tex at revision. The
+Data-journal submission guidelines of the kind surveyed in
+`paper/journal_submission_notes.md` (checked 2026-08-15) ask for "a single pdf file for the
+main article" in the first review round, and only require .docx/.tex at revision. The
 Data Descriptor is written as templates and stitched by `scripts/build_sdata.py`, so until
 now there was no PDF of it at all -- only of the longer technical report, which is not the
 submitted document. Producing it by hand would mean the submitted artefact was the one thing

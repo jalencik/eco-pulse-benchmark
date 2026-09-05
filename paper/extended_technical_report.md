@@ -839,9 +839,10 @@ deployable:
 
 **The cost is negligible in both tasks** — 28.56 against
 28.01 µg/m³ under leave-city-out, well inside the fold-to-fold spread
-of 11.38 µg/m³. This is a positive result for deployment and a
-deflationary one for the satellite features: products that arrive too late to be operational
-are also contributing little when they are available. Section 6.4 shows why.
+of 11.38 µg/m³. This is a positive result for deployment: the products
+excluded by the latency constraint are not the ones carrying the result, so operating under
+the constraint costs little. It is not a statement about the satellite family as a whole,
+which Section 6.4 reports as the largest single share of attribution.
 
 ---
 
@@ -1024,11 +1025,16 @@ and an exact sign-flip permutation test that assumes no distribution at all. The
 test's smallest attainable two-sided *p*-value is 0.03125, a floor imposed by
 having only 6 cities; we state it rather than let a reader mistake it for evidence.
 
-**The evidence is suggestive and does not reach conventional significance under the unit
-of generalisation this benchmark is built around.** Corrections
-for serial dependence alone leave the station-day result significant; treating cities as the
-unit does not. We report both and let the divergence stand, because it is a real property of
-a study with six cities, not a defect to be resolved by choosing the smaller number.
+**The evidence is suggestive and does not reach conventional significance under either
+procedure this benchmark treats as primary.** Corrections for serial dependence alone leave
+the station-day result significant. At the city level the two primary procedures do not
+(paired *t* *p* = 0.1392, exact permutation *p* = 0.1250), while
+a percentile cluster bootstrap over the same 6 cities returns
+*p* = 0.0428. We report all of them rather than the smallest. The percentile bootstrap
+is the least trustworthy of the three here for the same reason the cluster-robust estimator
+is: 6 clusters is too few to resample, and the interval it produces is
+anti-conservative. The divergence is a real property of a study with six cities, not a defect
+to be resolved by choosing a number.
 
 **The pooled improvement is significant (< 0.0001); 4 of
 6 individual folds are, and 3 of those survive Holm correction.**
@@ -1332,6 +1338,28 @@ qualifications apply to the current ordering.
 
 We report the attribution as measured. A paper arguing that satellite remote sensing enables
 air quality prediction in Central Asia would not be supported by these experiments.
+
+## 7.4b Where the error is, and what it scales with
+
+Leave-city-out error is not spread evenly. It tracks the held-out city's own concentration:
+fold RMSE rises with city mean, and mean bias falls monotonically from
+14.4 µg/m³ in Bishkek, the cleanest city in the benchmark, to
+-25.3 µg/m³ in Dushanbe, the most polluted. A model fitted on five
+cities and asked for a sixth predicts toward the levels it was trained on, over-predicting
+clean cities and under-predicting dirty ones.
+
+The same gradient holds inside the concentration range rather than only between cities. Bias
+is 10.1 µg/m³ on days below the WHO 24-hour guideline and
+-90.4 µg/m³ above six times it, where RMSE reaches
+100.9 µg/m³ on the 6.6% of rows in that band. Seasonally,
+winter RMSE is 51.0 µg/m³ against 16.0 µg/m³ in summer, which is the same
+effect seen through the region's winter coal season.
+
+This is a property of the region and the network rather than of one model, and it is the
+clearest thing the benchmark shows: transferring a PM2.5 model to an unmonitored Central
+Asian city fails first on the city's overall level, not on its day-to-day pattern. In the
+terms of Section 3.1 it is an area-of-applicability statement measured rather than named.
+Per-fold, per-band and per-season figures are in `t7_01`–`t7_03`.
 
 ## 7.5 Zero-drift reporting, and the drift it caught
 

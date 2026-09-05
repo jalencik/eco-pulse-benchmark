@@ -55,7 +55,7 @@ def main() -> int:
 
     unknown = sorted(set(present) - set(ORDER))
     if unknown:
-        print(f"FAILED: template(s) not in the Scientific Data section order: {unknown}")
+        print(f"FAILED: template(s) not in the data-descriptor section order: {unknown}")
         return 1
 
     missing_sections = [s for s in ORDER if s not in present]
@@ -156,7 +156,7 @@ def main() -> int:
     print(f"  {len(parts) - 1} of {len(ORDER)} required sections + References, {words:,} words")
 
     if missing_sections:
-        print("\n  NOT YET WRITTEN (required by Scientific Data):")
+        print("\n  NOT YET WRITTEN (required by the data-descriptor format):")
         for s in missing_sections:
             print(f"    - {s}")
         print("\n  The document is INCOMPLETE and must not be submitted in this state.")

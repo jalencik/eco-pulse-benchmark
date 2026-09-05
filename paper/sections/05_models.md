@@ -102,6 +102,7 @@ deployable:
 
 **The cost is negligible in both tasks** — 28.56 against
 28.01 µg/m³ under leave-city-out, well inside the fold-to-fold spread
-of 11.38 µg/m³. This is a positive result for deployment and a
-deflationary one for the satellite features: products that arrive too late to be operational
-are also contributing little when they are available. Section 6.4 shows why.
+of 11.38 µg/m³. This is a positive result for deployment: the products
+excluded by the latency constraint are not the ones carrying the result, so operating under
+the constraint costs little. It is not a statement about the satellite family as a whole,
+which Section 6.4 reports as the largest single share of attribution.

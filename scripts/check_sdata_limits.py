@@ -88,12 +88,12 @@ def main() -> int:
             failures.append(f"{heading} is {words} words, limit {limit}")
 
     if failures:
-        print("\nFAILED -- Scientific Data limits not met:", file=sys.stderr)
+        print("\nFAILED -- data-descriptor submission limits not met:", file=sys.stderr)
         for f in failures:
             print(f"  {f}", file=sys.stderr)
         return 1
 
-    print("\nall Scientific Data submission limits satisfied")
+    print("\nall data-descriptor submission limits satisfied")
     return 0
 
 

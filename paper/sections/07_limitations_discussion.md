@@ -140,6 +140,28 @@ qualifications apply to the current ordering.
 We report the attribution as measured. A paper arguing that satellite remote sensing enables
 air quality prediction in Central Asia would not be supported by these experiments.
 
+## 7.4b Where the error is, and what it scales with
+
+Leave-city-out error is not spread evenly. It tracks the held-out city's own concentration:
+fold RMSE rises with city mean, and mean bias falls monotonically from
+14.4 µg/m³ in Bishkek, the cleanest city in the benchmark, to
+-25.3 µg/m³ in Dushanbe, the most polluted. A model fitted on five
+cities and asked for a sixth predicts toward the levels it was trained on, over-predicting
+clean cities and under-predicting dirty ones.
+
+The same gradient holds inside the concentration range rather than only between cities. Bias
+is 10.1 µg/m³ on days below the WHO 24-hour guideline and
+-90.4 µg/m³ above six times it, where RMSE reaches
+100.9 µg/m³ on the 6.6% of rows in that band. Seasonally,
+winter RMSE is 51.0 µg/m³ against 16.0 µg/m³ in summer, which is the same
+effect seen through the region's winter coal season.
+
+This is a property of the region and the network rather than of one model, and it is the
+clearest thing the benchmark shows: transferring a PM2.5 model to an unmonitored Central
+Asian city fails first on the city's overall level, not on its day-to-day pattern. In the
+terms of Section 3.1 it is an area-of-applicability statement measured rather than named.
+Per-fold, per-band and per-season figures are in `t7_01`–`t7_03`.
+
 ## 7.5 Zero-drift reporting, and the drift it caught
 
 Every number in this manuscript is a double-brace placeholder token resolved at render time

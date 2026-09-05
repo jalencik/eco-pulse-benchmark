@@ -124,6 +124,12 @@ March 2025**, citing funding. Six of nine reference monitors stop at exactly `20
 and the programme's closure is independently documented (CNN, Democracy Now, CBS, NBC,
 March 2025; ~34 countries affected).
 
+> **Retracted 2026-08-14, kept here as the Phase-0 record.** "Terminated the programme"
+> overstates the evidence. What closed on 2025-03-04 was the **StateAir publication
+> channel**; three diplomatic-post monitors continued or resumed publishing through AirNow
+> afterwards. The corrected position is in `data/MANIFEST.md` and D-011 of
+> `data/DECISIONS.md`. The station counts in this section are also pre-merge and pre-Q7.
+
 This project designated the embassy network as the benchmark's spine. That was correct: it
 is the only consistent multi-country reference in the region and the sole route into
 Ashgabat. **That spine is now a historical archive, not a live feed.**

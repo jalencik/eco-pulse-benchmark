@@ -177,11 +177,16 @@ and an exact sign-flip permutation test that assumes no distribution at all. The
 test's smallest attainable two-sided *p*-value is 0.03125, a floor imposed by
 having only 6 cities; we state it rather than let a reader mistake it for evidence.
 
-**The evidence is suggestive and does not reach conventional significance under the unit
-of generalisation this benchmark is built around.** Corrections
-for serial dependence alone leave the station-day result significant; treating cities as the
-unit does not. We report both and let the divergence stand, because it is a real property of
-a study with six cities, not a defect to be resolved by choosing the smaller number.
+**The evidence is suggestive and does not reach conventional significance under either
+procedure this benchmark treats as primary.** Corrections for serial dependence alone leave
+the station-day result significant. At the city level the two primary procedures do not
+(paired *t* *p* = 0.1392, exact permutation *p* = 0.1250), while
+a percentile cluster bootstrap over the same 6 cities returns
+*p* = 0.0428. We report all of them rather than the smallest. The percentile bootstrap
+is the least trustworthy of the three here for the same reason the cluster-robust estimator
+is: 6 clusters is too few to resample, and the interval it produces is
+anti-conservative. The divergence is a real property of a study with six cities, not a defect
+to be resolved by choosing a number.
 
 **The pooled improvement is significant (< 0.0001); 4 of
 6 individual folds are, and 3 of those survive Holm correction.**

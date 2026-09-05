@@ -447,7 +447,7 @@ if _holm_f.exists():
     put("n_sig_holm", int(pd.read_csv(_holm_f).sig_holm_05.sum()), 0)
 
 # --------------------------------------------------------------------------------------
-# Figures used only by the Scientific Data sections (Data Records, Technical Validation,
+# Figures used only by the data-descriptor sections (Data Records, Technical Validation,
 # Usage Notes, Availability). Derived here for the same reason as everything else: a Data
 # Records table that describes the deposit from memory will drift from the deposit.
 # --------------------------------------------------------------------------------------
