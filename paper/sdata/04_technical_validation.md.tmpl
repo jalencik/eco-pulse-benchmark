@@ -103,8 +103,8 @@ variation.** It scores {{taskn_retrospective_rmse}} ± {{taskn_retrospective_rms
 against {{best_legal_baseline_rmse}} µg/m³ for the strongest legal rung
 (`{{best_legal_baseline}}`), ahead of all {{n_legal_baselines}} of them **on the fold mean**.
 That ordering is not robust: the paired difference over {{n_cities}} cities is not
-statistically separable (*p* = {{idw_paired_p}}), per-fold differences span −10.73 to
-+5.10 µg/m³, and removing one city reverses the lead in one of {{n_loco_folds}} subsets. The
+statistically separable (*p* = {{idw_paired_p}}), per-fold differences span {{idw_fold_diff_min}} to
++{{idw_fold_diff_max}} µg/m³, and removing one city reverses the lead in one of {{n_loco_folds}} subsets. The
 margin is {{idw_margin_seed_sd}}× the seed standard deviation, so it is fold heterogeneity
 rather than run-to-run noise (`t7_05_ranking_robustness.csv`). A constant equal to
 the held-out city's own test-block mean scores {{daily_constant_rmse}} µg/m³, but that

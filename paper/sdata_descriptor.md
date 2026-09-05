@@ -512,7 +512,7 @@ variation.** It scores 28.01 ± 0.35 µg/m³
 against 29.44 µg/m³ for the strongest legal rung
 (`idw_k5_p2`), ahead of all 6 of them **on the fold mean**.
 That ordering is not robust: the paired difference over 6 cities is not
-statistically separable (*p* = 0.586), per-fold differences span −10.73 to
+statistically separable (*p* = 0.586), per-fold differences span -10.73 to
 +5.10 µg/m³, and removing one city reverses the lead in one of 6 subsets. The
 margin is 4.1× the seed standard deviation, so it is fold heterogeneity
 rather than run-to-run noise (`t7_05_ranking_robustness.csv`). A constant equal to
