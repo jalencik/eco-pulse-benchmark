@@ -20,10 +20,10 @@ unavailable at inference, no baseline ladder, an exceedance F1 that a constant c
 already achieves. The number reported here is what survives after those escapes are closed
 by failing tests.
 
-Three findings run against the study's own framing. A trivial
-always-exceed classifier is not beaten by any credential-free nowcaster, because these
-cities exceed the WHO 24-hour guideline on most days — a fact about the region, not about
-the models. Attribution is spread almost evenly across feature
+Three findings run against the study's own framing. A trivial always-exceed classifier
+scores F1 = 0.741 and the best credential-free nowcaster clears it by only
+0.034, because these cities exceed the WHO 24-hour guideline on most days:
+a fact about the region, not about the models. Attribution is spread almost evenly across feature
 families, with the five satellite products (26.6%) narrowly ahead of
 spatial interpolation (20.4%) rather than displaced by it. That
 ordering is the reverse of the one reported before the duplicate Dushanbe instrument was
@@ -35,7 +35,8 @@ roughly 4,600.
 **For practitioners.** The clearest practical signal in this work is not an ordering of
 feature families — that ordering proved fragile, reversing once a single duplicated
 instrument was removed. It is that with 7 instruments across 6
-cities, a learned model does not beat knowing a city's own average, and the attribution
+cities, a learned model barely separates from an oracle constant it is not permitted to
+use, and the attribution
 ranking is unstable to one station. Both point the same way: the binding constraint is
 network density, not modelling technique or choice of remote-sensing product. The single most
 valuable investment for Central Asian air quality modelling is more stations — particularly

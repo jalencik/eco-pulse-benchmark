@@ -189,6 +189,14 @@ put("p3_base_rate", 100 * tn3.base_rate.mean(), 1)
 put("p3n_any_beats_trivial", "yes" if bool(tn3.beats_trivial.any()) else "no")
 put("p3n_best_rmse_model", tn3.groupby("model").rmse.mean().idxmin())
 put("p3n_best_f1_model", tn3.groupby("model").f1_exceed.mean().idxmax())
+# How far the best nowcaster actually clears the trivial always-exceed floor. The
+# manuscript asserted in four places that nothing cleared it at all, which this margin
+# contradicts; emitting it keeps the corrected sentence tied to the table.
+put(
+    "p3n_best_f1_margin",
+    tn3.groupby("model").f1_exceed.mean().max() - tn3.f1_trivial_always.mean(),
+    3,
+)
 
 # ---- R7 informative missingness (Section 2) ----
 r7 = pd.read_csv(T / "t2_01_r7_missingness.csv")
@@ -326,6 +334,39 @@ if _rob_f.exists():
     put("model_rmse_ref_only", float(_mb[_ref].mean()))
     _idw2 = _lad2[_lad2.model == "idw_k5_p2"].groupby("fold").rmse.mean()
     put("idw_rmse_ref_only", float(_idw2[[c for c in _ref if c in _idw2.index]].mean()))
+
+# Error structure. These three tables were the only result tables whose figures reached the
+# prose by hand-typing rather than substitution, and all seven of them had drifted from
+# source by the time it was checked - one of them across the 100 boundary. Emitting them here
+# puts them under the same render-time guarantee as every other number in the manuscript.
+_fold_f = T / "t7_01_error_analysis_by_fold.csv"
+if _fold_f.exists():
+    _fold = pd.read_csv(_fold_f)
+    _hi = _fold.loc[_fold.bias.idxmax()]
+    _lo = _fold.loc[_fold.bias.idxmin()]
+    put("bias_fold_max_city", _hi.fold)
+    put("bias_fold_max", float(_hi.bias), 1)
+    put("bias_fold_min_city", _lo.fold)
+    put("bias_fold_min", float(_lo.bias), 1)
+    put("n_folds_positive_r2", int((_fold.r2 > 0).sum()), 0)
+
+_conc_f = T / "t7_02_error_by_concentration.csv"
+if _conc_f.exists():
+    _conc = pd.read_csv(_conc_f).set_index("band")
+    _clean = _conc.loc[[b for b in _conc.index if b.startswith("clean")][0]]
+    _ext = _conc.loc[[b for b in _conc.index if b.startswith("extreme")][0]]
+    put("bias_clean_band", float(_clean.bias), 1)
+    put("bias_extreme_band", float(_ext.bias), 1)
+    put("rmse_extreme_band", float(_ext.rmse), 1)
+    put("share_extreme_band", 100 * float(_ext.share_of_rows), 1)
+
+_seas_f = T / "t7_03_error_by_season.csv"
+if _seas_f.exists():
+    _seas = pd.read_csv(_seas_f).set_index("season")
+    put("rmse_djf", float(_seas.loc["DJF"].rmse), 1)
+    put("rmse_jja", float(_seas.loc["JJA"].rmse), 1)
+    put("r2_djf", float(_seas.loc["DJF"].r2), 2)
+    put("r2_jja", float(_seas.loc["JJA"].r2), 2)
 
 _sig_f = T / "t6_06_significance.csv"
 if _sig_f.exists():

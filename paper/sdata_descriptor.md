@@ -497,9 +497,10 @@ predictor uses test labels and is **not legal** under leave-city-out; it is repo
 diagnostic floor only. Mean per-fold R² is
 -0.04, with a spread of -0.55 to 0.52 and
 3 of 6 folds negative. Pooled against the global mean,
-R² = 0.13 — the model captures some between-city variation and no within-city
-day-to-day variation, and a reader given only the pooled figure would substantially
-overestimate what it does.
+R² = 0.13. The model captures some between-city variation and within-city
+skill that does not generalise across cities: per-fold R² is positive in
+3 of 6 cities and negative in the rest. A reader given
+only the pooled figure would substantially overestimate what it does.
 
 Baselines are scored at the same daily resolution on the same evaluation rows; an hourly
 RMSE is structurally larger than a daily one and the two are never compared.
@@ -510,13 +511,15 @@ RMSE is structurally larger than a daily one and the two are never compared.
 
 **Figure 3.** Leave-city-out error against the held-out city's mean PM2.5. Left: fold RMSE
 rises with city concentration (Spearman rho = +0.94). Right: mean bias falls monotonically
-from +14.9 µg/m³ in Bishkek, the cleanest city, to −25.1 µg/m³ in Dushanbe, the most polluted.
+from 14.4 µg/m³ in Bishkek, the cleanest city, to
+-25.3 µg/m³ in Dushanbe, the most polluted.
 
 A model trained on five cities and applied to a sixth predicts toward the concentrations it
 was trained on: cleaner cities are over-predicted and more polluted ones under-predicted. The
-same pattern holds within the concentration range — bias is +10.3 µg/m³ on days below the WHO
-24-hour guideline and −90.5 µg/m³ above six times it, where RMSE reaches 99.5 µg/m³. Winter
-(DJF) RMSE is 50.3 µg/m³ against 16.5 µg/m³ in summer.
+same pattern holds within the concentration range: bias is 10.1 µg/m³ on days
+below the WHO 24-hour guideline and -90.4 µg/m³ above six times it, where RMSE
+reaches 100.9 µg/m³ on the 6.6% of rows in that band. Winter
+(DJF) RMSE is 51.0 µg/m³ against 16.0 µg/m³ in summer.
 
 This is a property of the region and the network rather than of one model, and it is the
 clearest thing the dataset shows: **transferring a PM2.5 model to an unmonitored Central Asian

@@ -46,8 +46,9 @@ protocol generalises over — is the unit of analysis (paired *t* on 6 city mean
 R² is -0.04 with 3 of 6 folds
 negative: the model ranks first on error while explaining little within-city day-to-day
 variation. Further results are
-reported against interest: no credential-free nowcaster beat a constant always-exceed
-classifier at a 61.8% base rate; no feature family dominates attribution, with satellite
+reported against interest: at a 61.8% exceedance base rate a constant
+always-exceed classifier already scores F1 = 0.741, and the best credential-free
+nowcaster clears that floor by only 0.034; no feature family dominates attribution, with satellite
 products (26.6%) ahead of calendar terms (22.2%), static
 geography (21.8%) and spatial neighbours
 (20.4%); and measured latency invalidated three of five initial

@@ -112,9 +112,10 @@ predictor uses test labels and is **not legal** under leave-city-out; it is repo
 diagnostic floor only. Mean per-fold R² is
 {{taskn_retrospective_r2}}, with a spread of {{r2_fold_min}} to {{r2_fold_max}} and
 {{n_folds_negative_r2}} of {{n_loco_folds}} folds negative. Pooled against the global mean,
-R² = {{r2_pooled_global}} — the model captures some between-city variation and no within-city
-day-to-day variation, and a reader given only the pooled figure would substantially
-overestimate what it does.
+R² = {{r2_pooled_global}}. The model captures some between-city variation and within-city
+skill that does not generalise across cities: per-fold R² is positive in
+{{n_folds_positive_r2}} of {{n_loco_folds}} cities and negative in the rest. A reader given
+only the pooled figure would substantially overestimate what it does.
 
 Baselines are scored at the same daily resolution on the same evaluation rows; an hourly
 RMSE is structurally larger than a daily one and the two are never compared.
@@ -125,13 +126,15 @@ RMSE is structurally larger than a daily one and the two are never compared.
 
 **Figure 3.** Leave-city-out error against the held-out city's mean PM2.5. Left: fold RMSE
 rises with city concentration (Spearman rho = +0.94). Right: mean bias falls monotonically
-from +14.9 µg/m³ in Bishkek, the cleanest city, to −25.1 µg/m³ in Dushanbe, the most polluted.
+from {{bias_fold_max}} µg/m³ in {{bias_fold_max_city}}, the cleanest city, to
+{{bias_fold_min}} µg/m³ in {{bias_fold_min_city}}, the most polluted.
 
 A model trained on five cities and applied to a sixth predicts toward the concentrations it
 was trained on: cleaner cities are over-predicted and more polluted ones under-predicted. The
-same pattern holds within the concentration range — bias is +10.3 µg/m³ on days below the WHO
-24-hour guideline and −90.5 µg/m³ above six times it, where RMSE reaches 99.5 µg/m³. Winter
-(DJF) RMSE is 50.3 µg/m³ against 16.5 µg/m³ in summer.
+same pattern holds within the concentration range: bias is {{bias_clean_band}} µg/m³ on days
+below the WHO 24-hour guideline and {{bias_extreme_band}} µg/m³ above six times it, where RMSE
+reaches {{rmse_extreme_band}} µg/m³ on the {{share_extreme_band}}% of rows in that band. Winter
+(DJF) RMSE is {{rmse_djf}} µg/m³ against {{rmse_jja}} µg/m³ in summer.
 
 This is a property of the region and the network rather than of one model, and it is the
 clearest thing the dataset shows: **transferring a PM2.5 model to an unmonitored Central Asian

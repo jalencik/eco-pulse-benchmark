@@ -255,10 +255,10 @@ Mean absolute SHAP over the test block, by feature family:
 
 | Family | Share of total attribution |
 |---|---:|
-| spatial neighbour | **{{shap_spatial_neighbour_pct}}%** |
-| static geography | {{shap_static_geography_pct}}% |
+| satellite | **{{shap_satellite_pct}}%** |
 | calendar | {{shap_calendar_pct}}% |
-| satellite | {{shap_satellite_pct}}% |
+| static geography | {{shap_static_geography_pct}}% |
+| spatial neighbour | {{shap_spatial_neighbour_pct}}% |
 | CAMS forecast | {{shap_cams_forecast_pct}}% |
 
 **No feature family dominates.** The five satellite products carry the largest share of
@@ -308,8 +308,10 @@ Established:
   {{taskn_retrospective_rmse}} µg/m³. Restricting to features available at inference time is
   close to free, which is the one comfortable result here.
 - The task is hard in a way the protocol makes visible. Under leave-city-out, a tuned
-  gradient-boosting model with satellite, meteorological and spatial features does **not**
-  improve on each city's own mean.
+  gradient-boosting model with satellite, meteorological and spatial features sits within
+  {{oracle_gap_abs}} µg/m³ of an oracle constant equal to the held-out city's own test-block
+  mean, a predictor the protocol does not permit it to use. It leads that oracle in
+  {{n_folds_beat_oracle}} of {{n_loco_folds}} folds.
 
 Not established — and previously claimed:
 

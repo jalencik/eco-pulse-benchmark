@@ -46,8 +46,9 @@ protocol generalises over — is the unit of analysis (paired *t* on {{n_cities}
 R² is {{taskn_retrospective_r2}} with {{n_folds_negative_r2}} of {{n_loco_folds}} folds
 negative: the model ranks first on error while explaining little within-city day-to-day
 variation. Further results are
-reported against interest: no credential-free nowcaster beat a constant always-exceed
-classifier at a {{p3_base_rate}}% base rate; no feature family dominates attribution, with satellite
+reported against interest: at a {{p3_base_rate}}% exceedance base rate a constant
+always-exceed classifier already scores F1 = {{p3_trivial_f1}}, and the best credential-free
+nowcaster clears that floor by only {{p3n_best_f1_margin}}; no feature family dominates attribution, with satellite
 products ({{shap_satellite_pct}}%) ahead of calendar terms ({{shap_calendar_pct}}%), static
 geography ({{shap_static_geography_pct}}%) and spatial neighbours
 ({{shap_spatial_neighbour_pct}}%); and measured latency invalidated three of five initial

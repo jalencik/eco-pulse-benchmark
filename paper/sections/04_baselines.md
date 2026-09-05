@@ -38,7 +38,8 @@ does not read the recent past. **Only the same-hour 7-day mean achieves positive
 mean.
 
 **Figure 2** shows the full Task N ladder, including the tuned model of Section 5 for
-context. Every interpolation rung sits above the training pool mean.
+context. Every interpolation rung except ordinary kriging sits above the training pool
+mean, and kriging clears it by under 1 µg/m³.
 
 ![Figure 2](figures/fig2_baseline_ladder.png)
 
@@ -85,9 +86,10 @@ that is what the guideline defines. In this region the exceedance base rate is
 
 A classifier that predicts "exceeds" unconditionally therefore scores F1 =
 **0.741**. The training-pool mean — a constant, carrying no information
-whatsoever — scores 0.741, and is the **highest-F1 model in the
-entire Task N ladder**. Its Peirce skill is 0.000, exactly zero, as
-it must be for any constant.
+whatsoever — scores 0.741, matching that floor to three decimals,
+and the whole Task N ladder spans only 0.034 of F1 above it
+(idw_k5_p2, 0.775). The training-pool mean's Peirce skill is
+0.000, exactly zero, as it must be for any constant.
 
 The consequence reaches past this table: a paper reporting only exceedance F1 on
 this region could present a constant as its best classifier and the number would look

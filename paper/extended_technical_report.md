@@ -46,8 +46,9 @@ protocol generalises over — is the unit of analysis (paired *t* on 6 city mean
 R² is -0.04 with 3 of 6 folds
 negative: the model ranks first on error while explaining little within-city day-to-day
 variation. Further results are
-reported against interest: no credential-free nowcaster beat a constant always-exceed
-classifier at a 61.8% base rate; no feature family dominates attribution, with satellite
+reported against interest: at a 61.8% exceedance base rate a constant
+always-exceed classifier already scores F1 = 0.741, and the best credential-free
+nowcaster clears that floor by only 0.034; no feature family dominates attribution, with satellite
 products (26.6%) ahead of calendar terms (22.2%), static
 geography (21.8%) and spatial neighbours
 (20.4%); and measured latency invalidated three of five initial
@@ -142,11 +143,13 @@ deployable configurations by test rather than by convention.
 Three results shaped the work that follows.
 
 **A constant is hard to beat, and that says more about the region than about the models.**
-No credential-free nowcaster beat a trivial always-exceed predictor on health-relevant
-exceedance. The reason is uncomfortable and entirely physical: PM2.5 in these cities clears
-the WHO 24-hour guideline on most days of the year, so a classifier that never varies is
-correct most of the time. Chronic pollution, not modelling skill, sets that floor. Beating
-it is the only evidence that a model has learned something past the regional mean. Raw CAMS,
+On health-relevant exceedance, the best credential-free nowcaster clears a trivial
+always-exceed predictor by 0.034 of F1. The reason is entirely physical:
+PM2.5 in these cities clears the WHO 24-hour guideline on most days of the year, so a
+classifier that never varies is correct most of the time, and the floor sits at F1 =
+0.741 before any model is fitted. Chronic pollution, not modelling skill, sets
+that floor, and a margin that small is not evidence that a model has learned anything past
+the regional mean. Raw CAMS,
 a full chemistry-transport model, is improved simply by subtracting a per-city constant, and
 even after that correction it reaches only R² -0.11. Across two
 phases, every baseline we tried sat below the accuracy of predicting the held-out city's own
@@ -633,7 +636,8 @@ does not read the recent past. **Only the same-hour 7-day mean achieves positive
 mean.
 
 **Figure 2** shows the full Task N ladder, including the tuned model of Section 5 for
-context. Every interpolation rung sits above the training pool mean.
+context. Every interpolation rung except ordinary kriging sits above the training pool
+mean, and kriging clears it by under 1 µg/m³.
 
 ![Figure 2](figures/fig2_baseline_ladder.png)
 
@@ -680,9 +684,10 @@ that is what the guideline defines. In this region the exceedance base rate is
 
 A classifier that predicts "exceeds" unconditionally therefore scores F1 =
 **0.741**. The training-pool mean — a constant, carrying no information
-whatsoever — scores 0.741, and is the **highest-F1 model in the
-entire Task N ladder**. Its Peirce skill is 0.000, exactly zero, as
-it must be for any constant.
+whatsoever — scores 0.741, matching that floor to three decimals,
+and the whole Task N ladder spans only 0.034 of F1 above it
+(idw_k5_p2, 0.775). The training-pool mean's Peirce skill is
+0.000, exactly zero, as it must be for any constant.
 
 The consequence reaches past this table: a paper reporting only exceedance F1 on
 this region could present a constant as its best classifier and the number would look
@@ -1108,10 +1113,10 @@ Mean absolute SHAP over the test block, by feature family:
 
 | Family | Share of total attribution |
 |---|---:|
-| spatial neighbour | **20.4%** |
-| static geography | 21.8% |
+| satellite | **26.6%** |
 | calendar | 22.2% |
-| satellite | 26.6% |
+| static geography | 21.8% |
+| spatial neighbour | 20.4% |
 | CAMS forecast | 9.0% |
 
 **No feature family dominates.** The five satellite products carry the largest share of
@@ -1161,8 +1166,10 @@ Established:
   28.01 µg/m³. Restricting to features available at inference time is
   close to free, which is the one comfortable result here.
 - The task is hard in a way the protocol makes visible. Under leave-city-out, a tuned
-  gradient-boosting model with satellite, meteorological and spatial features does **not**
-  improve on each city's own mean.
+  gradient-boosting model with satellite, meteorological and spatial features sits within
+  0.11 µg/m³ of an oracle constant equal to the held-out city's own test-block
+  mean, a predictor the protocol does not permit it to use. It leads that oracle in
+  3 of 6 folds.
 
 Not established — and previously claimed:
 
@@ -1212,15 +1219,16 @@ modelling choice removes it.**
 
 ## 7.2 Leave-station-out covers a minority of the benchmark
 
-2 leave-station-out folds exist and they span two cities.
+2 leave-station-out folds exist and both are the Khujand pair, so the
+protocol is evaluated entirely on low-cost sensors.
 **Almaty, Ashgabat, Bishkek, Dushanbe, Tashkent each hold a single instrument**, so within-city station holdout is
 undefined there.
 
 The consequence runs deeper than reduced coverage. The Q6 timezone check compares
 instruments within a city. In a single-station city, a constant lifelong offset is invisible
 to every rule in the suite, and the QC output records that explicitly instead of returning
-a pass that actually means "not tested". Four of six cities therefore rest on metadata
-correctness for their time alignment. We regard this as the benchmark's largest unaudited
+a pass that actually means "not tested". Five of the 6 cities therefore rest on
+metadata correctness for their time alignment. We regard this as the benchmark's largest unaudited
 assumption.
 
 A related constraint sits upstream: 306 candidate stations were excluded for insufficient
@@ -1433,10 +1441,10 @@ unavailable at inference, no baseline ladder, an exceedance F1 that a constant c
 already achieves. The number reported here is what survives after those escapes are closed
 by failing tests.
 
-Three findings run against the study's own framing. A trivial
-always-exceed classifier is not beaten by any credential-free nowcaster, because these
-cities exceed the WHO 24-hour guideline on most days — a fact about the region, not about
-the models. Attribution is spread almost evenly across feature
+Three findings run against the study's own framing. A trivial always-exceed classifier
+scores F1 = 0.741 and the best credential-free nowcaster clears it by only
+0.034, because these cities exceed the WHO 24-hour guideline on most days:
+a fact about the region, not about the models. Attribution is spread almost evenly across feature
 families, with the five satellite products (26.6%) narrowly ahead of
 spatial interpolation (20.4%) rather than displaced by it. That
 ordering is the reverse of the one reported before the duplicate Dushanbe instrument was
@@ -1448,7 +1456,8 @@ roughly 4,600.
 **For practitioners.** The clearest practical signal in this work is not an ordering of
 feature families — that ordering proved fragile, reversing once a single duplicated
 instrument was removed. It is that with 7 instruments across 6
-cities, a learned model does not beat knowing a city's own average, and the attribution
+cities, a learned model barely separates from an oracle constant it is not permitted to
+use, and the attribution
 ranking is unstable to one station. Both point the same way: the binding constraint is
 network density, not modelling technique or choice of remote-sensing product. The single most
 valuable investment for Central Asian air quality modelling is more stations — particularly

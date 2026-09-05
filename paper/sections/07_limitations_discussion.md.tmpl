@@ -26,15 +26,16 @@ modelling choice removes it.**
 
 ## 7.2 Leave-station-out covers a minority of the benchmark
 
-{{n_lso_folds}} leave-station-out folds exist and they span two cities.
+{{n_lso_folds}} leave-station-out folds exist and both are the Khujand pair, so the
+protocol is evaluated entirely on low-cost sensors.
 **{{lso_ineligible}} each hold a single instrument**, so within-city station holdout is
 undefined there.
 
 The consequence runs deeper than reduced coverage. The Q6 timezone check compares
 instruments within a city. In a single-station city, a constant lifelong offset is invisible
 to every rule in the suite, and the QC output records that explicitly instead of returning
-a pass that actually means "not tested". Four of six cities therefore rest on metadata
-correctness for their time alignment. We regard this as the benchmark's largest unaudited
+a pass that actually means "not tested". Five of the {{n_cities}} cities therefore rest on
+metadata correctness for their time alignment. We regard this as the benchmark's largest unaudited
 assumption.
 
 A related constraint sits upstream: 306 candidate stations were excluded for insufficient

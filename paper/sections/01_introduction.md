@@ -79,11 +79,13 @@ deployable configurations by test rather than by convention.
 Three results shaped the work that follows.
 
 **A constant is hard to beat, and that says more about the region than about the models.**
-No credential-free nowcaster beat a trivial always-exceed predictor on health-relevant
-exceedance. The reason is uncomfortable and entirely physical: PM2.5 in these cities clears
-the WHO 24-hour guideline on most days of the year, so a classifier that never varies is
-correct most of the time. Chronic pollution, not modelling skill, sets that floor. Beating
-it is the only evidence that a model has learned something past the regional mean. Raw CAMS,
+On health-relevant exceedance, the best credential-free nowcaster clears a trivial
+always-exceed predictor by 0.034 of F1. The reason is entirely physical:
+PM2.5 in these cities clears the WHO 24-hour guideline on most days of the year, so a
+classifier that never varies is correct most of the time, and the floor sits at F1 =
+0.741 before any model is fitted. Chronic pollution, not modelling skill, sets
+that floor, and a margin that small is not evidence that a model has learned anything past
+the regional mean. Raw CAMS,
 a full chemistry-transport model, is improved simply by subtracting a per-city constant, and
 even after that correction it reaches only R² -0.11. Across two
 phases, every baseline we tried sat below the accuracy of predicting the held-out city's own

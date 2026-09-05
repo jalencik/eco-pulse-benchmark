@@ -266,10 +266,10 @@ Mean absolute SHAP over the test block, by feature family:
 
 | Family | Share of total attribution |
 |---|---:|
-| spatial neighbour | **20.4%** |
-| static geography | 21.8% |
+| satellite | **26.6%** |
 | calendar | 22.2% |
-| satellite | 26.6% |
+| static geography | 21.8% |
+| spatial neighbour | 20.4% |
 | CAMS forecast | 9.0% |
 
 **No feature family dominates.** The five satellite products carry the largest share of
@@ -319,8 +319,10 @@ Established:
   28.01 µg/m³. Restricting to features available at inference time is
   close to free, which is the one comfortable result here.
 - The task is hard in a way the protocol makes visible. Under leave-city-out, a tuned
-  gradient-boosting model with satellite, meteorological and spatial features does **not**
-  improve on each city's own mean.
+  gradient-boosting model with satellite, meteorological and spatial features sits within
+  0.11 µg/m³ of an oracle constant equal to the held-out city's own test-block
+  mean, a predictor the protocol does not permit it to use. It leads that oracle in
+  3 of 6 folds.
 
 Not established — and previously claimed:
 
