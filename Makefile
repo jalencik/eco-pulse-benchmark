@@ -22,7 +22,7 @@ help:
 	@echo "baselines  - run credential-free baseline ladder (5 seeds)"
 	@echo "models     - GBDT + tuned LOCO + CAMS variants + DM/SHAP analysis"
 	@echo "paper      - regenerate every table and re-render the manuscript"
-	@echo "pdf        - render the Data Descriptor to the single PDF Scientific Data wants"
+	@echo "pdf        - render the data descriptor to a single submission PDF"
 	@echo "reproduce  - clean-checkout end-to-end regeneration of every reported number"
 
 setup:

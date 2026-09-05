@@ -1489,19 +1489,24 @@ frozen splits.
 
 Ground observations derive from the OpenAQ API (US diplomatic-post reference monitors and
 national networks). The derived hourly panel is **not** redistributed here because the
-per-station licence terms have not been transcribed; `data/MANIFEST.md` records provenance
-per source, and `README.md` gives the two commands that rebuild the panel from the API with
-an OpenAQ key. Satellite products are public: MAIAC AOD (MCD19A2.061) and Sentinel-5P
+per-feed licence terms are heterogeneous and four of the ten source feeds carry no licence
+record at all; depositing the merged panel under a single licence would assert a uniform
+permission the evidence does not support. Per-location licence records were retrieved on
+2026-08-14 and are tabulated in full in `data/MANIFEST.md`, which also records provenance per
+source, and `README.md` gives the two commands that rebuild the panel from the API with an
+OpenAQ key. Satellite products are public: MAIAC AOD (MCD19A2.061) and Sentinel-5P
 (OFFL/NRTI) via Google Earth Engine; CAMS forecasts and ERA5 via the Copernicus
 Atmosphere Data Store and Climate Data Store respectively.
 
-**Note on permanence.** The US State Department terminated its global diplomatic-post air
-quality programme in March 2025. Five of the ten contributing source feeds stop on
-2025-03-04 — every StateAir feed, plus Bishkek's AirNow feed — and at benchmark-station
-level, after co-published feeds are merged, **2 of
-7 stations (8881, Bishkek) end there**; the others survive
-through their longer-lived feed. An earlier version of this statement said "six of the
-eight", which was wrong in both terms. The record curated here is finite and partly withdrawn
+**Note on permanence.** The StateAir publication channel closed on 2025-03-04. Five of the
+ten contributing source feeds stop there — every StateAir feed, plus Bishkek's AirNow feed —
+and at benchmark-station level, after co-published feeds are merged,
+**2 of 7 stations
+(8881, Bishkek) end there**; the others survive through their longer-lived
+feed. The closure was not uniform and this statement has been corrected twice: an earlier
+version said "six of the eight", which was wrong in both terms, and a later one said the
+programme itself had terminated, which overstates what the evidence supports. Three
+diplomatic-post monitors continued or resumed publication through AirNow after that date. The record curated here is finite and partly withdrawn
 at source, which is a reason to archive this benchmark rather than an argument against it.
 Authors intending to cite it should reference the frozen checksum, not the branch head.
 
@@ -1513,8 +1518,6 @@ drafting and editing of the manuscript text. The authors reviewed and edited all
 verified every reported number against the regenerated result tables, and take full
 responsibility for the content of the publication. Generative AI is not listed as an author
 and no AI system holds authorship or accountability for this work.
-
-*Note for submission: adjust this wording to the target journal's template. Elsevier requires the statement immediately above the reference list. IEEE additionally requires the system to be named, the affected sections identified, and the level of use described. Routine grammar and spelling correction does not, under any of these policies, require declaration.*
 
 ## 9.3 CRediT author contributions
 

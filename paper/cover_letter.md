@@ -1,18 +1,23 @@
-# Cover letter — *Scientific Data*
+# Cover letter
+
+> **Venue-specific fields.** This letter is written to be portable. The four bracketed
+> placeholders below, and the closing paragraph on article-processing charges, are the only
+> parts that change per venue. `paper/journal_submission_notes.md` records what each
+> candidate venue expects and which of these to keep.
 
 **Manuscript title:** A quality-controlled PM2.5 dataset with frozen cross-city evaluation
 splits for six Central Asian cities
 
-**Article type:** Data Descriptor
+**Article type:** [ARTICLE TYPE]
 
 **Corresponding author:** Jaloliddin Musayev, International House Tashkent Academic Lyceum,
-Tashkent, Uzbekistan — jaloliddin2009applicant@gmail.com — ORCID 0009-0003-0210-3687
+Tashkent, Uzbekistan. jaloliddin2009applicant@gmail.com, ORCID 0009-0003-0210-3687
 
 ---
 
 Dear Editors,
 
-We submit the manuscript above for consideration as a Data Descriptor.
+We submit the manuscript above for consideration at [JOURNAL].
 
 The dataset is a quality-controlled record of daily PM2.5 for seven instruments across six
 Central Asian cities (Almaty, Ashgabat, Bishkek, Dushanbe, Khujand and Tashkent), together
@@ -23,7 +28,7 @@ in these cities, and its publication channel closed on 2025-03-04. The record is
 finite, and curating it carefully is more useful than curating a live feed that anyone can
 re-pull.
 
-We think it suits *Scientific Data* for three reasons.
+Three properties of the work seem to us to carry it.
 
 First, the processing decisions are documented rather than assumed. Every quality-control
 rule records its effect on *n* and the direction of bias if it is wrong, and the full decision
@@ -69,8 +74,10 @@ The manuscript is not under consideration elsewhere, and all authors have approv
 submission. Use of generative AI in preparing the software and text is disclosed in the
 manuscript.
 
-As the corresponding author is based in Uzbekistan, we request the 50% APC discount available
-for lower-middle-income locations, at the point of submission as your policy requires.
+[APC PARAGRAPH — include only where the venue charges an article-processing fee and offers a
+country-based waiver or discount. Suggested wording: "As the corresponding author is based in
+Uzbekistan, we request the [N]% APC discount available for lower-middle-income locations, at
+the point of submission as your policy requires."]
 
 Thank you for your consideration.
 

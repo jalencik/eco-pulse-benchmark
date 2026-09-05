@@ -36,9 +36,9 @@ and ground fusion, sensor comparison, and reproducible benchmarking.
 Central Asia is among the most polluted inhabited regions on earth, and among the least
 instrumented. Tursumbayeva et al. (2023) put annual PM2.5 in six regional capitals at 4.3–12.6
 times the WHO 2021 guideline, tracing the burden mainly to coal combustion rather than
-transport — contradicting official emissions inventories. Source-apportionment studies reach
-the same conclusion independently in Kazakhstan (Tursun et al., 2025) and Tajikistan
-(Papagiannis et al., 2024). The monitoring base beneath those numbers is thin and unevenly
+transport, against official emissions inventories. Source-apportionment studies reach the same
+conclusion independently in Kazakhstan (Tursun et al., 2025) and Tajikistan (Papagiannis et
+al., 2024). The monitoring base beneath those numbers is thin and unevenly
 open: Turkmenistan operates no national network, Kazakhstan releases data only to users
 physically inside the country, and only Kyrgyzstan publishes in a fully open form
 (OpenAQ, 2025).
@@ -54,16 +54,14 @@ The cost of that absence is measurable. Consider the closest analogue: PM2.5 est
 Xinjiang, an arid, dust-affected, sparsely monitored region much like this one. Jin et al.
 (2022) report R² between 0.73 and 0.81 under 10-fold cross-validation with no spatial
 stratification. With 41 stations in 16 cities and 8-day averaging, that design places
-observations from the same station — frequently the same window — on both sides of the split.
-The number answers one question: how well can we interpolate among stations we already have?
-Readers take it as answering another: how well can we estimate where no monitor exists?
-Nothing in a reported R² separates the two. This is not a complaint about one paper. Roberts
-et al. (2016) show that spatially, temporally or hierarchically structured data require
-blocked validation; Meyer et al. (2019) demonstrate the same for spatially derived
-predictors; Alazmi and Rakha (2022) measure the effect directly on particulate data; and Tang
-et al. (2024) place validation strategy among the systematically overlooked issues in air
-quality machine learning. The methodological position is not new. What the region has never
-had is a benchmark that enforces it.
+observations from the same station, often the same window, on both sides of the split. Such a
+figure measures interpolation among stations already held rather than estimation where no
+monitor exists, and nothing in a reported R² separates the two. The remedy is established:
+blocked validation for spatially, temporally or hierarchically structured data (Roberts et
+al., 2016), for spatially derived predictors (Meyer et al., 2019) and for particulate data
+specifically (Alazmi and Rakha, 2022), with validation strategy named among the systematically
+overlooked issues in the field (Tang et al., 2024). What the region has never had is a
+benchmark that enforces it.
 
 AQ-Bench (Betancourt et al., 2021) is the precedent — 5,577 stations worldwide, split by
 spatial clustering at a 50 km threshold — but it targets long-term ozone metrics from station
@@ -72,16 +70,16 @@ spatial clustering rationale rather than inventing a second one, and diverge on 
 target, temporal protocol and region. AirDelhi (Chauhan et al., 2023) offers a second
 precedent for fine-grained particulate benchmarking, confined to a single city.
 
-This Data Descriptor documents a benchmark of 7 instruments across
+This paper documents a benchmark of 7 instruments across
 6 cities spanning 2018-11-27 to 2024-12-31. Splits were frozen and hashed
 before the reported results were produced: blocked-temporal with a purge gap of
 240 hours from the maximum feature lag (168 h) and horizon
 (72 h), leave-city-out over 6 folds, and leave-station-out
 where station density allows (2 folds; Almaty, Ashgabat, Bishkek, Dushanbe, Tashkent hold one instrument
-each and are named ineligible rather than quietly dropped). A test enforces immutability, and
-it fails for the authors exactly as it fails for anyone else. Every predictor carries a
-measured latency and a typed availability flag, so anything that cannot exist at prediction
-time is barred from deployable configurations by test rather than by convention.
+each and are named ineligible rather than quietly dropped). Immutability is enforced by a
+test that fails for the authors exactly as for anyone else. Every predictor carries a measured
+latency and a typed availability flag, so anything that cannot exist at prediction time is
+barred from deployable configurations by test rather than convention.
 
 One fold deserves naming. Khujand's stations begin after the training block closes, so the
 city contributes no training label anywhere in the record — not one row. A model arrives with
@@ -90,10 +88,10 @@ benchmark contains, and the one that matches the deployment case the work exists
 unmonitored city asking for a number it has never been given. We report it separately;
 averaging it into the other five would report neither.
 
-The intended reuse is direct. Any method that produces a PM2.5 estimate — statistical,
-physical or learned — can be scored on these splits and compared against the included
-baseline ladder without re-deriving a protocol, and without the ambiguity that makes existing
-regional figures incommensurable.
+The intended reuse is direct. Any method producing a PM2.5 estimate, statistical, physical or
+learned, can be scored on these splits against the included baseline ladder without
+re-deriving a protocol, and without the ambiguity that makes existing regional figures
+incommensurable.
 
 
 ## Methods
@@ -800,17 +798,19 @@ consistency.
 
 ## References
 
-1. George I. Austin, Itsik Pe’er and Tal Korem (2025). *Distributional bias compromises leave-one-out cross-validation*. Science Advances. https://doi.org/10.1126/sciadv.adx6976
-2. Clara Betancourt et al. (2021). *AQ-Bench: a benchmark dataset for machine learning on global air quality metrics*. Earth system science data. https://doi.org/10.5194/essd-13-3013-2021
-3. A. Colin Cameron and Douglas L. Miller (2015). *A Practitioner’s Guide to Cluster-Robust Inference*. Journal of Human Resources. https://doi.org/10.3368/jhr.50.2.317
-4. Sachin Chauhan et al. (2023). *AirDelhi: Fine-Grained Spatio-Temporal Particulate Matter Dataset From Delhi For ML based Modeling*. Advances in Neural Information Processing Systems 36. https://doi.org/10.52202/075280-3298
-5. Francis X. Diebold (2015). *Comparing Predictive Accuracy, Twenty Years Later: A Personal Perspective on the Use and Abuse of Diebold–Mariano Tests*. Journal of Business and Economic Statistics. https://doi.org/10.1080/07350015.2014.983236
-6. Hans Hersbach et al. (2020). *The ERA5 global reanalysis*. Quarterly Journal of the Royal Meteorological Society. https://doi.org/10.1002/qj.3803
-7. Sture Holm (1979). *A Simple Sequentially Rejective Multiple Test Procedure*. Scandinavian Journal of Statistics. https://doi.org/10.2307/4615733
-8. Alexei Lyapustin et al. (2018). *MODIS Collection 6 MAIAC algorithm*. Atmospheric measurement techniques. https://doi.org/10.5194/amt-11-5741-2018
-9. Stefanos Papagiannis et al. (2024). *Air quality challenges in Central Asian urban areas: a PM2.5 source apportionment analysis in Dushanbe, Tajikistan*. Environmental Science and Pollution Research. https://doi.org/10.1007/s11356-024-33833-6
-10. Kazbek Tursun et al. (2025). *Dominant sources of PM2.5 in Kazakhstan's urban cities: A PMF and HYSPLIT-based study for air quality management in Central Asia*. Urban Climate. https://doi.org/10.1016/j.uclim.2025.102706
-11. Tongshu Zheng et al. (2018). *Field evaluation of low-cost particulate matter sensors in high- and low-concentration environments*. Atmospheric measurement techniques. https://doi.org/10.5194/amt-11-4823-2018
+1. Asmaa Alazmi and Hesham Rakha (2022). *Assessing and Validating the Ability of Machine Learning to Handle Unrefined Particle Air Pollution Mobile Monitoring Data Randomly, Spatially, and Spatiotemporally*. International Journal of Environmental Research and Public Health. https://doi.org/10.3390/ijerph191610098
+2. George I. Austin, Itsik Pe’er and Tal Korem (2025). *Distributional bias compromises leave-one-out cross-validation*. Science Advances. https://doi.org/10.1126/sciadv.adx6976
+3. Clara Betancourt et al. (2021). *AQ-Bench: a benchmark dataset for machine learning on global air quality metrics*. Earth system science data. https://doi.org/10.5194/essd-13-3013-2021
+4. A. Colin Cameron and Douglas L. Miller (2015). *A Practitioner’s Guide to Cluster-Robust Inference*. Journal of Human Resources. https://doi.org/10.3368/jhr.50.2.317
+5. Sachin Chauhan et al. (2023). *AirDelhi: Fine-Grained Spatio-Temporal Particulate Matter Dataset From Delhi For ML based Modeling*. Advances in Neural Information Processing Systems 36. https://doi.org/10.52202/075280-3298
+6. Francis X. Diebold (2015). *Comparing Predictive Accuracy, Twenty Years Later: A Personal Perspective on the Use and Abuse of Diebold–Mariano Tests*. Journal of Business and Economic Statistics. https://doi.org/10.1080/07350015.2014.983236
+7. Hans Hersbach et al. (2020). *The ERA5 global reanalysis*. Quarterly Journal of the Royal Meteorological Society. https://doi.org/10.1002/qj.3803
+8. Sture Holm (1979). *A Simple Sequentially Rejective Multiple Test Procedure*. Scandinavian Journal of Statistics. https://doi.org/10.2307/4615733
+9. Alexei Lyapustin et al. (2018). *MODIS Collection 6 MAIAC algorithm*. Atmospheric measurement techniques. https://doi.org/10.5194/amt-11-5741-2018
+10. Hanna Meyer et al. (2019). *Importance of spatial predictor variable selection in machine learning applications – Moving from data reproduction to spatial prediction*. Ecological Modelling. https://doi.org/10.1016/j.ecolmodel.2019.108815
+11. Dié Tang, Yu Zhan and Fumo Yang (2024). *A review of machine learning for modeling air quality: Overlooked but important issues*. Atmospheric Research. https://doi.org/10.1016/j.atmosres.2024.107261
+12. Kazbek Tursun et al. (2025). *Dominant sources of PM2.5 in Kazakhstan's urban cities: A PMF and HYSPLIT-based study for air quality management in Central Asia*. Urban Climate. https://doi.org/10.1016/j.uclim.2025.102706
+13. Tongshu Zheng et al. (2018). *Field evaluation of low-cost particulate matter sensors in high- and low-concentration environments*. Atmospheric measurement techniques. https://doi.org/10.5194/amt-11-4823-2018
 
 ### Data Citations
 

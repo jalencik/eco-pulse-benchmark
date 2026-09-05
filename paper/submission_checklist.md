@@ -1,6 +1,12 @@
-# Submission checklist — *Scientific Data* Data Descriptor
+# Submission checklist — data-journal route (Data Descriptor)
 
-Prepared 2026-08-15 against the journal's current submission guidelines. Every value below is
+> **This file is venue-specific and no venue has been selected.** It is kept as a worked
+> example of one candidate route, because the legwork behind it is real. The portable
+> material lives in [`journal_submission_notes.md`](journal_submission_notes.md); rewrite
+> this file once a venue is chosen, and treat any figure here as needing re-checking against
+> that venue's current guidelines.
+
+Prepared 2026-08-15 against that journal's then-current submission guidelines. Every value below is
 taken from the repository; nothing here is invented. Items marked **[YOU]** need Jaloliddin to
 enter or confirm them in the submission system, and they cannot be filled from project files.
 
@@ -80,7 +86,7 @@ cannot be undone later.
 
 - 582 tests pass
 - Data Descriptor builds byte-identically across consecutive runs
-- Title 104/110 chars, abstract 150/170 words, Background & Summary 686/700 words
+- Title 104/110 chars, abstract 150/170 words, Background & Summary 648/700 words
 - Section order matches the journal's required sequence
 - 2 figures (limit 8), 4 tables (limit 10)
 - `splits.sha256` unchanged — no scientific data altered
