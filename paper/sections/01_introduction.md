@@ -80,10 +80,12 @@ Three results shaped the work that follows.
 
 **A constant is hard to beat, and that says more about the region than about the models.**
 On health-relevant exceedance, the best credential-free nowcaster clears a trivial
-always-exceed predictor by 0.034 of F1. The reason is entirely physical:
-PM2.5 in these cities clears the WHO 24-hour guideline on most days of the year, so a
-classifier that never varies is correct most of the time, and the floor sits at F1 =
-0.741 before any model is fitted. Chronic pollution, not modelling skill, sets
+always-exceed predictor by 0.034 of F1. The reason is a base rate rather than skill:
+4 of the 6 cities clear the WHO 24-hour guideline on
+most test days, from 88% at Dushanbe down to
+24% at Bishkek, so a classifier that never varies is correct
+most of the time in most of them, and the floor sits at F1 = 0.741 before any
+model is fitted. Chronic pollution, not modelling skill, sets
 that floor, and a margin that small is not evidence that a model has learned anything past
 the regional mean. Raw CAMS, a full chemistry-transport model, is improved in
 5 of 6 cities simply by subtracting a per-city

@@ -19,6 +19,17 @@ resampled quantity is the whole leave-city-out protocol per seed. Baseline rungs
 deterministic and carry no seed dispersion. Section 3.6 rule 5 requires this of every
 submission to the benchmark; it is applied here to the reference implementation as well.
 
+**Two estimators appear in this paper and they are not the same number.** Section 5 and the
+table above report the mean over 5 independently seeded runs. Section 6.2 onward,
+and every Diebold–Mariano and significance result, score the **5-seed
+ensemble**: the seed predictions are averaged first and the average is scored once. Averaging
+reduces variance, so the ensemble is the better estimator and its fold-mean RMSE
+(27.91 µg/m³) sits below the mean of the single-seed RMSEs
+(28.01 µg/m³). Where a ± appears beside a Section 6.2 figure, the
+centre is the ensemble and the spread is the dispersion of the single-seed runs around their
+own mean — the spread describes the seed-to-seed variability of the procedure, not the
+uncertainty of the ensemble, which is narrower and is not estimated here.
+
 **Two numbers describe this result, and they point in opposite directions.**
 
 *Between cities, the model retains some signal.* Pooled over all evaluation rows — variance
@@ -161,21 +172,34 @@ the unit of generalisation is the **city** — as Section 5.4 already argues, an
 leave-city-out protocol implies. The primary analysis therefore aggregates to one value per
 city and tests those 6 numbers.
 
-| | Test | Unit | *n* | *p* |
-|---|---|---|---:|---:|
-| **Primary** | paired *t* on city means | city | 6 | **0.1392** |
-| **Primary** | exact sign-flip permutation | city | 6 | **0.1250** |
-| Sensitivity | station-day, independence assumed | station-day | 2214 | 2.6e-10 |
-| Sensitivity | station-day, Newey–West HAC (lag 60 d) | station-day | 2214 | 0.0044 |
-| Sensitivity | cluster bootstrap over cities | city | 6 | 0.0428 |
+The quantity tested is the loss differential Δ, the model's squared error minus debiased
+CAMS's, in (µg/m³)². Negative values favour the model.
+
+| | Test | Unit | *n* | Δ (95% CI) | *p* |
+|---|---|---|---:|---:|---:|
+| **Primary** | paired *t* on city means | city | 6 | **-96.2 (-237.0, +44.5)** | **0.1392** |
+| **Primary** | exact sign-flip permutation | city | 6 | **-96.2** | **0.1250** |
+| Sensitivity | station-day, independence assumed | station-day | 2214 | -101.7 (-133.3, -70.2) | 2.6e-10 |
+| Sensitivity | station-day, Newey–West HAC (lag 60 d) | station-day | 2214 | -101.7 (-171.7, -31.7) | 0.0044 |
+| Sensitivity | cluster bootstrap over cities | city | 6 | -96.2 (-196.5, -2.9) | 0.0428 |
+
+**The interval is the more informative half of the primary row.** At
+(-237.0, +44.5) (µg/m³)² it spans zero and is wide enough to contain both a substantial
+improvement over CAMS and a moderate degradation. The study does not establish that the model
+is better, and it equally does not establish that it is not: with 6 cities the
+design cannot separate those cases. Reporting only *p* = 0.1392 would invite the
+reading that no effect exists, which the interval does not support either.
 
 With 6 clusters, cluster-robust asymptotics are unreliable — the cluster-robust
 variance estimator is materially downward-biased below roughly 30–50 clusters
 (Cameron and Miller, 2015). Two remedies appropriate at this cluster count are reported
 together: a *t*-test on 6 city means with 5 degrees of freedom,
-and an exact sign-flip permutation test that assumes no distribution at all. The permutation
-test's smallest attainable two-sided *p*-value is 0.03125, a floor imposed by
-having only 6 cities; we state it rather than let a reader mistake it for evidence.
+and an exact sign-flip permutation test. That test is distribution-free but not
+assumption-free: it trades normality for the weaker requirement that each city's mean
+differential be sign-symmetric about zero under the null, and at 6 cities that
+requirement is no more checkable than normality was. Its smallest attainable two-sided
+*p*-value is 0.03125, a floor imposed by having only 6 cities; we state
+it rather than let a reader mistake it for evidence.
 
 **The evidence is suggestive and does not reach conventional significance under either
 procedure this benchmark treats as primary.** Corrections for serial dependence alone leave

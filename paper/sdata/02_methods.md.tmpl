@@ -123,8 +123,10 @@ probability sample is the correct estimator. The quantity here is not map accura
 error incurred in a city that contributed no training row. For that, withholding the city is
 the estimand rather than a biased proxy for it, and a random split estimates something else.
 Meyer and Pebesma (2021) give the complementary frame: whether a held-out city falls inside
-the model's area of applicability. Technical Validation reports that error grows with a
-city's mean concentration, which is that question answered empirically.
+the model's area of applicability. Technical Validation answers that question empirically: held-out-city bias falls
+monotonically with the city's mean concentration (Spearman rho = {{rho_mean_bias}}), while
+fold RMSE carries no such relation after normalisation by each city's own variability
+(rho = {{rho_mean_rmse_norm}}).
 
 **Leave-station-out** ({{n_lso_folds}} folds). Available only where a city holds more than one
 instrument. {{lso_ineligible}} hold one instrument each and are named ineligible rather than

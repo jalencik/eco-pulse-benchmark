@@ -38,9 +38,12 @@ feature families — that ordering proved fragile, reversing once a single dupli
 instrument was removed. It is that with 7 instruments across 6
 cities, a learned model barely separates from an oracle constant it is not permitted to
 use, and the attribution
-ranking is unstable to one station. Both point the same way: the binding constraint is
-network density, not modelling technique or choice of remote-sensing product. The single most
-valuable investment for Central Asian air quality modelling is more stations — particularly
+ranking is unstable to one station. Both are consistent with the same reading: at this network density a learned model barely
+separates from a predictor it is not permitted to use, and the ranking of what carries it is
+unstable to a single station. We cannot separate that from a modelling-technique constraint,
+because one model class was evaluated (Section 5) and network density was never varied. What
+the benchmark does show is where the marginal return is legible: the single most plausible
+investment for Central Asian air quality modelling is more stations — particularly
 in Turkmenistan, which has none, and Kazakhstan, which contributes one city here.
 
 **For the field.** The benchmark's value is that it forecloses the shortcuts. A future

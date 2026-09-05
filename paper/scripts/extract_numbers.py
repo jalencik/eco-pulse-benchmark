@@ -426,6 +426,19 @@ if _kho_f.exists():
     put("kho_mean_d_all", float(_all.mean_loss_differential), 1)
     put("kho_mean_d_excl", float(_ex.mean_loss_differential), 1)
 
+# Section 6 scores the five-seed ENSEMBLE mean prediction, while Section 5 reports means of
+# single-seed runs. The two differ, the ensemble is the better estimator, and the manuscript
+# printed one as the centre of a spread computed from the other. Emitting the ensemble figure
+# lets the text state which is which instead of eliding it.
+_ens_f = T / "t6_01_predictions_task_n.csv"
+if _ens_f.exists():
+    _ep = pd.read_csv(_ens_f)
+    _per_fold_ens = _ep.groupby("fold").apply(
+        lambda g: float(((g.pm25 - g.lgbm) ** 2).mean() ** 0.5), include_groups=False
+    )
+    put("taskn_ensemble_rmse", float(_per_fold_ens.mean()))
+    put("n_seeds_ensembled", int(len([c for c in _ep.columns if c.startswith("lgbm_seed")])), 0)
+
 _sig_f = T / "t6_06_significance.csv"
 if _sig_f.exists():
     _s = pd.read_csv(_sig_f)
@@ -442,6 +455,29 @@ if _sig_f.exists():
     _n_cities = len({s["city"] for s in sp["stations"]})
     put("sig_primary_df", _n_cities - 1, 0)
     put("sig_perm_floor", 2 / (2**_n_cities), 5)
+
+    # The primary analysis reported p-values and no effect. These carry the estimand itself
+    # and its interval, both already present in t6_06, so the tables can show what the study
+    # actually estimated rather than only whether it cleared a threshold.
+    def _row(sub: str):
+        return _s[_s.test.str.contains(sub, regex=False)].iloc[0]
+
+    def _ci(sub: str, dp: int = 1) -> str:
+        r = _row(sub)
+        if pd.isna(r.ci_lo) or pd.isna(r.ci_hi):
+            return "not defined"
+        return f"{float(r.ci_lo):+.{dp}f}, {float(r.ci_hi):+.{dp}f}"
+
+    # The city-level effect is the mean of the 6 city differentials, carried verbatim as the
+    # permutation row's statistic. The station-day effect is the centre of its symmetric t
+    # interval; the naive and HAC rows agree there to machine precision.
+    _naive = _row("independence assumed")
+    put("sig_mean_d_city", float(_row("exact sign-flip permutation").statistic), 1)
+    put("sig_mean_d_stationday", (float(_naive.ci_lo) + float(_naive.ci_hi)) / 2, 1)
+    put("sig_ci_t", _ci("paired t-test on city means"))
+    put("sig_ci_naive", _ci("independence assumed"))
+    put("sig_ci_hac60", _ci("lag 60 d"))
+    put("sig_ci_boot", _ci("cluster bootstrap"))
 
 # Task F comparability: the Section 3 baselines are hourly and horizon-resolved; the learned
 # Task F model is daily and single-horizon. Both counts are surfaced so the incomparability is

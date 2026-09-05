@@ -157,13 +157,23 @@ The estimand is the reduction in squared error **at a city with no local trainin
 the unit of generalisation is the city. Aggregating to one value per city gives
 {{n_cities}} observations.
 
-| | Test | Unit | *n* | *p* |
-|---|---|---|---:|---:|
-| **Primary** | paired *t* on city means | city | {{n_cities}} | **{{sig_primary_t_p}}** |
-| **Primary** | exact sign-flip permutation | city | {{n_cities}} | **{{sig_primary_perm_p}}** |
-| Sensitivity | station-day, independence assumed | station-day | {{dm_pooled_n}} | {{sig_naive_p}} |
-| Sensitivity | station-day, Newey–West HAC (lag 60 d) | station-day | {{dm_pooled_n}} | {{sig_hac60_p}} |
-| Sensitivity | cluster bootstrap over cities | city | {{n_cities}} | {{sig_boot_p}} |
+The quantity tested is the loss differential Δ, the model's squared error minus debiased
+CAMS's, in (µg/m³)². Negative values favour the model.
+
+| | Test | Unit | *n* | Δ (95% CI) | *p* |
+|---|---|---|---:|---:|---:|
+| **Primary** | paired *t* on city means | city | {{n_cities}} | **{{sig_mean_d_city}} ({{sig_ci_t}})** | **{{sig_primary_t_p}}** |
+| **Primary** | exact sign-flip permutation | city | {{n_cities}} | **{{sig_mean_d_city}}** | **{{sig_primary_perm_p}}** |
+| Sensitivity | station-day, independence assumed | station-day | {{dm_pooled_n}} | {{sig_mean_d_stationday}} ({{sig_ci_naive}}) | {{sig_naive_p}} |
+| Sensitivity | station-day, Newey–West HAC (lag 60 d) | station-day | {{dm_pooled_n}} | {{sig_mean_d_stationday}} ({{sig_ci_hac60}}) | {{sig_hac60_p}} |
+| Sensitivity | cluster bootstrap over cities | city | {{n_cities}} | {{sig_mean_d_city}} ({{sig_ci_boot}}) | {{sig_boot_p}} |
+
+**The interval is the more informative half of the primary row.** At
+({{sig_ci_t}}) (µg/m³)² it spans zero and is wide enough to contain both a substantial
+improvement over CAMS and a moderate degradation. The study does not establish that the model
+is better, and it equally does not establish that it is not: with {{n_cities}} cities the
+design cannot separate those cases. Reporting only *p* = {{sig_primary_t_p}} would invite the
+reading that no effect exists, which the interval does not support either.
 
 The loss differential is serially correlated within station (first-order autocorrelation
 {{acf_lag1}}), so the independence-assuming figure is reported only for comparison with

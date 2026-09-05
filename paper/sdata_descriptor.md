@@ -220,8 +220,10 @@ probability sample is the correct estimator. The quantity here is not map accura
 error incurred in a city that contributed no training row. For that, withholding the city is
 the estimand rather than a biased proxy for it, and a random split estimates something else.
 Meyer and Pebesma (2021) give the complementary frame: whether a held-out city falls inside
-the model's area of applicability. Technical Validation reports that error grows with a
-city's mean concentration, which is that question answered empirically.
+the model's area of applicability. Technical Validation answers that question empirically: held-out-city bias falls
+monotonically with the city's mean concentration (Spearman rho = -1.00), while
+fold RMSE carries no such relation after normalisation by each city's own variability
+(rho = -0.03).
 
 **Leave-station-out** (2 folds). Available only where a city holds more than one
 instrument. Almaty, Ashgabat, Bishkek, Dushanbe, Tashkent hold one instrument each and are named ineligible rather than
@@ -557,13 +559,23 @@ The estimand is the reduction in squared error **at a city with no local trainin
 the unit of generalisation is the city. Aggregating to one value per city gives
 6 observations.
 
-| | Test | Unit | *n* | *p* |
-|---|---|---|---:|---:|
-| **Primary** | paired *t* on city means | city | 6 | **0.1392** |
-| **Primary** | exact sign-flip permutation | city | 6 | **0.1250** |
-| Sensitivity | station-day, independence assumed | station-day | 2214 | 2.6e-10 |
-| Sensitivity | station-day, Newey–West HAC (lag 60 d) | station-day | 2214 | 0.0044 |
-| Sensitivity | cluster bootstrap over cities | city | 6 | 0.0428 |
+The quantity tested is the loss differential Δ, the model's squared error minus debiased
+CAMS's, in (µg/m³)². Negative values favour the model.
+
+| | Test | Unit | *n* | Δ (95% CI) | *p* |
+|---|---|---|---:|---:|---:|
+| **Primary** | paired *t* on city means | city | 6 | **-96.2 (-237.0, +44.5)** | **0.1392** |
+| **Primary** | exact sign-flip permutation | city | 6 | **-96.2** | **0.1250** |
+| Sensitivity | station-day, independence assumed | station-day | 2214 | -101.7 (-133.3, -70.2) | 2.6e-10 |
+| Sensitivity | station-day, Newey–West HAC (lag 60 d) | station-day | 2214 | -101.7 (-171.7, -31.7) | 0.0044 |
+| Sensitivity | cluster bootstrap over cities | city | 6 | -96.2 (-196.5, -2.9) | 0.0428 |
+
+**The interval is the more informative half of the primary row.** At
+(-237.0, +44.5) (µg/m³)² it spans zero and is wide enough to contain both a substantial
+improvement over CAMS and a moderate degradation. The study does not establish that the model
+is better, and it equally does not establish that it is not: with 6 cities the
+design cannot separate those cases. Reporting only *p* = 0.1392 would invite the
+reading that no effect exists, which the interval does not support either.
 
 The loss differential is serially correlated within station (first-order autocorrelation
 0.25), so the independence-assuming figure is reported only for comparison with

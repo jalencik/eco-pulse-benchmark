@@ -144,10 +144,12 @@ Three results shaped the work that follows.
 
 **A constant is hard to beat, and that says more about the region than about the models.**
 On health-relevant exceedance, the best credential-free nowcaster clears a trivial
-always-exceed predictor by 0.034 of F1. The reason is entirely physical:
-PM2.5 in these cities clears the WHO 24-hour guideline on most days of the year, so a
-classifier that never varies is correct most of the time, and the floor sits at F1 =
-0.741 before any model is fitted. Chronic pollution, not modelling skill, sets
+always-exceed predictor by 0.034 of F1. The reason is a base rate rather than skill:
+4 of the 6 cities clear the WHO 24-hour guideline on
+most test days, from 88% at Dushanbe down to
+24% at Bishkek, so a classifier that never varies is correct
+most of the time in most of them, and the floor sits at F1 = 0.741 before any
+model is fitted. Chronic pollution, not modelling skill, sets
 that floor, and a margin that small is not evidence that a model has learned anything past
 the regional mean. Raw CAMS, a full chemistry-transport model, is improved in
 5 of 6 cities simply by subtracting a per-city
@@ -431,9 +433,11 @@ interpolating within a sampled population and transferring to a location outside
 benchmark exists for the second.
 
 Meyer and Pebesma (2021) supply the complementary framework: a model's area of applicability
-is the region of predictor space where its training data support a prediction at all. Section
-7 reports that error grows with the held-out city's mean concentration, which is an
-applicability statement measured rather than named. We report it empirically and flag the
+is the region of predictor space where its training data support a prediction at all. Section 7
+reports that the held-out city's mean bias falls monotonically with its concentration
+(Spearman rho = -1.00), while fold RMSE carries no such relation once normalised
+by each city's own variability (rho = -0.03). That is an applicability
+statement measured rather than named. We report it empirically and flag the
 formal treatment as work the benchmark makes possible rather than work it performs.
 
 The checksum is over bytes, which on a mixed-platform repository is not automatic. An early
@@ -870,6 +874,17 @@ resampled quantity is the whole leave-city-out protocol per seed. Baseline rungs
 deterministic and carry no seed dispersion. Section 3.6 rule 5 requires this of every
 submission to the benchmark; it is applied here to the reference implementation as well.
 
+**Two estimators appear in this paper and they are not the same number.** Section 5 and the
+table above report the mean over 5 independently seeded runs. Section 6.2 onward,
+and every Diebold–Mariano and significance result, score the **5-seed
+ensemble**: the seed predictions are averaged first and the average is scored once. Averaging
+reduces variance, so the ensemble is the better estimator and its fold-mean RMSE
+(27.91 µg/m³) sits below the mean of the single-seed RMSEs
+(28.01 µg/m³). Where a ± appears beside a Section 6.2 figure, the
+centre is the ensemble and the spread is the dispersion of the single-seed runs around their
+own mean — the spread describes the seed-to-seed variability of the procedure, not the
+uncertainty of the ensemble, which is narrower and is not estimated here.
+
 **Two numbers describe this result, and they point in opposite directions.**
 
 *Between cities, the model retains some signal.* Pooled over all evaluation rows — variance
@@ -1012,21 +1027,34 @@ the unit of generalisation is the **city** — as Section 5.4 already argues, an
 leave-city-out protocol implies. The primary analysis therefore aggregates to one value per
 city and tests those 6 numbers.
 
-| | Test | Unit | *n* | *p* |
-|---|---|---|---:|---:|
-| **Primary** | paired *t* on city means | city | 6 | **0.1392** |
-| **Primary** | exact sign-flip permutation | city | 6 | **0.1250** |
-| Sensitivity | station-day, independence assumed | station-day | 2214 | 2.6e-10 |
-| Sensitivity | station-day, Newey–West HAC (lag 60 d) | station-day | 2214 | 0.0044 |
-| Sensitivity | cluster bootstrap over cities | city | 6 | 0.0428 |
+The quantity tested is the loss differential Δ, the model's squared error minus debiased
+CAMS's, in (µg/m³)². Negative values favour the model.
+
+| | Test | Unit | *n* | Δ (95% CI) | *p* |
+|---|---|---|---:|---:|---:|
+| **Primary** | paired *t* on city means | city | 6 | **-96.2 (-237.0, +44.5)** | **0.1392** |
+| **Primary** | exact sign-flip permutation | city | 6 | **-96.2** | **0.1250** |
+| Sensitivity | station-day, independence assumed | station-day | 2214 | -101.7 (-133.3, -70.2) | 2.6e-10 |
+| Sensitivity | station-day, Newey–West HAC (lag 60 d) | station-day | 2214 | -101.7 (-171.7, -31.7) | 0.0044 |
+| Sensitivity | cluster bootstrap over cities | city | 6 | -96.2 (-196.5, -2.9) | 0.0428 |
+
+**The interval is the more informative half of the primary row.** At
+(-237.0, +44.5) (µg/m³)² it spans zero and is wide enough to contain both a substantial
+improvement over CAMS and a moderate degradation. The study does not establish that the model
+is better, and it equally does not establish that it is not: with 6 cities the
+design cannot separate those cases. Reporting only *p* = 0.1392 would invite the
+reading that no effect exists, which the interval does not support either.
 
 With 6 clusters, cluster-robust asymptotics are unreliable — the cluster-robust
 variance estimator is materially downward-biased below roughly 30–50 clusters
 (Cameron and Miller, 2015). Two remedies appropriate at this cluster count are reported
 together: a *t*-test on 6 city means with 5 degrees of freedom,
-and an exact sign-flip permutation test that assumes no distribution at all. The permutation
-test's smallest attainable two-sided *p*-value is 0.03125, a floor imposed by
-having only 6 cities; we state it rather than let a reader mistake it for evidence.
+and an exact sign-flip permutation test. That test is distribution-free but not
+assumption-free: it trades normality for the weaker requirement that each city's mean
+differential be sign-symmetric about zero under the null, and at 6 cities that
+requirement is no more checkable than normality was. Its smallest attainable two-sided
+*p*-value is 0.03125, a floor imposed by having only 6 cities; we state
+it rather than let a reader mistake it for evidence.
 
 **The evidence is suggestive and does not reach conventional significance under either
 procedure this benchmark treats as primary.** Corrections for serial dependence alone leave
@@ -1526,9 +1554,12 @@ feature families — that ordering proved fragile, reversing once a single dupli
 instrument was removed. It is that with 7 instruments across 6
 cities, a learned model barely separates from an oracle constant it is not permitted to
 use, and the attribution
-ranking is unstable to one station. Both point the same way: the binding constraint is
-network density, not modelling technique or choice of remote-sensing product. The single most
-valuable investment for Central Asian air quality modelling is more stations — particularly
+ranking is unstable to one station. Both are consistent with the same reading: at this network density a learned model barely
+separates from a predictor it is not permitted to use, and the ranking of what carries it is
+unstable to a single station. We cannot separate that from a modelling-technique constraint,
+because one model class was evaluated (Section 5) and network density was never varied. What
+the benchmark does show is where the marginal return is legible: the single most plausible
+investment for Central Asian air quality modelling is more stations — particularly
 in Turkmenistan, which has none, and Kazakhstan, which contributes one city here.
 
 **For the field.** The benchmark's value is that it forecloses the shortcuts. A future

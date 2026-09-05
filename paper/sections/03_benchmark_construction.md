@@ -32,9 +32,11 @@ interpolating within a sampled population and transferring to a location outside
 benchmark exists for the second.
 
 Meyer and Pebesma (2021) supply the complementary framework: a model's area of applicability
-is the region of predictor space where its training data support a prediction at all. Section
-7 reports that error grows with the held-out city's mean concentration, which is an
-applicability statement measured rather than named. We report it empirically and flag the
+is the region of predictor space where its training data support a prediction at all. Section 7
+reports that the held-out city's mean bias falls monotonically with its concentration
+(Spearman rho = -1.00), while fold RMSE carries no such relation once normalised
+by each city's own variability (rho = -0.03). That is an applicability
+statement measured rather than named. We report it empirically and flag the
 formal treatment as work the benchmark makes possible rather than work it performs.
 
 The checksum is over bytes, which on a mixed-platform repository is not automatic. An early

@@ -31,9 +31,11 @@ badly downward-biased below roughly 30-50 clusters (Cameron & Miller 2015). Two 
 appropriate at G = 6 and both are reported:
 
   * a paired t-test on the 6 city means with G-1 = 5 degrees of freedom, and
-  * an **exact sign-flip permutation test** over all 2^6 = 64 sign assignments, which makes no
-    distributional assumption at all. Its smallest attainable two-sided p-value is 2/64 =
-    0.03125, and that floor is stated explicitly rather than hidden.
+  * an **exact sign-flip permutation test** over all 2^6 = 64 sign assignments. It is
+    distribution-free but not assumption-free: it trades normality for the weaker
+    requirement that each city's mean differential be sign-symmetric about 0 under the null,
+    which at G = 6 cannot be checked either. Its smallest attainable two-sided p-value is
+    2/64 = 0.03125, and that floor is stated explicitly rather than hidden.
 
 Neither is "the significant one". Both are reported with the same prominence.
 """
