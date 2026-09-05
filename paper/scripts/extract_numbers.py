@@ -506,6 +506,36 @@ if _idw_t5.exists() and _idw_t3.exists():
     put("idw_fold_diff_min", float(_dd.min()))
     put("idw_fold_diff_max", float(_dd.max()))
 
+# Freeze 2, the retrieval-count exclusion: its validation gain and its test-block outcome.
+# Both were typed into three sections; the test-block figure came from a run whose outputs
+# were never deposited. Sign convention for both: positive means excluding the features
+# lowered RMSE.
+_f2v = T / "t5_04_ablation_val.csv"
+_f2t = T / "t5_07_missingness_test.csv"
+if _f2v.exists():
+    _v = pd.read_csv(_f2v).groupby("config").rmse.mean()
+    if {"all", "drop_satellite_missingness"} <= set(_v.index):
+        put("freeze2_val_gain", float(_v["all"] - _v["drop_satellite_missingness"]))
+if _f2t.exists():
+    _t7 = pd.read_csv(_f2t)
+    _t = _t7.groupby("config").rmse.mean()
+    if {"included", "excluded"} <= set(_t.index):
+        put("freeze2_test_delta", float(_t["included"] - _t["excluded"]))
+        put("freeze2_test_rmse_excluded", float(_t["excluded"]))
+        put("freeze2_test_rmse_included", float(_t["included"]))
+        # The fold-mean hides that the sign varies by city; both extremes are emitted.
+        _by = _t7.groupby(["fold", "config"]).rmse.mean()
+        _pf = {
+            str(f): float(_by[(f, "included")] - _by[(f, "excluded")])
+            for f in sorted(_t7.fold.unique())
+        }
+        _lo = min(_pf, key=_pf.get)
+        _hi = max(_pf, key=_pf.get)
+        put("freeze2_delta_min_city", _lo)
+        put("freeze2_delta_min", _pf[_lo])
+        put("freeze2_delta_max_city", _hi)
+        put("freeze2_delta_max", _pf[_hi])
+
 _sig_f = T / "t6_06_significance.csv"
 if _sig_f.exists():
     _s = pd.read_csv(_sig_f)
@@ -650,6 +680,7 @@ for _t in (
     "t6_06_significance",
     "t6_07_per_fold_holm",
     "t7_06_leave_khujand_out",
+    "t5_07_missingness_test",
 ):
     _p = T / f"{_t}.csv"
     put(f"rows_{_t[:5]}", f"{len(pd.read_csv(_p)):,}" if _p.exists() else "n/a")

@@ -22,12 +22,12 @@ pre-registered quality rules, plus one added after validation exposed a duplicat
 instrument, then deduplicated and timezone-verified; {{n_reference_instruments}} are US
 embassy reference monitors and {{n_lowcost_instruments}} low-cost sensors, labelled as such.
 Each station-day is paired with satellite retrievals, a chemistry-transport forecast and
-static geography, each with a measured acquisition latency fixing whether it could be known
-at prediction time. The release includes frozen, checksummed splits
+static geography, each with a measured latency fixing whether it could be known at
+prediction time. The release includes frozen, checksummed splits
 (blocked-temporal with a {{purge_hours}}-hour purge; leave-city-out over {{n_loco_folds}}
-folds), a baseline ladder and reference model outputs. Predicted city means for held-out cities span
+folds), a baseline ladder and reference outputs. Predicted city means for held-out cities span
 {{pred_city_mean_range}} µg/m³ against {{obs_city_mean_range}} observed, so bias falls with
 concentration largely by construction (rho = {{rho_mean_bias}}); fold RMSE rises with it but
-not after normalising by each city's variability (rho = {{rho_mean_rmse_norm}}). The data support cross-city
+not after normalising by each city's variability (rho = {{rho_mean_rmse_norm}}). The data support work on cross-city
 generalisation, satellite-ground fusion, low-cost-sensor transfer and reproducible
 benchmarking.

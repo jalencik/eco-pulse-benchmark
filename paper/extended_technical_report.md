@@ -569,7 +569,7 @@ regeneration and manuscript rendering — in that order, because splits are hash
 before any model reads data. Every number in this paper is produced by that command. No
 figure in the manuscript is typed by hand; Section 7.5 describes the mechanism and the drift
 it caught. The command is idempotent: a second run reproduces all
-30 result tables **byte-identically**, verified by SHA-256.
+31 result tables **byte-identically**, verified by SHA-256.
 
 **A reproducibility failure this paper had to fix in itself.** Until benchmark v1.1.0 the
 model layer was *absent* from `make reproduce`. Its four producers wrote files under names
@@ -847,7 +847,14 @@ their missingness is target-correlated. A validation-block ablation then *indica
 they harmed leave-city-out generalisation, which is mechanistically plausible: retrieval
 success depends on local surface brightness, snow cover and solar geometry, all properties of
 a particular city. The exclusion was frozen on that basis and scored once on test, where the
-validation gain of 1.75 µg/m³ did not replicate, delivering 0.045 µg/m³. The configuration
+validation gain of 1.75 µg/m³ largely did not carry over: scored on the test
+block at the frozen hyperparameters, with and without the features on identical rows and
+seeds (`t5_07`), the fold-mean gain is 0.25 µg/m³
+(28.26 with the features against 28.01
+without), and the sign varies by city, from 3.24 at
+Ashgabat to -1.70 at Almaty. An
+earlier draft quoted 0.045 for this figure from a run whose outputs were not deposited; the
+table replaces it. The configuration
 was not reverted after the fact — reverting a frozen choice because the test block disagreed
 would be the selection-on-test this section exists to prevent — and the non-replication is
 reported rather than removed. The features remain in the Task F set. Section 7.4 returns to
@@ -1441,8 +1448,9 @@ qualifications apply to the current ordering.
    generalisation, which is mechanistically plausible: retrieval success depends on local
    surface brightness, snow cover and solar geometry, all properties of a particular city.
    The exclusion was frozen on that basis and they are excluded from Task N, retained for
-   Task F. Scored once on test, the validation gain of 1.75 µg/m³ did not replicate; it
-   delivered 0.045 µg/m³. The mechanism remains plausible and the effect remains unmeasured
+   Task F. Scored on test at the frozen hyperparameters (`t5_07`), the validation gain of
+   1.75 µg/m³ shrank to 0.25 µg/m³ on the fold mean, with
+   the sign varying by city; an earlier draft quoted 0.045 from an undeposited run. The mechanism remains plausible and the effect remains unmeasured
    at this sample size, so this is a frozen decision reported with its outcome rather than a
    finding about retrieval physics.
 3. *SO₂ is structurally absent in the season it exists to observe.* Retrieval needs

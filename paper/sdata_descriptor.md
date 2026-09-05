@@ -22,13 +22,13 @@ pre-registered quality rules, plus one added after validation exposed a duplicat
 instrument, then deduplicated and timezone-verified; 5 are US
 embassy reference monitors and 2 low-cost sensors, labelled as such.
 Each station-day is paired with satellite retrievals, a chemistry-transport forecast and
-static geography, each with a measured acquisition latency fixing whether it could be known
-at prediction time. The release includes frozen, checksummed splits
+static geography, each with a measured latency fixing whether it could be known at
+prediction time. The release includes frozen, checksummed splits
 (blocked-temporal with a 240-hour purge; leave-city-out over 6
-folds), a baseline ladder and reference model outputs. Predicted city means for held-out cities span
+folds), a baseline ladder and reference outputs. Predicted city means for held-out cities span
 6.77 µg/m³ against 35.23 observed, so bias falls with
 concentration largely by construction (rho = -1.00); fold RMSE rises with it but
-not after normalising by each city's variability (rho = -0.03). The data support cross-city
+not after normalising by each city's variability (rho = -0.03). The data support work on cross-city
 generalisation, satellite-ground fusion, low-cost-sensor transfer and reproducible
 benchmarking.
 
@@ -306,6 +306,10 @@ Every file below is plain text (JSON or CSV). `splits.sha256` carries the digest
 projections the builder writes from the same payload and are not separately digested, so
 `splits.json` is the file to cite.
 
+Figure 1 maps the 7 instruments, marker area proportional to each station's
+observation count and marker shape distinguishing the reference monitors from the low-cost
+sensors.
+
 ![Figure 1](figures/fig1_study_area.png)
 
 **Figure 1.** The 7 benchmark instruments across 6 Central Asian
@@ -313,6 +317,9 @@ cities. Marker style distinguishes the 5 US diplomatic-post
 reference monitors from the 2 Clarity low-cost sensors at Khujand.
 Leave-city-out withholds every instrument in one city at a time, so the spacing between
 cities — not between instruments — sets the extrapolation distance each fold demands.
+
+Figure 2 shows monthly hourly-completeness per station across the record, which is where
+the feed transitions, the Khujand start dates and the 2025-03-04 closure are visible.
 
 ![Figure 2](figures/figS1_coverage.png)
 
@@ -375,6 +382,7 @@ reference implementation. All are CSV with a header row.
 | `t4_01_cams_baseline_variants.csv` | 21 | CAMS raw, locally debiased and pooled-debiased, per station. |
 | `t5_01_loco_untuned.csv` | 108 | Untuned gradient boosting, leave-city-out, per fold and seed. |
 | `t5_02_loco_tuned.csv` | 123 | Tuned gradient boosting, leave-city-out, per fold and seed, with selected hyperparameters. |
+| `t5_07_missingness_test.csv` | 60 | The Freeze-2 exclusion scored on the test block: the tuned Task N model with and without the retrieval-count features, per fold and seed, at the hyperparameters frozen in `t5_02`. This is the table behind the non-replication reported in Technical Validation. |
 | `t6_01_predictions_task_n.csv` | 2,214 | **Row-level predictions** on the test block: `station_id`, `date`, observed `pm25`, ensemble `lgbm`, per-seed `lgbm_seed0`–`lgbm_seed4`, `pooled` (debiased CAMS), `fold`. |
 | `t6_02_dm_lgbm_vs_cams.csv` | 7 | Diebold–Mariano per fold and pooled. |
 | `t6_06_significance.csv` | 7 | Primary and sensitivity inference with unit of analysis, statistic, *p* and confidence interval. |
@@ -531,6 +539,9 @@ RMSE is structurally larger than a daily one and the two are never compared.
 
 ### Where the data are hard
 
+Figure 3 plots each held-out city's RMSE and mean bias against its observed mean
+concentration.
+
 ![Figure 3](figures/figS2_error_structure.png)
 
 **Figure 3.** Leave-city-out error against the held-out city's mean PM2.5. Left: fold RMSE
@@ -621,7 +632,10 @@ test: fold-mean RMSE fell from 30.24 to 28.05 µg/m³.
 retrieval-count features harmed leave-city-out generalisation, which is mechanistically
 plausible: retrieval success depends on local surface brightness, snow cover and solar
 geometry, all city-specific. Frozen, then scored once on test: **the validation gain of
-1.75 µg/m³ did not replicate, delivering 0.045 µg/m³.**
+1.75 µg/m³ shrank to 0.25 µg/m³ on the fold mean, and the
+sign varies by city (`t5_07_missingness_test.csv`, scored at the frozen hyperparameters).**
+An earlier draft quoted 0.045 for this figure from a run whose outputs were not deposited;
+the table replaces it.
 
 **That non-replication is reported rather than removed.** Reverting the configuration after
 seeing its test result would have made the test set a selection criterion, which is the
@@ -637,7 +651,7 @@ effect on a score. `scripts/experiment_model_search.py` and
 ### Reproducibility
 
 A single command regenerates every reported number from the frozen splits. Two consecutive
-runs reproduce all 30 result tables **byte-identically**, verified by
+runs reproduce all 31 result tables **byte-identically**, verified by
 SHA-256. The manuscript is rendered from templates whose numeric fields are substituted from
 a machine-extracted mapping, so no reported figure is typed by hand, and a test re-extracts
 from the CSVs and fails if any figure has drifted.
@@ -711,7 +725,8 @@ earlier claim about them is retracted in Technical Validation.
 **One city carries 26.7% of the pooled rows.** Khujand is the only
 two-station city, so any row-level statistic here is weighted toward it, and it is also the
 only city with low-cost labels. `t7_06_leave_khujand_out.csv` recomputes the primary
-inference without it: the verdict is unchanged (ROBUST), with paired *t*
+inference without it: the verdict is unchanged (ROBUST), which for a null result
+means only that the null persists, with paired *t*
 *p* = 0.1392 over all 6 cities against 0.2165 over the five
 reference-grade ones. Report per city, and if you must pool, run the same exclusion.
 
@@ -852,7 +867,7 @@ regeneration and manuscript rendering:
 make reproduce        # or, where make is unavailable:  python tasks.py reproduce
 ```
 
-The command is deterministic: two consecutive runs reproduce all 30
+The command is deterministic: two consecutive runs reproduce all 31
 result tables byte-identically under SHA-256. Verifying the frozen splits requires neither
 credentials nor a rebuild (`sha256sum -c splits.sha256`), and the test suite runs offline
 against committed fixtures. Regenerating the reference results additionally requires the

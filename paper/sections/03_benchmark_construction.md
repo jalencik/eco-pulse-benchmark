@@ -162,7 +162,7 @@ regeneration and manuscript rendering — in that order, because splits are hash
 before any model reads data. Every number in this paper is produced by that command. No
 figure in the manuscript is typed by hand; Section 7.5 describes the mechanism and the drift
 it caught. The command is idempotent: a second run reproduces all
-30 result tables **byte-identically**, verified by SHA-256.
+31 result tables **byte-identically**, verified by SHA-256.
 
 **A reproducibility failure this paper had to fix in itself.** Until benchmark v1.1.0 the
 model layer was *absent* from `make reproduce`. Its four producers wrote files under names

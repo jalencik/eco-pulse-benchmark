@@ -122,6 +122,9 @@ RMSE is structurally larger than a daily one and the two are never compared.
 
 ### Where the data are hard
 
+Figure 3 plots each held-out city's RMSE and mean bias against its observed mean
+concentration.
+
 ![Figure 3](figures/figS2_error_structure.png)
 
 **Figure 3.** Leave-city-out error against the held-out city's mean PM2.5. Left: fold RMSE
@@ -212,7 +215,10 @@ test: fold-mean RMSE fell from 30.24 to 28.05 µg/m³.
 retrieval-count features harmed leave-city-out generalisation, which is mechanistically
 plausible: retrieval success depends on local surface brightness, snow cover and solar
 geometry, all city-specific. Frozen, then scored once on test: **the validation gain of
-1.75 µg/m³ did not replicate, delivering 0.045 µg/m³.**
+{{freeze2_val_gain}} µg/m³ shrank to {{freeze2_test_delta}} µg/m³ on the fold mean, and the
+sign varies by city (`t5_07_missingness_test.csv`, scored at the frozen hyperparameters).**
+An earlier draft quoted 0.045 for this figure from a run whose outputs were not deposited;
+the table replaces it.
 
 **That non-replication is reported rather than removed.** Reverting the configuration after
 seeing its test result would have made the test set a selection criterion, which is the

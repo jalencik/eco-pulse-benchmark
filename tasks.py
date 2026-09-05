@@ -73,6 +73,10 @@ TARGETS: dict[str, list[list[str]]] = {
     "models": [
         [PY, "scripts/train_gbdt.py"],
         [PY, "scripts/train_phase5.py"],
+        # Re-scores the Task N model on the test block with and without the retrieval-count
+        # features, at the hyperparameters train_phase5 froze in t5_02. The manuscript quoted
+        # this outcome from a run whose outputs were never deposited; now it is a table.
+        [PY, "scripts/build_missingness_test.py"],
         [PY, "scripts/build_cams_variants.py"],
         [PY, "scripts/phase6_analysis.py"],
         # Both read t6_01, so they must follow phase6_analysis.py.

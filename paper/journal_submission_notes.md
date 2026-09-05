@@ -16,7 +16,7 @@ made once and applied consistently.
 | `paper/extended_technical_report.md` | Yes | Standard research-article structure. Venue-neutral throughout. |
 | `paper/sdata_descriptor.md` | Structurally venue-shaped | Built to the Data Descriptor section order (Background and Summary, Methods, Data Records, Technical Validation, Usage Notes, Data/Code Availability, Declarations). That order is a requirement of the Data Descriptor article type. Submitting elsewhere means re-sectioning, not rewriting: the prose and every number carry over unchanged. |
 | `paper/cover_letter.md` | Yes, with four placeholders | `[ARTICLE TYPE]`, `[JOURNAL]`, and the APC paragraph. |
-| `paper/HIGHLIGHTS.md` | Yes | Only some venues ask for it. The 85-character rule is the strictest known constraint, so bullets that satisfy it satisfy any looser one. |
+| `paper/HIGHLIGHTS.md` | Yes | Only some venues ask for it. The file is heading plus bullets and nothing else, because submission systems ingest it verbatim. Three to five bullets, each at most 85 characters including spaces, free of jargon, acronyms and abbreviations; 85 is the strictest known constraint, so bullets that satisfy it satisfy any looser one. `scripts/check_highlights.py` fails the build if a bullet exceeds the limit, which is easy to do while editing and which submission systems reject rather than truncate. |
 | `paper/tables/`, `paper/figures/`, `benchmark/` | Yes | Frozen artefacts. Independent of venue. |
 | `paper/submission_checklist.md` | No | Written against one venue's submission form. Rewrite when a venue is chosen. |
 

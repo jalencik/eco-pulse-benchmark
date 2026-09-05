@@ -133,8 +133,9 @@ qualifications apply to the current ordering.
    generalisation, which is mechanistically plausible: retrieval success depends on local
    surface brightness, snow cover and solar geometry, all properties of a particular city.
    The exclusion was frozen on that basis and they are excluded from Task N, retained for
-   Task F. Scored once on test, the validation gain of 1.75 µg/m³ did not replicate; it
-   delivered 0.045 µg/m³. The mechanism remains plausible and the effect remains unmeasured
+   Task F. Scored on test at the frozen hyperparameters (`t5_07`), the validation gain of
+   {{freeze2_val_gain}} µg/m³ shrank to {{freeze2_test_delta}} µg/m³ on the fold mean, with
+   the sign varying by city; an earlier draft quoted 0.045 from an undeposited run. The mechanism remains plausible and the effect remains unmeasured
    at this sample size, so this is a frozen decision reported with its outcome rather than a
    finding about retrieval physics.
 3. *SO₂ is structurally absent in the season it exists to observe.* Retrieval needs

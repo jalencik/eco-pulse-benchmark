@@ -51,8 +51,9 @@ Two things we would rather you heard from us than found for yourself.
 
 **The reference implementation is a reference point, not a result.** It records the lowest
 error of six legal baselines, but the paired difference across six cities is not
-statistically separable, mean per-fold R² is negative, and errors grow with a city's mean
-concentration. We report all three plainly. A benchmark whose reference implementation is
+statistically separable, mean per-fold R² is negative, and the model's predicted city means
+barely vary between cities, so its bias tracks each city's level almost by construction. We
+report all three plainly. A benchmark whose reference implementation is
 reported honestly is more useful to the next group than one tuned until it wins, and the
 dataset's value does not rest on the model performing well.
 

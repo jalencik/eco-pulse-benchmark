@@ -77,7 +77,14 @@ their missingness is target-correlated. A validation-block ablation then *indica
 they harmed leave-city-out generalisation, which is mechanistically plausible: retrieval
 success depends on local surface brightness, snow cover and solar geometry, all properties of
 a particular city. The exclusion was frozen on that basis and scored once on test, where the
-validation gain of 1.75 µg/m³ did not replicate, delivering 0.045 µg/m³. The configuration
+validation gain of 1.75 µg/m³ largely did not carry over: scored on the test
+block at the frozen hyperparameters, with and without the features on identical rows and
+seeds (`t5_07`), the fold-mean gain is 0.25 µg/m³
+(28.26 with the features against 28.01
+without), and the sign varies by city, from 3.24 at
+Ashgabat to -1.70 at Almaty. An
+earlier draft quoted 0.045 for this figure from a run whose outputs were not deposited; the
+table replaces it. The configuration
 was not reverted after the fact — reverting a frozen choice because the test block disagreed
 would be the selection-on-test this section exists to prevent — and the non-replication is
 reported rather than removed. The features remain in the Task F set. Section 7.4 returns to
