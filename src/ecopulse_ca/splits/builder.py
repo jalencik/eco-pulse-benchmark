@@ -248,6 +248,14 @@ def build(panel_path: Path = INTERIM / "benchmark_panel.parquet") -> dict:
             "spatial": "leave_city_out",
             "temporal": "test",
         },
+        # Two of these strings are stale and must stay stale. "covers 2 of 6 cities" and
+        # "4 stations report after 2025-03-04" were written before the v1.1.0 Dushanbe merge
+        # (both folds are Khujand; 2 stations end at the shutdown). They are inside the
+        # deposited, checksummed splits.json, and tests/test_splits_immutable.py compares a
+        # fresh build() to that file byte for byte. Correcting the wording here would break
+        # the freeze against Zenodo 10.5281/zenodo.21930669 and invalidate every published
+        # score. benchmark/README.md item 6 reports the staleness to readers instead. Fix the
+        # strings only in the commit that raises the benchmark version.
         "notes": [
             "Post-test data is reserved and unused: it cannot train (lookahead vs the 2024 "
             "test block) and cannot test (only 4 stations report after 2025-03-04).",
