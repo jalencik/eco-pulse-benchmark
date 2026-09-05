@@ -1,0 +1,3 @@
+set,n_cities,n_rows,rmse_model,rmse_cams,mean_loss_differential,t_stat,p_paired_t,p_permutation,permutation_floor,sig_paired_t,sig_permutation,verdict,excluded_city_row_share
+all_cities,6,2214,31.49409432394774,33.06959504014411,-96.24762279396633,-1.7575615700442093,0.13915985024470703,0.125,0.03125,False,False,ROBUST,0.26738934056007224
+excluding_Khujand,5,1622,28.359062812681753,30.193511161400043,-98.2719262868314,-1.4662272898949689,0.21647009158169367,0.25,0.0625,False,False,ROBUST,0.26738934056007224

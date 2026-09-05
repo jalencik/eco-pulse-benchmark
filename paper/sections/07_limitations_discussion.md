@@ -169,6 +169,35 @@ Asian city fails first on the city's overall level, not on its day-to-day patter
 terms of Section 3.1 it is an area-of-applicability statement measured rather than named.
 Per-fold, per-band and per-season figures are in `t7_01`–`t7_03`.
 
+## 7.4c One city carries a quarter of the pooled rows
+
+Khujand is the only city with two instruments, so it contributes
+**26.7% of the 2214 pooled evaluation rows** — more than any
+other city, from one of 6. It is also the only city whose labels are low-cost
+(Section 7.2), which the paper has already said makes its fold incomparable in kind. Declaring
+a fold incomparable and then leaving it inside every row-level statistic is the sharpest
+objection available against the pooled numbers, so we measure it rather than argue about it.
+
+Recomputing the primary analysis on the 1622 rows of the five reference-grade
+cities gives the same verdict. The model's RMSE falls to 28.36 µg/m³ against
+CAMS at 30.19 µg/m³, both lower than the pooled figures because Khujand is
+the hardest fold, and the mean loss differential moves from -96.2 to
+-98.3 — marginally *more* favourable to the model, not less. Neither primary
+test reaches significance in either set: paired *t* *p* = 0.1392 with all six
+cities and 0.2165 without Khujand; the exact permutation test gives
+0.1250 and 0.2500.
+
+One caveat belongs with that second column rather than after it. The exact sign-flip test over
+five cities has a smallest attainable two-sided *p*-value of 0.0625, above
+α = 0.05, so it cannot return a significant result at any effect size. Its *p* rising to
+0.2500 is therefore not evidence that the effect weakened; it is what removing a
+city does to the test. The paired *t* result is the informative half of the comparison.
+
+The classification is made by rule in `t7_06_leave_khujand_out.csv` rather than by reading,
+and it is **ROBUST**: no primary test flips, the sign does not reverse, and the effect
+does not move materially. The paper's central negative result does not depend on the low-cost
+city.
+
 ## 7.5 Zero-drift reporting, and the drift it caught
 
 Every number in this manuscript is a double-brace placeholder token resolved at render time

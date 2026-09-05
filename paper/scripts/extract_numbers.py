@@ -407,6 +407,25 @@ if _cams_f.exists():
         put("debias_worst_raw", float(_cv.raw[_worst]))
         put("debias_worst_local", float(_cv.debiased_local[_worst]))
 
+# Leave-Khujand-out sensitivity. Khujand is the only two-station city and the only
+# low-cost one, so it dominates row-level statistics while being declared incomparable in
+# kind. These keys let the manuscript state the sensitivity result rather than assert
+# robustness.
+_kho_f = T / "t7_06_leave_khujand_out.csv"
+if _kho_f.exists():
+    _kho = pd.read_csv(_kho_f).set_index("set")
+    _all, _ex = _kho.loc["all_cities"], _kho.loc["excluding_Khujand"]
+    put("khujand_row_share", 100 * float(_all.excluded_city_row_share), 1)
+    put("kho_verdict", str(_all.verdict))
+    put("kho_n_rows_excl", int(_ex.n_rows), 0)
+    put("kho_rmse_model_excl", float(_ex.rmse_model))
+    put("kho_rmse_cams_excl", float(_ex.rmse_cams))
+    put("kho_p_t_excl", float(_ex.p_paired_t), 4)
+    put("kho_p_perm_excl", float(_ex.p_permutation), 4)
+    put("kho_perm_floor_excl", float(_ex.permutation_floor), 4)
+    put("kho_mean_d_all", float(_all.mean_loss_differential), 1)
+    put("kho_mean_d_excl", float(_ex.mean_loss_differential), 1)
+
 _sig_f = T / "t6_06_significance.csv"
 if _sig_f.exists():
     _s = pd.read_csv(_sig_f)
@@ -513,6 +532,7 @@ for _t in (
     "t6_02_dm_lgbm_vs_cams",
     "t6_06_significance",
     "t6_07_per_fold_holm",
+    "t7_06_leave_khujand_out",
 ):
     _p = T / f"{_t}.csv"
     put(f"rows_{_t[:5]}", f"{len(pd.read_csv(_p)):,}" if _p.exists() else "n/a")

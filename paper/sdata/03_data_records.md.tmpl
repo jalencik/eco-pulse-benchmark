@@ -77,6 +77,7 @@ reference implementation. All are CSV with a header row.
 | `t6_02_dm_lgbm_vs_cams.csv` | {{rows_t6_02}} | Diebold–Mariano per fold and pooled. |
 | `t6_06_significance.csv` | {{rows_t6_06}} | Primary and sensitivity inference with unit of analysis, statistic, *p* and confidence interval. |
 | `t6_07_per_fold_holm.csv` | {{rows_t6_07}} | Per-fold *p*-values with Holm step-down correction. |
+| `t7_06_leave_khujand_out.csv` | {{rows_t7_06}} | **Leave-Khujand-out sensitivity.** The primary inference recomputed over the five reference-grade cities, with each arm's city count, row count, RMSEs, mean loss differential, both *p*-values, the attainable permutation floor and a rule-assigned verdict. |
 
 `t6_01_predictions_task_n.csv` is the most reusable record: it permits any alternative loss,
 significance procedure or aggregation to be applied to the reference implementation without
@@ -84,9 +85,12 @@ retraining it, and its per-seed columns make the ensemble decomposable.
 
 ### What is not redistributed, and why
 
-**The derived ground-truth panel is not included.** It is built from the OpenAQ archive, whose
-per-station licence terms are heterogeneous and not yet transcribed for every contributing
-provider. Redistributing it would assert a licence we have not verified. `data/MANIFEST.md`
+**The derived ground-truth panel is not included.** It is built from the OpenAQ archive,
+whose per-feed licence terms are heterogeneous: six of the ten source feeds carry an explicit
+licence permitting redistribution and four carry no licence record at all. Depositing the
+merged panel under a single licence would assert a uniform permission the evidence does not
+support for every feed. The full matrix, retrieved 2026-08-14, is in `data/MANIFEST.md` and
+summarised in Data Availability. `data/MANIFEST.md`
 records the full provenance of every source, and two documented commands rebuild the panel
 from the archive with an API key.
 

@@ -81,6 +81,11 @@ TARGETS: dict[str, list[list[str]]] = {
         # build_significance computes the primary (city-level) and sensitivity inference.
         [PY, "scripts/build_daily_baselines.py"],
         [PY, "scripts/build_significance.py"],
+        # Khujand is the only two-station city, so it carries 26.7% of every row-level
+        # statistic while being the one city the manuscript calls incomparable in kind.
+        # This recomputes the primary inference without it, so the pooled claims are
+        # measured against that objection rather than left exposed to it.
+        [PY, "scripts/build_khujand_sensitivity.py"],
         # Reporting analyses on the FROZEN predictions -- error decomposition by fold,
         # concentration regime and season, the feature audit, and whether the ladder ranking
         # survives removing one city. None of these change the configuration.

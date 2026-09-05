@@ -370,6 +370,7 @@ reference implementation. All are CSV with a header row.
 | `t6_02_dm_lgbm_vs_cams.csv` | 7 | Diebold–Mariano per fold and pooled. |
 | `t6_06_significance.csv` | 7 | Primary and sensitivity inference with unit of analysis, statistic, *p* and confidence interval. |
 | `t6_07_per_fold_holm.csv` | 6 | Per-fold *p*-values with Holm step-down correction. |
+| `t7_06_leave_khujand_out.csv` | 2 | **Leave-Khujand-out sensitivity.** The primary inference recomputed over the five reference-grade cities, with each arm's city count, row count, RMSEs, mean loss differential, both *p*-values, the attainable permutation floor and a rule-assigned verdict. |
 
 `t6_01_predictions_task_n.csv` is the most reusable record: it permits any alternative loss,
 significance procedure or aggregation to be applied to the reference implementation without
@@ -377,9 +378,12 @@ retraining it, and its per-seed columns make the ensemble decomposable.
 
 ### What is not redistributed, and why
 
-**The derived ground-truth panel is not included.** It is built from the OpenAQ archive, whose
-per-station licence terms are heterogeneous and not yet transcribed for every contributing
-provider. Redistributing it would assert a licence we have not verified. `data/MANIFEST.md`
+**The derived ground-truth panel is not included.** It is built from the OpenAQ archive,
+whose per-feed licence terms are heterogeneous: six of the ten source feeds carry an explicit
+licence permitting redistribution and four carry no licence record at all. Depositing the
+merged panel under a single licence would assert a uniform permission the evidence does not
+support for every feed. The full matrix, retrieved 2026-08-14, is in `data/MANIFEST.md` and
+summarised in Data Availability. `data/MANIFEST.md`
 records the full provenance of every source, and two documented commands rebuild the panel
 from the archive with an API key.
 
@@ -609,7 +613,7 @@ effect on a score. `scripts/experiment_model_search.py` and
 ### Reproducibility
 
 A single command regenerates every reported number from the frozen splits. Two consecutive
-runs reproduce all 29 result tables **byte-identically**, verified by
+runs reproduce all 30 result tables **byte-identically**, verified by
 SHA-256. The manuscript is rendered from templates whose numeric fields are substituted from
 a machine-extracted mapping, so no reported figure is typed by hand, and a test re-extracts
 from the CSVs and fails if any figure has drifted.
@@ -679,6 +683,13 @@ classifier by construction.
 fold's RMSE and reversed the ordering of feature-attribution families. Attribution rankings on
 a 7-instrument benchmark should be treated as unstable, and this paper's own
 earlier claim about them is retracted in Technical Validation.
+
+**One city carries 26.7% of the pooled rows.** Khujand is the only
+two-station city, so any row-level statistic here is weighted toward it, and it is also the
+only city with low-cost labels. `t7_06_leave_khujand_out.csv` recomputes the primary
+inference without it: the verdict is unchanged (ROBUST), with paired *t*
+*p* = 0.1392 over all 6 cities against 0.2165 over the five
+reference-grade ones. Report per city, and if you must pool, run the same exclusion.
 
 ### Known limitations
 
@@ -804,7 +815,7 @@ regeneration and manuscript rendering:
 make reproduce        # or, where make is unavailable:  python tasks.py reproduce
 ```
 
-The command is deterministic: two consecutive runs reproduce all 29
+The command is deterministic: two consecutive runs reproduce all 30
 result tables byte-identically under SHA-256. Verifying the frozen splits requires neither
 credentials nor a rebuild (`sha256sum -c splits.sha256`), and the test suite runs offline
 against committed fixtures. Regenerating the reference results additionally requires the
@@ -813,7 +824,7 @@ ground-truth panel described above.
 **Custom code of note.** The quality-control rules (`src/ecopulse_ca/qc/`), split builder
 (`src/ecopulse_ca/splits/`), Diebold–Mariano implementation with Harvey–Leybourne–Newbold
 correction (`src/ecopulse_ca/eval/`), and the primary/sensitivity inference
-(`scripts/build_significance.py`) are original to this work. 584 automated tests
+(`scripts/build_significance.py`) are original to this work. 592 automated tests
 enforce split immutability, absence of leakage, table provenance and manuscript-number
 consistency.
 

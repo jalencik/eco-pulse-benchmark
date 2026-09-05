@@ -58,6 +58,13 @@ fold's RMSE and reversed the ordering of feature-attribution families. Attributi
 a {{n_stations}}-instrument benchmark should be treated as unstable, and this paper's own
 earlier claim about them is retracted in Technical Validation.
 
+**One city carries {{khujand_row_share}}% of the pooled rows.** Khujand is the only
+two-station city, so any row-level statistic here is weighted toward it, and it is also the
+only city with low-cost labels. `t7_06_leave_khujand_out.csv` recomputes the primary
+inference without it: the verdict is unchanged ({{kho_verdict}}), with paired *t*
+*p* = {{sig_primary_t_p}} over all {{n_cities}} cities against {{kho_p_t_excl}} over the five
+reference-grade ones. Report per city, and if you must pool, run the same exclusion.
+
 ### Known limitations
 
 - **Six cities.** The spatial sample is small, and it bounds every inference: with
