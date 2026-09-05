@@ -46,8 +46,8 @@ compared on identical terms.
 The observations are not redistributed here because the per-provider licence terms are not
 the same for every contributor, and four of the ten source feeds carry no licence record at
 all. `data/MANIFEST.md` has the full per-feed matrix with what we could and could not
-establish, plus the two commands that rebuild the derived panel from the original archive
-with an OpenAQ key.
+establish. The three commands that rebuild the derived panel from the original archive with
+an OpenAQ key are in the reproduction section below and in `benchmark/README.md`.
 
 That being said, **verifying the benchmark needs no credentials and no rebuild.**
 `cd benchmark/splits && sha256sum -c splits.sha256` is enough, and the whole test suite runs

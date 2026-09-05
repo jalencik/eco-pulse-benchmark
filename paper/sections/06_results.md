@@ -104,7 +104,7 @@ Three corrections to this comparison were needed:
 
 Every rung below is scored on **the same daily evaluation rows as the learned model**
 (local-calendar daily means, ≥18 hours, the frozen 2024 test block). Table 6.1 above and the
-hourly ladder in Section 3 are not comparable to each other and are no longer presented as one
+hourly ladder in Section 4.2 are not comparable to each other and are no longer presented as one
 ladder.
 
 | Model (daily, leave-city-out) | RMSE µg/m³ |
@@ -229,8 +229,11 @@ that footing below.
 Ashgabat that is 18.83 against 20.74 µg/m³ (DM statistic
 1.17, *p* = 0.2420); at Bishkek the gap is smaller still and the
 test cannot separate it from zero (*p* = 0.8805). Neither reversal approaches
-significance, so the two methods are indistinguishable in those two cities rather than
-CAMS winning them.
+significance. That is not a finding that the two methods perform alike there: at Ashgabat
+CAMS holds a 10% RMSE advantage on 263 station-days, and a per-fold test at
+this sample size can neither confirm nor exclude a difference of that size. The reversals are
+not separable from zero, which is a weaker statement than CAMS winning and a weaker one than
+the two being equal.
 
 **Khujand, the zero-shot fold, clears significance before Holm correction
 (0.0430) and not after it** at 38.81 µg/m³ against CAMS at
@@ -245,7 +248,9 @@ earlier hourly implementation instead derived the lag from the forecast horizon 
 `horizon_hours = 1` for the nowcasting task, which
 disables the HAC correction entirely and inflated *p*-values by roughly seven orders of
 magnitude. We now report the full sensitivity sweep: across truncation lags of
-0 to 60 hours the pooled conclusion is stable, with all comparisons significant
+0 to 60 days the pooled conclusion is stable (the `truncation_lag_h` column name in
+`t6_03` is a carry-over from the hourly implementation; on the daily series these are lags in
+days), with all comparisons significant
 (yes) and a worst-case *p* of 0.0056.
 
 **Figure 3** gives the per-city comparison against debiased CAMS, and **Figure 5** the
@@ -272,7 +277,7 @@ monitored station from that station's own history at lags of 1, 2 and 7 days plu
 30-day rolling means. Its shortest lag is one day, so it is a **single-horizon, next-day
 (24 h) forecast evaluated at daily resolution**.
 
-It is therefore **not comparable to the Task F baseline ladder in Section 3**, which is
+It is therefore **not comparable to the Task F baseline ladder in Section 4.1**, which is
 resolved across three horizons (24, 48 and 72 h) and scored on hourly observations
 (115,381 observations, against 2,214 daily rows for the model).
 Earlier drafts placed the two in one table. They measure different things at different

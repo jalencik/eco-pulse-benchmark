@@ -146,7 +146,7 @@ zero-shot wherever it appears.
    averaged into one number hides the variation that matters.
 4. Diebold–Mariano tests (Diebold and Mariano, 1995) for any claimed improvement, with the
    truncation lag stated, Newey–West HAC variance (Newey and West, 1987) and the
-   Harvey–Leybourne–Newbold small-sample correction (Harvey et al., 1997). Section 4.4
+   Harvey–Leybourne–Newbold small-sample correction (Harvey et al., 1997). Section 6.2
    shows why the lag cannot be left at its default: setting it to zero inflated our
    *p*-values by seven orders of magnitude.
 5. Exceedance metrics accompanied by the trivial-classifier score and Peirce skill

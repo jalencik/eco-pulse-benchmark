@@ -21,7 +21,8 @@ should never end up in a notebook, a commit, or a log line.
 - The key arrives by email and authenticates through an `X-API-Key` header.
 - Put it in `.env` as `OPENAQ_API_KEY=...`
 - **Unblocks:** all ground-truth ingestion, QC, split construction, and the whole
-  credential-free baseline ladder, which is to say all of `benchmark v1.1.0`.
+  credential-free baseline ladder. It does not unblock the learned model or the CAMS
+  comparison, which additionally need the two predictor-layer accounts below.
 
 Until that key exists the ingestion client runs against committed offline fixtures, so the
 test suite still passes. No number derived from a fixture is ever reported as a result.

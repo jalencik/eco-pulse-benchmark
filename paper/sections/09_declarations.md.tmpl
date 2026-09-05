@@ -18,8 +18,8 @@ per-feed licence terms are heterogeneous and four of the ten source feeds carry 
 record at all; depositing the merged panel under a single licence would assert a uniform
 permission the evidence does not support. Per-location licence records were retrieved on
 2026-08-14 and are tabulated in full in `data/MANIFEST.md`, which also records provenance per
-source, and `README.md` gives the two commands that rebuild the panel from the API with an
-OpenAQ key. Satellite products are public: MAIAC AOD (MCD19A2.061) and Sentinel-5P
+source, and `README.md` gives the three commands that rebuild the panel from the API with an
+OpenAQ key, together with the two further accounts the predictor layer needs. Satellite products are public: MAIAC AOD (MCD19A2.061) and Sentinel-5P
 (OFFL/NRTI) via Google Earth Engine; CAMS forecasts and ERA5 via the Copernicus
 Atmosphere Data Store and Climate Data Store respectively.
 

@@ -642,8 +642,8 @@ SHA-256. The manuscript is rendered from templates whose numeric fields are subs
 a machine-extracted mapping, so no reported figure is typed by hand, and a test re-extracts
 from the CSVs and fails if any figure has drifted.
 
-The reference implementation is deterministic: Section 5's per-seed RMSEs and Section 6's
-per-seed predictions agree to floating point across all
+The reference implementation is deterministic: the per-seed RMSEs in `t5_02` and the
+per-seed predictions in `t6_01` agree to floating point across all
 6×5 fold-seed pairs, and the ensemble satisfies the convexity bound
 relating it to its members in every fold.
 
@@ -739,7 +739,8 @@ reference-grade ones. Report per city, and if you must pool, run the same exclus
 - **Kazakhstan contributes one city.** Astana failed the completeness rule at
   42.8% against a required 60%.
 - **Task F is single-horizon.** The learned Task F model predicts next-day daily means and
-  does not produce the 48 h or 72 h horizons its Section 3 baselines cover; the two are not
+  does not produce the 48 h or 72 h horizons the hourly Task F ladder in `t3_01` covers; the
+  two are not
   comparable and are not tabled together.
 - **The ground-truth panel is not redistributed.** Split definitions and reference results are
   self-contained and verifiable offline. Regenerating results from raw observations requires

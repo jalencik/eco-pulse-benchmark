@@ -113,6 +113,10 @@ Three caveats, each material:
    leave-station-out, the held-out station would have been the same physical device as one
    in training. Fixed (D-003); the threshold has a wide margin, since the two genuinely
    distinct Dushanbe sites are 6.06 km apart.
+   > **Retracted 2026-08-13 (D-012), kept as the Phase-0 record.** The two Dushanbe records
+   > are one instrument republished under coordinates 6.06 km apart: 99.99% of 33,462
+   > overlapping hours are the identical reading. The distance margin this sentence relies
+   > on was the very case a distance rule cannot see, which is why Q5c (D-011) exists.
 2. **Only Khujand is non-reference.** Six of seven cities rest on a single reference-grade
    instrument each. There is no redundancy: lose one station, lose one city.
 3. **Q7 completeness is not yet applied.** 7 is an upper bound. The count can only fall.
@@ -127,8 +131,8 @@ March 2025; ~34 countries affected).
 > **Retracted 2026-08-14, kept here as the Phase-0 record.** "Terminated the programme"
 > overstates the evidence. What closed on 2025-03-04 was the **StateAir publication
 > channel**; three diplomatic-post monitors continued or resumed publishing through AirNow
-> afterwards. The corrected position is in `data/MANIFEST.md` and D-011 of
-> `data/DECISIONS.md`. The station counts in this section are also pre-merge and pre-Q7.
+> afterwards. The corrected position is in `data/MANIFEST.md` and D-009 of
+> `data/DECISIONS.md` (D-011 is the Q5c duplicate rule). The station counts in this section are also pre-merge and pre-Q7.
 
 This project designated the embassy network as the benchmark's spine. That was correct: it
 is the only consistent multi-country reference in the region and the sole route into

@@ -116,6 +116,7 @@ for _, r in folds.iterrows():
     f = r.fold.lower()
     put(f"dm_{f}_p", r.p, 4)
     put(f"dm_{f}_stat", r.dm)
+    put(f"dm_{f}_n", int(r.n), 0)
     put(f"rmse_lgbm_{f}", r.rmse_lgbm)
     put(f"rmse_cams_{f}", r.rmse_cams)
 
