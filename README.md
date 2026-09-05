@@ -112,7 +112,7 @@ once the ground-truth panel already exists on your machine.
 | Goal | Command |
 |---|---|
 | Verify the frozen benchmark | `cd benchmark/splits && sha256sum -c splits.sha256` |
-| Run the full test suite (582 tests, offline fixtures) | `python tasks.py test` |
+| Run the full test suite (584 tests, offline fixtures) | `python tasks.py test` |
 | Lint and type-check | `python tasks.py lint && python tasks.py typecheck` |
 
 The splits **are** the benchmark, and they are committed, so verifying them takes no rebuild

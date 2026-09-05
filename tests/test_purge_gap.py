@@ -9,6 +9,8 @@ of quietly inflating scores.
 
 from __future__ import annotations
 
+import pathlib
+
 import pandas as pd
 import pytest
 
@@ -43,6 +45,53 @@ class TestPurgeIsDerived:
 
         longest_days = SameHourMean().n_days
         assert longest_days * 24 <= MAX_LAG_HOURS
+
+    def test_task_n_admits_no_local_history(self):
+        """The purge bounds Task N. That only holds if Task N never sees own-station lags.
+
+        MAX_LAG_HOURS is 168 h, but lag_features.ROLL_WINDOWS reaches 720 h. That window is
+        admissible for Task F, where a station's own history exists at prediction time, and
+        inadmissible for Task N, which withholds whole cities. Nothing tested the split
+        until now: test_max_lag_covers_the_longest_feature_window inspects only the hourly
+        ladder's SameHourMean and never opens lag_features.py, so the 30-day window sat
+        outside every check the suite ran.
+        """
+        from ecopulse_ca.models.lag_features import LOCAL_LAG_COLS
+
+        src = (
+            pathlib.Path(__file__).resolve().parents[1] / "scripts" / "train_phase5.py"
+        ).read_text(encoding="utf-8")
+        task_n, task_f = src.split("TASK F:", 1)
+        for col in LOCAL_LAG_COLS:
+            assert col not in task_n, (
+                f"{col} is an own-station history feature and appears in the Task N section "
+                "of train_phase5.py. Under leave-city-out the held-out city contributes no "
+                "label, so this feature cannot exist; and its window exceeds the purge."
+            )
+        assert "LOCAL_LAG_COLS" in task_f, (
+            "Task F no longer references LOCAL_LAG_COLS. If local lags moved, this test and "
+            "the purge-scope statement in the manuscript both need revisiting."
+        )
+
+    def test_the_longest_local_window_is_declared_and_exceeds_the_purge(self):
+        """Records the exemption as a fact, so widening it silently is impossible.
+
+        If someone raises ROLL_WINDOWS, this test fails and forces the manuscript's
+        purge-scope paragraph to be revisited rather than quietly falsified.
+        """
+        from ecopulse_ca.models.lag_features import ROLL_WINDOWS
+
+        longest_hours = max(ROLL_WINDOWS) * 24
+        assert longest_hours == 720, (
+            "The longest own-station window changed. Section 'Split construction' states "
+            "720 h explicitly; update it, and re-check that Task N still excludes these "
+            "features."
+        )
+        assert longest_hours > PURGE_HOURS, (
+            "The longest own-station window now fits inside the purge. That is a stronger "
+            "position than the manuscript claims - update the scope paragraph, which "
+            "currently states the window exceeds it."
+        )
 
     def test_climatology_uses_no_window_beyond_its_fold(self):
         # Climatology fits on whatever fit() receives, so it adds no lag requirement --

@@ -102,7 +102,7 @@
   "n_sig_holm": "3",
   "n_stations": "7",
   "n_stations_ending_at_shutdown": "2",
-  "n_tests": "582",
+  "n_tests": "584",
   "oracle_gap_abs": "0.11",
   "oracle_margin": "0.11",
   "p3_base_rate": "61.8",

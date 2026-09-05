@@ -84,7 +84,7 @@ cannot be undone later.
 
 ## Verified before submission
 
-- 582 tests pass
+- 584 tests pass
 - Data Descriptor builds byte-identically across consecutive runs
 - Title 104/110 chars, abstract 150/170 words, Background & Summary 648/700 words
 - Section order matches the journal's required sequence

@@ -99,6 +99,18 @@ channel closed. Each purge is
 ({{max_horizon_hours}})`, so that no training row's feature window can reach into the block
 that follows. The relation is stated in `config.purge_rule` so a reader can verify it.
 
+**What that bound covers, precisely.** `max_lag_hours` bounds the features admitted under
+leave-city-out, which is the protocol every headline number in this paper is computed under.
+Task F additionally admits a station's own history, including a 30-day rolling mean whose
+window reaches 720 h and therefore crosses the purge into the preceding block. That is
+deliberate and it is not leakage in the leave-city-out sense: a forecaster at a monitored
+station genuinely holds that station's past observations at prediction time. It does mean a
+Task F test row's own-history features can overlap the validation block used for tuning, so
+Task F figures carry a weaker separation guarantee than Task N figures and the two are never
+compared. A submission that uses an own-history window longer than {{max_lag_hours}} h under
+Task N would violate the protocol; two tests in `tests/test_purge_gap.py` pin the exclusion
+and the declared window length so neither can drift unnoticed.
+
 **Leave-city-out** ({{n_loco_folds}} folds). Each fold withholds one city entirely — every
 station in it, for the whole record. This is the protocol the benchmark is built around,
 because it is the only one that answers the deployment question: what is the concentration at
