@@ -980,9 +980,11 @@ rungs on the fold mean.
 But a fold mean is an average over 6 numbers, and the per-city differences are
 much larger than the average of them. Against inverse-distance weighting the model is better
 in 4 of 6 cities, with per-fold differences ranging from
-−10.73 to +5.10 µg/m³. A paired test over the 6 cities gives
-***p* = 0.586** — the margin is **not statistically distinguishable from zero** at
-the unit of generalisation this benchmark is built on. Removing any single city and
+-10.73 to +5.10 µg/m³. A paired *t*-test over the
+6 per-city RMSEs gives ***p* = 0.586** — the margin is **not
+statistically distinguishable from zero** at the unit of generalisation this benchmark is
+built on. This test pairs RMSE, not the squared-error differential the CAMS comparison in
+Section 6.2b pairs; the two are both city-level and are not the same functional. Removing any single city and
 recomputing, the model still leads inverse-distance weighting in
 5 of 6 subsets; in the remaining one the ordering reverses.
 
@@ -1134,7 +1136,8 @@ is: 6 clusters is too few to resample, and the interval it produces is
 anti-conservative. The divergence is a real property of a study with six cities, not a defect
 to be resolved by choosing a number.
 
-**The pooled improvement is significant (< 0.0001); 4 of
+**The pooled station-day improvement is significant (< 0.0001), which is not the
+paper's inferential claim (Section 6.2b); 4 of
 6 individual folds are, and 3 of those survive Holm correction.**
 Almaty, Tashkent (*p* = 0.0050) and Dushanbe hold after correction. Khujand
 (*p* = 0.0430) is significant uncorrected and is not after it, and we report it on
@@ -1165,8 +1168,8 @@ magnitude. We now report the full sensitivity sweep: across truncation lags of
 
 **Figure 3** gives the per-city comparison against debiased CAMS, and **Figure 5** the
 observed-versus-predicted scatter with the 1:1 line. The compression toward the mean
-visible in Figure 5 is the same effect that drives the RMSE/exceedance divergence of
-Section 4.3.
+visible in Figure 5 is consistent with the RMSE/exceedance divergence of Section 4.3, which
+was measured on the baseline ladder; whether it is the same effect is not tested here.
 
 ![Figure 3](figures/fig3_per_city_rmse.png)
 
@@ -1177,8 +1180,8 @@ difference statistically separable.
 ![Figure 5](figures/fig5_obs_vs_pred.png)
 
 **Figure 5.** Observed against predicted daily mean PM2.5 (µg/m³) under leave-city-out,
-with the 1:1 line. Compression toward the mean is visible at high observed values and is
-the mechanism behind the RMSE/exceedance divergence of Section 4.3.
+with the 1:1 line. Compression toward the mean is visible at high observed values, the
+same pattern Section 4.3 reports for the baseline ladder's RMSE/exceedance divergence.
 
 ## 6.3 Task F — forecasting at monitored stations
 
@@ -1410,8 +1413,11 @@ neighbour features for 20.4%, and static geography a further
 instructive rather than incidental.** Under benchmark v1.0.0 the two Dushanbe records were
 treated as separate stations when they are one instrument republished twice (Section 2,
 D-012). Every other city therefore had an additional neighbour at effectively zero distance
-from an existing one, which inflated the apparent value of spatial interpolation. Once the
-duplicate is merged, satellite attribution overtakes it.
+from an existing one, which is the most plausible route by which the apparent value of
+spatial interpolation was inflated. It is not the only thing the merge changed: the neighbour
+features, the training rows and the evaluation rows all moved together, and this paper does
+not decompose the reversal among them. Once the duplicate is merged, satellite attribution
+overtakes it.
 
 The earlier claim — that a study assembled around remote sensing was "really" a spatial
 interpolator — was an artefact of a duplicated station. We state that plainly because it was

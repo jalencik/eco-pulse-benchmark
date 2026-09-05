@@ -74,6 +74,8 @@
   "feed_bishkek_overlap_test": "5389.00",
   "feed_bishkek_p95_test": "33.6",
   "identity_coincidence_pct": "2.6",
+  "idw_fold_diff_max": "5.10",
+  "idw_fold_diff_min": "-10.73",
   "idw_loco_leads": "5",
   "idw_margin_seed_sd": "4.1",
   "idw_paired_p": "0.586",

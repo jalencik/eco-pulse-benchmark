@@ -479,6 +479,23 @@ for _tp in sorted(T.glob("t*_*.csv")):
             _n_p += int(_tdf[_c].notna().sum())
 put("n_p_values_in_tables", _n_p, 0)
 
+# Per-city RMSE difference, tuned model minus IDW, on the same basis build_robustness.py uses
+# (seed-mean model RMSE per held-out city from t5_02; daily IDW RMSE per fold from t3_06).
+# Section 6.1 quoted this range as two typed literals that had drifted from both tables.
+_idw_t5 = T / "t5_02_loco_tuned.csv"
+_idw_t3 = T / "t3_06_task_n_baselines_daily.csv"
+if _idw_t5.exists() and _idw_t3.exists():
+    _mdl = (
+        pd.read_csv(_idw_t5)
+        .query("task == 'N' and tier == 'retrospective' and model == 'lgbm_tuned'")
+        .groupby("held_out_city")
+        .rmse.mean()
+    )
+    _idw = pd.read_csv(_idw_t3).query("model == 'idw_k5_p2'").groupby("fold").rmse.mean()
+    _dd = (_mdl - _idw).dropna()
+    put("idw_fold_diff_min", float(_dd.min()))
+    put("idw_fold_diff_max", float(_dd.max()))
+
 _sig_f = T / "t6_06_significance.csv"
 if _sig_f.exists():
     _s = pd.read_csv(_sig_f)
