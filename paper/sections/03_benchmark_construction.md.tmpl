@@ -45,6 +45,30 @@ declared *before* the `benchmark/splits/** -text` override, not after. This was 
 by cloning into a temporary directory and running `sha256sum -c` there — an in-place check
 passes on a file that no other machine can reproduce.
 
+## 3.1b Relation to the nearest precedent
+
+Section 1.2 defers the comparison with AQ-Bench (Betancourt et al., 2021) to here, because
+it is the only prior artefact of this class that was published as a benchmark rather than as
+a study, and the separation has to be exact rather than asserted.
+
+| | AQ-Bench (2021) | This benchmark |
+|---|---|---|
+| Pollutant | Tropospheric ozone | PM2.5 |
+| Target | Long-term aggregated metrics | Daily concentration, and hourly for Task F |
+| Task | Station metadata to metric, time-independent regression | Nowcasting at unmonitored sites, and short-horizon forecasting |
+| Region | USA, Europe, East Asia | Central Asia, absent from AQ-Bench |
+| Spatial protocol | Spatial clustering at a 50 km threshold | Leave-city-out, with leave-station-out where density allows |
+| Temporal protocol | None; the task is time-independent | Blocked, with a derived purge gap |
+| Stations | 5,577 | {{n_stations}} instruments in {{n_cities}} cities |
+
+The one row that is a borrowing rather than a difference is the spatial protocol. AQ-Bench's
+50 km clustering threshold is a defensible published rationale for separating stations that
+are not independent, and leave-station-out here adopts it rather than inventing a second
+threshold with no precedent behind it. Everything else in the table is a divergence, and the
+last row is the honest one: this benchmark is three orders of magnitude smaller. It is not a
+competitor to AQ-Bench on coverage. It covers a region AQ-Bench excludes, for a pollutant it
+does not treat, under a temporal protocol its task does not require.
+
 ## 3.2 Two tasks, never pooled
 
 | | Task N — nowcasting | Task F — forecasting |

@@ -15,7 +15,7 @@ Dear Editors,
 We submit the manuscript above for consideration as a Data Descriptor.
 
 The dataset is a quality-controlled record of daily PM2.5 for seven instruments across six
-Central Asian cities — Almaty, Ashgabat, Bishkek, Dushanbe, Khujand and Tashkent — together
+Central Asian cities (Almaty, Ashgabat, Bishkek, Dushanbe, Khujand and Tashkent), together
 with frozen, checksummed evaluation splits, a mandatory baseline ladder, and reference model
 outputs. Central Asia is among the most polluted regions in the world and among the least
 monitored. The US diplomatic-post network was for years the only open reference-grade source
@@ -53,8 +53,8 @@ dataset's value does not rest on the model performing well.
 
 **One data-rights question is open.** Six of the ten source feeds carry explicit licences
 permitting redistribution (US Public Domain, CC0 1.0), and two more are demonstrably the same
-measurements as licensed feeds. For the remaining two — the diplomatic-post feeds at Bishkek
-and Tashkent — no licence record has been issued by the platform that serves them, and the
+measurements as licensed feeds. For the remaining two, the diplomatic-post feeds at Bishkek
+and Tashkent, no licence record has been issued by the platform that serves them, and the
 only US Department of State air-quality data-use statement we could locate is scoped to a
 different programme. We have written to the Department at its published air-quality address
 (`airpollution@state.gov`) requesting clarification, and as of 2026-08-18 have not received a

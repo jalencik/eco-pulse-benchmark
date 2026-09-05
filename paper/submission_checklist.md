@@ -2,7 +2,7 @@
 
 Prepared 2026-08-15 against the journal's current submission guidelines. Every value below is
 taken from the repository; nothing here is invented. Items marked **[YOU]** need Jaloliddin to
-enter or confirm them in the submission system — they cannot be filled from project files.
+enter or confirm them in the submission system, and they cannot be filled from project files.
 
 ---
 
@@ -38,8 +38,10 @@ markdown source is `paper/sdata_descriptor.md`; converting it is a revision-stag
 
 Corresponding email: `jaloliddin2009applicant@gmail.com`
 
-**[YOU]** Co-author ORCIDs — only author 1 has one recorded. The system may prompt for the
-others; either supply them or leave blank if they have none.
+**[YOU]** Co-author ORCIDs. Two of the three are recorded: Jaloliddin Musayev
+(0009-0003-0210-3687) and Asadbek Abdivayitov (0009-0006-3484-3438). Ozodbek Yo'ldashev's is
+still outstanding. The system prompts per author, so either supply it or leave it blank if he
+has none.
 
 ## Declarations (all already written into the manuscript)
 

@@ -123,9 +123,10 @@ sensors.** Merging the two co-published Dushanbe records into one instrument (se
 removed the only reference-grade city holding more than one device, so within-city station
 holdout is now evaluated *exclusively* on the Clarity pair. This protocol therefore says
 nothing about generalisation across the reference-monitor network, and it supports no headline
-claim in this paper — a position AQ-Bench (Betancourt et al., 2021) takes for leave-one-out
-protocols generally. The folds are retained because they are well defined and may be useful to
-a method specifically targeting low-cost sensor transfer.
+claim in this paper. Leave-one-out protocols carry a documented failure mode of their own
+(Austin et al., 2025), which is a further reason not to rest a headline number on two folds.
+The folds are retained because they are well defined and may be useful to a method
+specifically targeting low-cost sensor transfer.
 
 ### Reference implementation
 
