@@ -22,8 +22,9 @@ by failing tests.
 
 Three findings run against the study's own framing. A trivial always-exceed classifier
 scores F1 = 0.741 and the best credential-free nowcaster clears it by only
-0.034, because these cities exceed the WHO 24-hour guideline on most days:
-a fact about the region, not about the models. Attribution is spread almost evenly across feature
+0.034, because 4 of the 6 cities
+exceed the WHO 24-hour guideline on most days: a fact about the region, not about the
+models. Attribution is spread almost evenly across feature
 families, with the five satellite products (26.6%) narrowly ahead of
 spatial interpolation (20.4%) rather than displaced by it. That
 ordering is the reverse of the one reported before the duplicate Dushanbe instrument was

@@ -350,6 +350,20 @@ if _fold_f.exists():
     put("bias_fold_min", float(_lo.bias), 1)
     put("n_folds_positive_r2", int((_fold.r2 > 0).sum()), 0)
 
+    # Red-team of the error-structure claim. RMSE scales with the target's own variability,
+    # so "error grows with a city's mean" is partly a scale effect and partly a finding. Both
+    # coefficients are emitted, plus the normalised one that separates them, because the raw
+    # correlation alone overstates what the data show. Spearman on 6 folds, computed here
+    # rather than retyped.
+    def _spearman(a, b):
+        ra = pd.Series(a).rank()
+        rb = pd.Series(b).rank()
+        return float(ra.corr(rb))
+
+    put("rho_mean_rmse", _spearman(_fold.obs_mean, _fold.rmse), 2)
+    put("rho_mean_rmse_norm", _spearman(_fold.obs_mean, _fold.rmse / _fold.obs_sd), 2)
+    put("rho_mean_bias", _spearman(_fold.obs_mean, _fold.bias), 2)
+
 _conc_f = T / "t7_02_error_by_concentration.csv"
 if _conc_f.exists():
     _conc = pd.read_csv(_conc_f).set_index("band")
@@ -360,6 +374,15 @@ if _conc_f.exists():
     put("rmse_extreme_band", float(_ext.rmse), 1)
     put("share_extreme_band", 100 * float(_ext.share_of_rows), 1)
 
+    # Two universal statements in the prose were true of a majority, not of every city.
+    # Emitting the counts keeps the corrected wording tied to the tables.
+    _maj = _fold[_fold.exceed_rate > 0.5]
+    put("n_cities_exceed_most_days", len(_maj), 0)
+    put("exceed_rate_max", 100 * float(_fold.exceed_rate.max()), 0)
+    put("exceed_rate_min", 100 * float(_fold.exceed_rate.min()), 0)
+    put("exceed_city_max", _fold.loc[_fold.exceed_rate.idxmax()].fold)
+    put("exceed_city_min", _fold.loc[_fold.exceed_rate.idxmin()].fold)
+
 _seas_f = T / "t7_03_error_by_season.csv"
 if _seas_f.exists():
     _seas = pd.read_csv(_seas_f).set_index("season")
@@ -367,6 +390,22 @@ if _seas_f.exists():
     put("rmse_jja", float(_seas.loc["JJA"].rmse), 1)
     put("r2_djf", float(_seas.loc["DJF"].r2), 2)
     put("r2_jja", float(_seas.loc["JJA"].r2), 2)
+
+# Per-city debiasing of CAMS helps in most cities and hurts in one. The Introduction stated it
+# as universal; these keys let it state the exception instead.
+_cams_f = T / "t4_01_cams_baseline_variants.csv"
+if _cams_f.exists():
+    _cv = pd.read_csv(_cams_f).pivot_table(
+        index="city", columns="variant", values="rmse", aggfunc="mean"
+    )
+    if {"raw", "debiased_local"} <= set(_cv.columns):
+        _better = _cv.debiased_local < _cv.raw
+        put("n_cities_debias_helps", int(_better.sum()), 0)
+        put("n_cities_debias_total", int(len(_cv)), 0)
+        _worst = (_cv.debiased_local - _cv.raw).idxmax()
+        put("debias_worst_city", _worst)
+        put("debias_worst_raw", float(_cv.raw[_worst]))
+        put("debias_worst_local", float(_cv.debiased_local[_worst]))
 
 _sig_f = T / "t6_06_significance.csv"
 if _sig_f.exists():

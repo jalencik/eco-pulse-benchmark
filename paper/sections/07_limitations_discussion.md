@@ -142,12 +142,19 @@ air quality prediction in Central Asia would not be supported by these experimen
 
 ## 7.4b Where the error is, and what it scales with
 
-Leave-city-out error is not spread evenly. It tracks the held-out city's own concentration:
-fold RMSE rises with city mean, and mean bias falls monotonically from
-14.4 µg/m³ in Bishkek, the cleanest city in the benchmark, to
--25.3 µg/m³ in Dushanbe, the most polluted. A model fitted on five
-cities and asked for a sixth predicts toward the levels it was trained on, over-predicting
-clean cities and under-predicting dirty ones.
+Leave-city-out error is not spread evenly, and the robust half of that statement is not the
+obvious one. Fold RMSE does rise with the held-out city's mean concentration
+(Spearman rho = 0.94), but RMSE scales with the variability of the target, and
+dividing each fold's RMSE by that city's own observed standard deviation removes the relation
+entirely (rho = -0.03). We report that rather than let the raw coefficient
+stand for more than it shows.
+
+What survives normalisation is the bias. It falls monotonically across every fold without
+exception (rho = -1.00), from 14.4 µg/m³ in
+Bishkek, the cleanest city in the benchmark, to -25.3 µg/m³ in
+Dushanbe, the most polluted. That is the regression-toward-the-training-mean
+signature: a model fitted on five cities and asked for a sixth predicts toward the levels it
+was trained on, over-predicting clean cities and under-predicting dirty ones.
 
 The same gradient holds inside the concentration range rather than only between cities. Bias
 is 10.1 µg/m³ on days below the WHO 24-hour guideline and

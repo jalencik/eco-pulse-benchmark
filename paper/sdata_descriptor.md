@@ -17,18 +17,19 @@ ORCID iDs: Jaloliddin Musayev 0009-0003-0210-3687; Asadbek Abdivayitov 0009-0006
 
 We present a quality-controlled dataset of daily PM2.5 observations from 7
 instruments in 6 Central Asian cities — Almaty, Ashgabat, Bishkek, Dushanbe,
-Khujand and Tashkent — covering 2018-11-27 to 2024-12-31. Records were screened by
-seven pre-registered quality rules, plus one added during validation after it revealed a
-duplicated instrument, then deduplicated and timezone-verified;
-5 instruments are US embassy reference monitors and
-2 are low-cost sensors, labelled as such. Each station-day is paired
-with satellite retrievals, chemistry-transport forecasts, reanalysis meteorology and static
-geography, and every predictor carries a measured acquisition latency indicating whether it
-could be known at prediction time. The release includes frozen, checksummed evaluation splits
-— blocked-temporal with a 240-hour purge, and leave-city-out over
-6 folds — with a baseline ladder and reference model outputs. Errors grow with
-a city's mean concentration, so the data support work on cross-city generalisation, satellite
-and ground fusion, sensor comparison, and reproducible benchmarking.
+Khujand and Tashkent — covering 2018-11-27 to 2024-12-31. Records were screened by seven
+pre-registered quality rules, plus one added after validation exposed a duplicated
+instrument, then deduplicated and timezone-verified; 5 are US
+embassy reference monitors and 2 low-cost sensors, labelled as such.
+Each station-day is paired with satellite retrievals, chemistry-transport forecasts,
+reanalysis meteorology and static geography, each predictor carrying a measured acquisition
+latency fixing whether it could be known at prediction time. The release includes frozen, checksummed splits
+(blocked-temporal with a 240-hour purge; leave-city-out over 6
+folds), a baseline ladder and reference model outputs. Held-out-city bias falls monotonically with the city's mean
+concentration (Spearman rho = -1.00), a regression toward training levels; fold
+RMSE rises with it but not after normalising by each city's variability
+(rho = -0.03). The data support cross-city generalisation,
+satellite-ground fusion, sensor comparison and reproducible benchmarking.
 
 
 ## Background and Summary
@@ -508,12 +509,19 @@ RMSE is structurally larger than a daily one and the two are never compared.
 ![Figure 3](figures/figS2_error_structure.png)
 
 **Figure 3.** Leave-city-out error against the held-out city's mean PM2.5. Left: fold RMSE
-rises with city concentration (Spearman rho = +0.94). Right: mean bias falls monotonically
-from 14.4 µg/m³ in Bishkek, the cleanest city, to
--25.3 µg/m³ in Dushanbe, the most polluted.
+rises with city concentration (Spearman rho = 0.94). Right: mean bias falls
+monotonically from 14.4 µg/m³ in Bishkek, the cleanest city, to
+-25.3 µg/m³ in Dushanbe, the most polluted
+(rho = -1.00).
 
-A model trained on five cities and applied to a sixth predicts toward the concentrations it
-was trained on: cleaner cities are over-predicted and more polluted ones under-predicted. The
+The two panels are not equally strong evidence, and the difference matters for reuse. RMSE
+scales with the variability of whatever is being predicted, so the left panel is partly a
+scale effect: dividing each fold's RMSE by that city's own observed standard deviation leaves
+no monotone relation with concentration at all (rho = -0.03). The bias
+panel does not have that weakness. It is monotone across every fold without exception
+(rho = -1.00), and it identifies the mechanism: a model trained on five cities
+and applied to a sixth predicts toward the concentrations it was trained on, over-predicting
+cleaner cities and under-predicting more polluted ones. The
 same pattern holds within the concentration range: bias is 10.1 µg/m³ on days
 below the WHO 24-hour guideline and -90.4 µg/m³ above six times it, where RMSE
 reaches 100.9 µg/m³ on the 6.6% of rows in that band. Winter
@@ -648,7 +656,9 @@ largely measures whether cities differ from each other, which is far easier. Rep
 you mean. On this benchmark the reference model scores -0.04 on the first
 and 0.13 on the second.
 
-**Exceedance F1 has a high floor.** These cities clear the WHO 24-hour guideline on most days,
+**Exceedance F1 has a high floor.** 4 of the 6 cities
+clear the WHO 24-hour guideline on most days, from 88% of test days at
+Dushanbe down to 24% at Bishkek,
 so a classifier that always predicts "exceeds" scores F1 = 0.741 at a base rate of
 61.8%. Peirce skill score is reported alongside because it is zero for that
 classifier by construction.

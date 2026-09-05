@@ -149,9 +149,12 @@ PM2.5 in these cities clears the WHO 24-hour guideline on most days of the year,
 classifier that never varies is correct most of the time, and the floor sits at F1 =
 0.741 before any model is fitted. Chronic pollution, not modelling skill, sets
 that floor, and a margin that small is not evidence that a model has learned anything past
-the regional mean. Raw CAMS,
-a full chemistry-transport model, is improved simply by subtracting a per-city constant, and
-even after that correction it reaches only R² -0.11. Across two
+the regional mean. Raw CAMS, a full chemistry-transport model, is improved in
+5 of 6 cities simply by subtracting a per-city
+constant, and even after that correction it reaches only R² -0.11. The
+exception is instructive: at Bishkek the same correction degrades RMSE from
+16.99 to 23.96 µg/m³, which is why the pooled variant rather
+than the local one is the legal comparator under leave-city-out. Across two
 phases, every baseline we tried sat below the accuracy of predicting the held-out city's own
 mean.
 
@@ -1341,12 +1344,19 @@ air quality prediction in Central Asia would not be supported by these experimen
 
 ## 7.4b Where the error is, and what it scales with
 
-Leave-city-out error is not spread evenly. It tracks the held-out city's own concentration:
-fold RMSE rises with city mean, and mean bias falls monotonically from
-14.4 µg/m³ in Bishkek, the cleanest city in the benchmark, to
--25.3 µg/m³ in Dushanbe, the most polluted. A model fitted on five
-cities and asked for a sixth predicts toward the levels it was trained on, over-predicting
-clean cities and under-predicting dirty ones.
+Leave-city-out error is not spread evenly, and the robust half of that statement is not the
+obvious one. Fold RMSE does rise with the held-out city's mean concentration
+(Spearman rho = 0.94), but RMSE scales with the variability of the target, and
+dividing each fold's RMSE by that city's own observed standard deviation removes the relation
+entirely (rho = -0.03). We report that rather than let the raw coefficient
+stand for more than it shows.
+
+What survives normalisation is the bias. It falls monotonically across every fold without
+exception (rho = -1.00), from 14.4 µg/m³ in
+Bishkek, the cleanest city in the benchmark, to -25.3 µg/m³ in
+Dushanbe, the most polluted. That is the regression-toward-the-training-mean
+signature: a model fitted on five cities and asked for a sixth predicts toward the levels it
+was trained on, over-predicting clean cities and under-predicting dirty ones.
 
 The same gradient holds inside the concentration range rather than only between cities. Bias
 is 10.1 µg/m³ on days below the WHO 24-hour guideline and
@@ -1471,8 +1481,9 @@ by failing tests.
 
 Three findings run against the study's own framing. A trivial always-exceed classifier
 scores F1 = 0.741 and the best credential-free nowcaster clears it by only
-0.034, because these cities exceed the WHO 24-hour guideline on most days:
-a fact about the region, not about the models. Attribution is spread almost evenly across feature
+0.034, because 4 of the 6 cities
+exceed the WHO 24-hour guideline on most days: a fact about the region, not about the
+models. Attribution is spread almost evenly across feature
 families, with the five satellite products (26.6%) narrowly ahead of
 spatial interpolation (20.4%) rather than displaced by it. That
 ordering is the reverse of the one reported before the duplicate Dushanbe instrument was

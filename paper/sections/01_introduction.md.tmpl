@@ -85,9 +85,12 @@ PM2.5 in these cities clears the WHO 24-hour guideline on most days of the year,
 classifier that never varies is correct most of the time, and the floor sits at F1 =
 {{p3_trivial_f1}} before any model is fitted. Chronic pollution, not modelling skill, sets
 that floor, and a margin that small is not evidence that a model has learned anything past
-the regional mean. Raw CAMS,
-a full chemistry-transport model, is improved simply by subtracting a per-city constant, and
-even after that correction it reaches only R² {{cams_debiased_pooled_r2}}. Across two
+the regional mean. Raw CAMS, a full chemistry-transport model, is improved in
+{{n_cities_debias_helps}} of {{n_cities_debias_total}} cities simply by subtracting a per-city
+constant, and even after that correction it reaches only R² {{cams_debiased_pooled_r2}}. The
+exception is instructive: at {{debias_worst_city}} the same correction degrades RMSE from
+{{debias_worst_raw}} to {{debias_worst_local}} µg/m³, which is why the pooled variant rather
+than the local one is the legal comparator under leave-city-out. Across two
 phases, every baseline we tried sat below the accuracy of predicting the held-out city's own
 mean.
 

@@ -17,15 +17,16 @@ ORCID iDs: Jaloliddin Musayev 0009-0003-0210-3687; Asadbek Abdivayitov 0009-0006
 
 We present a quality-controlled dataset of daily PM2.5 observations from {{n_stations}}
 instruments in {{n_cities}} Central Asian cities — Almaty, Ashgabat, Bishkek, Dushanbe,
-Khujand and Tashkent — covering {{train_start}} to {{test_end}}. Records were screened by
-seven pre-registered quality rules, plus one added during validation after it revealed a
-duplicated instrument, then deduplicated and timezone-verified;
-{{n_reference_instruments}} instruments are US embassy reference monitors and
-{{n_lowcost_instruments}} are low-cost sensors, labelled as such. Each station-day is paired
-with satellite retrievals, chemistry-transport forecasts, reanalysis meteorology and static
-geography, and every predictor carries a measured acquisition latency indicating whether it
-could be known at prediction time. The release includes frozen, checksummed evaluation splits
-— blocked-temporal with a {{purge_hours}}-hour purge, and leave-city-out over
-{{n_loco_folds}} folds — with a baseline ladder and reference model outputs. Errors grow with
-a city's mean concentration, so the data support work on cross-city generalisation, satellite
-and ground fusion, sensor comparison, and reproducible benchmarking.
+Khujand and Tashkent — covering {{train_start}} to {{test_end}}. Records were screened by seven
+pre-registered quality rules, plus one added after validation exposed a duplicated
+instrument, then deduplicated and timezone-verified; {{n_reference_instruments}} are US
+embassy reference monitors and {{n_lowcost_instruments}} low-cost sensors, labelled as such.
+Each station-day is paired with satellite retrievals, chemistry-transport forecasts,
+reanalysis meteorology and static geography, each predictor carrying a measured acquisition
+latency fixing whether it could be known at prediction time. The release includes frozen, checksummed splits
+(blocked-temporal with a {{purge_hours}}-hour purge; leave-city-out over {{n_loco_folds}}
+folds), a baseline ladder and reference model outputs. Held-out-city bias falls monotonically with the city's mean
+concentration (Spearman rho = {{rho_mean_bias}}), a regression toward training levels; fold
+RMSE rises with it but not after normalising by each city's variability
+(rho = {{rho_mean_rmse_norm}}). The data support cross-city generalisation,
+satellite-ground fusion, sensor comparison and reproducible benchmarking.
