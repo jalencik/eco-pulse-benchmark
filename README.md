@@ -191,9 +191,11 @@ test rather than a convention, because a convention does not fail the build.
 ## Two tasks, never mixed in one table
 
 - **Task F, forecasting.** At a monitored station, predict PM2.5 at t+24/48/72 h. Ladder:
-  persistence, then diurnal persistence, then climatology, then ridge, then LightGBM.
+  persistence, diurnal persistence, climatology, and the same-hour seven-day mean
+  (`paper/tables/t3_01`). The learned model is scored against that ladder, not part of it.
 - **Task N, nowcasting.** Estimate PM2.5 in a held-out city with **zero** local labels.
-  Ladder: nearest-monitor, then IDW, then ordinary kriging, then satellite models.
+  Ladder: nearest monitor, IDW, ordinary kriging, and the training-pool mean
+  (`paper/tables/t3_02` hourly, `t3_06` daily).
 
 Task N's interpolation rungs are the comparison reviewers actually want against a satellite
 model. Does it beat just interpolating from nearby monitors? That question gets skipped a
@@ -260,7 +262,7 @@ Worth reading before you report anything from it.
 - **Ozodbek Yo'ldashev:** supervision, review and editing.
 
 Generative-AI use in preparing the software and manuscript text is disclosed in the paper
-itself (`paper/sdata_descriptor.md`, Declarations), per the target journal's policy.
+itself (`paper/sdata_descriptor.md`, Declarations), as journal policies require.
 
 ## Licence
 

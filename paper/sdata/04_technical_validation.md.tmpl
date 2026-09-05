@@ -151,9 +151,12 @@ below the WHO 24-hour guideline and {{bias_extreme_band}} µg/m³ above six time
 reaches {{rmse_extreme_band}} µg/m³ on the {{share_extreme_band}}% of rows in that band. Winter
 (DJF) RMSE is {{rmse_djf}} µg/m³ against {{rmse_jja}} µg/m³ in summer.
 
-This is a property of the region and the network rather than of one model, and it is the
-clearest thing the dataset shows: **transferring a PM2.5 model to an unmonitored Central Asian
-city fails first on the city's overall level, not on its day-to-day pattern.** Per-fold,
+This is the clearest thing the dataset shows for the one model class evaluated here, over
+six cities and one test year: **transferring a PM2.5 model to an unmonitored Central Asian
+city fails first on the city's overall level, not on its day-to-day pattern.** Whether that
+is a property of the region and the network or of this model cannot be separated by this
+design; the predictor family most likely to carry a city's level, meteorology, is absent
+from every tier. Per-fold,
 per-band and per-season figures are in `t7_01`–`t7_03`.
 
 ### Statistical validation

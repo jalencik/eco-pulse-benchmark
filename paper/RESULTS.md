@@ -147,6 +147,6 @@ Newey–West HAC variance with truncation lag h−1, plus the Harvey–Leybourne
 ## Known caveats that travel with these numbers
 
 1. **Bishkek's test-block labels are publisher-dependent** — the two feeds of that one instrument agree on only 11.1% of 5389 overlapping hours in the test block (p95 disagreement 33.6 µg/m³). Bishkek rows carry that uncertainty irreducibly.
-2. **Leave-station-out covers 2 of 6 cities.** The rest hold a single instrument.
+2. **Leave-station-out covers 1 of 6 cities.** Both folds are the Khujand pair; every other city holds a single instrument.
 3. **Kazakhstan contributes one city** — Astana failed Q7 at 42.8% completeness.
 4. **No result speaks to current conditions.** The StateAir publication channel closed 2025-03-04; the monitors did not all stop, and the frozen record is not extended past the test block.

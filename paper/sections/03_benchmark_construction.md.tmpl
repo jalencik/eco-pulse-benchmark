@@ -191,7 +191,9 @@ record run manifests with content hashes so the ordering is provable rather than
 splits.sha256` is sufficient, and the test suite runs offline against committed fixtures.
 *Regenerating* the numbers additionally requires the derived ground-truth panel, which is
 built from the OpenAQ archive with an API key. That panel is not redistributed here because
-the per-station licence terms are not yet transcribed; `data/MANIFEST.md` records the
+the per-feed licence terms are heterogeneous and four of the ten feeds carry no licence
+record at all (the matrix, retrieved 2026-08-14, is in `data/MANIFEST.md`); the same file
+records the
 provenance and `README.md` the three commands that rebuild it, and the two further accounts the predictor layer needs. Running the pipeline without
 it fails with those instructions rather than a missing-file traceback. We state this
 explicitly because "one command reproduces everything" is a claim reviewers test, and it is

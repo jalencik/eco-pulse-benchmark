@@ -47,8 +47,9 @@ you mean. On this benchmark the reference model scores {{taskn_retrospective_r2}
 and {{r2_pooled_global}} on the second.
 
 **Exceedance F1 has a high floor.** {{n_cities_exceed_most_days}} of the {{n_cities}} cities
-clear the WHO 24-hour guideline on most days, from {{exceed_rate_max}}% of test days at
-{{exceed_city_max}} down to {{exceed_rate_min}}% at {{exceed_city_min}},
+clear the WHO 24-hour guideline on most test days, up to {{exceed_rate_max}}% at
+{{exceed_city_max}}; the other two do not, as low as {{exceed_rate_min}}% at
+{{exceed_city_min}},
 so a classifier that always predicts "exceeds" scores F1 = {{p3_trivial_f1}} at a base rate of
 {{p3_base_rate}}%. Peirce skill score is reported alongside because it is zero for that
 classifier by construction.

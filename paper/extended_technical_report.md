@@ -146,8 +146,9 @@ Three results shaped the work that follows.
 On health-relevant exceedance, the best credential-free nowcaster clears a trivial
 always-exceed predictor by 0.034 of F1. The reason is a base rate rather than skill:
 4 of the 6 cities clear the WHO 24-hour guideline on
-most test days, from 88% at Dushanbe down to
-24% at Bishkek, so a classifier that never varies is correct
+most test days, up to 88% at Dushanbe, while the other two do
+not, as low as 24% at Bishkek, so a classifier that never
+varies is correct
 most of the time in most of them, and the floor sits at F1 = 0.741 before any
 model is fitted. Chronic pollution, not modelling skill, sets
 that floor, and a margin that small is not evidence that a model has learned anything past
@@ -598,7 +599,9 @@ record run manifests with content hashes so the ordering is provable rather than
 splits.sha256` is sufficient, and the test suite runs offline against committed fixtures.
 *Regenerating* the numbers additionally requires the derived ground-truth panel, which is
 built from the OpenAQ archive with an API key. That panel is not redistributed here because
-the per-station licence terms are not yet transcribed; `data/MANIFEST.md` records the
+the per-feed licence terms are heterogeneous and four of the ten feeds carry no licence
+record at all (the matrix, retrieved 2026-08-14, is in `data/MANIFEST.md`); the same file
+records the
 provenance and `README.md` the three commands that rebuild it, and the two further accounts the predictor layer needs. Running the pipeline without
 it fails with those instructions rather than a missing-file traceback. We state this
 explicitly because "one command reproduces everything" is a claim reviewers test, and it is
@@ -1515,9 +1518,12 @@ is 10.1 µg/m³ on days below the WHO 24-hour guideline and
 winter RMSE is 51.0 µg/m³ against 16.0 µg/m³ in summer, which is the same
 effect seen through the region's winter coal season.
 
-This is a property of the region and the network rather than of one model, and it is the
-clearest thing the benchmark shows: transferring a PM2.5 model to an unmonitored Central
-Asian city fails first on the city's overall level, not on its day-to-day pattern. In the
+This is the clearest thing the benchmark shows for the one model class evaluated here, over
+six cities and one test year: transferring a PM2.5 model to an unmonitored Central Asian
+city fails first on the city's overall level, not on its day-to-day pattern. Whether that is
+a property of the region and the network or of this model cannot be separated by this
+design, and Section 7.6 records that the predictor family most likely to carry a city's
+level is absent from every tier. In the
 terms of Section 3.1 it is an area-of-applicability statement measured rather than named.
 Per-fold, per-band and per-season figures are in `t7_01`–`t7_03`.
 

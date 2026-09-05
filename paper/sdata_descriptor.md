@@ -568,9 +568,12 @@ below the WHO 24-hour guideline and -90.4 µg/m³ above six times it, where RMSE
 reaches 100.9 µg/m³ on the 6.6% of rows in that band. Winter
 (DJF) RMSE is 51.0 µg/m³ against 16.0 µg/m³ in summer.
 
-This is a property of the region and the network rather than of one model, and it is the
-clearest thing the dataset shows: **transferring a PM2.5 model to an unmonitored Central Asian
-city fails first on the city's overall level, not on its day-to-day pattern.** Per-fold,
+This is the clearest thing the dataset shows for the one model class evaluated here, over
+six cities and one test year: **transferring a PM2.5 model to an unmonitored Central Asian
+city fails first on the city's overall level, not on its day-to-day pattern.** Whether that
+is a property of the region and the network or of this model cannot be separated by this
+design; the predictor family most likely to carry a city's level, meteorology, is absent
+from every tier. Per-fold,
 per-band and per-season figures are in `t7_01`–`t7_03`.
 
 ### Statistical validation
@@ -711,8 +714,9 @@ you mean. On this benchmark the reference model scores -0.04 on the first
 and 0.13 on the second.
 
 **Exceedance F1 has a high floor.** 4 of the 6 cities
-clear the WHO 24-hour guideline on most days, from 88% of test days at
-Dushanbe down to 24% at Bishkek,
+clear the WHO 24-hour guideline on most test days, up to 88% at
+Dushanbe; the other two do not, as low as 24% at
+Bishkek,
 so a classifier that always predicts "exceeds" scores F1 = 0.741 at a base rate of
 61.8%. Peirce skill score is reported alongside because it is zero for that
 classifier by construction.
@@ -831,7 +835,9 @@ serves them. Depositing the merged panel under a single licence would assert uni
 permission that the evidence does not support for every feed, so the observations are left at
 source. This is a statement about provenance, not about availability.
 
-**Every observation used here is publicly retrievable, without credentials.** All ten source
+**Every observation used here is publicly retrievable, without credentials, though not by
+the pipeline documented here, which reads the keyed API; the credential-free route is the
+archive described below, which this repository does not script.** All ten source
 feeds — the four StateAir feeds included — are published in OpenAQ's open-data archive on
 Amazon S3 (`s3://openaq-data-archive/records/csv.gz/locationid={id}/`), registered with the
 AWS Registry of Open Data and downloadable anonymously; retrieval of each benchmark feed was

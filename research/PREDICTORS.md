@@ -96,6 +96,11 @@ Two are derived and motivated by findings rather than convention:
 | `reanalysis_oracle` | 18 | ❌ | EE, ADS, CDS | Cost-of-operational-constraints ablation |
 | `static_only` | 5 | ✅ | EE | Ablation floor: how much is geography alone? |
 
+> **Counts superseded, kept as the Phase-0 record.** These sizes predate measurement.
+> `src/ecopulse_ca/features/catalogue.py` is authoritative and holds `deployable` = 11,
+> `reanalysis_oracle` = 21, `static_only` = 7 after the latency audit moved products
+> between tiers and the retrieval-count features were added.
+
 Note `deployable` does **not** require `CDS_API_KEY`. ERA5 is oracle-only, and a test
 asserts that. If a deployable run ever needs the CDS key, something has leaked.
 
