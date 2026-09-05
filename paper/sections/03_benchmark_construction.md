@@ -192,7 +192,7 @@ splits.sha256` is sufficient, and the test suite runs offline against committed 
 *Regenerating* the numbers additionally requires the derived ground-truth panel, which is
 built from the OpenAQ archive with an API key. That panel is not redistributed here because
 the per-station licence terms are not yet transcribed; `data/MANIFEST.md` records the
-provenance and `README.md` the two commands that rebuild it. Running the pipeline without
+provenance and `README.md` the three commands that rebuild it, and the two further accounts the predictor layer needs. Running the pipeline without
 it fails with those instructions rather than a missing-file traceback. We state this
 explicitly because "one command reproduces everything" is a claim reviewers test, and it is
 true only after that acquisition step.
