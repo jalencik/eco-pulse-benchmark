@@ -42,14 +42,17 @@
     "is_oa": false,
     "cited_by": 71,
     "source_api": "openalex",
+    "abstract": "Abstract Aerosols are an important contributor to global atmospheric environmental changes and have critical effects on the global climate system and human health. Central Asia is one of the most important sources of dust aerosols in the world and produces a significant portion of global aerosols. Central Asia is also a scarce aerosol-data area, so it is of great significance to obtain and verify new aerosol data from this region. In this study, based on the aerosol optical depth (AOD) data from remote sensing (MYD04_L2) and ground-based observations (AERONET and Microtops II), the applicability of multiangle implementation of atmospheric correction (MAIAC) AOD in Central Asia was comprehensively analyzed, and the variation in AOD in Central Asia over the last 20 years was analyzed by the information entropy method. The results indicate that MAIAC AOD has good application prospects in Central Asia and can effectively compensate for the lack of observational data from Central Asia. MAIAC AOD exhibits excellent spatiotemporal consistency with MYD04 deep blue (DB) AOD and has a better ability than MYD04 DB AOD to describe local fine-scale features. Furthermore, MAIAC AOD demonstrates high consistency with ground-based AOD observations, showing high R (0.737) and low RMSE (0.067) values and having 65.2% of samples falling within the expected error (EE) envelope. When employing the ground-based AOD observations as a bridge, MAIAC exhibits superiority to MYD04 DB in both the richness number of valid high-quality retrievals and the retrieval accuracy of various evaluation indicators. The annual variation in AOD in Central Asia exhibits a unimodal distribution, with AOD being largest in April, followed by March and May, and comparable rangeability. Based on information entropy, interannual variation in AOD exists in most areas of Central Asia, with AOD in the Taklimakan Desert area being significantly increased and that in northern Central Asia (Kazakhstan) showing a downward trend.",
+    "oa_pdf": "https://www.sciencedirect.com/science/article/am/pii/S1352231021000911",
     "apis": [
       "openalex",
+      "semanticscholar",
       "crossref"
     ],
     "match_score": 1.0,
     "ref": "A4",
     "query": "Validation and comparison of high-resolution MAIAC aerosol products over Central Asia",
-    "depth": "SNIPPET"
+    "depth": "FULL"
   },
   {
     "title": "Dominant sources of PM2.5 in Kazakhstan's urban cities: A PMF and HYSPLIT-based study for air quality management in Central Asia",
@@ -195,14 +198,12 @@
     "is_oa": true,
     "cited_by": 21,
     "source_api": "openalex",
-    "pmcid": "9408314",
-    "tldr": "The results show that the model based on unrefined data was able to detect the pollutant hot spot areas with similar accuracy compared to the aggregated model, and the performance was found to improve when temporal data added to the model.",
     "apis": [
       "openalex",
-      "semanticscholar",
       "crossref"
     ],
     "match_score": 1.0,
+    "pmcid": "PMC9408314",
     "ref": "B3",
     "query": "Assessing validating machine learning unrefined particle air pollution mobile monitoring spatially spatiotemporally",
     "depth": "FULL"
@@ -634,10 +635,8 @@
     "is_oa": true,
     "cited_by": 9490,
     "source_api": "openalex",
-    "tldr": "It is proved that, since the data instances with larger gradients play a more important role in the computation of information gain, GOSS can obtain quite accurate estimation of the information gain with a much smaller data size.",
     "apis": [
-      "openalex",
-      "semanticscholar"
+      "openalex"
     ],
     "merge_conflicts": [
       "crossref:A Novel Scheme for Mapping of MVT-Type P"
@@ -895,6 +894,7 @@
     "source_api": "openalex",
     "apis": [
       "openalex",
+      "semanticscholar",
       "crossref"
     ],
     "match_score": 1.0,
@@ -921,12 +921,83 @@
       "openalex",
       "crossref"
     ],
-    "merge_conflicts": [
-      "semanticscholar:Development and Application of a United "
-    ],
-    "match_score": 1.0,
+    "match_score": 0.91,
     "ref": "S:M20",
     "query": "Development and application of a United States wide correction for PM2.5 data collected with the PurpleAir sensor",
+    "depth": "FULL"
+  },
+  {
+    "title": "Spatial cross-validation is not the right way to evaluate map accuracy",
+    "year": 2021,
+    "doi": "10.1016/j.ecolmodel.2021.109692",
+    "venue": "Ecological Modelling",
+    "authors": [
+      "Alexandre M.J.‐C. Wadoux",
+      "G.B.M. Heuvelink",
+      "Sytze de Bruin",
+      "D.J. Brus"
+    ],
+    "is_oa": true,
+    "cited_by": 298,
+    "source_api": "openalex",
+    "apis": [
+      "openalex",
+      "crossref"
+    ],
+    "match_score": 1.0,
+    "ref": "S:M22",
+    "query": "Spatial cross-validation is not the right way to evaluate map accuracy",
+    "depth": "SNIPPET"
+  },
+  {
+    "title": "Predicting into unknown space? Estimating the area of applicability of spatial prediction models",
+    "year": 2021,
+    "doi": "10.1111/2041-210x.13650",
+    "venue": "Methods in Ecology and Evolution",
+    "authors": [
+      "Hanna Meyer",
+      "Edzer Pebesma"
+    ],
+    "abstract": "Abstract Machine learning algorithms have become very popular for spatial mapping of the environment due to their ability to fit nonlinear and complex relationships. However, this ability comes with the disadvantage that they can only be applied to new data if these are similar to the training data. Since spatial mapping requires predictions to new geographic space which in many cases goes along with new predictor properties, a method to assess the area to which a prediction model can be reliably applied is required. Here, we suggest a methodology that delineates the ‘area of applicability’ (AOA) that we define as the area where we enabled the model to learn about relationships based on the training data, and where the estimated cross‐validation performance holds. We first propose a ‘dissimilarity index’ (DI) that is based on the minimum distance to the training data in the multidimensional predictor space, with predictors being weighted by their respective importance in the model. The AOA is then derived by applying a threshold which is the (outlier‐removed) maximum DI of the training data derived via cross‐validation. We further use the relationship between the DI and the cross‐validation performance to map the estimated performance of predictions. We illustrate the approach in a simulated case study chosen to mimic ecological realities and test the credibility by using a large set of simulated data. The simulation studies showed that the prediction error within the AOA is comparable to the cross‐validation error of the trained model, while the cross‐validation error does not apply outside the AOA. This applies to models being trained with randomly distributed training data, as well as when training data are clustered in space and where spatial cross‐validation is applied. Using the relationship between DI and cross‐validation performance showed potential to limit predictions to the area where a user‐defined performance applies. We suggest to add the AOA computation to the modeller's standard toolkit and to present predictions for the AOA only. We further suggest to report a map of DI‐dependent performance estimates alongside prediction maps and complementary to (cross‐)validation performance measures and the common uncertainty estimates.",
+    "is_oa": true,
+    "cited_by": 457,
+    "source_api": "openalex",
+    "apis": [
+      "openalex"
+    ],
+    "merge_conflicts": [
+      "crossref:Review for \"Predicting into unknown spac"
+    ],
+    "match_score": 1.0,
+    "ref": "S:M23",
+    "query": "Predicting into unknown space Estimating the area of applicability of spatial prediction models",
+    "depth": "ABSTRACT"
+  },
+  {
+    "title": "WeatherBench: A Benchmark Data Set for Data‐Driven Weather Forecasting",
+    "year": 2020,
+    "doi": "10.1029/2020ms002203",
+    "venue": "Journal of Advances in Modeling Earth Systems",
+    "authors": [
+      "Stephan Rasp",
+      "Peter D. Dueben",
+      "Sebastian Scher",
+      "Jonathan A. Weyn",
+      "Soukayna Mouatadid",
+      "Nils Thuerey"
+    ],
+    "abstract": "Abstract Data‐driven approaches, most prominently deep learning, have become powerful tools for prediction in many domains. A natural question to ask is whether data‐driven methods could also be used to predict global weather patterns days in advance. First studies show promise but the lack of a common data set and evaluation metrics make intercomparison between studies difficult. Here we present a benchmark data set for data‐driven medium‐range weather forecasting (specifically 3–5 days), a topic of high scientific interest for atmospheric and computer scientists alike. We provide data derived from the ERA5 archive that has been processed to facilitate the use in machine learning models. We propose simple and clear evaluation metrics which will enable a direct comparison between different methods. Further, we provide baseline scores from simple linear regression techniques, deep learning models, as well as purely physical forecasting models. The data set is publicly available at https://github.com/pangeo‐data/WeatherBench and the companion code is reproducible with tutorials for getting started. We hope that this data set will accelerate research in data‐driven weather forecasting.",
+    "oa_pdf": "https://agupubs.onlinelibrary.wiley.com/doi/pdfdirect/10.1029/2020MS002203",
+    "is_oa": true,
+    "cited_by": 488,
+    "source_api": "openalex",
+    "apis": [
+      "openalex",
+      "crossref"
+    ],
+    "match_score": 1.0,
+    "ref": "S:M24",
+    "query": "WeatherBench a benchmark data set for data-driven weather forecasting",
     "depth": "FULL"
   }
 ]

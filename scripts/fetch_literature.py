@@ -117,6 +117,16 @@ SWEEPS: dict[str, str] = {
     "air monitoring",
     "M20": "Development and application of a United States wide correction for PM2.5 data "
     "collected with the PurpleAir sensor",
+    # The published objection to the paper's own core method. Engaging only the literature
+    # that agrees with spatial blocking is how a methods section reads as a first attempt.
+    "M22": "Spatial cross-validation is not the right way to evaluate map accuracy",
+    # The constructive complement: a formal name for "is the held-out city inside the
+    # model's applicability domain", which Section 7.4 currently answers empirically.
+    "M23": "Predicting into unknown space Estimating the area of applicability of spatial "
+    "prediction models",
+    # Benchmark-design precedent for the mandatory baseline ladder, which was justified by
+    # assertion alone.
+    "M24": "WeatherBench a benchmark data set for data-driven weather forecasting",
 }
 
 # A fuzzy search returns the most-cited nearby paper, not the requested one. Accepting
@@ -159,6 +169,9 @@ REQUIRED: dict[str, set[str]] = {
     "M19": {"alphasense"},
     "M20": {"purpleair"},
     "M21": {"sequentially"},
+    "M22": {"accuracy"},
+    "M23": {"applicability"},
+    "M24": {"weatherbench"},
     "C1": {"transfer"},
     "C2": {"covariates"},
 }

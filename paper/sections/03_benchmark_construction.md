@@ -18,6 +18,25 @@ failure mode — Austin et al. (2025) show that distributional bias can compromi
 is why leave-*city*-out, not leave-station-out, is the headline protocol: it holds out a
 whole aerosol regime rather than one instrument within a regime.
 
+That position is contested, and the objection is worth stating rather than leaving for a
+referee. Wadoux et al. (2021) argue that spatial cross-validation is not the right way to
+evaluate map accuracy: where the goal is the accuracy of a map over a fixed population,
+spatial blocking is pessimistically biased, and design-based validation on a probability
+sample is the correct estimator. We accept that argument on its own terrain and note that it
+is not this one. The quantity estimated here is not the accuracy of a map across Central
+Asia; it is the error a model incurs in a city that contributed no training row, which is the
+question a government asks before trusting an estimate for an unmonitored city. For that
+estimand, holding the city out is not a pessimistic proxy for the target quantity. It *is*
+the target quantity, and a random split estimates something else. The distinction is between
+interpolating within a sampled population and transferring to a location outside it, and this
+benchmark exists for the second.
+
+Meyer and Pebesma (2021) supply the complementary framework: a model's area of applicability
+is the region of predictor space where its training data support a prediction at all. Section
+7 reports that error grows with the held-out city's mean concentration, which is an
+applicability statement measured rather than named. We report it empirically and flag the
+formal treatment as work the benchmark makes possible rather than work it performs.
+
 The checksum is over bytes, which on a mixed-platform repository is not automatic. An early
 version was unverifiable because `Path.write_text` applied CRLF translation on Windows, and
 the `.gitattributes` fix that followed was itself wrong: for attributes the **last** matching

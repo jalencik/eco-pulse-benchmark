@@ -104,6 +104,16 @@ station in it, for the whole record. This is the protocol the benchmark is built
 because it is the only one that answers the deployment question: what is the concentration at
 a location with no local monitor?
 
+Spatial blocking is contested, and the objection applies to a different estimand than this
+one. Wadoux et al. (2021) show that spatially blocked cross-validation is pessimistically
+biased for *map accuracy* over a fixed population, where design-based validation on a
+probability sample is the correct estimator. The quantity here is not map accuracy; it is the
+error incurred in a city that contributed no training row. For that, withholding the city is
+the estimand rather than a biased proxy for it, and a random split estimates something else.
+Meyer and Pebesma (2021) give the complementary frame: whether a held-out city falls inside
+the model's area of applicability. Technical Validation reports that error grows with a
+city's mean concentration, which is that question answered empirically.
+
 **Leave-station-out** ({{n_lso_folds}} folds). Available only where a city holds more than one
 instrument. {{lso_ineligible}} hold one instrument each and are named ineligible rather than
 quietly dropped.

@@ -2,6 +2,7 @@
 
 | Ref | Depth | Citation verified | First author | Year | Venue | DOI |
 |---|---|---|---|---|---|---|
+| A4 | FULL | yes | Xiangyue Chen et al. | 2021 | Atmospheric Environment | `10.1016/j.atmosenv.2021.118273` |
 | A6 | FULL | yes | Stefanos Papagiannis et al. | 2024 | Environmental Science and Pollution Research | `10.1007/s11356-024-33833-6` |
 | A7 | FULL | yes | Jamie Banks, Bernd Heinold, Kerstin Schepanski | 2022 | Journal of Geophysical Research Atmospheres | `10.1029/2022jd036618` |
 | A8 | FULL | yes | Jie Liu et al. | 2025 | Scientific Reports | `10.1038/s41598-025-86880-5` |
@@ -15,6 +16,7 @@
 | S:M18 | FULL | yes | Aaron van Donkelaar et al. | 2021 | Environmental Science & Technology | `10.1021/acs.est.1c05309` |
 | S:M19 | FULL | yes | Leigh R. Crilley et al. | 2018 | Atmospheric measurement techniques | `10.5194/amt-11-709-2018` |
 | S:M20 | FULL | yes | Karoline K. Barkjohn, B. Gantt, Andrea L. Clements | 2021 | Atmospheric measurement techniques | `10.5194/amt-14-4617-2021` |
+| S:M24 | FULL | yes | Stephan Rasp et al. | 2020 | Journal of Advances in Modeling Earth Systems | `10.1029/2020ms002203` |
 | S:M3 | FULL | yes | Francis X. Diebold, Roberto S. Mariano | 1994 | National Bureau of Economic Research | `10.3386/t0169` |
 | S:M6 | FULL | yes | Philipp Probst, Marvin N. Wright, Anne‐Laure Boulesteix | 2019 | Wiley Interdisciplinary Reviews Data Mining and Knowledge Discovery | `10.1002/widm.1301` |
 | S:M7 | FULL | yes | Yongming Xu et al. | 2018 | Environmental Pollution | `10.1016/j.envpol.2018.08.029` |
@@ -26,9 +28,9 @@
 | S:M10 | ABSTRACT | partial | Guolin Ke et al. | 2017 | HAL (Le Centre pour la Communication Scientifique Directe) | — |
 | S:M14 | ABSTRACT | yes | Francis X. Diebold | 2015 | Journal of Business and Economic Statistics | `10.1080/07350015.2014.983236` |
 | S:M21 | ABSTRACT | yes | Sture Holm | 1979 | Scandinavian Journal of Statistics | `10.2307/4615733` |
+| S:M23 | ABSTRACT | yes | Hanna Meyer, Edzer Pebesma | 2021 | Methods in Ecology and Evolution | `10.1111/2041-210x.13650` |
 | S:M5 | ABSTRACT | yes | Whitney K. Newey, Kenneth D. West | 1987 | Econometrica | `10.2307/1913610` |
 | A2 | SNIPPET | yes | Madina Tursumbayeva et al. | 2023 | Atmospheric Environment | `10.1016/j.atmosenv.2023.119901` |
-| A4 | SNIPPET | yes | Xiangyue Chen et al. | 2021 | Atmospheric Environment | `10.1016/j.atmosenv.2021.118273` |
 | A5 | SNIPPET | yes | Kazbek Tursun et al. | 2025 | Urban Climate | `10.1016/j.uclim.2025.102706` |
 | B2 | SNIPPET | yes | Dié Tang, Yu Zhan, Fumo Yang | 2024 | Atmospheric Research | `10.1016/j.atmosres.2024.107261` |
 | B5 | SNIPPET | yes | Sachin Chauhan et al. | 2023 | Advances in Neural Information Processing Systems 36 | `10.52202/075280-3298` |
@@ -37,8 +39,9 @@
 | S:M13 | SNIPPET | yes | A. Colin Cameron, Douglas L. Miller | 2015 | Journal of Human Resources | `10.3368/jhr.50.2.317` |
 | S:M16 | SNIPPET | yes | Pepijn Veefkind et al. | 2012 | Remote Sensing of Environment | `10.1016/j.rse.2011.09.027` |
 | S:M2 | SNIPPET | yes | Hanna Meyer et al. | 2019 | Ecological Modelling | `10.1016/j.ecolmodel.2019.108815` |
+| S:M22 | SNIPPET | yes | Alexandre M.J.‐C. Wadoux et al. | 2021 | Ecological Modelling | `10.1016/j.ecolmodel.2021.109692` |
 | S:M4 | SNIPPET | yes | David I. Harvey, Stephen J. Leybourne, Paul Newbold | 1997 | International Journal of Forecasting | `10.1016/s0169-2070(96)00719-4` |
 | A3 | UNRESOLVED | no | — | — | *not indexed; closest rejected: Mapping PM2.5 Sources and Emission Management Op* | — |
 | A9 | UNRESOLVED | no | — | — | *not indexed; closest rejected: Comparative assessment of PM2.5 pollution in Uzb* | — |
 
-**38 records resolved via API.** ABSTRACT=7, FULL=18, SNIPPET=11, UNRESOLVED=2. 35 carry an authoritative DOI; 25 reached abstract depth or better.
+**41 records resolved via API.** ABSTRACT=8, FULL=20, SNIPPET=11, UNRESOLVED=2. 38 carry an authoritative DOI; 28 reached abstract depth or better.

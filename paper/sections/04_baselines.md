@@ -2,7 +2,12 @@
 
 A learned model is only interesting relative to what it beats. This section reports the
 mandatory ladder — persistence, climatology, raw chemistry-transport, and the spatial
-interpolators — before any learned model appears. Every rung is credential-free and
+interpolators — before any learned model appears. The requirement is not a house rule.
+WeatherBench (Rasp et al., 2020) established the same discipline for data-driven weather
+forecasting: a benchmark ships persistence, climatology and an operational physical model
+alongside the data, so that a later method is measured against what the field already has
+rather than against whatever the authors chose to include. The ladder here is that
+convention applied to a pollutant and a region where it had not been. Every rung is credential-free and
 deterministic, so seed variance is zero by construction and is reported as `(det.)` rather
 than as a measured `± 0.000`.
 
