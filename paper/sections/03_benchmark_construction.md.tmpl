@@ -117,7 +117,16 @@ rejects it, so the check cannot silently degrade into a no-op.
 
 Both Khujand stations begin after the training block closes, so Khujand appears only in
 validation and test. Its leave-city-out fold is therefore strictly harder than the other
-five: the model has no local history in any form, not merely no label in the current fold.
+five: the fitted model sees no Khujand row anywhere, not merely no label in the current fold.
+
+One qualification belongs with that, because the zero-shot framing rests on it. The two
+global configuration freezes described in Section 5.3 — the `log1p` target and the exclusion
+of the retrieval-count features — were selected by scripts that score candidates on the
+held-out city's own validation block rather than on the training cities'. Khujand's 2023
+observations therefore informed those two choices, though no Khujand row entered any model
+fit and the 2024 test block was untouched by either selection. Per-fold hyperparameter tuning
+does not have this property: it validates on the training cities only. We state the
+distinction rather than let "zero-shot" carry more than it should.
 
 We retain it as a distinct evaluation regime rather than repairing it. Every other fold
 measures interpolation between cities the model has seen at some point in training; Khujand

@@ -342,6 +342,9 @@ if _rob_f.exists():
 _fold_f = T / "t7_01_error_analysis_by_fold.csv"
 if _fold_f.exists():
     _fold = pd.read_csv(_fold_f)
+    for _r in _fold.itertuples():
+        put(f"bias_{str(_r.fold).lower()}", float(_r.bias), 1)
+        put(f"median_bias_{str(_r.fold).lower()}", float(_r.median_bias), 1)
     _hi = _fold.loc[_fold.bias.idxmax()]
     _lo = _fold.loc[_fold.bias.idxmin()]
     put("bias_fold_max_city", _hi.fold)

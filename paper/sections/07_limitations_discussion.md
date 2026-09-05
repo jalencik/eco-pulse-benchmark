@@ -126,11 +126,14 @@ qualifications apply to the current ordering.
    any protocol whatsoever.
 2. *Missingness is informative but does not transfer between cities.* Retrieval-count
    features were promoted to predictors on the evidence that missingness is target-correlated.
-   A validation-block ablation (Section 5.3) then showed they **hurt** leave-city-out
-   generalisation, because retrieval success depends on local surface brightness, snow cover
-   and solar geometry — properties of a particular city. They are excluded from Task N and
-   retained for Task F. That is a finding about retrieval physics,
-   and at the same time a measure of how little the retrieved values contribute.
+   A validation-block ablation (Section 5.3) then *indicated* they harmed leave-city-out
+   generalisation, which is mechanistically plausible: retrieval success depends on local
+   surface brightness, snow cover and solar geometry, all properties of a particular city.
+   The exclusion was frozen on that basis and they are excluded from Task N, retained for
+   Task F. Scored once on test, the validation gain of 1.75 µg/m³ did not replicate; it
+   delivered 0.045 µg/m³. The mechanism remains plausible and the effect remains unmeasured
+   at this sample size, so this is a frozen decision reported with its outcome rather than a
+   finding about retrieval physics.
 3. *SO₂ is structurally absent in the season it exists to observe.* Retrieval needs
    ultraviolet signal; at these latitudes in December it falls to 0.1% against
    91.0% in July. The direct tracer for the region's dominant winter source is
@@ -155,6 +158,20 @@ Bishkek, the cleanest city in the benchmark, to -25.3 µg/m³ in
 Dushanbe, the most polluted. That is the regression-toward-the-training-mean
 signature: a model fitted on five cities and asked for a sixth predicts toward the levels it
 was trained on, over-predicting clean cities and under-predicting dirty ones.
+
+**Part of that bias is mechanical, and the table shows which part.** The reference model is
+fitted on `log1p` and inverted with `expm1` (Section 5.3), and `expm1` of a conditional mean
+on the log scale estimates the conditional *median* on the raw scale, not the mean. Under
+right skew that is a systematically low estimator of the raw-scale mean, and no smearing
+retransformation is applied. The signature is visible in `t7_01`: at Khujand the mean bias is
+-14.3 µg/m³ while the median bias is -0.3, and at Tashkent
+-7.5 against -0.4. The typical day is close to unbiased and
+the deficit sits in the upper tail, which is what a median-targeting inversion produces
+rather than what a training-mean pull alone would. Both mechanisms are present: the ordering
+across folds is monotone, which the transform alone does not explain, and the mean-median gap
+within folds is large, which the training-mean pull alone does not explain. A user who needs
+unbiased raw-scale means rather than good squared error should apply a smearing correction
+before reusing these predictions.
 
 The same gradient holds inside the concentration range rather than only between cities. Bias
 is 10.1 µg/m³ on days below the WHO 24-hour guideline and

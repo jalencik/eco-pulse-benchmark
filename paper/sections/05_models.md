@@ -47,7 +47,7 @@ configuration. The tuning protocol follows established guidance for tree ensembl
 No hyperparameter, feature-set choice, or early-stopping decision is made
 against test-block performance.
 
-The untuned and tuned configurations are reported side by side below. **They differ in four
+The untuned and tuned configurations are reported side by side below. **They differ in five
 respects, not one, and the gap between them must not be read as the effect of hyperparameter
 tuning alone.** An earlier version of this manuscript described them as sharing "the same
 feature set". That was incorrect. The differences are:
@@ -58,10 +58,20 @@ feature set". That was incorrect. The differences are:
 | trees | 600 | 800 |
 | training rows | train block only (to 2022-12-31) | train block **+ validation block** (to 2023-12-21) |
 | hyperparameters | library defaults | grid search, 16 combinations |
+| target | raw µg/m³ | **`log1p`, inverted with `expm1`** |
 
-Because the feature set, the tree count and the training window all change together, the
-untuned-to-tuned difference is a **combined** effect. This paper does not run the ablation
-that would separate them, and no causal attribution to tuning is claimed.
+Because the feature set, the tree count, the training window and the target scale all change
+together, the untuned-to-tuned difference is a **combined** effect. This paper does not run
+the ablation that would separate them, and no causal attribution to tuning is claimed.
+
+**The target transform, stated here because it is the largest of the five.** Daily PM2.5 in
+this record has skew 2.79 and excess kurtosis 13.5, so raw-scale squared error is dominated
+by a handful of extreme days. Four formulations — raw and `log1p`, each with and without a
+residual-against-interpolator variant — were compared across three model families on the
+validation block alone; `log1p` won for every family. The choice was frozen before the test
+block was touched, and scored once there it moved fold-mean RMSE from 30.24 to 28.05 µg/m³.
+Every metric in this paper is computed on the raw µg/m³ scale after inversion, never on the
+log scale. Section 7.4b records what that inversion costs.
 
 | Feature set | Untuned RMSE | Tuned RMSE | Untuned R² | Tuned R² |
 |---|---:|---:|---:|---:|

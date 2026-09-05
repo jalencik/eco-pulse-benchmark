@@ -518,7 +518,16 @@ rejects it, so the check cannot silently degrade into a no-op.
 
 Both Khujand stations begin after the training block closes, so Khujand appears only in
 validation and test. Its leave-city-out fold is therefore strictly harder than the other
-five: the model has no local history in any form, not merely no label in the current fold.
+five: the fitted model sees no Khujand row anywhere, not merely no label in the current fold.
+
+One qualification belongs with that, because the zero-shot framing rests on it. The two
+global configuration freezes described in Section 5.3 — the `log1p` target and the exclusion
+of the retrieval-count features — were selected by scripts that score candidates on the
+held-out city's own validation block rather than on the training cities'. Khujand's 2023
+observations therefore informed those two choices, though no Khujand row entered any model
+fit and the 2024 test block was untouched by either selection. Per-fold hyperparameter tuning
+does not have this property: it validates on the training cities only. We state the
+distinction rather than let "zero-shot" carry more than it should.
 
 We retain it as a distinct evaluation regime rather than repairing it. Every other fold
 measures interpolation between cities the model has seen at some point in training; Khujand
@@ -791,7 +800,7 @@ configuration. The tuning protocol follows established guidance for tree ensembl
 No hyperparameter, feature-set choice, or early-stopping decision is made
 against test-block performance.
 
-The untuned and tuned configurations are reported side by side below. **They differ in four
+The untuned and tuned configurations are reported side by side below. **They differ in five
 respects, not one, and the gap between them must not be read as the effect of hyperparameter
 tuning alone.** An earlier version of this manuscript described them as sharing "the same
 feature set". That was incorrect. The differences are:
@@ -802,10 +811,20 @@ feature set". That was incorrect. The differences are:
 | trees | 600 | 800 |
 | training rows | train block only (to 2022-12-31) | train block **+ validation block** (to 2023-12-21) |
 | hyperparameters | library defaults | grid search, 16 combinations |
+| target | raw µg/m³ | **`log1p`, inverted with `expm1`** |
 
-Because the feature set, the tree count and the training window all change together, the
-untuned-to-tuned difference is a **combined** effect. This paper does not run the ablation
-that would separate them, and no causal attribution to tuning is claimed.
+Because the feature set, the tree count, the training window and the target scale all change
+together, the untuned-to-tuned difference is a **combined** effect. This paper does not run
+the ablation that would separate them, and no causal attribution to tuning is claimed.
+
+**The target transform, stated here because it is the largest of the five.** Daily PM2.5 in
+this record has skew 2.79 and excess kurtosis 13.5, so raw-scale squared error is dominated
+by a handful of extreme days. Four formulations — raw and `log1p`, each with and without a
+residual-against-interpolator variant — were compared across three model families on the
+validation block alone; `log1p` won for every family. The choice was frozen before the test
+block was touched, and scored once there it moved fold-mean RMSE from 30.24 to 28.05 µg/m³.
+Every metric in this paper is computed on the raw µg/m³ scale after inversion, never on the
+log scale. Section 7.4b records what that inversion costs.
 
 | Feature set | Untuned RMSE | Tuned RMSE | Untuned R² | Tuned R² |
 |---|---:|---:|---:|---:|
@@ -1356,11 +1375,14 @@ qualifications apply to the current ordering.
    any protocol whatsoever.
 2. *Missingness is informative but does not transfer between cities.* Retrieval-count
    features were promoted to predictors on the evidence that missingness is target-correlated.
-   A validation-block ablation (Section 5.3) then showed they **hurt** leave-city-out
-   generalisation, because retrieval success depends on local surface brightness, snow cover
-   and solar geometry — properties of a particular city. They are excluded from Task N and
-   retained for Task F. That is a finding about retrieval physics,
-   and at the same time a measure of how little the retrieved values contribute.
+   A validation-block ablation (Section 5.3) then *indicated* they harmed leave-city-out
+   generalisation, which is mechanistically plausible: retrieval success depends on local
+   surface brightness, snow cover and solar geometry, all properties of a particular city.
+   The exclusion was frozen on that basis and they are excluded from Task N, retained for
+   Task F. Scored once on test, the validation gain of 1.75 µg/m³ did not replicate; it
+   delivered 0.045 µg/m³. The mechanism remains plausible and the effect remains unmeasured
+   at this sample size, so this is a frozen decision reported with its outcome rather than a
+   finding about retrieval physics.
 3. *SO₂ is structurally absent in the season it exists to observe.* Retrieval needs
    ultraviolet signal; at these latitudes in December it falls to 0.1% against
    91.0% in July. The direct tracer for the region's dominant winter source is
@@ -1385,6 +1407,20 @@ Bishkek, the cleanest city in the benchmark, to -25.3 µg/m³ in
 Dushanbe, the most polluted. That is the regression-toward-the-training-mean
 signature: a model fitted on five cities and asked for a sixth predicts toward the levels it
 was trained on, over-predicting clean cities and under-predicting dirty ones.
+
+**Part of that bias is mechanical, and the table shows which part.** The reference model is
+fitted on `log1p` and inverted with `expm1` (Section 5.3), and `expm1` of a conditional mean
+on the log scale estimates the conditional *median* on the raw scale, not the mean. Under
+right skew that is a systematically low estimator of the raw-scale mean, and no smearing
+retransformation is applied. The signature is visible in `t7_01`: at Khujand the mean bias is
+-14.3 µg/m³ while the median bias is -0.3, and at Tashkent
+-7.5 against -0.4. The typical day is close to unbiased and
+the deficit sits in the upper tail, which is what a median-targeting inversion produces
+rather than what a training-mean pull alone would. Both mechanisms are present: the ordering
+across folds is monotone, which the transform alone does not explain, and the mean-median gap
+within folds is large, which the training-mean pull alone does not explain. A user who needs
+unbiased raw-scale means rather than good squared error should apply a smearing correction
+before reusing these predictions.
 
 The same gradient holds inside the concentration range rather than only between cities. Bias
 is 10.1 µg/m³ on days below the WHO 24-hour guideline and
