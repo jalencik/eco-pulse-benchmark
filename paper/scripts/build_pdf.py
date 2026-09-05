@@ -84,6 +84,10 @@ def main(argv: list[str]) -> int:
     text = src.read_text(encoding="utf-8")
 
     body = markdown.markdown(text, extensions=["tables", "fenced_code", "sane_lists"])
+    # Unicode subscript digits (SO₂, NO₂) reach reportlab as glyphs its base-14 faces do not
+    # carry and came out as "SOn"/"NOn" in the rendered PDF. Rewrite them as real <sub>
+    # elements, as scripts/build_pdf.py already does for the technical report.
+    body = body.translate({0x2080 + i: f"<sub>{i}</sub>" for i in range(10)})
     body = _inline_images(body, src.parent)
     html = (
         f"<html><head><meta charset='utf-8'><style>{CSS}</style></head><body>{body}</body></html>"

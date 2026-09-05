@@ -327,8 +327,10 @@ forgotten. Related: `STATUS.md` risk R3.
 
 ### D-011 — Q5c: duplicate detection by value identity, not distance
 - **Date:** 2026-08-13
-- **Decision:** add a pre-registered rule `Q5c` that flags any station pair whose overlapping
-  observations are **bit-identical on more than 50% of samples**, regardless of separation.
+- **Decision:** add a rule `Q5c` that flags any station pair whose overlapping observations
+  are **bit-identical on more than 50% of samples**, regardless of separation.
+- **Status:** **This rule was added AFTER data inspection**, when Q5b passed a pair that
+  proved to be one instrument. It is not pre-registered, and the manuscript says so.
 - **Reason:** Q5b keys on distance (150 m) and therefore catches only the republication case
   where the two records agree on position. It cannot see the inverse — one instrument
   published twice under coordinates that *disagree* — which is what happened in Dushanbe

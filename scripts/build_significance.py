@@ -5,7 +5,9 @@ THE PROBLEM THIS FILE EXISTS TO SOLVE
 The published claim was *p* < 0.0001, from a Diebold-Mariano test treating 2,480 station-days
 from 6 cities as independent observations. They are not independent in either dimension:
 
-  * serially -- the loss differential has ACF +0.63 at lag 1, still +0.21 at lag 8;
+  * serially -- the loss differential has within-station ACF +0.24 at lag 1, still
+    +0.09 at lag 8 (recomputed from the deposited t6_01; an earlier draft of this
+    docstring overstated both by roughly 2.5x);
   * cross-sectionally -- station-days cluster within cities, and cities contribute grossly
     unequal row counts, so the pooled statistic is dominated by whichever city has most rows.
 

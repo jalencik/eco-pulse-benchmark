@@ -31,7 +31,7 @@ before the reported results were produced: blocked-temporal with a purge gap of 
 hours from the maximum feature lag and horizon, plus leave-city-out over 6
 folds. Nowcasting at unmonitored sites and forecasting at monitored stations are defined
 separately and never pooled. Ground observations are fused with satellite retrievals,
-chemistry-transport forecasts, reanalysis meteorology and static geography, each carrying a
+a chemistry-transport forecast and static geography, each carrying a
 measured acquisition latency that governs admissibility.
 
 Against a mandatory baseline ladder scored at a single temporal resolution, tuned gradient
@@ -377,13 +377,17 @@ bright-surface retrieval matters here: much of the study region is high-albedo d
 seasonal snow, the conditions under which coarser algorithms lose the surface-aerosol
 separation.
 
-**The split between clean and contaminated features follows retrieval physics.** CO uses the
-2.3 µm shortwave-infrared band and AAI uses ultraviolet reflectance *ratios* rather than
-absorption depth (Veefkind et al., 2012); both survive winter geometry and cloud, and neither
-shows target-correlated missingness. MAIAC (visible/near-infrared) and the ultraviolet
-absorption retrievals do not.
+**The split between clean and contaminated features follows retrieval physics, with one
+exception the table forces.** AAI uses ultraviolet reflectance *ratios* rather than
+absorption depth (Veefkind et al., 2012), survives winter geometry and cloud, and is the only
+product whose missingness is not target-correlated (0.75). CO's 2.3 µm
+shortwave-infrared retrieval also survives winter geometry, and its December coverage is far
+higher than SO₂'s, but its missingness still carries a detectable association with the
+target (7.2e-05), so it is grouped with the contaminated products rather than with AAI.
+MAIAC (visible/near-infrared) and the ultraviolet absorption retrievals are contaminated on
+both counts.
 
-**The two clean features are complementary to the contaminated ones.** AOD and AAI are both
+**The one clean feature is complementary to the contaminated ones.** AOD and AAI are both
 present on 62.8% of station-days; AAI alone covers a further 36.9%; neither
 is available on 0.1%. Usable satellite coverage therefore rises from
 62.8% to 99.9%, and the coverage AAI
@@ -495,8 +499,11 @@ Purge = max_lag + max_horizon = 168 + 72 =
 240 hours, applied at both block boundaries. A test recomputes this from the
 registered model definitions rather than reading a constant, so adding a model with a longer
 feature window fails the build instead of quietly leaking across the boundary. The failure
-mode this prevents is specific: a 168-hour rolling feature computed at the first test
-timestamp reads 168 hours of training labels.
+mode this prevents runs in both directions across a boundary: a training row's forecast
+horizon reaching forward into the block that follows, so that its label is a value the next
+block is meant to hold out; and a test row's feature window reaching back into the block
+before, so that its inputs are built from labels the model was tuned on. The purge width is
+the sum of the two reaches.
 
 ## 3.4 Feature admissibility is typed, not documented
 
@@ -651,15 +658,23 @@ does not read the recent past. **Only the same-hour 7-day mean achieves positive
 (0.11); every other rung is worse than predicting the test-block
 mean.
 
-**Figure 2** shows the full Task N ladder, including the tuned model of Section 5 for
-context. Every interpolation rung except ordinary kriging sits above the training pool
-mean, and kriging clears it by under 1 µg/m³.
+**Figure 2** shows the full Task N ladder at daily resolution, including the tuned model of
+Section 5 for context, so that every bar is comparable with the learned model's. At that
+resolution the two interpolators lead the credential-free rungs (IDW
+30.10, kriging 30.33 µg/m³) and every
+rung sits below the training-pool mean (33.83). The hourly
+table in Section 4.2 orders the same methods differently, with kriging alone under the pool
+mean, and the two resolutions are not comparable to one another.
 
 ![Figure 2](figures/fig2_baseline_ladder.png)
 
-**Figure 2.** Task N baseline ladder, leave-city-out mean RMSE (µg/m³). Lower is better.
-The tuned model of Section 5 is shown in dark fill for context; every credential-free
-interpolation rung sits above the training pool mean.
+**Figure 2.** Task N baseline ladder at daily resolution, leave-city-out mean RMSE (µg/m³),
+so that every bar is comparable with the learned model's. Lower is better. The tuned model of
+Section 5 is shown in dark fill for context. At this resolution the two interpolators lead
+the credential-free rungs (IDW 30.10, kriging
+30.33) and the training-pool mean sits at
+33.83 µg/m³; the hourly ladder in Section 4.2 orders them
+differently and is not comparable to this panel.
 
 ## 4.2 Task N — nowcasting under leave-city-out
 
@@ -784,7 +799,8 @@ fixed splits.
 - **calendar** — cyclical day-of-year and hour encodings, weekday.
 - **satellite** — MAIAC AOD, S5P AAI/NO₂/SO₂/CO.
 - **satellite missingness** — valid-pixel counts and retrieval indicators, promoted to
-  features in their own right.
+  features in their own right. **Task F only**: excluded from Task N by a frozen decision
+  described in Section 5.3.
 - **CAMS forecast** — the 24-hour-lead chemistry-transport prediction.
 
 Autoregressive lags of the target are **Task F only**. They are not merely optimistic under
@@ -792,7 +808,7 @@ leave-city-out; they are undefined, because the held-out city supplies no histor
 the spatial features above are the only route to target information, and they are
 constructed with the held-out city removed.
 
-## 5.3 Tuning
+## 5.3 Tuning and the two frozen configuration choices
 
 Hyperparameters are selected on the 2023-01-11 to 2023-12-21 validation block and then
 frozen. The test block 2024-01-01 to 2024-12-31 is read exactly once per reported
@@ -823,8 +839,36 @@ by a handful of extreme days. Four formulations — raw and `log1p`, each with a
 residual-against-interpolator variant — were compared across three model families on the
 validation block alone; `log1p` won for every family. The choice was frozen before the test
 block was touched, and scored once there it moved fold-mean RMSE from 30.24 to 28.05 µg/m³.
+**The second frozen choice: retrieval-count features are excluded from Task N.** The
+valid-pixel counts and retrieval indicators (Section 2.4) were promoted to predictors because
+their missingness is target-correlated. A validation-block ablation then *indicated* that
+they harmed leave-city-out generalisation, which is mechanistically plausible: retrieval
+success depends on local surface brightness, snow cover and solar geometry, all properties of
+a particular city. The exclusion was frozen on that basis and scored once on test, where the
+validation gain of 1.75 µg/m³ did not replicate, delivering 0.045 µg/m³. The configuration
+was not reverted after the fact — reverting a frozen choice because the test block disagreed
+would be the selection-on-test this section exists to prevent — and the non-replication is
+reported rather than removed. The features remain in the Task F set. Section 7.4 returns to
+what this does and does not establish.
+
+**Two selection criteria, stated because they differ.** Both frozen choices above were
+scored on the held-out city's own validation rows; per-fold hyperparameter tuning is scored
+on the training cities' validation rows. Section 3.5 records the consequence for the
+zero-shot claim.
+
+**The comparator's information budget is not identical to the model's.** The CAMS bias
+offset is fitted on the training block alone, through 2022-12-31; the tuned model it is
+compared with is refit on training plus validation, through 2023-12-21. The asymmetry
+favours the model by one year of fitting data. It is stated here rather than corrected
+because the offset is a single scalar per configuration whose estimate does not move
+materially with an extra year, and because refitting the comparator on validation data would
+make its per-fold definition depend on the fold in a way the frozen protocol does not
+specify. A reader who wants the strictly matched comparison has the code to run it.
+
 Every metric in this paper is computed on the raw µg/m³ scale after inversion, never on the
-log scale. Section 7.4b records what that inversion costs.
+log scale, and inverted predictions are clipped at zero: `expm1` can return values in
+(−1, 0) for a log-scale prediction below zero, and a negative concentration is not a
+prediction. Section 7.4b records what that inversion costs.
 
 | Feature set | Untuned RMSE | Tuned RMSE | Untuned R² | Tuned R² |
 |---|---:|---:|---:|---:|
@@ -881,8 +925,8 @@ Task N and Task F reported separately throughout.
 
 | Model | RMSE (µg/m³) | MAE | R² |
 |---|---:|---:|---:|
-| best spatial baseline (kriging) | 39.71 | — | -0.22 |
-| training-pool mean (constant) | 40.69 | — | -0.24 |
+| best spatial baseline (idw_k5_p2, daily) | 30.10 | — | -0.32 |
+| training-pool mean (constant, daily) | 33.83 | — | -0.60 |
 | CAMS, pooled debias | 29.77 | 21.19 | -0.14 |
 | LightGBM, static only | 28.63 ± 0.17 | 18.39 | -0.15 |
 | LightGBM, deployable | 28.56 ± 0.52 | 17.72 | -0.09 |
@@ -1031,7 +1075,11 @@ claim is the city-level test in Section 6.2b, not these. Six folds are tested, s
 *p*-values are additionally reported with a Holm step-down correction (Holm, 1979) in
 `t6_07_per_fold_holm.csv`; **3 of 6 survive it at α = 0.05.**
 The correction family is the 6 per-fold comparisons of the same model pair,
-declared here because a family chosen after seeing the *p*-values is not a correction.
+declared here because a family chosen after seeing the *p*-values is not a correction. It is
+the only corrected family. The deposited tables carry 378 *p*-values in
+total, across the hourly ladders, the lag-sensitivity sweeps and the robustness checks; those
+are reported as descriptive diagnostics and no inferential claim in this paper rests on any of
+them individually. The paper's inference is the city-level primary analysis of Section 6.2b.
 
 ### 6.2b Which *p*-value is the paper's claim
 
@@ -1122,8 +1170,9 @@ Section 4.3.
 
 ![Figure 3](figures/fig3_per_city_rmse.png)
 
-**Figure 3.** Held-out city RMSE (µg/m³), tuned LightGBM against debiased CAMS. Ashgabat
-is the fold where the sign reverses; the two are statistically indistinguishable there.
+**Figure 3.** Held-out city RMSE (µg/m³), tuned LightGBM against debiased CAMS.
+Ashgabat and Bishkek are the folds where the sign reverses; in neither is the
+difference statistically separable.
 
 ![Figure 5](figures/fig5_obs_vs_pred.png)
 
@@ -1403,10 +1452,26 @@ stand for more than it shows.
 
 What survives normalisation is the bias. It falls monotonically across every fold without
 exception (rho = -1.00), from 14.4 µg/m³ in
-Bishkek, the cleanest city in the benchmark, to -25.3 µg/m³ in
-Dushanbe, the most polluted. That is the regression-toward-the-training-mean
-signature: a model fitted on five cities and asked for a sixth predicts toward the levels it
-was trained on, over-predicting clean cities and under-predicting dirty ones.
+Bishkek, the cleanest city in the benchmark by test-block mean, to
+-25.3 µg/m³ in Dushanbe, the most polluted. A perfect rank
+correlation over six folds should not be read as a strong empirical regularity, because it is
+close to forced: the model's predicted city means span only 6.77 µg/m³
+(22.37 to 29.14) against an observed span of
+35.23 µg/m³ (12.42 to 47.64), and any
+predictor that flat is monotone-biased by arithmetic. The substantive finding is the
+flatness. Transferred to a city it has never seen, the model returns something close to a
+regional level and does not move it with the city, over-predicting clean cities and
+under-predicting polluted ones. Whether that is best described as regression toward the
+training mean or as the absence of any feature that carries a city's level is a distinction
+this design cannot make; Section 7.6 notes that the one family of predictors that would
+most directly carry it, meteorology, is absent.
+
+One caveat on "cleanest". Bishkek's 2024 test-block mean of
+12.42 µg/m³ is low against every published estimate for that city, which
+is routinely among the most polluted capitals in the world during the heating season; the
+2024 record here comes from the merged AirNow and StateAir feeds whose disagreement Section
+7.1 documents. The ordering in this section is the ordering of the frozen test block, not a
+claim about the cities' climatology.
 
 **Part of that bias is mechanical, and the table shows which part.** The reference model is
 fitted on `log1p` and inverted with `expm1` (Section 5.3), and `expm1` of a conditional mean
@@ -1448,7 +1513,7 @@ Recomputing the primary analysis on the 1622 rows of the five reference-grade
 cities gives the same verdict. The model's RMSE falls to 28.36 µg/m³ against
 CAMS at 30.19 µg/m³, both lower than the pooled figures because Khujand is
 the hardest fold, and the mean loss differential moves from -96.2 to
--98.3 — marginally *more* favourable to the model, not less. Neither primary
+-98.3 (µg/m³)² — marginally *more* favourable to the model, not less. Neither primary
 test reaches significance in either set: paired *t* *p* = 0.1392 with all six
 cities and 0.2165 without Khujand; the exact permutation test gives
 0.1250 and 0.2500.
@@ -1461,8 +1526,10 @@ city does to the test. The paired *t* result is the informative half of the comp
 
 The classification is made by rule in `t7_06_leave_khujand_out.csv` rather than by reading,
 and it is **ROBUST**: no primary test flips, the sign does not reverse, and the effect
-does not move materially. The paper's central negative result does not depend on the low-cost
-city.
+does not move materially. For a result that is null on all six cities that verdict certifies
+one thing, that the null persists with the incomparable city removed; it does not, and could
+not, certify a positive result. The paper's central negative result does not depend on the
+low-cost city.
 
 ## 7.5 Zero-drift reporting, and the drift it caught
 
@@ -1499,9 +1566,16 @@ one now.
   (11.38 µg/m³) exceeds seed standard deviation
   (1.79 µg/m³) by roughly an order of magnitude. Conclusions are far more
   sensitive to which cities are in the set than to any training randomness.
-- **ERA5 is oracle-only and incompletely retrieved.** Its measured latency (163 h) exceeds
-  every evaluated horizon, so it cannot enter the deployable set. The multi-year retrieval
-  was stopped once that was established.
+- **There is no meteorological predictor in any tier.** ERA5's measured latency (163 h)
+  exceeds every evaluated horizon, so it cannot enter the deployable set, and the multi-year
+  retrieval was stopped once that was established, so it does not enter the retrospective
+  set either. The consequence is larger than the latency finding it came from: the reference
+  model has no boundary-layer height, wind speed, temperature or humidity term, and those
+  are the first-order controls on day-to-day urban PM2.5 in basin cities under winter
+  inversion. Some of that variance reaches the model indirectly through the CAMS forecast
+  and the calendar terms. A model with a deployable meteorological input, such as an NWP
+  forecast at the same lead time as CAMS, is the most obvious untested configuration on this
+  benchmark.
 - **One item of prior art is unresolved.** A 2025 conference abstract claims the first
   machine-learning PM2.5 prediction for Tashkent. The publisher page returns HTTP 403 and
   the record is absent from OpenAlex, Crossref, Semantic Scholar and Europe PMC, so **its

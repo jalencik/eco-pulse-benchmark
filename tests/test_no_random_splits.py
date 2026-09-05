@@ -23,7 +23,11 @@ from pathlib import Path
 
 import pytest
 
-SRC = Path(__file__).resolve().parents[1] / "src"
+ROOT = Path(__file__).resolve().parents[1]
+# Every model in this project is fitted from scripts/, not from src/, so a scan of src/
+# alone never reached a single fit call. Both trees are scanned.
+SRC = ROOT / "src"
+SCRIPTS = ROOT / "scripts"
 
 #: (regex, why it is forbidden, what to use instead)
 FORBIDDEN: list[tuple[str, str, str]] = [
@@ -60,7 +64,11 @@ ALLOWED_SUBSTRINGS = ("GroupKFold", "StratifiedGroupKFold", "TimeSeriesSplit")
 
 
 def _python_files() -> list[Path]:
-    return sorted(p for p in SRC.rglob("*.py") if "__pycache__" not in p.parts)
+    return sorted(
+        p
+        for p in list(SRC.rglob("*.py")) + list(SCRIPTS.rglob("*.py"))
+        if "__pycache__" not in p.parts
+    )
 
 
 def test_src_tree_is_non_empty():

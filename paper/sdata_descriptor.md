@@ -21,15 +21,16 @@ Khujand and Tashkent — covering 2018-11-27 to 2024-12-31. Records were screene
 pre-registered quality rules, plus one added after validation exposed a duplicated
 instrument, then deduplicated and timezone-verified; 5 are US
 embassy reference monitors and 2 low-cost sensors, labelled as such.
-Each station-day is paired with satellite retrievals, chemistry-transport forecasts,
-reanalysis meteorology and static geography, each predictor carrying a measured acquisition
-latency fixing whether it could be known at prediction time. The release includes frozen, checksummed splits
+Each station-day is paired with satellite retrievals, a chemistry-transport forecast and
+static geography, each with a measured acquisition latency fixing whether it could be known
+at prediction time. The release includes frozen, checksummed splits
 (blocked-temporal with a 240-hour purge; leave-city-out over 6
-folds), a baseline ladder and reference model outputs. Held-out-city bias falls monotonically with the city's mean
-concentration (Spearman rho = -1.00), a regression toward training levels; fold
-RMSE rises with it but not after normalising by each city's variability
-(rho = -0.03). The data support cross-city generalisation,
-satellite-ground fusion, sensor comparison and reproducible benchmarking.
+folds), a baseline ladder and reference model outputs. Predicted city means for held-out cities span
+6.77 µg/m³ against 35.23 observed, so bias falls with
+concentration largely by construction (rho = -1.00); fold RMSE rises with it but
+not after normalising by each city's variability (rho = -0.03). The data support cross-city
+generalisation, satellite-ground fusion, low-cost-sensor transfer and reproducible
+benchmarking.
 
 
 ## Background and Summary
@@ -169,13 +170,17 @@ initial estimates proved wrong, one by 774 days.
 - **Satellite.** Sentinel-5P CO, NO₂, SO₂ and absorbing aerosol index (Veefkind et al.,
   2012); MODIS MAIAC AOD (Lyapustin et al., 2018).
   Retrieval-quality fractions are carried as features, because missingness in these products is
-  correlated with the target — SO₂ retrieves on 0.1% of December days against 92.6% in summer,
+  correlated with the target — SO₂ retrieves on 0.1% of December days against
+  91.0% in July,
   a solar-geometry floor that blinds the direct winter coal tracer throughout the coal season.
   Null rows are retained rather than imputed: interpolating across a systematically missing
   extreme tail would invent the values that matter most.
 - **Chemistry transport.** Copernicus CAMS global PM2.5 forecast, used both as a feature and,
   bias-corrected, as a baseline.
-- **Reanalysis meteorology.** ERA5 single-level fields (Hersbach et al., 2020).
+- **No meteorological predictor.** ERA5 single-level fields (Hersbach et al., 2020) were
+  retrieved and latency-tested; at 163 h they cannot enter the deployable tier, and the
+  retrieval was stopped before a multi-year archive existed, so they enter no tier. The
+  reference model carries no boundary-layer height, wind, temperature or humidity term.
 - **Static geography.** Elevation, terrain basin indices at multiple radii, VIIRS night-time
   lights, and population density.
 
@@ -296,8 +301,10 @@ against the regenerated result tables and take full responsibility for the conte
 ## Data Records
 
 The benchmark is deposited as a single versioned archive, **`eco-pulse-ca` v1.1.0**.
-Every file below is plain text (JSON or CSV) and carries a SHA-256 digest in
-`splits.sha256`, which the test suite verifies on every run.
+Every file below is plain text (JSON or CSV). `splits.sha256` carries the digest of
+`splits.json`, which the test suite verifies on every run; the three split sidecars are
+projections the builder writes from the same payload and are not separately digested, so
+`splits.json` is the file to cite.
 
 ![Figure 1](figures/fig1_study_area.png)
 
@@ -536,10 +543,15 @@ The two panels are not equally strong evidence, and the difference matters for r
 scales with the variability of whatever is being predicted, so the left panel is partly a
 scale effect: dividing each fold's RMSE by that city's own observed standard deviation leaves
 no monotone relation with concentration at all (rho = -0.03). The bias
-panel does not have that weakness. It is monotone across every fold without exception
-(rho = -1.00), and it identifies the mechanism: a model trained on five cities
-and applied to a sixth predicts toward the concentrations it was trained on, over-predicting
-cleaner cities and under-predicting more polluted ones. The
+panel is monotone across every fold without exception (rho = -1.00), and the
+reason is visible in the predictions themselves rather than in the coefficient. The model's
+predicted city means span only 6.77 µg/m³, from
+22.37 to 29.14, while the observed city means span
+35.23 µg/m³, from 12.42 to 47.64. A
+predictor that flat is biased upward in clean cities and downward in polluted ones by
+arithmetic, and a perfect rank correlation over six folds is what that arithmetic produces.
+The finding is therefore the flatness: transferred to a city it has never seen, the model
+returns something close to a regional level and does not move it with the city. The
 same pattern holds within the concentration range: bias is 10.1 µg/m³ on days
 below the WHO 24-hour guideline and -90.4 µg/m³ above six times it, where RMSE
 reaches 100.9 µg/m³ on the 6.6% of rows in that band. Winter
@@ -788,10 +800,14 @@ and be disseminated as received". Its stated scope is the Mission China programm
 that did serve them published no equivalent statement. We nonetheless attribute the
 observations to the U.S. Department of State and carry the verification caveat, and we treat
 the final clause as a further reason not to redistribute a merged, quality-controlled,
-daily-aggregated panel. `data/MANIFEST.md` sets out the full evidence and its limits. Satellite retrievals are Sentinel-5P (CO, NO₂, SO₂, absorbing
-aerosol index) and MODIS MAIAC AOD; chemistry-transport forecasts are Copernicus CAMS; and
-reanalysis meteorology is ERA5. Each source, its access route, its licence status and its
-measured acquisition latency are recorded in `data/MANIFEST.md`.
+daily-aggregated panel. `data/MANIFEST.md` sets out the full evidence and its limits.
+
+**Predictor sources.** Satellite retrievals are Sentinel-5P (CO, NO₂, SO₂, absorbing aerosol
+index) and MODIS MAIAC AOD; the chemistry-transport forecast is Copernicus CAMS. ERA5
+reanalysis was retrieved and latency-tested but enters no feature tier (Methods), so it is a
+source the pipeline touched rather than a predictor the results use. Each source, its access
+route, its licence status and its measured acquisition latency are recorded in
+`data/MANIFEST.md`.
 
 **Why the panel is not deposited here.** Licence terms are heterogeneous across the ten source
 feeds, and for the four StateAir feeds no licence has been recorded by the platform that
@@ -815,9 +831,11 @@ and figure, and render this manuscript is openly available at
 `https://github.com/jalencik/eco-pulse-benchmark`, archived at the deposit above, under an
 MIT licence.
 
-**Environment.** Python 3.12 (pinned `>=3.12,<3.13`), with numpy, pandas, scipy,
-scikit-learn, LightGBM, pyarrow and matplotlib. Exact versions are pinned in
-`pyproject.toml`; `python tasks.py setup` creates the environment.
+**Environment.** Python 3.12 (`>=3.12,<3.13`), with numpy, pandas, scipy, scikit-learn,
+LightGBM, pyarrow and matplotlib. `pyproject.toml` declares compatible ranges;
+`requirements-lock.txt` records the exact versions the deposited tables were produced with,
+and is the file to install from when byte-identical regeneration is the goal.
+`python tasks.py setup` creates the environment.
 
 **Reproduction.** A single command runs the whole chain — lint, type check, the full test
 suite, checksum verification, split regeneration, baseline ladder, model layer, table

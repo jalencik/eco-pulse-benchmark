@@ -1,8 +1,10 @@
 ## Data Records
 
 The benchmark is deposited as a single versioned archive, **`eco-pulse-ca` v{{benchmark_version}}**.
-Every file below is plain text (JSON or CSV) and carries a SHA-256 digest in
-`splits.sha256`, which the test suite verifies on every run.
+Every file below is plain text (JSON or CSV). `splits.sha256` carries the digest of
+`splits.json`, which the test suite verifies on every run; the three split sidecars are
+projections the builder writes from the same payload and are not separately digested, so
+`splits.json` is the file to cite.
 
 ![Figure 1](figures/fig1_study_area.png)
 

@@ -18,6 +18,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 SEC = ROOT / "paper" / "sections"
+SDATA = ROOT / "paper" / "sdata"
 TABLES = ROOT / "paper" / "tables"
 NUMBERS = ROOT / "paper" / "numbers.json"
 PLACEHOLDER = re.compile(r"\{\{([a-zA-Z0-9_]+)\}\}")
@@ -45,8 +46,13 @@ class TestExtractionChain:
         assert not drift, f"figures changed on re-extraction: {sorted(drift)[:10]}"
 
     def test_every_template_resolves(self):
-        """An unresolved placeholder must fail the build, not print itself."""
-        for tmpl in SEC.glob("*.md.tmpl"):
+        """An unresolved placeholder must fail the build, not print itself.
+
+        Both template trees. The Data Descriptor's templates were outside this check while
+        seven of their hand-typed figures drifted from the tables, so the guarantee the paper
+        credits this test with did not cover the document being submitted.
+        """
+        for tmpl in list(SEC.glob("*.md.tmpl")) + list(SDATA.glob("*.md.tmpl")):
             keys = set(PLACEHOLDER.findall(tmpl.read_text(encoding="utf-8")))
             nums = json.loads(NUMBERS.read_text(encoding="utf-8"))
             missing = sorted(keys - set(nums))

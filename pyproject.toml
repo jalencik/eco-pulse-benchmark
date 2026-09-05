@@ -84,8 +84,10 @@ disallow_untyped_defs = true
 ignore_missing_imports = true
 
 # --- Reproducibility contract -------------------------------------------------
-# Every number in the paper must trace to (run_id, git_sha, config_hash, seed).
-# Enforced by tests/test_run_traceability.py, not by convention.
+# Every number in the paper is substituted at render time from paper/numbers.json, which
+# paper/scripts/extract_numbers.py derives from paper/tables/*.csv. Enforced by
+# tests/test_manuscript_numbers.py (re-extraction must be drift-free) and
+# tests/test_table_provenance.py (every table has a producer inside `reproduce`).
 [tool.ecopulse]
 seeds = [0, 1, 2, 3, 4]
 random_splits_allowed = false

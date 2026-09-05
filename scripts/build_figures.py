@@ -66,20 +66,34 @@ PRETTY = {
 }
 
 
+LOW_COST_CITIES = {"Khujand"}
+
+
 def fig1_study_area() -> str:
     """Station geography. Reviewers ask 'where is this?' before anything else."""
     splits = json.loads(SPLITS.read_bytes())
     st = pd.DataFrame(splits["stations"])
+    # Instrument grade is a function of city: both Khujand instruments are Clarity low-cost
+    # optical sensors and every other benchmark station is a US diplomatic-post BAM/FEM
+    # monitor (data/MANIFEST.md, per-instrument grade table; DECISIONS.md D-012). The caption
+    # promises the two are drawn with different markers, so they are.
+    low_cost = st.city.isin(LOW_COST_CITIES)
     fig, ax = plt.subplots(figsize=(6.0, 4.2))
-    ax.scatter(
-        st.longitude,
-        st.latitude,
-        s=st.n_observations / 900,
-        c=GREY[0],
-        edgecolor="white",
-        zorder=3,
-        label="Benchmark station (area $\\propto$ n observations)",
-    )
+    for mask, marker, lab in (
+        (~low_cost, "o", "Reference monitor (area $\\propto$ n observations)"),
+        (low_cost, "^", "Low-cost sensor (Clarity)"),
+    ):
+        sub = st[mask]
+        ax.scatter(
+            sub.longitude,
+            sub.latitude,
+            s=sub.n_observations / 900,
+            c=GREY[0],
+            marker=marker,
+            edgecolor="white",
+            zorder=3,
+            label=lab,
+        )
     seen: set[str] = set()
     for _, r in st.iterrows():
         if r.city in seen:
@@ -105,7 +119,11 @@ def fig1_study_area() -> str:
 
 def fig2_baseline_ladder() -> str:
     """Task N ladder. The central honesty claim of the paper, in one panel."""
-    base = pd.read_csv(TABLES / "t3_02_task_n_baselines_hourly.csv")
+    # Daily ladder, legal rungs only. The hourly table (t3_02) was plotted here until it was
+    # noticed that the two model bars are daily, which put hourly and daily RMSE on one axis,
+    # the comparison Section 4.3 forbids. The oracle constant is excluded: it is not a rung.
+    base = pd.read_csv(TABLES / "t3_06_task_n_baselines_daily.csv")
+    base = base[base.legal.astype(str).str.lower() == "true"]
     tuned = pd.read_csv(TABLES / "t5_02_loco_tuned.csv")
     rows = base.groupby("model").rmse.mean().to_dict()
     n = tuned[(tuned.task == "N") & (tuned.tier == "retrospective")]
@@ -123,7 +141,7 @@ def fig2_baseline_ladder() -> str:
             bar.set_hatch("///")
     for bar, v in zip(bars, s.values, strict=False):
         ax.text(v + 0.3, bar.get_y() + bar.get_height() / 2, f"{v:.1f}", va="center", fontsize=8)
-    ax.set_xlabel("RMSE (µg/m³), leave-city-out mean — lower is better")
+    ax.set_xlabel("Leave-city-out RMSE, daily means (µg/m³)")
     ax.set_title("Figure 2. Task N baseline ladder", loc="left", fontsize=10)
     ax.set_xlim(0, max(s.values) * 1.15)
     out = FIGS / "fig2_baseline_ladder.png"

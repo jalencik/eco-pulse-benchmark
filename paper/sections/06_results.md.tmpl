@@ -7,8 +7,8 @@ Task N and Task F reported separately throughout.
 
 | Model | RMSE (µg/m³) | MAE | R² |
 |---|---:|---:|---:|
-| best spatial baseline (kriging) | {{p3n_ordinary_kriging_rmse}} | — | {{p3n_ordinary_kriging_r2}} |
-| training-pool mean (constant) | {{p3n_training_pool_mean_rmse}} | — | {{p3n_training_pool_mean_r2}} |
+| best spatial baseline ({{p3n_daily_best_rmse_model}}, daily) | {{p3n_daily_best_rmse}} | — | {{p3n_daily_idw_k5_p2_r2}} |
+| training-pool mean (constant, daily) | {{p3n_daily_training_pool_mean_rmse}} | — | {{p3n_daily_training_pool_mean_r2}} |
 | CAMS, pooled debias | {{taskn_cams_rmse}} | {{taskn_cams_mae}} | {{taskn_cams_r2}} |
 | LightGBM, static only | {{taskn_static_only_rmse}} ± {{taskn_static_only_rmse_sd}} | {{taskn_static_only_mae}} | {{taskn_static_only_r2}} |
 | LightGBM, deployable | {{taskn_deployable_rmse}} ± {{taskn_deployable_rmse_sd}} | {{taskn_deployable_mae}} | {{taskn_deployable_r2}} |
@@ -146,7 +146,11 @@ claim is the city-level test in Section 6.2b, not these. Six folds are tested, s
 *p*-values are additionally reported with a Holm step-down correction (Holm, 1979) in
 `t6_07_per_fold_holm.csv`; **{{n_sig_holm}} of {{n_loco_folds}} survive it at α = 0.05.**
 The correction family is the {{n_loco_folds}} per-fold comparisons of the same model pair,
-declared here because a family chosen after seeing the *p*-values is not a correction.
+declared here because a family chosen after seeing the *p*-values is not a correction. It is
+the only corrected family. The deposited tables carry {{n_p_values_in_tables}} *p*-values in
+total, across the hourly ladders, the lag-sensitivity sweeps and the robustness checks; those
+are reported as descriptive diagnostics and no inferential claim in this paper rests on any of
+them individually. The paper's inference is the city-level primary analysis of Section 6.2b.
 
 ### 6.2b Which *p*-value is the paper's claim
 
@@ -237,8 +241,9 @@ Section 4.3.
 
 ![Figure 3](figures/fig3_per_city_rmse.png)
 
-**Figure 3.** Held-out city RMSE (µg/m³), tuned LightGBM against debiased CAMS. Ashgabat
-is the fold where the sign reverses; the two are statistically indistinguishable there.
+**Figure 3.** Held-out city RMSE (µg/m³), tuned LightGBM against debiased CAMS.
+{{dm_fold_favouring_cams}} are the folds where the sign reverses; in neither is the
+difference statistically separable.
 
 ![Figure 5](figures/fig5_obs_vs_pred.png)
 

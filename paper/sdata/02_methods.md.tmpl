@@ -72,13 +72,17 @@ initial estimates proved wrong, one by 774 days.
 - **Satellite.** Sentinel-5P CO, NO₂, SO₂ and absorbing aerosol index (Veefkind et al.,
   2012); MODIS MAIAC AOD (Lyapustin et al., 2018).
   Retrieval-quality fractions are carried as features, because missingness in these products is
-  correlated with the target — SO₂ retrieves on 0.1% of December days against 92.6% in summer,
+  correlated with the target — SO₂ retrieves on {{r7_so2_dec}}% of December days against
+  {{r7_so2_jul}}% in July,
   a solar-geometry floor that blinds the direct winter coal tracer throughout the coal season.
   Null rows are retained rather than imputed: interpolating across a systematically missing
   extreme tail would invent the values that matter most.
 - **Chemistry transport.** Copernicus CAMS global PM2.5 forecast, used both as a feature and,
   bias-corrected, as a baseline.
-- **Reanalysis meteorology.** ERA5 single-level fields (Hersbach et al., 2020).
+- **No meteorological predictor.** ERA5 single-level fields (Hersbach et al., 2020) were
+  retrieved and latency-tested; at 163 h they cannot enter the deployable tier, and the
+  retrieval was stopped before a multi-year archive existed, so they enter no tier. The
+  reference model carries no boundary-layer height, wind, temperature or humidity term.
 - **Static geography.** Elevation, terrain basin indices at multiple radii, VIIRS night-time
   lights, and population density.
 

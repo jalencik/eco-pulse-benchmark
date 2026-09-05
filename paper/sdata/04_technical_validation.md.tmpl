@@ -134,10 +134,15 @@ The two panels are not equally strong evidence, and the difference matters for r
 scales with the variability of whatever is being predicted, so the left panel is partly a
 scale effect: dividing each fold's RMSE by that city's own observed standard deviation leaves
 no monotone relation with concentration at all (rho = {{rho_mean_rmse_norm}}). The bias
-panel does not have that weakness. It is monotone across every fold without exception
-(rho = {{rho_mean_bias}}), and it identifies the mechanism: a model trained on five cities
-and applied to a sixth predicts toward the concentrations it was trained on, over-predicting
-cleaner cities and under-predicting more polluted ones. The
+panel is monotone across every fold without exception (rho = {{rho_mean_bias}}), and the
+reason is visible in the predictions themselves rather than in the coefficient. The model's
+predicted city means span only {{pred_city_mean_range}} µg/m³, from
+{{pred_city_mean_min}} to {{pred_city_mean_max}}, while the observed city means span
+{{obs_city_mean_range}} µg/m³, from {{obs_city_mean_min}} to {{obs_city_mean_max}}. A
+predictor that flat is biased upward in clean cities and downward in polluted ones by
+arithmetic, and a perfect rank correlation over six folds is what that arithmetic produces.
+The finding is therefore the flatness: transferred to a city it has never seen, the model
+returns something close to a regional level and does not move it with the city. The
 same pattern holds within the concentration range: bias is {{bias_clean_band}} µg/m³ on days
 below the WHO 24-hour guideline and {{bias_extreme_band}} µg/m³ above six times it, where RMSE
 reaches {{rmse_extreme_band}} µg/m³ on the {{share_extreme_band}}% of rows in that band. Winter

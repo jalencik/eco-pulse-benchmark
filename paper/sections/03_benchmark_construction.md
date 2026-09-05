@@ -94,8 +94,11 @@ Purge = max_lag + max_horizon = 168 + 72 =
 240 hours, applied at both block boundaries. A test recomputes this from the
 registered model definitions rather than reading a constant, so adding a model with a longer
 feature window fails the build instead of quietly leaking across the boundary. The failure
-mode this prevents is specific: a 168-hour rolling feature computed at the first test
-timestamp reads 168 hours of training labels.
+mode this prevents runs in both directions across a boundary: a training row's forecast
+horizon reaching forward into the block that follows, so that its label is a value the next
+block is meant to hold out; and a test row's feature window reaching back into the block
+before, so that its inputs are built from labels the model was tuned on. The purge width is
+the sum of the two reaches.
 
 ## 3.4 Feature admissibility is typed, not documented
 

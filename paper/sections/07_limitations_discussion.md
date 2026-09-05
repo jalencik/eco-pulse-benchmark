@@ -154,10 +154,26 @@ stand for more than it shows.
 
 What survives normalisation is the bias. It falls monotonically across every fold without
 exception (rho = -1.00), from 14.4 µg/m³ in
-Bishkek, the cleanest city in the benchmark, to -25.3 µg/m³ in
-Dushanbe, the most polluted. That is the regression-toward-the-training-mean
-signature: a model fitted on five cities and asked for a sixth predicts toward the levels it
-was trained on, over-predicting clean cities and under-predicting dirty ones.
+Bishkek, the cleanest city in the benchmark by test-block mean, to
+-25.3 µg/m³ in Dushanbe, the most polluted. A perfect rank
+correlation over six folds should not be read as a strong empirical regularity, because it is
+close to forced: the model's predicted city means span only 6.77 µg/m³
+(22.37 to 29.14) against an observed span of
+35.23 µg/m³ (12.42 to 47.64), and any
+predictor that flat is monotone-biased by arithmetic. The substantive finding is the
+flatness. Transferred to a city it has never seen, the model returns something close to a
+regional level and does not move it with the city, over-predicting clean cities and
+under-predicting polluted ones. Whether that is best described as regression toward the
+training mean or as the absence of any feature that carries a city's level is a distinction
+this design cannot make; Section 7.6 notes that the one family of predictors that would
+most directly carry it, meteorology, is absent.
+
+One caveat on "cleanest". Bishkek's 2024 test-block mean of
+12.42 µg/m³ is low against every published estimate for that city, which
+is routinely among the most polluted capitals in the world during the heating season; the
+2024 record here comes from the merged AirNow and StateAir feeds whose disagreement Section
+7.1 documents. The ordering in this section is the ordering of the frozen test block, not a
+claim about the cities' climatology.
 
 **Part of that bias is mechanical, and the table shows which part.** The reference model is
 fitted on `log1p` and inverted with `expm1` (Section 5.3), and `expm1` of a conditional mean
@@ -199,7 +215,7 @@ Recomputing the primary analysis on the 1622 rows of the five reference-grade
 cities gives the same verdict. The model's RMSE falls to 28.36 µg/m³ against
 CAMS at 30.19 µg/m³, both lower than the pooled figures because Khujand is
 the hardest fold, and the mean loss differential moves from -96.2 to
--98.3 — marginally *more* favourable to the model, not less. Neither primary
+-98.3 (µg/m³)² — marginally *more* favourable to the model, not less. Neither primary
 test reaches significance in either set: paired *t* *p* = 0.1392 with all six
 cities and 0.2165 without Khujand; the exact permutation test gives
 0.1250 and 0.2500.
@@ -212,8 +228,10 @@ city does to the test. The paired *t* result is the informative half of the comp
 
 The classification is made by rule in `t7_06_leave_khujand_out.csv` rather than by reading,
 and it is **ROBUST**: no primary test flips, the sign does not reverse, and the effect
-does not move materially. The paper's central negative result does not depend on the low-cost
-city.
+does not move materially. For a result that is null on all six cities that verdict certifies
+one thing, that the null persists with the incomparable city removed; it does not, and could
+not, certify a positive result. The paper's central negative result does not depend on the
+low-cost city.
 
 ## 7.5 Zero-drift reporting, and the drift it caught
 
@@ -250,9 +268,16 @@ one now.
   (11.38 µg/m³) exceeds seed standard deviation
   (1.79 µg/m³) by roughly an order of magnitude. Conclusions are far more
   sensitive to which cities are in the set than to any training randomness.
-- **ERA5 is oracle-only and incompletely retrieved.** Its measured latency (163 h) exceeds
-  every evaluated horizon, so it cannot enter the deployable set. The multi-year retrieval
-  was stopped once that was established.
+- **There is no meteorological predictor in any tier.** ERA5's measured latency (163 h)
+  exceeds every evaluated horizon, so it cannot enter the deployable set, and the multi-year
+  retrieval was stopped once that was established, so it does not enter the retrospective
+  set either. The consequence is larger than the latency finding it came from: the reference
+  model has no boundary-layer height, wind speed, temperature or humidity term, and those
+  are the first-order controls on day-to-day urban PM2.5 in basin cities under winter
+  inversion. Some of that variance reaches the model indirectly through the CAMS forecast
+  and the calendar terms. A model with a deployable meteorological input, such as an NWP
+  forecast at the same lead time as CAMS, is the most obvious untested configuration on this
+  benchmark.
 - **One item of prior art is unresolved.** A 2025 conference abstract claims the first
   machine-learning PM2.5 prediction for Tashkent. The publisher page returns HTTP 403 and
   the record is absent from OpenAlex, Crossref, Semantic Scholar and Europe PMC, so **its

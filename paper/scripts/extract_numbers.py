@@ -442,6 +442,43 @@ if _ens_f.exists():
     put("taskn_ensemble_rmse", float(_per_fold_ens.mean()))
     put("n_seeds_ensembled", int(len([c for c in _ep.columns if c.startswith("lgbm_seed")])), 0)
 
+# Daily-resolution Task N ladder, per model. Table 6.1 and Figure 2 had been placing hourly
+# baseline RMSEs (t3_02) beside daily model RMSEs, which is the resolution mixing the paper
+# itself forbids in Section 4.3. Legal rungs only; the oracle constant is excluded here.
+_dl_f = T / "t3_06_task_n_baselines_daily.csv"
+if _dl_f.exists():
+    _dl = pd.read_csv(_dl_f)
+    _dl = _dl[_dl.legal.astype(str).str.lower() == "true"]
+    for _m, _g in _dl.groupby("model"):
+        put(f"p3n_daily_{_m}_rmse", float(_g.rmse.mean()))
+        put(f"p3n_daily_{_m}_r2", float(_g.r2.mean()))
+    _dbest = _dl.groupby("model").rmse.mean().idxmin()
+    put("p3n_daily_best_rmse_model", _dbest)
+    put("p3n_daily_best_rmse", float(_dl.groupby("model").rmse.mean().min()))
+
+# Why the bias relation is monotone. The held-out-city predictions barely vary between
+# cities, so bias = predicted mean - observed mean is a decreasing function of observed mean
+# almost by construction. The spread of the two is what the reader needs to see.
+_pm_f = T / "t6_01_predictions_task_n.csv"
+if _pm_f.exists():
+    _pm = pd.read_csv(_pm_f).groupby("fold").agg(obs=("pm25", "mean"), pred=("lgbm", "mean"))
+    put("pred_city_mean_min", float(_pm.pred.min()))
+    put("pred_city_mean_max", float(_pm.pred.max()))
+    put("pred_city_mean_range", float(_pm.pred.max() - _pm.pred.min()))
+    put("obs_city_mean_min", float(_pm.obs.min()))
+    put("obs_city_mean_max", float(_pm.obs.max()))
+    put("obs_city_mean_range", float(_pm.obs.max() - _pm.obs.min()))
+
+# How many hypothesis tests the deposited tables contain, so the manuscript can say which
+# family is corrected and admit that the rest are descriptive.
+_n_p = 0
+for _tp in sorted(T.glob("t*_*.csv")):
+    _tdf = pd.read_csv(_tp)
+    for _c in _tdf.columns:
+        if _c == "p" or _c.endswith("_p") or _c in ("p_value", "mannwhitney_p", "paired_p"):
+            _n_p += int(_tdf[_c].notna().sum())
+put("n_p_values_in_tables", _n_p, 0)
+
 _sig_f = T / "t6_06_significance.csv"
 if _sig_f.exists():
     _s = pd.read_csv(_sig_f)

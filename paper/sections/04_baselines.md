@@ -37,15 +37,23 @@ does not read the recent past. **Only the same-hour 7-day mean achieves positive
 (0.11); every other rung is worse than predicting the test-block
 mean.
 
-**Figure 2** shows the full Task N ladder, including the tuned model of Section 5 for
-context. Every interpolation rung except ordinary kriging sits above the training pool
-mean, and kriging clears it by under 1 µg/m³.
+**Figure 2** shows the full Task N ladder at daily resolution, including the tuned model of
+Section 5 for context, so that every bar is comparable with the learned model's. At that
+resolution the two interpolators lead the credential-free rungs (IDW
+30.10, kriging 30.33 µg/m³) and every
+rung sits below the training-pool mean (33.83). The hourly
+table in Section 4.2 orders the same methods differently, with kriging alone under the pool
+mean, and the two resolutions are not comparable to one another.
 
 ![Figure 2](figures/fig2_baseline_ladder.png)
 
-**Figure 2.** Task N baseline ladder, leave-city-out mean RMSE (µg/m³). Lower is better.
-The tuned model of Section 5 is shown in dark fill for context; every credential-free
-interpolation rung sits above the training pool mean.
+**Figure 2.** Task N baseline ladder at daily resolution, leave-city-out mean RMSE (µg/m³),
+so that every bar is comparable with the learned model's. Lower is better. The tuned model of
+Section 5 is shown in dark fill for context. At this resolution the two interpolators lead
+the credential-free rungs (IDW 30.10, kriging
+30.33) and the training-pool mean sits at
+33.83 µg/m³; the hourly ladder in Section 4.2 orders them
+differently and is not comparable to this panel.
 
 ## 4.2 Task N — nowcasting under leave-city-out
 

@@ -41,10 +41,14 @@ and be disseminated as received". Its stated scope is the Mission China programm
 that did serve them published no equivalent statement. We nonetheless attribute the
 observations to the U.S. Department of State and carry the verification caveat, and we treat
 the final clause as a further reason not to redistribute a merged, quality-controlled,
-daily-aggregated panel. `data/MANIFEST.md` sets out the full evidence and its limits. Satellite retrievals are Sentinel-5P (CO, NO₂, SO₂, absorbing
-aerosol index) and MODIS MAIAC AOD; chemistry-transport forecasts are Copernicus CAMS; and
-reanalysis meteorology is ERA5. Each source, its access route, its licence status and its
-measured acquisition latency are recorded in `data/MANIFEST.md`.
+daily-aggregated panel. `data/MANIFEST.md` sets out the full evidence and its limits.
+
+**Predictor sources.** Satellite retrievals are Sentinel-5P (CO, NO₂, SO₂, absorbing aerosol
+index) and MODIS MAIAC AOD; the chemistry-transport forecast is Copernicus CAMS. ERA5
+reanalysis was retrieved and latency-tested but enters no feature tier (Methods), so it is a
+source the pipeline touched rather than a predictor the results use. Each source, its access
+route, its licence status and its measured acquisition latency are recorded in
+`data/MANIFEST.md`.
 
 **Why the panel is not deposited here.** Licence terms are heterogeneous across the ten source
 feeds, and for the four StateAir feeds no licence has been recorded by the platform that
@@ -68,9 +72,11 @@ and figure, and render this manuscript is openly available at
 `https://github.com/jalencik/eco-pulse-benchmark`, archived at the deposit above, under an
 MIT licence.
 
-**Environment.** Python 3.12 (pinned `>=3.12,<3.13`), with numpy, pandas, scipy,
-scikit-learn, LightGBM, pyarrow and matplotlib. Exact versions are pinned in
-`pyproject.toml`; `python tasks.py setup` creates the environment.
+**Environment.** Python 3.12 (`>=3.12,<3.13`), with numpy, pandas, scipy, scikit-learn,
+LightGBM, pyarrow and matplotlib. `pyproject.toml` declares compatible ranges;
+`requirements-lock.txt` records the exact versions the deposited tables were produced with,
+and is the file to install from when byte-identical regeneration is the goal.
+`python tasks.py setup` creates the environment.
 
 **Reproduction.** A single command runs the whole chain — lint, type check, the full test
 suite, checksum verification, split regeneration, baseline ladder, model layer, table

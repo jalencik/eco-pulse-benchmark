@@ -7,8 +7,8 @@ Task N and Task F reported separately throughout.
 
 | Model | RMSE (µg/m³) | MAE | R² |
 |---|---:|---:|---:|
-| best spatial baseline (kriging) | 39.71 | — | -0.22 |
-| training-pool mean (constant) | 40.69 | — | -0.24 |
+| best spatial baseline (idw_k5_p2, daily) | 30.10 | — | -0.32 |
+| training-pool mean (constant, daily) | 33.83 | — | -0.60 |
 | CAMS, pooled debias | 29.77 | 21.19 | -0.14 |
 | LightGBM, static only | 28.63 ± 0.17 | 18.39 | -0.15 |
 | LightGBM, deployable | 28.56 ± 0.52 | 17.72 | -0.09 |
@@ -157,7 +157,11 @@ claim is the city-level test in Section 6.2b, not these. Six folds are tested, s
 *p*-values are additionally reported with a Holm step-down correction (Holm, 1979) in
 `t6_07_per_fold_holm.csv`; **3 of 6 survive it at α = 0.05.**
 The correction family is the 6 per-fold comparisons of the same model pair,
-declared here because a family chosen after seeing the *p*-values is not a correction.
+declared here because a family chosen after seeing the *p*-values is not a correction. It is
+the only corrected family. The deposited tables carry 378 *p*-values in
+total, across the hourly ladders, the lag-sensitivity sweeps and the robustness checks; those
+are reported as descriptive diagnostics and no inferential claim in this paper rests on any of
+them individually. The paper's inference is the city-level primary analysis of Section 6.2b.
 
 ### 6.2b Which *p*-value is the paper's claim
 
@@ -248,8 +252,9 @@ Section 4.3.
 
 ![Figure 3](figures/fig3_per_city_rmse.png)
 
-**Figure 3.** Held-out city RMSE (µg/m³), tuned LightGBM against debiased CAMS. Ashgabat
-is the fold where the sign reverses; the two are statistically indistinguishable there.
+**Figure 3.** Held-out city RMSE (µg/m³), tuned LightGBM against debiased CAMS.
+Ashgabat and Bishkek are the folds where the sign reverses; in neither is the
+difference statistically separable.
 
 ![Figure 5](figures/fig5_obs_vs_pred.png)
 

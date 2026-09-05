@@ -99,8 +99,9 @@ Two are derived and motivated by findings rather than convention:
 Note `deployable` does **not** require `CDS_API_KEY`. ERA5 is oracle-only, and a test
 asserts that. If a deployable run ever needs the CDS key, something has leaked.
 
-`static_only` matters more than it looks: given that Phase 3 found *no* credential-free
-nowcaster beats a trivial always-exceed predictor, knowing how much leave-city-out signal
+`static_only` matters more than it looks: given that Phase 3 found the best credential-free
+nowcaster clears a trivial always-exceed predictor by only 0.034 of F1 (an earlier version of
+this note said none clears it, which t3_02 contradicts), knowing how much leave-city-out signal
 is explained by geography with **zero time-varying input** sets the floor a satellite model
 must clear.
 

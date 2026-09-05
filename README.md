@@ -50,7 +50,7 @@ establish, plus the two commands that rebuild the derived panel from the origina
 with an OpenAQ key.
 
 That being said, **verifying the benchmark needs no credentials and no rebuild.**
-`sha256sum -c benchmark/splits/splits.sha256` is enough, and the whole test suite runs
+`cd benchmark/splits && sha256sum -c splits.sha256` is enough, and the whole test suite runs
 offline.
 
 ## Scoring a method on this benchmark
@@ -125,7 +125,15 @@ committed, for the licence reasons above. With an `OPENAQ_API_KEY` in `.env` (se
 ```bash
 python -m ecopulse_ca.ingest.openaq --out data/interim/station_census.csv
 python scripts/pull_panel.py
+python scripts/build_benchmark_panel.py
 ```
+
+That is the ground truth. The predictors need two more accounts, and they are not optional:
+MAIAC AOD, the Sentinel-5P products and the static geography are reduced server-side on
+Google Earth Engine (`scripts/pull_maiac.py`, `pull_s5p_*.py`), and the CAMS forecast comes
+from the Copernicus Atmosphere Data Store (`scripts/pull_cams.py`). `REGISTRATION.md` covers
+all three registrations. Nothing in `reproduce` fetches from the network; it expects the
+extracts under `data/interim/` to exist.
 
 Then one command rebuilds every reported number end to end:
 
@@ -141,6 +149,11 @@ Where `make` is missing, `python tasks.py reproduce` is the same chain. It runs 
 typecheck, tests, splits (frozen and hash-verified *before* any model sees data), baselines
 over 5 seeds, tables, manuscript render, stitch, and it stops at the first failure. If you
 try it without the panel it fails with instructions instead of a bare traceback.
+
+`make reproduce` is idempotent. `pyproject.toml` declares compatible version ranges;
+`requirements-lock.txt` records the exact versions the committed tables were produced
+with, and is the file to install from (`pip install -r requirements-lock.txt`) when
+byte-identical regeneration is the goal rather than a working environment.
 
 `make reproduce` is idempotent. Running it again leaves the working tree clean, including
 `splits.sha256`, whose freeze timestamp is preserved when the hash has not changed.

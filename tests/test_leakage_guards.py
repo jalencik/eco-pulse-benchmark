@@ -78,9 +78,10 @@ def test_purge_gap_covers_the_declared_feature_lag(splits, blocks):
     )
     for gap in ("purge_train_val", "purge_val_test"):
         width_h = (_ts(blocks[gap]["end"]) - _ts(blocks[gap]["start"])).total_seconds() / 3600 + 1
-        assert width_h * 24 >= 0  # width is in hours; the daily models consume whole days
-        assert width_h >= 240 or width_h >= purge_h / 24, (
-            f"{gap} width {width_h} h does not cover the declared purge"
+        # Both quantities are in hours. An earlier version of this assertion compared hours
+        # to purge_h / 24 and carried a second clause that could not fail.
+        assert width_h >= purge_h, (
+            f"{gap} width {width_h} h does not cover the declared purge {purge_h} h"
         )
 
 

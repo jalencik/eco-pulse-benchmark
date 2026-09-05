@@ -164,13 +164,17 @@ bright-surface retrieval matters here: much of the study region is high-albedo d
 seasonal snow, the conditions under which coarser algorithms lose the surface-aerosol
 separation.
 
-**The split between clean and contaminated features follows retrieval physics.** CO uses the
-2.3 µm shortwave-infrared band and AAI uses ultraviolet reflectance *ratios* rather than
-absorption depth (Veefkind et al., 2012); both survive winter geometry and cloud, and neither
-shows target-correlated missingness. MAIAC (visible/near-infrared) and the ultraviolet
-absorption retrievals do not.
+**The split between clean and contaminated features follows retrieval physics, with one
+exception the table forces.** AAI uses ultraviolet reflectance *ratios* rather than
+absorption depth (Veefkind et al., 2012), survives winter geometry and cloud, and is the only
+product whose missingness is not target-correlated ({{r7_aai_p}}). CO's 2.3 µm
+shortwave-infrared retrieval also survives winter geometry, and its December coverage is far
+higher than SO₂'s, but its missingness still carries a detectable association with the
+target ({{r7_co_p}}), so it is grouped with the contaminated products rather than with AAI.
+MAIAC (visible/near-infrared) and the ultraviolet absorption retrievals are contaminated on
+both counts.
 
-**The two clean features are complementary to the contaminated ones.** AOD and AAI are both
+**The one clean feature is complementary to the contaminated ones.** AOD and AAI are both
 present on {{comp_both}}% of station-days; AAI alone covers a further {{comp_aai_only}}%; neither
 is available on {{comp_neither}}%. Usable satellite coverage therefore rises from
 {{comp_both}}% to {{comp_combined}}%, and the coverage AAI
