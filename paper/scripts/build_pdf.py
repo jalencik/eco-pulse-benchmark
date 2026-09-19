@@ -121,6 +121,15 @@ def main(argv: list[str]) -> int:
         print(f"FAILED: {result.err} error(s) rendering {out.name}")
         return 1
 
+    # A second copy under the name the manuscript is submitted as. The build path keeps its
+    # historic name because tests, three scripts and the Makefile bind to it; renaming that is
+    # a separate change. A submission system wants a file the editor can recognise, so the
+    # copy carries the paper's name and is the one to upload.
+    if src == DEFAULT_IN:
+        submission = src.parent / "Eco Pulse Benchmark.pdf"
+        submission.write_bytes(out.read_bytes())
+        print(f"wrote {submission}  (the file to upload)")
+
     kb = out.stat().st_size / 1024
     print(f"wrote {out}")
     print(f"  {len(text.split()):,} words -> {kb:,.0f} KB")
