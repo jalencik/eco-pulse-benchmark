@@ -1,61 +1,63 @@
-## Background and Summary
+## 1. Introduction
 
-Central Asia is among the most polluted inhabited regions on earth, and among the least
-instrumented. Tursumbayeva et al. (2023) put annual PM2.5 in six regional capitals at 4.3–12.6
-times the WHO 2021 guideline, tracing the burden mainly to coal combustion rather than
-transport, against official emissions inventories. Source-apportionment studies reach the same
+Tursumbayeva et al. (2023) put annual PM2.5 in six Central Asian capitals at 4.3–12.6 times
+the WHO 2021 guideline, and attribute most of that burden to coal combustion, not transport,
+against official emissions inventories. Source-apportionment studies reach the same
 conclusion independently in Kazakhstan (Tursun et al., 2025) and Tajikistan (Papagiannis et
-al., 2024). The monitoring base beneath those numbers is thin and unevenly
-open: Turkmenistan operates no national network, Kazakhstan releases data only to users
-physically inside the country, and only Kyrgyzstan publishes in a fully open form
-(OpenAQ, 2025).
+al., 2024). The monitoring base beneath those numbers is thin and unevenly open. Turkmenistan
+operates no national network, Kazakhstan releases data only to users physically inside the
+country, and only Kyrgyzstan publishes in a fully open form (OpenAQ, 2025).
 
-Estimates are not what the region lacks. Global gridded products
-(van Donkelaar et al., 2021) already assign PM2.5 values
-across Central Asia, and the epidemiological literature consumes them. What nobody can do is
-check those estimates, or set two methods against each other on identical terms. There is no
-open station-level benchmark for the region — no frozen splits, no declared protocol, no
-shared evaluation.
+Global gridded products (van Donkelaar et al., 2021) already assign PM2.5 values across
+Central Asia and the epidemiological literature consumes them, but nobody can check those
+values against ground observations, or score two methods on the same terms, because the region
+has no open station-level benchmark.
 
-The cost of that absence is measurable. Consider the closest analogue: PM2.5 estimation across
-Xinjiang, an arid, dust-affected, sparsely monitored region much like this one. Jin et al.
-(2022) report R² between 0.73 and 0.81 under 10-fold cross-validation with no spatial
-stratification. With 41 stations in 16 cities and 8-day averaging, that design places
-observations from the same station, often the same window, on both sides of the split. Such a
-figure measures interpolation among stations already held rather than estimation where no
-monitor exists, and nothing in a reported R² separates the two. The remedy is established:
-blocked validation for spatially, temporally or hierarchically structured data (Roberts et
-al., 2016), for spatially derived predictors (Meyer et al., 2019) and for particulate data
-specifically (Alazmi and Rakha, 2022), with validation strategy named among the systematically
-overlooked issues in the field (Tang et al., 2024). What the region has never had is a
-benchmark that enforces it.
+The objective of this work is to supply that benchmark. We fixed, before producing the
+reported results, which cities and days a method is evaluated on, what it is compared against,
+and how the comparison is scored. The evaluation withholds an entire city at a time, so a
+score answers the question the region actually faces: what is the PM2.5 concentration in a
+city where no monitor has ever operated? Methods are scored on those withheld cities against a
+mandatory ladder of constant and spatial-interpolation baselines, and against a bias-corrected
+CAMS forecast, the comparator on which the primary inference is run.
 
-AQ-Bench (Betancourt et al., 2021) is the precedent — 5,577 stations worldwide, split by
-spatial clustering at a 50 km threshold — but it targets long-term ozone metrics from station
-metadata in a time-independent regression, and excludes Central Asia entirely. We borrow its
-spatial clustering rationale rather than inventing a second one, and diverge on pollutant,
-target, temporal protocol and region. AirDelhi (Chauhan et al., 2023) offers a second
-precedent for fine-grained particulate benchmarking, confined to a single city.
+Why the protocol matters can be seen in the closest published analogue. Jin et al. (2022)
+estimate PM2.5 across Xinjiang, an arid, sparsely monitored region like this one, and report R²
+between 0.73 and 0.81 under 10-fold cross-validation with no spatial stratification. With 41
+stations in 16 cities and 8-day averaging, that design places observations from the same
+station, often from the same window, on both sides of the split. The resulting figure describes
+interpolation among stations the model already holds. It says little about estimation where no
+monitor exists, and a reported R² does not separate the two cases. Blocked validation is the
+established remedy for structured data (Roberts et al., 2016), for spatially derived predictors
+(Meyer et al., 2019) and for particulate data specifically (Alazmi and Rakha, 2022), and
+validation strategy is named among the field's systematically overlooked issues (Tang et al.,
+2024). No benchmark has enforced it for this region.
 
-This paper documents a benchmark of {{n_stations}} instruments across
-{{n_cities}} cities spanning {{train_start}} to {{test_end}}. Splits were frozen and hashed
-before the reported results were produced: blocked-temporal with a purge gap of
-{{purge_hours}} hours from the maximum feature lag ({{max_lag_hours}} h) and horizon
-({{max_horizon_hours}} h), leave-city-out over {{n_loco_folds}} folds, and leave-station-out
-where station density allows ({{n_lso_folds}} folds; {{lso_ineligible}} hold one instrument
-each and are named ineligible rather than quietly dropped). Immutability is enforced by a
-test that fails for the authors exactly as for anyone else. Every predictor carries a measured
-latency and a typed availability flag, so anything that cannot exist at prediction time is
-barred from deployable configurations by test rather than convention.
+AQ-Bench (Betancourt et al., 2021) is the nearest precedent, with 5,577 stations worldwide
+split by spatial clustering at a 50 km threshold. It targets long-term ozone metrics from
+station metadata in a time-independent regression, and it excludes Central Asia. We adopt its
+spatial clustering rationale. Pollutant, target, temporal protocol and region differ. AirDelhi
+(Chauhan et al., 2023) is a second precedent for fine-grained particulate benchmarking,
+confined to a single city.
 
-One fold deserves naming. Khujand's stations begin after the training block closes, so the
-city contributes no training label anywhere in the record — not one row. A model arrives with
-no local history and must return a concentration regardless. This is the harshest test the
-benchmark contains, and the one that matches the deployment case the work exists for: an
-unmonitored city asking for a number it has never been given. We report it separately;
-averaging it into the other five would report neither.
+The benchmark covers {{n_stations}} instruments across {{n_cities}} cities, spanning
+{{train_start}} to {{test_end}}. Splits were frozen and hashed before the reported results were
+produced, and a test checks the committed file against that digest on every run, so a split
+cannot change without a version raise. Leave-city-out withholds one city at a time over {{n_loco_folds}}
+folds. Blocked-temporal separates training from test in time, with a purge of {{purge_hours}}
+hours, wide enough that no training row's leave-city-out feature window reaches the block
+that follows. A variable unknowable at prediction time cannot
+enter a configuration presented as deployable, because every predictor carries a measured
+acquisition latency.
 
-The intended reuse is direct. Any method producing a PM2.5 estimate, statistical, physical or
-learned, can be scored on these splits against the included baseline ladder without
-re-deriving a protocol, and without the ambiguity that makes existing regional figures
-incommensurable.
+One fold is worth singling out. Khujand's two sensors begin on {{khujand_first_obs_a}} and
+{{khujand_first_obs_b}}, after the training block closes, so the Khujand fold is zero-shot: the
+model that scores it has seen no Khujand label. Every fold refits on training and validation
+rows together, and the validation block ends on {{val_end}}, so at most the first weeks of
+Khujand's record enter the five other folds' pools. We report the primary inference both with
+and without Khujand (Statistical validation).
+
+On these splits the tuned reference model scores {{taskn_retrospective_rmse}} µg/m³ fold-mean
+RMSE against {{taskn_cams_rmse}} µg/m³ for pooled-debiased CAMS, a difference six cities
+cannot separate (paired t p = {{sig_primary_t_p}}), and any method producing a PM2.5 estimate
+can be scored on the same terms.

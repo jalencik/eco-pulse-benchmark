@@ -44,6 +44,7 @@ ORDER = [
     "03_data_records",
     "04_technical_validation",
     "05_usage_notes",
+    "05b_conclusions",
     "06_availability",
     "07_declarations",
 ]
@@ -79,12 +80,28 @@ def main() -> int:
         return 1
 
     # References. Scientific Data lists References as a required section, and this descriptor
-    # cites six works in-text; a citing document with no reference list fails editorial
+    # cites works in-text; a citing document with no reference list fails editorial
     # screening outright. Built from research/sources.json -- the same resolver-verified
     # records the research-article manuscript uses -- and restricted to works this document
     # actually cites, so it is not padded with the longer article's bibliography.
     body = "\n\n".join(parts)
-    cited = set(re.findall(r"\(([A-Z][\w'’-]+)(?: et al\.| and [A-Z][\w'’-]+)?, (\d{4})\)", body))
+    # Match both citation forms, "(Jin et al., 2022)" and "Jin et al. (2022)", on a
+    # whitespace-collapsed body: the templates are hard-wrapped, and a citation split across
+    # a line ("Papagiannis et" at a line end, "al., 2024" on the next) silently dropped out of the list before this.
+    # Lowercase particles ("van Donkelaar") are allowed; the record's surname is the last token.
+    _flat = re.sub(r"\s+", " ", body)
+    _who = r"((?:[a-z]+ )?[A-Z][\w'’-]+(?: et al\.| and (?:[a-z]+ )?[A-Z][\w'’-]+)?)"
+
+    def _first_surname(who: str) -> str:
+        return re.split(r" et al\.| and ", who)[0].split()[-1]
+
+    cited = {
+        (_first_surname(w), y) for w, y in re.findall(rf"\({_who}, ((?:19|20)\d{{2}})\)", _flat)
+    }
+    cited |= {
+        (_first_surname(w), y)
+        for w, y in re.findall(rf"(?<!\w){_who} \(((?:19|20)\d{{2}})\)", _flat)
+    }
     records = json.loads((ROOT / "research" / "sources.json").read_text(encoding="utf-8"))
 
     def _surname(rec: dict) -> str:

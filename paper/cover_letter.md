@@ -1,6 +1,6 @@
 # Cover letter
 
-> **Venue-specific fields.** This letter is written to be portable. The four bracketed
+> **Venue-specific fields.** This letter is written to be portable. The two bracketed
 > placeholders below, and the closing paragraph on article-processing charges, are the only
 > parts that change per venue. `paper/journal_submission_notes.md` records what each
 > candidate venue expects and which of these to keep.
@@ -8,7 +8,7 @@
 **Manuscript title:** A quality-controlled PM2.5 dataset with frozen cross-city evaluation
 splits for six Central Asian cities
 
-**Article type:** [ARTICLE TYPE]
+**Article type:** Research article
 
 **Corresponding author:** Jaloliddin Musayev, International House Tashkent Academic Lyceum,
 Tashkent, Uzbekistan. jaloliddin2009applicant@gmail.com, ORCID 0009-0003-0210-3687
@@ -30,17 +30,17 @@ re-pull.
 
 Three properties of the work seem to us to carry it.
 
-First, the processing decisions are documented rather than assumed. Every quality-control
+First, the processing decisions are documented, not assumed. Every quality-control
 rule records its effect on *n* and the direction of bias if it is wrong, and the full decision
 log is released with the data. One rule was added during validation after it revealed that two
 records 6.06 km apart were a single US-embassy monitor republished under two programmes; that
-correction, and the earlier claim it retracts, are both stated in the manuscript rather than
+correction, and the earlier claim it retracts, are both stated in the manuscript, not
 quietly fixed.
 
-Second, the evaluation splits are immutable by test. `splits.sha256` is compared against a
-fresh build on every run, and the test fails for the authors exactly as it does for anyone
-else. Changing a split requires raising the benchmark version and regenerating every published
-number, which is deliberately harder than editing a JSON file.
+Second, the evaluation splits are immutable by test. A test checks the committed `splits.json`
+against its published digest on every run, by canonical form and by raw bytes, and it fails for
+the authors exactly as it does for anyone else. Changing a split requires raising the benchmark
+version and regenerating every published number.
 
 Third, the reference results are reproducible. A single command runs lint, type checking, the
 full test suite, checksum verification, split regeneration, the baseline ladder, the model
@@ -49,11 +49,11 @@ result tables byte-identically under SHA-256.
 
 Two things we would rather you heard from us than found for yourself.
 
-**The reference implementation is a reference point, not a result.** It records the lowest
-error of six legal baselines, but the paired difference across six cities is not
-statistically separable, mean per-fold R² is negative, and the model's predicted city means
-barely vary between cities, so its bias tracks each city's level almost by construction. We
-report all three plainly. A benchmark whose reference implementation is
+**The reference implementation is a reference point, and we do not claim it as a result.** It
+records the lowest error of the six admissible baselines, but the paired difference across six
+cities is not statistically separable, mean per-fold R² is negative, and the model's predicted
+city means barely vary between cities, so its bias tracks each city's level almost by
+construction. We report all three plainly. A benchmark whose reference implementation is
 reported honestly is more useful to the next group than one tuned until it wins, and the
 dataset's value does not rest on the model performing well.
 
@@ -66,12 +66,12 @@ different programme. We have written to the Department at its published air-qual
 (`airpollution@state.gov`) requesting clarification, and as of 2026-08-18 have not received a
 reply. Accordingly the deposit contains the derived benchmark artefacts and the
 complete pipeline code, but **not** the underlying observations, which remain publicly
-retrievable at source without credentials. The Data Availability statement sets this out, and
+retrievable at source without credentials. The Data availability statement sets this out, and
 `data/MANIFEST.md` documents the evidence and its limits per feed. We will update the
 manuscript when the Department responds, and we are glad to discuss the arrangement if it
 affects your assessment.
 
-The manuscript is not under consideration elsewhere, and all authors have approved this
+The manuscript is not under consideration elsewhere, and both authors have approved this
 submission. Use of generative AI in preparing the software and text is disclosed in the
 manuscript.
 

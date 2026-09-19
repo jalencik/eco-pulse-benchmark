@@ -29,13 +29,13 @@ RESERVED_DOI = "10.5281/zenodo.21930669"
 # Required by the Scientific Data submission guidelines, in order.
 REQUIRED = [
     "Abstract",
-    "Background and Summary",
-    "Methods",
-    "Data Records",
-    "Technical Validation",
-    "Usage Notes",
-    "Data Availability",
-    "Code Availability",
+    "1. Introduction",
+    "2. Materials and methods",
+    "3. The released benchmark",
+    "4. Results",
+    "5. Discussion",
+    "Data availability",
+    "Code availability",
 ]
 
 pytestmark = pytest.mark.skipif(not DOC.exists(), reason="descriptor not built yet")
@@ -59,10 +59,14 @@ def test_sections_appear_in_the_prescribed_order(doc):
     )
 
 
-def test_no_conclusion_section(doc):
-    """The Data Descriptor format has no Conclusion; including one invites a desk query."""
-    assert not re.search(r"^#+\s*(\d+\.\s*)?Conclusion", doc, re.MULTILINE), (
-        "the Data Descriptor format has no Conclusion section"
+def test_conclusions_section_exists(doc):
+    """The venue is not yet chosen and may be a local journal, so the manuscript is shaped as
+    a standard research article. Every such template expects a Conclusions section, and its
+    absence is the first thing a desk editor notices. (Under the earlier Data Descriptor
+    shape this guard ran in the opposite direction, because that format forbids one.)
+    """
+    assert re.search(r"^#+\s*(\d+\.\s*)?Conclusions?\b", doc, re.MULTILINE), (
+        "a research article needs a Conclusions section"
     )
 
 
@@ -83,8 +87,8 @@ def test_abstract_within_170_words(doc):
 
 
 def test_background_and_summary_within_700_words(doc):
-    body = doc.split("## Background and Summary", 1)[1].split("\n## ", 1)[0]
-    assert len(body.split()) <= 700, f"Background and Summary is {len(body.split())} words"
+    body = doc.split("## 1. Introduction", 1)[1].split("\n## ", 1)[0]
+    assert len(body.split()) <= 700, f"Introduction is {len(body.split())} words"
 
 
 def test_data_availability_does_not_assert_an_unminted_doi(doc):
@@ -99,12 +103,12 @@ def test_data_availability_does_not_assert_an_unminted_doi(doc):
     RESERVED_DOI is the *version* DOI for v1.1.0, not the concept DOI: a reported score must
     be attributable to one frozen split definition.
     """
-    section = doc.split("## Data Availability", 1)[1].split("\n## ", 1)[0]
+    section = doc.split("## Data availability", 1)[1].split("\n## ", 1)[0]
     assert RESERVED_DOI in section, (
-        f"Data Availability does not cite the reserved DOI {RESERVED_DOI}"
+        f"Data availability does not cite the reserved DOI {RESERVED_DOI}"
     )
     assert "PENDING" not in section.upper(), (
-        "a placeholder survives in Data Availability alongside a real DOI"
+        "a placeholder survives in Data availability alongside a real DOI"
     )
     others = {d.rstrip(".,)") for d in re.findall(r"10\.\d{4,9}/[^\s)\]*]+", section)}
     others.discard(RESERVED_DOI)
@@ -139,6 +143,6 @@ def test_descriptor_and_manuscript_agree_on_shared_figures(doc):
 def test_every_template_is_in_the_build_order():
     """A template on disk that the builder does not know about would be silently dropped."""
     build = (ROOT / "scripts" / "build_sdata.py").read_text(encoding="utf-8")
-    order = set(re.findall(r'"(\d\d_[a-z_]+)"', build))
+    order = set(re.findall(r'"(\d\d[a-z]?_[a-z_]+)"', build))
     on_disk = {p.name.replace(".md.tmpl", "") for p in SDATA.glob("*.md.tmpl")}
     assert on_disk <= order, f"templates not in build order: {sorted(on_disk - order)}"

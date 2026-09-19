@@ -49,7 +49,7 @@ fine-grained particulate benchmarking, confined to a single city.
 **C1 — a benchmark.** 7 stations across 6 cities. Splits were frozen
 and hashed before the results reported here were produced: blocked-temporal with a derived purge gap,
 leave-city-out over 6 folds, and leave-station-out where station density
-allows it (2 folds; Almaty, Ashgabat, Bishkek, Dushanbe, Tashkent hold one instrument each and are named
+allows it (2 folds; Almaty, Ashgabat, Bishkek, Dushanbe and Tashkent hold one instrument each and are named
 ineligible, not quietly dropped). A test enforces immutability. It fails for the
 authors exactly as it fails for anyone else.
 
@@ -59,12 +59,13 @@ the region has never applied. That framing makes a negative result publishable. 
 ours are negative.
 
 One fold deserves naming here. Khujand's stations begin after the training block closes, so
-the city contributes no training label anywhere in the record. Not one row. The model arrives
-with no local history of any kind and has to return a concentration regardless. This is the
-harshest test the benchmark contains, and it is also the one that matches the deployment
-case the work exists for: an unmonitored city asking for a number it has never been given.
-A model that collapses on Khujand has not earned the right to be deployed anywhere new. We
-report the fold on its own. Averaging it into the other five would report neither.
+the Khujand fold is zero-shot: the model that scores it has seen no Khujand label. Every fold
+refits on training and validation rows together, and the validation block ends on
+2023-12-21, so the 36 Khujand station-days inside it do enter the
+other five folds' pools. A model reaching the Khujand fold has no local history and must
+return a concentration regardless, which is the deployment case the work exists for: an
+unmonitored city asking for a number it has never been given. We report the fold on its own,
+because averaging it into the other five would describe neither.
 
 Estimating surface PM2.5 from satellite columns is itself an established line of work
 (Zang et al., 2017; Xu et al., 2018); what is new here is subjecting it to a spatial

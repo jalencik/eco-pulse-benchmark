@@ -11,7 +11,7 @@ multi-country reference in the region and the sole route to any measurement in T
 That network contracted sharply in March 2025, when the StateAir publication channel closed.
 Five of the ten contributing source feeds stop on 2025-03-04, and after co-published feeds
 are merged **2 of 7 benchmark stations
-(8881, Bishkek) end there**; the rest survive through a longer-lived feed.
+(Bishkek and Tashkent (8881)) end there**; the rest survive through a longer-lived feed.
 Reporting states that seventeen years of archive were subsequently removed from the
 originating platform.
 

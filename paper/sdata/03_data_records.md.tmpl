@@ -1,109 +1,83 @@
-## Data Records
+## 3. The released benchmark
 
-The benchmark is deposited as a single versioned archive, **`eco-pulse-ca` v{{benchmark_version}}**.
-Every file below is plain text (JSON or CSV). `splits.sha256` carries the digest of
-`splits.json`, which the test suite verifies on every run; the three split sidecars are
-projections the builder writes from the same payload and are not separately digested, so
-`splits.json` is the file to cite.
-
-Figure 1 maps the {{n_stations}} instruments, marker area proportional to each station's
-observation count and marker shape distinguishing the reference monitors from the low-cost
-sensors.
-
-![Figure 1](figures/fig1_study_area.png)
-
-**Figure 1.** The {{n_stations}} benchmark instruments across {{n_cities}} Central Asian
-cities. Marker style distinguishes the {{n_reference_instruments}} US diplomatic-post
-reference monitors from the {{n_lowcost_instruments}} Clarity low-cost sensors at Khujand.
-Leave-city-out withholds every instrument in one city at a time, so the spacing between
-cities — not between instruments — sets the extrapolation distance each fold demands.
-
-Figure 2 shows monthly hourly-completeness per station across the record, which is where
-the feed transitions, the Khujand start dates and the 2025-03-04 closure are visible.
+Coverage of the {{n_stations}} instruments over the record is shown in Figure 2. The
+benchmark is deposited as a single versioned archive, `eco-pulse-ca` v{{benchmark_version}}.
+`splits.sha256` carries the digest of `splits.json`, the file to cite. The three split sidecars are projections the builder writes
+from the same payload and are not separately digested.
 
 ![Figure 2](figures/figS1_coverage.png)
 
-**Figure 2.** Monthly hourly-completeness for each of the {{n_stations}} benchmark stations,
-from first to last observation. Dashed boxes mark the validation ({{val_start}} to
-{{val_end}}) and test ({{test_start}} to {{test_end}}) blocks. Two features of the record are
-visible directly: both Khujand sensors begin only in late 2023, after the training block
-closes, which is what makes Khujand a zero-label fold; and the record ends unevenly, with
-{{n_stations_ending_at_shutdown}} of {{n_stations}} stations
-({{stations_ending_at_shutdown}}) stopping at the StateAir closure on 2025-03-04 while the
-remainder continue past it through a longer-lived feed. All of that lies beyond the test
-block and none of it is used.
+**Figure 2.** Monthly hourly-completeness for each of the {{n_stations}} benchmark stations.
+Dashed boxes mark the validation ({{val_start}} to {{val_end}}) and test ({{test_start}} to
+{{test_end}}) blocks. Both Khujand sensors begin on {{khujand_first_obs_a}} and
+{{khujand_first_obs_b}}, after the training block closes, and the record ends unevenly, with
+{{n_stations_ending_at_shutdown}} of {{n_stations}} stations, {{stations_ending_at_shutdown}},
+stopping at the StateAir closure on 2025-03-04 while the remainder continue through a
+longer-lived feed. All of that lies beyond the test block and none of it is used.
 
 ### The frozen benchmark definition
 
-These five files *are* the benchmark. A method is evaluated on this benchmark by consuming
-them; nothing else in the archive is required.
+These five files, under `benchmark/splits/`, are the benchmark, and nothing else in the
+archive is needed to evaluate a method on it.
 
-| File | Format | Size | Contents |
-|---|---|---:|---|
-| `splits.json` | JSON | {{size_splits_json}} B | The complete benchmark definition: version, station table, temporal blocks, leave-city-out folds, leave-station-out folds, and the protocol configuration. Self-contained. |
-| `temporal_blocks.json` | JSON | {{size_temporal_blocks}} B | Train, purge, validation, purge, test and reserved blocks with UTC bounds. |
-| `leave_city_out.json` | JSON | {{size_leave_city_out}} B | The {{n_loco_folds}} spatial folds, each naming held-out city, held-out stations and training stations. |
-| `leave_station_out.json` | JSON | {{size_leave_station_out}} B | The {{n_lso_folds}} within-city folds, plus the cities named ineligible and why. |
-| `splits.sha256` | text | {{size_splits_sha}} B | SHA-256 of each file above, with the freeze timestamp. |
+| File | Format | Contents |
+|---|---|---|
+| `splits.json` | JSON | Complete benchmark definition: version, stations, temporal blocks, both fold sets, protocol configuration. |
+| `temporal_blocks.json` | JSON | Train, purge, validation, purge, test and reserved blocks with UTC bounds. |
+| `leave_city_out.json` | JSON | The {{n_loco_folds}} spatial folds, each naming held-out city, held-out stations and training stations. |
+| `leave_station_out.json` | JSON | The {{n_lso_folds}} within-city folds, plus the five cities named ineligible. |
+| `splits.sha256` | text | SHA-256 of `splits.json`, with the freeze timestamp. |
 
-**`splits.json` — record structure.**
-
-*`stations`* ({{n_stations}} records). One per instrument: `station_id`, `city`, `latitude`,
-`longitude`, `n_observations`. Station identifiers are OpenAQ `location_id` values as strings,
-except where two co-published feeds were merged into one physical instrument, in which case
-the identifier is the city name (see Methods, and `panel_sources.parquet` for per-hour
-provenance of the merge).
-
-*`temporal_blocks`* (6 records). `name`, `start`, `end`, in UTC. The two `purge_*` blocks are
-excluded from training and evaluation by construction and exist to break autocorrelation
-across the boundary.
-
-*`leave_city_out`* ({{n_loco_folds}} records). `fold`, `held_out_city`, `held_out_stations`,
-`train_stations`, `n_train_cities`.
-
-*`leave_station_out`* ({{n_lso_folds}} records plus an `ineligible_cities` list).
-`fold`, `city`, `held_out_station`, `train_stations`.
-
-*`config`*. `max_lag_hours` = {{max_lag_hours}}, `max_horizon_hours` = {{max_horizon_hours}},
-`purge_hours` = {{purge_hours}}, `test_year` = {{test_year}}, `seeds` =
-{{seeds_list}}, and `purge_rule`, which states the arithmetic relation the purge must satisfy
-so that a reader can verify it rather than trust it.
+`splits.json` holds a `stations` table ({{n_stations}} records: `station_id`, `city`,
+`latitude`, `longitude`, `n_observations`), the six `temporal_blocks` in UTC, the
+{{n_loco_folds}} `leave_city_out` and {{n_lso_folds}} `leave_station_out` folds with the
+ineligible-city list, and a `config` block (`max_lag_hours`, `max_horizon_hours`,
+`purge_hours`, `test_year`, `seeds`, `purge_rule`). Station identifiers are OpenAQ
+`location_id` values as strings, except that a merged pair carries its city name (Materials and methods).
 
 ### Reference results
 
 Provided so that a new method can be placed on the same axes without re-running the
-reference implementation. All are CSV with a header row.
+reference implementation. All are CSV with a header row, under `paper/tables/`.
 
 | File | Rows | Contents |
 |---|---:|---|
 | `t3_01_task_f_baselines_hourly.csv` | {{rows_t3_01}} | Task F baseline ladder, hourly, by station and horizon. |
 | `t3_02_task_n_baselines_hourly.csv` | {{rows_t3_02}} | Task N baseline ladder, hourly, by station, with exceedance metrics. |
-| `t3_06_task_n_baselines_daily.csv` | {{rows_t3_06}} | **Task N baseline ladder at daily resolution**, scored on the same evaluation rows as the learned models. This is the table to compare a daily model against; the hourly tables are not comparable to it. |
+| `t3_06_task_n_baselines_daily.csv` | {{rows_t3_06}} | Task N daily ladder on the learned models' evaluation rows: the table to compare a daily model against. |
 | `t4_01_cams_baseline_variants.csv` | {{rows_t4_01}} | CAMS raw, locally debiased and pooled-debiased, per station. |
 | `t5_01_loco_untuned.csv` | {{rows_t5_01}} | Untuned gradient boosting, leave-city-out, per fold and seed. |
-| `t5_02_loco_tuned.csv` | {{rows_t5_02}} | Tuned gradient boosting, leave-city-out, per fold and seed, with selected hyperparameters. |
-| `t5_07_missingness_test.csv` | {{rows_t5_07}} | The Freeze-2 exclusion scored on the test block: the tuned Task N model with and without the retrieval-count features, per fold and seed, at the hyperparameters frozen in `t5_02`. This is the table behind the non-replication reported in Technical Validation. |
-| `t6_01_predictions_task_n.csv` | {{rows_t6_01}} | **Row-level predictions** on the test block: `station_id`, `date`, observed `pm25`, ensemble `lgbm`, per-seed `lgbm_seed0`–`lgbm_seed4`, `pooled` (debiased CAMS), `fold`. |
+| `t5_02_loco_tuned.csv` | {{rows_t5_02}} | Tuned gradient boosting, all three tiers, per fold and seed, with selected hyperparameters; also carries the Task F rows. |
+| `t5_07_missingness_test.csv` | {{rows_t5_07}} | Freeze-2 ablation on the test block, with and without retrieval-count features, per fold and seed. |
+| `t6_01_predictions_task_n.csv` | {{rows_t6_01}} | Row-level test-block predictions: `station_id`, `date`, `pm25`, `lgbm`, `lgbm_seed0`–`lgbm_seed4`, `pooled` (debiased CAMS), `fold`. |
 | `t6_02_dm_lgbm_vs_cams.csv` | {{rows_t6_02}} | Diebold–Mariano per fold and pooled. |
-| `t6_06_significance.csv` | {{rows_t6_06}} | Primary and sensitivity inference with unit of analysis, statistic, *p* and confidence interval. |
+| `t6_06_significance.csv` | {{rows_t6_06}} | Primary and sensitivity inference with unit, statistic, *p* and CI. |
 | `t6_07_per_fold_holm.csv` | {{rows_t6_07}} | Per-fold *p*-values with Holm step-down correction. |
-| `t7_06_leave_khujand_out.csv` | {{rows_t7_06}} | **Leave-Khujand-out sensitivity.** The primary inference recomputed over the five reference-grade cities, with each arm's city count, row count, RMSEs, mean loss differential, both *p*-values, the attainable permutation floor and a rule-assigned verdict. |
+| `t7_06_leave_khujand_out.csv` | {{rows_t7_06}} | Primary inference over the five reference-grade cities. |
+
+The v{{benchmark_version}} archive was built on 2026-08-14 and predates two of the tables
+above. `t5_07_missingness_test.csv` and `t7_06_leave_khujand_out.csv` were produced
+afterwards and are held in the GitHub repository; a later deposit will carry them.
+
+### Scoring a method
+
+Read `splits.json`, which is self-contained. Fit only on the rows a fold permits: under
+leave-city-out no observation from the held-out city may enter training, including indirectly
+through a neighbour feature or a bias correction estimated on that city. Predict on the test
+block ({{test_start}} to {{test_end}}), score the local-calendar daily mean over at least 18
+hourly observations, and compare against `t3_06_task_n_baselines_daily.csv`, which is scored
+on the same rows at the same resolution. State the task and the tier, and never pool tasks or
+quote a retrospective number as a deployment claim. Report per city with dispersion over at
+least the {{n_seeds}} seeds used here ({{seeds_list}}), state the unit of analysis for any
+significance claim, since station-days are not independent, and give the truncation lag of any
+Diebold–Mariano test with a sensitivity sweep. The reference implementation is held to the
+same conditions.
 
 `t6_01_predictions_task_n.csv` is the most reusable record: it permits any alternative loss,
 significance procedure or aggregation to be applied to the reference implementation without
-retraining it, and its per-seed columns make the ensemble decomposable.
-
-### What is not redistributed, and why
-
-**The derived ground-truth panel is not included.** It is built from the OpenAQ archive,
-whose per-feed licence terms are heterogeneous: six of the ten source feeds carry an explicit
-licence permitting redistribution and four carry no licence record at all. Depositing the
-merged panel under a single licence would assert a uniform permission the evidence does not
-support for every feed. The full matrix, retrieved 2026-08-14, is in `data/MANIFEST.md` and
-summarised in Data Availability. `data/MANIFEST.md`
-records the full provenance of every source, and two documented commands rebuild the panel
-from the archive with an API key.
-
-This is a real limitation of the deposit and is stated rather than worked around: the split
-definitions and reference results are fully self-contained and verifiable offline, but
-*regenerating* the reference results from raw observations requires that acquisition step.
+retraining it, and its per-seed columns make the ensemble decomposable. The archive also
+holds the per-fold, per-band and per-season error tables (`t7_01`–`t7_03`) and the
+ranking-robustness table (`t7_05`) cited in Section 4. Neither the hourly panel
+nor the predictor matrix is deposited: both are rebuilt by the pipeline from the sources
+named under Predictor sources (Data availability). `panel_sources.parquet`, the per-hour
+provenance of each merge, is likewise written by the rebuild and is not in the archive.

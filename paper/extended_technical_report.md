@@ -3,12 +3,10 @@
 **Frozen leave-city-out splits, an operational-availability account, and a transfer
 baseline evaluated under whole-city holdout**
 
-**Jaloliddin Musayev**<sup>1,\*</sup>, **Asadbek Abdivayitov**<sup>2</sup>,
-**Ozodbek Yo'ldashev**<sup>3</sup>
+**Jaloliddin Musayev**<sup>1,\*</sup>, **Asadbek Abdivayitov**<sup>2</sup>
 
 <sup>1</sup> International House Tashkent Academic Lyceum, Tashkent, Uzbekistan
 <sup>2</sup> First Specialized Boarding School, Karshi, Uzbekistan
-<sup>3</sup> National University of Uzbekistan, Tashkent, Uzbekistan
 
 <sup>\*</sup> Corresponding author: jaloliddin2009applicant@gmail.com
 ORCID iDs: Jaloliddin Musayev 0009-0003-0210-3687; Asadbek Abdivayitov 0009-0006-3484-3438.
@@ -113,7 +111,7 @@ fine-grained particulate benchmarking, confined to a single city.
 **C1 — a benchmark.** 7 stations across 6 cities. Splits were frozen
 and hashed before the results reported here were produced: blocked-temporal with a derived purge gap,
 leave-city-out over 6 folds, and leave-station-out where station density
-allows it (2 folds; Almaty, Ashgabat, Bishkek, Dushanbe, Tashkent hold one instrument each and are named
+allows it (2 folds; Almaty, Ashgabat, Bishkek, Dushanbe and Tashkent hold one instrument each and are named
 ineligible, not quietly dropped). A test enforces immutability. It fails for the
 authors exactly as it fails for anyone else.
 
@@ -123,12 +121,13 @@ the region has never applied. That framing makes a negative result publishable. 
 ours are negative.
 
 One fold deserves naming here. Khujand's stations begin after the training block closes, so
-the city contributes no training label anywhere in the record. Not one row. The model arrives
-with no local history of any kind and has to return a concentration regardless. This is the
-harshest test the benchmark contains, and it is also the one that matches the deployment
-case the work exists for: an unmonitored city asking for a number it has never been given.
-A model that collapses on Khujand has not earned the right to be deployed anywhere new. We
-report the fold on its own. Averaging it into the other five would report neither.
+the Khujand fold is zero-shot: the model that scores it has seen no Khujand label. Every fold
+refits on training and validation rows together, and the validation block ends on
+2023-12-21, so the 36 Khujand station-days inside it do enter the
+other five folds' pools. A model reaching the Khujand fold has no local history and must
+return a concentration regardless, which is the deployment case the work exists for: an
+unmonitored city asking for a number it has never been given. We report the fold on its own,
+because averaging it into the other five would describe neither.
 
 Estimating surface PM2.5 from satellite columns is itself an established line of work
 (Zang et al., 2017; Xu et al., 2018); what is new here is subjecting it to a spatial
@@ -225,7 +224,7 @@ multi-country reference in the region and the sole route to any measurement in T
 That network contracted sharply in March 2025, when the StateAir publication channel closed.
 Five of the ten contributing source feeds stop on 2025-03-04, and after co-published feeds
 are merged **2 of 7 benchmark stations
-(8881, Bishkek) end there**; the rest survive through a longer-lived feed.
+(Bishkek and Tashkent (8881)) end there**; the rest survive through a longer-lived feed.
 Reporting states that seventeen years of archive were subsequently removed from the
 originating platform.
 
@@ -534,10 +533,13 @@ One qualification belongs with that, because the zero-shot framing rests on it. 
 global configuration freezes described in Section 5.3 — the `log1p` target and the exclusion
 of the retrieval-count features — were selected by scripts that score candidates on the
 held-out city's own validation block rather than on the training cities'. Khujand's 2023
-observations therefore informed those two choices, though no Khujand row entered any model
-fit and the 2024 test block was untouched by either selection. Per-fold hyperparameter tuning
-does not have this property: it validates on the training cities only. We state the
-distinction rather than let "zero-shot" carry more than it should.
+observations therefore informed those two choices. They also reach the other five folds
+through the refit: every fold refits on training and validation rows together, and the
+validation block ends on 2023-12-21, so the 36 Khujand station-days
+inside it sit in those folds' pools. What holds without qualification is narrower. No Khujand
+row enters the Khujand fold's own fit, and the 2024 test block was untouched by either
+selection. Per-fold hyperparameter tuning validates on the training cities only. We state the
+distinction so that "zero-shot" carries no more than it should.
 
 We retain it as a distinct evaluation regime rather than repairing it. Every other fold
 measures interpolation between cities the model has seen at some point in training; Khujand
@@ -1013,7 +1015,7 @@ comparison. Full robustness table: `t7_05_ranking_robustness.csv`.
 
 For reference, a constant equal to *the held-out city's own test-block mean* scores
 28.12 µg/m³. **That predictor is not legal and is not a baseline.** Under
-leave-city-out the held-out city contributes no training label anywhere in the record, so its
+leave-city-out the held-out city contributes no training row to its own fold, so its
 mean cannot be known at prediction time; it is reported as a diagnostic floor — the share of
 error that is pure within-city day-to-day variance — and the model is within
 0.11 µg/m³ of it. An earlier version of this manuscript compared the model
@@ -1346,7 +1348,7 @@ modelling choice removes it.**
 
 2 leave-station-out folds exist and both are the Khujand pair, so the
 protocol is evaluated entirely on low-cost sensors.
-**Almaty, Ashgabat, Bishkek, Dushanbe, Tashkent each hold a single instrument**, so within-city station holdout is
+**Almaty, Ashgabat, Bishkek, Dushanbe and Tashkent each hold a single instrument**, so within-city station holdout is
 undefined there.
 
 The consequence runs deeper than reduced coverage. The Q6 timezone check compares
@@ -1579,7 +1581,7 @@ one now.
 - **The record ends before the source does.** Five of the ten contributing source feeds stop
   on 2025-03-04, when the StateAir publication channel closed, and at benchmark-station level
   **2 of 7 stations
-  (8881, Bishkek) end there**; the rest survive through a longer-lived feed.
+  (Bishkek and Tashkent (8881)) end there**; the rest survive through a longer-lived feed.
   **No result in this paper speaks to current conditions.** The monitors did not all stop,
   though: as of 2026-08-14 the same
   diplomatic-post instruments are still republished through AirNow at Ashgabat (to
@@ -1738,7 +1740,7 @@ Atmosphere Data Store and Climate Data Store respectively.
 ten contributing source feeds stop there — every StateAir feed, plus Bishkek's AirNow feed —
 and at benchmark-station level, after co-published feeds are merged,
 **2 of 7 stations
-(8881, Bishkek) end there**; the others survive through their longer-lived
+(Bishkek and Tashkent (8881)) end there**; the others survive through their longer-lived
 feed. The closure was not uniform and this statement has been corrected twice: an earlier
 version said "six of the eight", which was wrong in both terms, and a later one said the
 programme itself had terminated, which overstates what the evidence supports. Three
@@ -1763,7 +1765,6 @@ editing; Visualisation; Project administration.
 
 **Asadbek Abdivayitov:** Data curation; Investigation.
 
-**Ozodbek Yo'ldashev:** Supervision; Writing — review and editing.
 
 All authors read and approved the submitted manuscript.
 

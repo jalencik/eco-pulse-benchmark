@@ -83,7 +83,7 @@ comparison. Full robustness table: `t7_05_ranking_robustness.csv`.
 
 For reference, a constant equal to *the held-out city's own test-block mean* scores
 28.12 µg/m³. **That predictor is not legal and is not a baseline.** Under
-leave-city-out the held-out city contributes no training label anywhere in the record, so its
+leave-city-out the held-out city contributes no training row to its own fold, so its
 mean cannot be known at prediction time; it is reported as a diagnostic floor — the share of
 error that is pure within-city day-to-day variance — and the model is within
 0.11 µg/m³ of it. An earlier version of this manuscript compared the model

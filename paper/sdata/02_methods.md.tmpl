@@ -1,13 +1,20 @@
-## Methods
+## 2. Materials and methods
 
 ### Study region and period
 
-The benchmark covers {{n_cities}} Central Asian cities — Almaty, Ashgabat, Bishkek, Dushanbe,
-Khujand and Tashkent — over {{train_start}} to {{test_end}}. Cities were not selected: they
-are every city in the region with an openly published PM2.5 record meeting the inclusion rules
-below. Turkmenistan operates no national network, and Kazakhstan releases national-network
-data only to users physically inside the country, so both are represented solely by US
-diplomatic-post monitors.
+The benchmark covers {{n_cities}} Central Asian cities (Almaty, Ashgabat, Bishkek, Dushanbe,
+Khujand and Tashkent) over {{train_start}} to {{test_end}} (Figure 1). Cities were not
+selected: they are every city in the region with an openly published PM2.5 record meeting the
+inclusion rules below.
+
+![Figure 1](figures/fig1_study_area.png)
+
+**Figure 1.** The {{n_stations}} benchmark instruments across {{n_cities}} Central Asian
+cities, marker area proportional to each station's observation count. Marker style
+distinguishes the {{n_reference_instruments}} US diplomatic-post reference monitors from the
+{{n_lowcost_instruments}} Clarity low-cost sensors at Khujand. Leave-city-out withholds every
+instrument in one city at a time, so the spacing between cities sets the extrapolation
+distance each fold demands.
 
 ### Ground observations
 
@@ -15,186 +22,146 @@ Hourly PM2.5 was retrieved from the OpenAQ v3 archive for all stations within th
 bounding box. 317 candidate stations were assessed. Inclusion required, as pre-registered
 before the data were inspected:
 
-**These are preliminary data.** The reference-grade observations originate with the US EPA
-AirNow programme, which states that its observational data "are not fully verified or
-validated" and "should be considered preliminary", and that they "are not subjected to the
-full validation used to officially submit and certify data in EPA's regulatory database".
-Fully validated regulatory data are held in EPA's Air Quality System and were not used here.
-The quality-control suite below is therefore applied to preliminary data and does not
-substitute for the originating agencies' validation. Any result computed on this benchmark
-inherits that status.
-
-- **Q7 span and completeness** — at least {{q7_min_years}} years of record and
-  {{q7_min_completeness_pct}}% completeness within it. This is the rule that excludes 306
-  stations, almost all low-cost units, and that excludes Astana at
-  {{astana_completeness_pct}}% completeness.
-- **Q1 physical range** — values outside [0, 1000] µg/m³ are masked.
-- **Q2 flatlining** — ≥24 consecutive identical non-zero values are masked.
-- **Q3 zero runs** — ≥6 consecutive zeros are masked.
-- **Q4 unit sanity** — station median outside [1, 500] µg/m³ rejects the series, catching
+- **Q7 span and completeness.** At least {{q7_min_years}} years of record and
+  {{q7_min_completeness_pct}}% completeness within it. This rule excludes 306 stations,
+  almost all low-cost units, and Astana at {{astana_completeness_pct}}% completeness.
+- **Q1 physical range.** Values outside [0, 1000] µg/m³ are masked.
+- **Q2 flatlining.** ≥24 consecutive identical non-zero values are masked.
+- **Q3 zero runs.** ≥6 consecutive zeros are masked.
+- **Q4 unit sanity.** A station median outside [1, 500] µg/m³ rejects the series, catching
   mg/m³ reported as µg/m³ and AQI values reported as concentrations.
 
-Every rule records its effect on *n* and its direction of bias if wrong; the full decision log
-is `data/DECISIONS.md`.
+Every decision taken under these rules records its effect on *n* and its direction of
+bias if wrong (`data/DECISIONS.md`).
 
-**Duplicate resolution (Q5).** Two distinct failures are handled separately. *Q5a*: one
-identifier appearing at more than one coordinate rejects the series. *Q5b*: several
-identifiers within 150 m are one instrument, detected by single-link clustering over the
-haversine distance, and merged. *Q5c*: any pair whose overlapping observations are
-bit-identical on more than half of samples is one instrument regardless of separation. Q5c was
-added after Q5b passed a pair 6.06 km apart that proved to be a single US-embassy monitor
-republished under two programmes; the evidence is given in Technical Validation.
+**Duplicate resolution (Q5).** *Q5a*: one identifier at more than one coordinate rejects the
+series. *Q5b*: identifiers within 150 m are one instrument, detected by single-link
+clustering over the haversine distance, and merged. *Q5c*: any pair bit-identical on more
+than half of overlapping samples is one instrument regardless of separation. Q5c was added
+after the data were inspected, when Q5b passed a pair that proved to be one instrument
+(Results).
 
-Merging is by **precedence and gap-fill, never averaging**: the feed with more observations is
-primary, the other fills only the hours the primary lacks, and per-hour provenance is retained
-in `panel_sources.parquet`. Averaging two copies of one measurement reduces no noise and, where
-the copies disagree, fabricates a third value no device produced. Three pairs merge under this
-rule — Bishkek, Ashgabat and Dushanbe — giving {{n_stations}} instruments across
-{{n_cities}} cities.
+We merge by precedence and gap-fill, never averaging: the feed with more observations is
+primary, the other fills only the hours the primary lacks, and per-hour provenance is written
+to `panel_sources.parquet` by the panel rebuild. Three pairs merge under this rule (Bishkek,
+Ashgabat and Dushanbe), giving {{n_stations}} instruments across {{n_cities}} cities, each
+merged instrument carrying its city name as `station_id`.
 
-**Q6 timezone verification.** Metadata offsets are not trusted. Each station's diurnal
-composite is cross-correlated against a regional reference, and the check reports lag
-identifiability rather than asserting a shift: Central Asian urban PM2.5 is bimodal with peaks
-roughly half a day apart, so whole-shape correlation cannot separate a 12-hour offset from
-none. Where the hypothesis is not distinguishable the station is flagged, not rejected.
+**Q6 timezone verification.** Each station's diurnal composite is cross-correlated against a
+regional reference, and a station whose lag cannot be identified is flagged (Results).
 
 **Daily target.** The prediction target is the local-calendar daily mean, requiring at least 18
-hourly observations. Local days rather than UTC: a UTC boundary splits a Central Asian night in
-half, cutting the overnight inversion peak across two days and understating both.
+hourly observations. Days are local-calendar because a UTC boundary splits a Central Asian
+night in half, cutting the overnight inversion peak across two days and understating both.
 
 ### Predictor sources
 
-Each predictor carries a **measured** acquisition latency and a typed availability flag, so
-that anything which cannot exist at prediction time is excluded from deployable configurations
-by test rather than by convention. Latency was measured rather than assumed; three of five
-initial estimates proved wrong, one by 774 days.
+Each predictor carries a measured acquisition latency and a typed availability flag, so
+anything that cannot exist at prediction time is excluded from deployable configurations by
+an automated test. Three of five initial latency estimates proved wrong when measured, one by
+774 days.
 
 - **Satellite.** Sentinel-5P CO, NO₂, SO₂ and absorbing aerosol index (Veefkind et al.,
-  2012); MODIS MAIAC AOD (Lyapustin et al., 2018).
-  Retrieval-quality fractions are carried as features, because missingness in these products is
-  correlated with the target — SO₂ retrieves on {{r7_so2_dec}}% of December days against
-  {{r7_so2_jul}}% in July,
-  a solar-geometry floor that blinds the direct winter coal tracer throughout the coal season.
-  Null rows are retained rather than imputed: interpolating across a systematically missing
-  extreme tail would invent the values that matter most.
+  2012); MODIS MAIAC AOD (Lyapustin et al., 2018). Missingness in these products is
+  correlated with the target: SO₂ retrieves on {{r7_so2_dec}}% of December days against
+  {{r7_so2_jul}}% in July. We attribute that floor mainly to solar geometry, with winter cloud
+  and snow cover likely contributing, and it blinds the direct winter coal tracer through the
+  coal season. A retrieval-validity feature (`*_valid_px`) was therefore computed for every
+  product and carried, then excluded from Task N under Freeze 2 (Results). It
+  remains available for Task F. Null rows are kept, because interpolating across a
+  systematically missing extreme tail would invent the values that matter most.
 - **Chemistry transport.** Copernicus CAMS global PM2.5 forecast, used both as a feature and,
   bias-corrected, as a baseline.
 - **No meteorological predictor.** ERA5 single-level fields (Hersbach et al., 2020) were
-  retrieved and latency-tested; at 163 h they cannot enter the deployable tier, and the
-  retrieval was stopped before a multi-year archive existed, so they enter no tier. The
+  retrieved and latency-tested. At 163 h they cannot enter the deployable tier, and the
+  retrieval was stopped before a multi-year archive existed, so they enter neither tier: the
   reference model carries no boundary-layer height, wind, temperature or humidity term.
 - **Static geography.** Elevation, terrain basin indices at multiple radii, VIIRS night-time
   lights, and population density.
 
 ### Split construction
 
-Splits were built by `src/ecopulse_ca/splits/builder.py`, hashed, and committed. They are
-immutable by test: `splits.sha256` is compared against a fresh build on every run, and the
-test fails for the authors exactly as for anyone else. Changing a split requires raising the
-benchmark version, recording the reason in `data/DECISIONS.md`, and regenerating every
-published number — deliberately more work than editing a JSON file.
+Splits were built by `src/ecopulse_ca/splits/builder.py`, hashed and committed, and a test
+checks the committed file against that digest on every run (Split integrity).
 
 **Temporal blocks.** Train, a purge, validation, a second purge, test, and a reserved
 post-test block. The test block is calendar {{test_year}}, the last full year of reference
-coverage in the frozen panel: every StateAir feed stops on 2025-03-04, when that publication
-channel closed. Each purge is
-{{purge_hours}} hours, derived rather than chosen:
-`purge_hours = max_lag_hours ({{max_lag_hours}}) + max_horizon_hours
-({{max_horizon_hours}})`, so that no training row's feature window can reach into the block
-that follows. The relation is stated in `config.purge_rule` so a reader can verify it.
+coverage, since every StateAir feed stops on 2025-03-04, when that publication channel
+closed. Each purge is {{purge_hours}} hours, derived from the feature and horizon bounds,
+`purge_hours = max_lag_hours ({{max_lag_hours}}) + max_horizon_hours ({{max_horizon_hours}})`,
+so that no training row's feature window can reach the block that follows. The relation is
+stated in `config.purge_rule`.
 
-**What that bound covers, precisely.** `max_lag_hours` bounds the features admitted under
-leave-city-out, which is the protocol every headline number in this paper is computed under.
-Task F additionally admits a station's own history, including a 30-day rolling mean whose
-window reaches 720 h and therefore crosses the purge into the preceding block. That is
-deliberate and it is not leakage in the leave-city-out sense: a forecaster at a monitored
-station genuinely holds that station's past observations at prediction time. It does mean a
-Task F test row's own-history features can overlap the validation block used for tuning, so
-Task F figures carry a weaker separation guarantee than Task N figures and the two are never
-compared. A submission that uses an own-history window longer than {{max_lag_hours}} h under
-Task N would violate the protocol; two tests in `tests/test_purge_gap.py` pin the exclusion
-and the declared window length so neither can drift unnoticed.
+`max_lag_hours` bounds the features admitted under leave-city-out, the protocol behind every
+headline number here. Task F additionally admits a station's own history, including a 30-day
+rolling mean whose 720 h window crosses the purge into the preceding block, as a forecaster
+at a monitored station genuinely would, so Task F figures carry a weaker separation
+guarantee than Task N figures and the two are never compared.
 
-**Leave-city-out** ({{n_loco_folds}} folds). Each fold withholds one city entirely — every
+**Leave-city-out** ({{n_loco_folds}} folds). Each fold withholds one city entirely, every
 station in it, for the whole record. This is the protocol the benchmark is built around,
-because it is the only one that answers the deployment question: what is the concentration at
-a location with no local monitor?
+because it is the only one whose error is measured where no monitor exists.
 
-Spatial blocking is contested, and the objection applies to a different estimand than this
-one. Wadoux et al. (2021) show that spatially blocked cross-validation is pessimistically
-biased for *map accuracy* over a fixed population, where design-based validation on a
-probability sample is the correct estimator. The quantity here is not map accuracy; it is the
-error incurred in a city that contributed no training row. For that, withholding the city is
-the estimand rather than a biased proxy for it, and a random split estimates something else.
-Meyer and Pebesma (2021) give the complementary frame: whether a held-out city falls inside
-the model's area of applicability. Technical Validation answers that question empirically: held-out-city bias falls
-monotonically with the city's mean concentration (Spearman rho = {{rho_mean_bias}}), while
-fold RMSE carries no such relation after normalisation by each city's own variability
-(rho = {{rho_mean_rmse_norm}}).
+Spatial blocking is contested, and the objection applies to a different estimand. Wadoux et
+al. (2021) show that spatially blocked cross-validation is pessimistically biased for *map
+accuracy* over a fixed population, where design-based validation on a probability sample is
+the correct estimator. The quantity here is the error incurred in a city that contributed no
+training row, for which withholding the city is the estimand itself. Meyer and Pebesma (2021)
+frame the complementary question, whether a held-out city falls inside the model's area of
+applicability.
 
 **Leave-station-out** ({{n_lso_folds}} folds). Available only where a city holds more than one
-instrument. {{lso_ineligible}} hold one instrument each and are named ineligible rather than
-quietly dropped.
-
-**Both remaining folds are the Khujand pair, and both of those instruments are low-cost
-sensors.** Merging the two co-published Dushanbe records into one instrument (see above)
-removed the only reference-grade city holding more than one device, so within-city station
-holdout is now evaluated *exclusively* on the Clarity pair. This protocol therefore says
-nothing about generalisation across the reference-monitor network, and it supports no headline
-claim in this paper. Leave-one-out protocols carry a documented failure mode of their own
-(Austin et al., 2025), which is a further reason not to rest a headline number on two folds.
-The folds are retained because they are well defined and may be useful to a method
-specifically targeting low-cost sensor transfer.
+instrument, so {{lso_ineligible}} are listed as ineligible and both remaining folds are the
+Khujand low-cost pair, the Dushanbe merge having removed the only reference-grade city with
+two devices. This protocol therefore says nothing about generalisation across the reference
+network and supports no headline claim, and leave-one-out protocols carry a documented
+failure mode of their own (Austin et al., 2025). The folds are retained for methods that
+target low-cost sensor transfer.
 
 ### Reference implementation
 
-Three feature tiers are defined by availability at prediction time — `static_only`,
-`deployable` and `retrospective` — so that a retrospective number can never be mistaken for a
+Three feature tiers are defined by availability at prediction time (`static_only`,
+`deployable` and `retrospective`), so that a retrospective number can never be mistaken for a
 deployment claim.
 
-Two tasks are defined separately and never pooled. **Task N** (nowcasting at unmonitored sites)
-withholds whole cities and admits no local history. **Task F** (forecasting at monitored
-stations) permits the station's own lagged observations; as implemented here it predicts the
-next-day daily mean from lags of 1, 2 and 7 days plus 7- and 30-day rolling means, and is
-therefore single-horizon.
+We define two tasks separately and never pool them. **Task N** (nowcasting at unmonitored
+sites) withholds whole cities and admits no local history. **Task F** (forecasting at
+monitored stations) permits the station's own lagged observations. As implemented here it
+predicts the next-day daily mean from lags of 1, 2 and 7 days plus 7- and 30-day rolling
+means, and is therefore single-horizon.
 
-The reference model is LightGBM. Hyperparameters are selected by grid search over
-{{tuning_grid_size}} combinations on the validation block only; a test parses the tuning
-function and fails if it references the test block at all. The selected configuration is then
-refit on train plus validation, with the purge block withheld, and scored once on the test
-block per configuration. Every configuration runs {{n_seeds}} seeds ({{seeds_list}}) and is
-reported as mean ± standard deviation.
+The reference model is LightGBM. We select hyperparameters by grid search over
+{{tuning_grid_size}} combinations on the validation block only, refit the selected
+configuration on train plus validation with the purge block withheld, and score it once on the
+test block. Every configuration runs {{n_seeds}} seeds ({{seeds_list}}) and is reported as
+mean ± standard deviation.
 
-**Baselines.** A mandatory ladder that every submission must climb: persistence, climatology,
-a training-pool constant, nearest-monitor, inverse-distance weighting, ordinary kriging, and
-CAMS in three variants. The CAMS bias correction is fitted on the training block only; the
-pooled variant excludes the held-out city from its own correction, so no label from a city
-informs its own reference. Baselines are additionally scored at daily resolution on the models'
-own evaluation rows, because an hourly RMSE is not comparable to a daily one.
+**Baselines.** Baselines are task-specific. Task N is scored against six rungs, three
+constants (the training-pool mean and the global mean and median), nearest monitor,
+inverse-distance weighting and ordinary kriging, tabled at daily resolution in Technical
+Validation (`t3_06`, which also carries the `oracle_city_constant` diagnostic, flagged
+`legal = False` and not a rung). Task F has its own hourly ladder of four history rungs, persistence,
+diurnal persistence, a same-hour 7-day mean and climatology (`t3_01`), at 24, 48 and 72 h,
+which the daily, single-horizon Task F reference model is not scored against. CAMS is tabled
+separately in three variants, raw, locally debiased and pooled-debiased (`t4_01`). The
+pooled-debiased variant, whose bias correction is fitted on the training block only with the
+held-out city excluded from its own correction, is the comparator for the primary statistical
+test and is not a rung of either ladder.
 
 ### Statistical methods
 
-Model-versus-baseline comparison uses the Diebold–Mariano test on squared-error differentials
-with Newey–West HAC variance and the Harvey–Leybourne–Newbold small-sample correction. Because
-the loss differential is serially correlated within station and station-days cluster within
-cities, a pooled station-day test is not a valid inference; the primary analysis aggregates to
-one value per city and tests those {{n_cities}} observations, with sensitivity analyses across
-HAC truncation lags and a cluster bootstrap. With {{n_cities}} clusters an exact sign-flip
-permutation test is reported alongside the parametric one, and its attainable floor is stated.
-Per-fold tests are Holm-corrected for multiplicity (Holm, 1979), and are read as
-descriptive diagnostics rather than as the inferential claim, since both comparators are
-estimated models rather than given forecasts (Diebold, 2015). Full detail and results are in Technical
-Validation.
+The primary metric is the root mean squared error of the daily mean, in µg/m³, computed per
+held-out city and averaged over folds. Model-versus-baseline comparison uses the
+Diebold–Mariano test on squared-error differentials with Newey–West HAC variance and the
+Harvey–Leybourne–Newbold correction. Because the loss differential is serially correlated
+within station and station-days cluster within cities, the primary analysis aggregates to one
+value per city and tests those {{n_cities}} observations, with sensitivity analyses across
+three HAC truncation lags (all deposited in `t6_06_significance.csv`, the longest tabled), a
+cluster bootstrap and an exact sign-flip permutation test whose attainable floor is stated.
+Per-fold tests are Holm-corrected (Holm, 1979) and read as descriptive, since both
+comparators are estimated models (Diebold, 2015).
 
 ### Software and generative-AI assistance
 
-Analysis code is Python 3.12; exact dependencies and versions are given in Code Availability.
-A generative AI assistant (Anthropic Claude, via Claude Code) was used during this work for
-software implementation, data-pipeline construction, statistical tooling, and drafting and
-editing of manuscript text. This is not AI-assisted copy editing, so it is declared rather
-than exempt. The methodological decisions the dataset rests on — the pre-registration of the
-quality rules, the choice to freeze and checksum the splits before any model was run, the
-leave-city-out protocol, the treatment of informative missingness, and every retraction
-recorded in `data/DECISIONS.md` — were made by the authors, who verified every reported figure
-against the regenerated result tables and take full responsibility for the content. See
-*Use of Generative AI* for the full declaration.
+Analysis code is Python 3.12, with exact dependencies and versions in Code availability.
+Generative-AI assistance is declared in full under *Use of generative AI*.

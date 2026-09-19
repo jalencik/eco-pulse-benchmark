@@ -28,7 +28,7 @@ modelling choice removes it.**
 
 2 leave-station-out folds exist and both are the Khujand pair, so the
 protocol is evaluated entirely on low-cost sensors.
-**Almaty, Ashgabat, Bishkek, Dushanbe, Tashkent each hold a single instrument**, so within-city station holdout is
+**Almaty, Ashgabat, Bishkek, Dushanbe and Tashkent each hold a single instrument**, so within-city station holdout is
 undefined there.
 
 The consequence runs deeper than reduced coverage. The Q6 timezone check compares
@@ -261,7 +261,7 @@ one now.
 - **The record ends before the source does.** Five of the ten contributing source feeds stop
   on 2025-03-04, when the StateAir publication channel closed, and at benchmark-station level
   **2 of 7 stations
-  (8881, Bishkek) end there**; the rest survive through a longer-lived feed.
+  (Bishkek and Tashkent (8881)) end there**; the rest survive through a longer-lived feed.
   **No result in this paper speaks to current conditions.** The monitors did not all stop,
   though: as of 2026-08-14 the same
   diplomatic-post instruments are still republished through AirNow at Ashgabat (to

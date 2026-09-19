@@ -27,7 +27,7 @@ Atmosphere Data Store and Climate Data Store respectively.
 ten contributing source feeds stop there — every StateAir feed, plus Bishkek's AirNow feed —
 and at benchmark-station level, after co-published feeds are merged,
 **2 of 7 stations
-(8881, Bishkek) end there**; the others survive through their longer-lived
+(Bishkek and Tashkent (8881)) end there**; the others survive through their longer-lived
 feed. The closure was not uniform and this statement has been corrected twice: an earlier
 version said "six of the eight", which was wrong in both terms, and a later one said the
 programme itself had terminated, which overstates what the evidence supports. Three
@@ -52,7 +52,6 @@ editing; Visualisation; Project administration.
 
 **Asadbek Abdivayitov:** Data curation; Investigation.
 
-**Ozodbek Yo'ldashev:** Supervision; Writing — review and editing.
 
 All authors read and approved the submitted manuscript.
 

@@ -126,10 +126,13 @@ One qualification belongs with that, because the zero-shot framing rests on it. 
 global configuration freezes described in Section 5.3 — the `log1p` target and the exclusion
 of the retrieval-count features — were selected by scripts that score candidates on the
 held-out city's own validation block rather than on the training cities'. Khujand's 2023
-observations therefore informed those two choices, though no Khujand row entered any model
-fit and the 2024 test block was untouched by either selection. Per-fold hyperparameter tuning
-does not have this property: it validates on the training cities only. We state the
-distinction rather than let "zero-shot" carry more than it should.
+observations therefore informed those two choices. They also reach the other five folds
+through the refit: every fold refits on training and validation rows together, and the
+validation block ends on 2023-12-21, so the 36 Khujand station-days
+inside it sit in those folds' pools. What holds without qualification is narrower. No Khujand
+row enters the Khujand fold's own fit, and the 2024 test block was untouched by either
+selection. Per-fold hyperparameter tuning validates on the training cities only. We state the
+distinction so that "zero-shot" carries no more than it should.
 
 We retain it as a distinct evaluation regime rather than repairing it. Every other fold
 measures interpolation between cities the model has seen at some point in training; Khujand

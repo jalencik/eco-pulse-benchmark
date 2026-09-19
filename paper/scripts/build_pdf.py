@@ -38,9 +38,11 @@ CSS = """
 body { font-family: Helvetica, Arial, sans-serif; font-size: 9.4pt; line-height: 1.42;
        color: #111; }
 h1 { font-size: 16pt; line-height: 1.25; margin: 0 0 0.5em 0; }
-h2 { font-size: 11.5pt; margin: 1.5em 0 0.45em 0; border-bottom: 0.6pt solid #999;
+h2 { font-size: 11.5pt; margin: 1.0em 0 0.45em 0; border-bottom: 0.6pt solid #999;
      padding-bottom: 2pt; }
-h3 { font-size: 10pt; margin: 1.1em 0 0.35em 0; }
+h3 { font-size: 10pt; margin: 0.8em 0 0.35em 0; }
+/* A heading never ends a page on its own; xhtml2pdf's extension for keep-with-next. */
+h2, h3 { -pdf-keep-with-next: true; }
 p  { margin: 0 0 0.55em 0; text-align: justify; }
 ul, ol { margin: 0 0 0.6em 1.1em; }
 li { margin-bottom: 0.22em; }
@@ -88,6 +90,12 @@ def main(argv: list[str]) -> int:
     # carry and came out as "SOn"/"NOn" in the rendered PDF. Rewrite them as real <sub>
     # elements, as scripts/build_pdf.py already does for the technical report.
     body = body.translate({0x2080 + i: f"<sub>{i}</sub>" for i in range(10)})
+    # Size figures as a journal sets them: single-column width for the map, a wider
+    # setting for the two short panels. xhtml2pdf ignores percentage widths in CSS, so
+    # the width goes on the tag. At page width the map alone consumed most of a page.
+    body = body.replace('alt="Figure 1"', 'alt="Figure 1" width="8.5cm"')
+    body = body.replace('alt="Figure 2"', 'alt="Figure 2" width="13cm"')
+    body = body.replace('alt="Figure 3"', 'alt="Figure 3" width="13cm"')
     body = _inline_images(body, src.parent)
     html = (
         f"<html><head><meta charset='utf-8'><style>{CSS}</style></head><body>{body}</body></html>"

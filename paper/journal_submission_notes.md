@@ -60,15 +60,12 @@ corresponding author.
 |---|---|---|---|
 | 1 | Jaloliddin Musayev | International House Tashkent Academic Lyceum, Tashkent, Uzbekistan | 0009-0003-0210-3687 (corresponding) |
 | 2 | Asadbek Abdivayitov | First Specialized Boarding School, Karshi, Uzbekistan | 0009-0006-3484-3438 |
-| 3 | Ozodbek Yo'ldashev | National University of Uzbekistan, Tashkent, Uzbekistan | not supplied |
 
-Two notes that need the corresponding author rather than a file edit:
+One note that needs the corresponding author rather than a file edit:
 
-- Ozodbek Yo'ldashev's ORCID is outstanding. Submission systems collect ORCIDs per author, so
-  this can be left blank at submission if he has none. It is deliberately not printed on the
-  title page as an unfilled placeholder.
 - The corresponding author's ORCID record registers the surname as "Musaev" while every
-  manuscript artefact uses "Musayev". Aligning the two avoids an indexing mismatch.
+  manuscript artefact uses "Musayev". The decision is to keep "Musayev" in the manuscripts
+  and correct the ORCID record, which avoids an indexing mismatch.
 
 ## Declarations, identical across venues
 

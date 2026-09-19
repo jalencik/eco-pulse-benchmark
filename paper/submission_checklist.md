@@ -40,14 +40,11 @@ markdown source is `paper/sdata_descriptor.md`; converting it is a revision-stag
 |---|---|---|---|
 | 1 | Jaloliddin Musayev | International House Tashkent Academic Lyceum, Tashkent, Uzbekistan | **Corresponding**, ORCID 0009-0003-0210-3687 |
 | 2 | Asadbek Abdivayitov | First Specialized Boarding School, Karshi, Uzbekistan | Co-author |
-| 3 | Ozodbek Yo'ldashev | National University of Uzbekistan, Tashkent, Uzbekistan | Co-author |
 
 Corresponding email: `jaloliddin2009applicant@gmail.com`
 
-**[YOU]** Co-author ORCIDs. Two of the three are recorded: Jaloliddin Musayev
-(0009-0003-0210-3687) and Asadbek Abdivayitov (0009-0006-3484-3438). Ozodbek Yo'ldashev's is
-still outstanding. The system prompts per author, so either supply it or leave it blank if he
-has none.
+Author ORCIDs are both recorded: Jaloliddin Musayev (0009-0003-0210-3687) and Asadbek
+Abdivayitov (0009-0006-3484-3438).
 
 ## Declarations (all already written into the manuscript)
 

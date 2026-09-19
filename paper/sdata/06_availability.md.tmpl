@@ -1,108 +1,52 @@
-## Data Availability
+## Data availability
 
-The frozen benchmark — split definitions, checksums and reference result tables — is
-deposited in Zenodo at **https://doi.org/10.5281/zenodo.21930669** under a CC BY 4.0 licence, as version
-{{benchmark_version}} of `eco-pulse-ca`. The archive contents and record structure are
-described in Data Records.
-
-The identifier above is the **version** DOI, which resolves to this release specifically
-rather than to the latest version. Results reported against this benchmark should cite it,
-together with the `splits.sha256` checksum, so that a score is attributable to one frozen
-split definition.
-
-**What the deposit does and does not contain.** The archive holds the benchmark's *derived*
-artefacts: split definitions, checksums, reference result tables, row-level predictions and
-the full pipeline code. **It does not contain the underlying hourly PM2.5 observations**, and
-the split definitions are not a substitute for them — they are station identifiers, fold
-membership and time bounds, not measurements.
+The frozen benchmark (split definitions, checksums and reference result tables) is deposited
+in Zenodo at https://doi.org/10.5281/zenodo.21930669 under a CC BY 4.0 licence, as version
+{{benchmark_version}} of `eco-pulse-ca`, together with the full pipeline code and no hourly
+PM2.5 observations. The identifier is the version DOI and resolves to this release. Results
+reported against this benchmark should cite it with the `splits.sha256` checksum, so that a
+score is attributable to one frozen split. Archive contents are described in Section 3.
 
 Ground PM2.5 observations are accessed through the OpenAQ archive (openaq.org) and originate
 with the US Department of State AirNow and StateAir programmes and with Clarity.
 
-**Licence status, verified 2026-08-14.** Per-location licence records were retrieved from
-OpenAQ's `/v3/locations` endpoint and are tabulated in full in `data/MANIFEST.md`. Six of the
-ten source feeds carry an explicit licence permitting redistribution: the four AirNow feeds
-are recorded as *US Public Domain* and the two Clarity feeds as *CC0 1.0*, both with
-redistribution and modification allowed and attribution not required. These six account for
-63.6% of contributing observation-hours. **The four StateAir feeds (Ashgabat, Bishkek,
-Dushanbe, Tashkent) carry no licence record at all** — the field is null, and the absence is
-systematic: across all 33 StateAir providers, none of their 36 locations carries one. The
-absence tracks the provider *label* rather than the data. OpenAQ's issue tracker documents a
-single location ingested under both the AirNow and StateAir labels, alternating between them,
-and that location today carries the AirNow label and a US Public Domain licence; the licence
-follows the label. We therefore treat the null as unassigned metadata rather than a withheld
-permission, while recording that no licence record has been issued for these four feeds.
+**Licence status, verified 2026-08-14.** Per-location licence records from OpenAQ's
+`/v3/locations` endpoint are tabulated in `data/MANIFEST.md`. Six of the ten source feeds
+carry an explicit licence permitting redistribution, the four AirNow feeds as *US Public
+Domain* and the two Clarity feeds as *CC0 1.0*, together 63.6% of contributing
+observation-hours. The four StateAir feeds carry no licence record, an absence that is
+systematic across all 33 StateAir providers and their 36 locations and that tracks the
+provider label. We treat the null as unassigned metadata while recording that no licence has
+been issued, and because a single deposit licence would assert a permission the evidence does
+not support for every feed, the observations are left at source. The Department of State's
+archived *Data Use Statement* asks that its data "not be altered in any way and be
+disseminated as received", which is a further reason not to redistribute a merged,
+daily-aggregated panel. We attribute the observations to the Department and carry its caveat
+that they "are not fully verified or validated".
 
-The Department of State's archived *Data Use Statement* for its air-quality programme requires
-that products relying on the data give attribution to the Department and indicate that the
-data "are not fully verified or validated", and asks that the data "not be altered in any way
-and be disseminated as received". Its stated scope is the Mission China programme and the
-`stateair.net` portal, neither of which served these four Central Asian feeds, and the portal
-that did serve them published no equivalent statement. We nonetheless attribute the
-observations to the U.S. Department of State and carry the verification caveat, and we treat
-the final clause as a further reason not to redistribute a merged, quality-controlled,
-daily-aggregated panel. `data/MANIFEST.md` sets out the full evidence and its limits.
+**Retrieval.** All ten source feeds are published in OpenAQ's open-data archive on Amazon S3
+(`s3://openaq-data-archive/records/csv.gz/locationid={id}/`), downloadable anonymously and
+verified for each benchmark feed on 2026-08-14, and through the OpenAQ v3 API with a free
+key, the route the pipeline uses. `data/MANIFEST.md` lists every source location and its
+provenance, and `README.md` gives the commands that rebuild the panel.
 
-**Predictor sources.** Satellite retrievals are Sentinel-5P (CO, NO₂, SO₂, absorbing aerosol
-index) and MODIS MAIAC AOD; the chemistry-transport forecast is Copernicus CAMS. ERA5
-reanalysis was retrieved and latency-tested but enters no feature tier (Methods), so it is a
-source the pipeline touched rather than a predictor the results use. Each source, its access
-route, its licence status and its measured acquisition latency are recorded in
-`data/MANIFEST.md`.
-
-**Why the panel is not deposited here.** Licence terms are heterogeneous across the ten source
-feeds, and for the four StateAir feeds no licence has been recorded by the platform that
-serves them. Depositing the merged panel under a single licence would assert uniform
-permission that the evidence does not support for every feed, so the observations are left at
-source. This is a statement about provenance, not about availability.
-
-**Every observation used here is publicly retrievable, without credentials, though not by
-the pipeline documented here, which reads the keyed API; the credential-free route is the
-archive described below, which this repository does not script.** All ten source
-feeds — the four StateAir feeds included — are published in OpenAQ's open-data archive on
-Amazon S3 (`s3://openaq-data-archive/records/csv.gz/locationid={id}/`), registered with the
-AWS Registry of Open Data and downloadable anonymously; retrieval of each benchmark feed was
-verified there on 2026-08-14. The same records are available through the OpenAQ v3 API with a
-free key. `data/MANIFEST.md` lists every source location identifier, and two documented
-commands rebuild the panel. The split definitions and reference results are fully
-self-contained and verifiable without any of this.
-
-## Code Availability
+## Code availability
 
 All code used to build the benchmark, run the reference implementation, produce every table
 and figure, and render this manuscript is openly available at
 `https://github.com/jalencik/eco-pulse-benchmark`, archived at the deposit above, under an
-MIT licence.
+MIT licence. The archive snapshots the code at version {{benchmark_version}}; the version
+that produced this manuscript is the repository head. The environment is Python 3.12, with
+`pyproject.toml` declaring compatible ranges and `requirements-lock.txt` recording the exact
+versions the deposited tables were produced with.
 
-**Environment.** Python 3.12 (`>=3.12,<3.13`), with numpy, pandas, scipy, scikit-learn,
-LightGBM, pyarrow and matplotlib. `pyproject.toml` declares compatible ranges;
-`requirements-lock.txt` records the exact versions the deposited tables were produced with,
-and is the file to install from when byte-identical regeneration is the goal.
-`python tasks.py setup` creates the environment.
-
-**Figures that need the panel.** Ten of the figures substituted into this document derive
-from the hourly panel or its QC output, neither of which is redistributed: the
-duplicate-detection shares, the shutdown-date station count and Astana's completeness. On a
-clone without the panel the extractor carries those ten forward from the committed extraction
-and says so in its output; every other figure is recomputed from the deposited tables.
-
-**Reproduction.** A single command runs the whole chain — lint, type check, the full test
-suite, checksum verification, split regeneration, baseline ladder, model layer, table
-regeneration and manuscript rendering:
-
-```
-make reproduce        # or, where make is unavailable:  python tasks.py reproduce
-```
-
-The command is deterministic: two consecutive runs reproduce all {{n_generated_tables}}
-result tables byte-identically under SHA-256. Verifying the frozen splits requires neither
-credentials nor a rebuild (`sha256sum -c splits.sha256`), and the test suite runs offline
-against committed fixtures. Regenerating the reference results additionally requires the
-ground-truth panel described above.
-
-**Custom code of note.** The quality-control rules (`src/ecopulse_ca/qc/`), split builder
-(`src/ecopulse_ca/splits/`), Diebold–Mariano implementation with Harvey–Leybourne–Newbold
-correction (`src/ecopulse_ca/eval/`), and the primary/sensitivity inference
-(`scripts/build_significance.py`) are original to this work. {{n_tests}} automated tests
-enforce split immutability, absence of leakage, table provenance and manuscript-number
-consistency.
+One command runs the whole chain, `make reproduce`, and it is deterministic, reproducing all
+{{n_generated_tables}} result tables byte-identically under SHA-256 across consecutive runs.
+Verifying the frozen splits needs neither credentials nor a rebuild
+(`sha256sum -c splits.sha256`) and the test suite runs offline, while regenerating the
+reference results requires the ground-truth panel; the figures that derive from it are listed
+in `paper/scripts/extract_numbers.py`, which carries them forward on a clone without the
+panel and says so. The quality-control rules, split builder, Diebold–Mariano implementation
+with Harvey–Leybourne–Newbold correction, and the primary and sensitivity inference are
+original to this work, and {{n_tests}} automated tests enforce split immutability, absence of
+leakage, table provenance and manuscript-number consistency.

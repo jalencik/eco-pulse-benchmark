@@ -259,7 +259,6 @@ Worth reading before you report anything from it.
   conceptualisation, methodology, software, validation, formal analysis, investigation, data
   curation, original draft, visualisation, project administration.
 - **Asadbek Abdivayitov:** data curation, investigation.
-- **Ozodbek Yo'ldashev:** supervision, review and editing.
 
 Generative-AI use in preparing the software and manuscript text is disclosed in the paper
 itself (`paper/sdata_descriptor.md`, Declarations), as journal policies require.

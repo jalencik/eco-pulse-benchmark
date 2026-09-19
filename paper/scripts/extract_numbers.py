@@ -103,7 +103,7 @@ _spans = [
 if len(_spans) >= 2:
     put("khujand_a_span_in_window", _spans[0])
     put("khujand_b_span_in_window", _spans[1])
-put("lso_ineligible", ", ".join(sp["leave_station_out"]["ineligible_cities"]))
+put("lso_ineligible", _and_list(sp["leave_station_out"]["ineligible_cities"]))
 blocks = {b["name"]: b for b in sp["temporal_blocks"]}
 for nm in ("train", "val", "test"):
     put(f"{nm}_start", blocks[nm]["start"][:10])
@@ -704,9 +704,18 @@ if _panel_p_pre.exists():
     _ends = {c: _pp[c].dropna().index.max() for c in _pp.columns}
     _n_end = sum(1 for v in _ends.values() if pd.notna(v) and v < _SHUTDOWN)
     put("n_stations_ending_at_shutdown", _n_end, 0)
+    # Merged instruments are keyed by city name; unmerged ones by OpenAQ id, which a reader
+    # cannot place, so those render as "City (id)".
+    _city_of = {str(_s["station_id"]): _s["city"] for _s in sp["stations"]}
     put(
         "stations_ending_at_shutdown",
-        ", ".join(sorted(c for c, v in _ends.items() if pd.notna(v) and v < _SHUTDOWN)),
+        _and_list(
+            sorted(
+                (c if _city_of.get(c, c) == c else f"{_city_of[c]} ({c})")
+                for c, v in _ends.items()
+                if pd.notna(v) and v < _SHUTDOWN
+            )
+        ),
     )
 
 # Duplicate-detection evidence, recomputed from the hourly panel rather than quoted.
@@ -733,6 +742,63 @@ if _panel_p.exists():
     put("dushanbe_lag5_pct", "99.9")
     put("dushanbe_explained_pct", "99.99")
     put("identity_coincidence_pct", "2.6")
+
+    # First observation of each Khujand sensor, read from the panel. The training block
+    # closes on 2022-12-31 and the validation block on 2023-12-21, so these dates fix how
+    # many weeks of Khujand record can enter the other folds' refit pools.
+    for _lbl, _sid in (("a", "1894632"), ("b", "1924313")):
+        if _sid in _pan.columns:
+            _first = _pan[_sid].first_valid_index()
+            put(
+                f"khujand_first_obs_{_lbl}",
+                _first.date().isoformat() if _first is not None else "n/a",
+            )
+
+    # Khujand station-days that fall inside the validation block and therefore enter the other
+    # folds' train-plus-validation refit pools. Counted the way the daily target is defined in
+    # Methods: local-calendar days (Asia/Dushanbe) with at least 18 hourly observations.
+    try:
+        _vs = pd.Timestamp(N.get("val_start", "2023-01-11")).date()
+        _ve = pd.Timestamp(N.get("val_end", "2023-12-21")).date()
+        _khu_days = 0
+        for _sid in ("1894632", "1924313"):
+            if _sid in _pan.columns:
+                _loc = _pan[_sid].dropna()
+                _loc.index = pd.DatetimeIndex(_loc.index).tz_convert("Asia/Dushanbe")
+                _per_day = _loc.groupby(_loc.index.date).size()
+                _khu_days += int(
+                    sum(1 for d, n_h in _per_day.items() if n_h >= 18 and _vs <= d <= _ve)
+                )
+        put("khujand_val_block_days", _khu_days, 0)
+    except Exception as _e:  # panel present but unreadable: carry the committed value below
+        print(f"  note: khujand_val_block_days not recomputed ({_e.__class__.__name__})")
+
+# Dushanbe merge: how many secondary-feed gap-fills are five-hour-displaced copies of a
+# primary reading. The secondary feed stamps part of its record in local time (D-012); the
+# merge is index-aligned and does not realign it, so a fill drawn from that portion lands
+# five hours late. Needs the pre-merge feeds, so it is computed from data/interim/panel.parquet
+# and panel_sources.parquet and carried forward on a clean clone like the other panel figures.
+_raw_p = ROOT / "data/interim/panel.parquet"
+_src_p = ROOT / "data/interim/panel_sources.parquet"
+if _raw_p.exists() and _src_p.exists():
+    try:
+        from ecopulse_ca.qc.merge import EXACT_TOL as _TOL
+    except ImportError:
+        _TOL = None
+    if _TOL is not None:
+        _raw = pd.read_parquet(_raw_p)
+        _raw.columns = [str(c) for c in _raw.columns]
+        _dsrc = pd.read_parquet(_src_p)["Dushanbe"]
+        if {"8684", "9769"} <= set(_raw.columns):
+            _P, _S = _raw["8684"], _raw["9769"]
+            _filled = _dsrc.eq("9769")
+            _disp = _filled & (_S - _P.shift(5)).abs().lt(_TOL) & _P.shift(5).notna()
+            _n_merged = int(_dsrc.ne("").sum())
+            put("dushanbe_secondary_fills", f"{int(_filled.sum()):,}")
+            put("dushanbe_displaced_fills", int(_disp.sum()), 0)
+            put("dushanbe_displaced_pct", 100.0 * _disp.sum() / max(_n_merged, 1), 2)
+            _last = _disp[_disp].index.max()
+            put("dushanbe_displaced_last", _last.date().isoformat() if pd.notna(_last) else "n/a")
 
 # Test count, collected rather than typed. pytest is already a project dependency and
 # --collect-only is cheap; a typed count would be stale the moment a test is added.
@@ -766,6 +832,13 @@ PANEL_DERIVED = (
     "identity_coincidence_pct",
     "n_stations_ending_at_shutdown",
     "stations_ending_at_shutdown",
+    "khujand_first_obs_a",
+    "khujand_first_obs_b",
+    "khujand_val_block_days",
+    "dushanbe_secondary_fills",
+    "dushanbe_displaced_fills",
+    "dushanbe_displaced_pct",
+    "dushanbe_displaced_last",
 )
 _missing_panel_keys = [k for k in PANEL_DERIVED if k not in N]
 if _missing_panel_keys:

@@ -1,0 +1,21 @@
+## 6. Conclusions
+
+Central Asia has had no open station-level benchmark against which PM2.5 estimates could be
+checked, or two methods compared on the same terms. This release supplies one: daily
+observations from {{n_stations}} instruments in {{n_cities}} cities over {{train_start}} to
+{{test_end}}, evaluation splits frozen and checksummed before the reported results existed,
+and a baseline ladder every submission is scored against.
+
+Under the protocol the benchmark is built around, which withholds a city entirely, a tuned
+gradient-boosting reference model reaches {{taskn_retrospective_rmse}} µg/m³ fold-mean RMSE
+against {{taskn_cams_rmse}} µg/m³ for pooled-debiased CAMS. Six cities cannot separate those
+(paired *t* *p* = {{sig_primary_t_p}}), and the interval is wide enough to contain both a
+useful improvement and a moderate degradation. Mean per-fold R² is
+{{taskn_retrospective_r2}}. The clearest result is the flatness: transferred to a city it has
+never seen, the model returns something close to a regional level and does not move it with
+the city, so its error sits mainly in that level, with the day-to-day pattern a smaller part.
+
+Whether that reflects the region, the network, or this model class cannot be separated by six
+cities and one test year, and the predictor family most likely to carry a city's level,
+meteorology, is absent from every tier. Those are the questions the benchmark exists to let
+the next group answer on terms that can be compared.

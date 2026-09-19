@@ -1,11 +1,9 @@
 # A quality-controlled PM2.5 dataset with frozen cross-city evaluation splits for six Central Asian cities
 
-**Jaloliddin Musayev**<sup>1,\*</sup>, **Asadbek Abdivayitov**<sup>2</sup>,
-**Ozodbek Yo'ldashev**<sup>3</sup>
+**Jaloliddin Musayev**<sup>1,\*</sup>, **Asadbek Abdivayitov**<sup>2</sup>
 
 <sup>1</sup> International House Tashkent Academic Lyceum, Tashkent, Uzbekistan
 <sup>2</sup> First Specialized Boarding School, Karshi, Uzbekistan
-<sup>3</sup> National University of Uzbekistan, Tashkent, Uzbekistan
 
 <sup>\*</sup> Corresponding author: jaloliddin2009applicant@gmail.com
 
@@ -15,19 +13,21 @@ ORCID iDs: Jaloliddin Musayev 0009-0003-0210-3687; Asadbek Abdivayitov 0009-0006
 
 ## Abstract
 
-We present a quality-controlled dataset of daily PM2.5 observations from {{n_stations}}
-instruments in {{n_cities}} Central Asian cities — Almaty, Ashgabat, Bishkek, Dushanbe,
-Khujand and Tashkent — covering {{train_start}} to {{test_end}}. Records were screened by seven
-pre-registered quality rules, plus one added after validation exposed a duplicated
-instrument, then deduplicated and timezone-verified; {{n_reference_instruments}} are US
-embassy reference monitors and {{n_lowcost_instruments}} low-cost sensors, labelled as such.
-Each station-day is paired with satellite retrievals, a chemistry-transport forecast and
-static geography, each with a measured latency fixing whether it could be known at
-prediction time. The release includes frozen, checksummed splits
-(blocked-temporal with a {{purge_hours}}-hour purge; leave-city-out over {{n_loco_folds}}
-folds), a baseline ladder and reference outputs. Predicted city means for held-out cities span
-{{pred_city_mean_range}} µg/m³ against {{obs_city_mean_range}} observed, so bias falls with
-concentration largely by construction (rho = {{rho_mean_bias}}); fold RMSE rises with it but
-not after normalising by each city's variability (rho = {{rho_mean_rmse_norm}}). The data support work on cross-city
-generalisation, satellite-ground fusion, low-cost-sensor transfer and reproducible
-benchmarking.
+Central Asia is among the most polluted inhabited regions on earth and among the least
+monitored. Gridded products already assign PM2.5 across the region, but no open
+station-level benchmark exists to check them against, which this dataset provides.
+
+It covers daily PM2.5 from {{n_stations}} instruments in {{n_cities}} cities, {{train_start}}
+to {{test_end}}, screened by seven pre-registered quality rules and one added after
+inspection, with {{n_reference_instruments}} reference monitors and
+{{n_lowcost_instruments}} low-cost sensors labelled as such. Each station-day carries
+satellite, chemistry-transport and static predictors with measured latencies. The deposit
+holds the frozen splits, checksums and reference results. The observations are rebuilt by
+script from OpenAQ.
+
+Splits were frozen and checksummed before the reported results existed. Leave-city-out over
+{{n_loco_folds}} folds withholds a city entirely, so error is measured where no monitor
+operates, against the same six baselines for every method. Over the six held-out cities the
+tuned retrospective-tier reference model reaches {{taskn_retrospective_rmse}} µg/m³
+fold-mean RMSE and is not separable from pooled-debiased CAMS ({{taskn_cams_rmse}} µg/m³,
+paired t p = {{sig_primary_t_p}}).

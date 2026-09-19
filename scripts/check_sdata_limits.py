@@ -2,8 +2,9 @@
 
 Run:  python scripts/check_sdata_limits.py
 
-Scientific Data enforces a 170-word abstract, a 700-word Background and Summary, and a
-110-character title. The editorial system queries a non-conforming manuscript rather than
+The venue is not yet chosen, so these are portability floors rather than one venue's rule:
+a 170-word abstract, a 700-word introduction and a 110-character title sit inside the
+limits of every candidate, including the strictest. The editorial system queries a non-conforming manuscript rather than
 truncating it, and a query costs weeks -- which is the entire reason this venue was chosen
 over a journal with a first-review round measured in months.
 
@@ -33,7 +34,7 @@ PLACEHOLDER = re.compile(r"\{\{([a-zA-Z0-9_]+)\}\}")
 # (template, heading the section starts at, word limit)
 LIMITS: list[tuple[str, str, int]] = [
     ("00_title_abstract.md.tmpl", "## Abstract", 170),
-    ("01_background_summary.md.tmpl", "## Background and Summary", 700),
+    ("01_background_summary.md.tmpl", "## 1. Introduction", 700),
 ]
 
 TITLE_LIMIT = 110
