@@ -35,7 +35,9 @@ DEFAULT_IN = ROOT / "paper" / "sdata_descriptor.md"
 
 CSS = """
 @page { size: A4; margin: 2.0cm 1.9cm 2.0cm 1.9cm; }
-body { font-family: Helvetica, Arial, sans-serif; font-size: 9.4pt; line-height: 1.42;
+/* Leading was 1.42. At 1.38, still comfortable for 9.4pt text, the manuscript sets in 13
+   pages instead of 14 with no content removed, which is the stated page target. */
+body { font-family: Helvetica, Arial, sans-serif; font-size: 9.4pt; line-height: 1.38;
        color: #111; }
 h1 { font-size: 16pt; line-height: 1.25; margin: 0 0 0.5em 0; }
 h2 { font-size: 11.5pt; margin: 1.0em 0 0.45em 0; border-bottom: 0.6pt solid #999;
@@ -55,6 +57,9 @@ th { background: #eee; border: 0.5pt solid #999; padding: 3pt; text-align: left;
 td { border: 0.5pt solid #999; padding: 3pt; vertical-align: top; }
 img { max-width: 100%; }
 sup { font-size: 6.6pt; }
+/* A reference list sets tighter than body prose. At the body paragraph spacing the
+   22 entries add most of a page. */
+p.ref { margin: 0 0 0.12em 0; text-align: left; }
 """
 
 
@@ -96,6 +101,14 @@ def main(argv: list[str]) -> int:
     body = body.replace('alt="Figure 1"', 'alt="Figure 1" width="8.5cm"')
     body = body.replace('alt="Figure 2"', 'alt="Figure 2" width="13cm"')
     body = body.replace('alt="Figure 3"', 'alt="Figure 3" width="13cm"')
+    # Tag the reference paragraphs so the CSS above can tighten them. They run from the
+    # References heading to the next section heading.
+    body = re.sub(
+        r"(<h2[^>]*>References</h2>)(.*?)(?=<h2)",
+        lambda m: m.group(1) + m.group(2).replace("<p>", '<p class="ref">'),
+        body,
+        flags=re.S,
+    )
     body = _inline_images(body, src.parent)
     html = (
         f"<html><head><meta charset='utf-8'><style>{CSS}</style></head><body>{body}</body></html>"

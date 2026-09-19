@@ -2,9 +2,9 @@
 
 ### Observation quality control
 
-The reference-grade observations originate with the US EPA AirNow programme, whose
-observational data "are not fully verified or validated" and "should be considered
-preliminary". Fully validated data in EPA's Air Quality System were not used, so every result
+The reference-grade observations originate with the US EPA AirNow programme, whose *AirNow
+Data Exchange Guidelines* (August 2025) state that its observational data "are not fully
+verified or validated" and "should be considered preliminary". Fully validated data in EPA's Air Quality System were not used, so every result
 here inherits that status. Seven rules (Q1–Q7) were declared before the data were inspected
 (Section 2; `data/DECISIONS.md`), each recording its effect on *n* and its direction of bias if
 wrong. Duplicate identity and timezone verification each changed the benchmark, and Q5c was
@@ -22,9 +22,8 @@ pair, 14.4 km apart, is bit-identical on {{khujand_identical_pct}}% of hours.
 
 We therefore added a value-identity rule (Q5c): flag any pair bit-identical on more than
 half of overlapping samples, regardless of separation. Independent instruments would not
-agree to floating point, and the threshold sits in the middle of a measured 36× gap between
-coincidence ({{identity_coincidence_pct}}% for unrelated pairs, an artefact of hourly values
-reported as rounded integers) and duplication.
+agree to floating point, and the threshold sits midway in a measured 36× gap between
+coincidence ({{identity_coincidence_pct}}% for unrelated pairs) and duplication.
 
 The Dushanbe records were merged under the precedence-and-gap-fill rule in Section 2, never
 averaging, because averaging two copies of one measurement fabricates a third value where
@@ -39,13 +38,13 @@ bias are logged as D-012 (`data/DECISIONS.md`). The benchmark holds
 {{benchmark_version}}.
 
 **Timezone correctness.** Each station's diurnal composite is cross-correlated against a
-regional reference (Materials and methods, Q6). An initial implementation rejected
-both Khujand sensors for an apparent 12-hour shift, an artefact: the reference
-self-correlates at r = +0.71 under a 12-hour rotation, because Central Asian urban PM2.5 is
-bimodal with peaks roughly half a day apart. The check now reports lag identifiability and
-flags a station when the hypothesis cannot be distinguished. That change, from rejection to flagging, is logged as D-006 and recorded as a post hoc
-rule revision in D-007 (`data/DECISIONS.md`). Only Khujand holds more than one instrument, so a constant, lifelong offset at a
-single-instrument city is undetectable by any check in this suite.
+regional reference (Section 2, Q6). An initial implementation rejected both Khujand sensors
+for an apparent 12-hour shift, an artefact: the reference self-correlates at r = +0.71 under
+a 12-hour rotation, because Central Asian urban PM2.5 is bimodal with peaks roughly half a
+day apart. The check now flags a station whose lag cannot be identified. That change from
+rejection to flagging is logged as D-006 and recorded as a post hoc revision in D-007
+(`data/DECISIONS.md`). Only Khujand holds more than one instrument, so a constant, lifelong
+offset at a single-instrument city is undetectable by any check in this suite.
 
 ### Instrument grade
 
@@ -66,8 +65,8 @@ Khujand is also the zero-shot fold. Its sensors begin on {{khujand_first_obs_a}}
 {{khujand_first_obs_b}}, after the training block closes, so the city contributes no row to
 the training block and none to its own fold. The {{khujand_val_block_days}} Khujand
 station-days inside the validation block, which ends on {{val_end}}, do enter the other five
-folds' tuning and refit pools. Inside the benchmark window the two sensors cover {{khujand_a_span_in_window}} y and
-{{khujand_b_span_in_window}} y, so both meet the pre-registered {{q7_min_years}}-year span
+folds' tuning and refit pools. Inside the benchmark window the two sensors cover {{khujand_a_span_in_window}} and
+{{khujand_b_span_in_window}} years, so both meet the pre-registered {{q7_min_years}}-year span
 rule only because we count their observations past the window's end. We kept them for
 coverage of a sixth city.
 
@@ -84,8 +83,11 @@ further test parses the tuning function and fails if it references the test bloc
 
 ### Reference implementation behaviour
 
-These results characterise the task and are not a claim of method performance. Scored at a
-single temporal resolution on the frozen test block, over {{n_seeds}} seeds:
+These results characterise the task and are not a claim of method performance. Table 3
+scores the ladder at a single temporal resolution on the frozen test block, over
+{{n_seeds}} seeds.
+
+**Table 3.** Leave-city-out daily RMSE, reference model and baselines.
 
 | Model (leave-city-out, daily) | RMSE µg/m³ |
 |---|---:|
@@ -108,13 +110,16 @@ labels, so it is a diagnostic floor and not an admissible rung. Mean per-fold R�
 overstate what the model does.
 
 Exceedance F1 has a high floor: {{n_cities_exceed_most_days}} of {{n_cities}} cities clear
-the WHO 24-hour guideline on most test days (up to {{exceed_rate_max}}% at
-{{exceed_city_max}}, as low as {{exceed_rate_min}}% at {{exceed_city_min}}), so a classifier
+the WHO 24-hour guideline on most test days, from {{exceed_rate_max}}% at
+{{exceed_city_max}} down to {{exceed_rate_min}}% at {{exceed_city_min}}, so a classifier
 that always predicts "exceeds" scores F1 = {{p3_trivial_f1}} at a base rate of
-{{p3_base_rate}}%, and Peirce skill score is reported alongside because it is zero for that
-classifier by construction.
+{{p3_base_rate}}%. Peirce skill score is
+reported alongside because it is zero for that classifier by construction.
 
 ### Error structure across cities
+
+Figure 3 plots each held-out city's RMSE and mean bias against its observed mean
+concentration.
 
 ![Figure 3](figures/figS2_error_structure.png)
 
@@ -158,7 +163,9 @@ the unit of generalisation is the city, and aggregating to one value per city gi
 {{n_cities}} observations. The quantity tested is the loss differential Δ in (µg/m³)², the
 model's squared error minus that of pooled-debiased CAMS, which scores {{taskn_cams_rmse}}
 µg/m³ fold-mean RMSE against the model's {{taskn_retrospective_rmse}}. Negative values favour
-the model.
+the model, and Table 4 reports the primary and sensitivity tests.
+
+**Table 4.** Primary and sensitivity inference against pooled-debiased CAMS.
 
 | | Test | Unit | *n* | Δ (95% CI) | *p* |
 |---|---|---|---:|---:|---:|

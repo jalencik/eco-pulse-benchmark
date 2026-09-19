@@ -21,8 +21,8 @@ It covers daily PM2.5 from 7 instruments in 6 cities, 2018-11-27
 to 2024-12-31, screened by seven pre-registered quality rules and one added after
 inspection, with 5 reference monitors and
 2 low-cost sensors labelled as such. Each station-day carries
-satellite, chemistry-transport and static predictors with measured latencies. The deposit
-holds the frozen splits, checksums and reference results. The observations are rebuilt by
+satellite, chemistry-transport and static predictors with measured latencies. The deposit holds the frozen
+splits, checksums and the v1.1.0 reference results. The observations are rebuilt by
 script from OpenAQ.
 
 Splits were frozen and checksummed before the reported results existed. Leave-city-out over
@@ -150,9 +150,10 @@ merged instrument carrying its city name as `station_id`.
 **Q6 timezone verification.** Each station's diurnal composite is cross-correlated against a
 regional reference, and a station whose lag cannot be identified is flagged (Results).
 
-**Daily target.** The prediction target is the local-calendar daily mean, requiring at least 18
-hourly observations. Days are local-calendar because a UTC boundary splits a Central Asian
-night in half, cutting the overnight inversion peak across two days and understating both.
+**Daily target.** The prediction target is the local-calendar daily mean, requiring at least
+18 hourly observations. Days are local-calendar because a UTC boundary falls mid-night in
+Central Asia, so an overnight peak would be divided between two calendar days and would
+lower both daily means.
 
 ### Predictor sources
 
@@ -210,10 +211,10 @@ training row, for which withholding the city is the estimand itself. Meyer and P
 frame the complementary question, whether a held-out city falls inside the model's area of
 applicability.
 
-**Leave-station-out** (2 folds). Available only where a city holds more than one
-instrument, so Almaty, Ashgabat, Bishkek, Dushanbe and Tashkent are listed as ineligible and both remaining folds are the
-Khujand low-cost pair, the Dushanbe merge having removed the only reference-grade city with
-two devices. This protocol therefore says nothing about generalisation across the reference
+**Leave-station-out** (2 folds). Only Khujand holds more than one instrument,
+so both folds are its low-cost pair, and the builder records the other five cities as
+ineligible in `leave_station_out.json`. The Dushanbe merge removed the only reference-grade
+city with two devices. This protocol therefore says nothing about generalisation across the reference
 network and supports no headline claim, and leave-one-out protocols carry a documented
 failure mode of their own (Austin et al., 2025). The folds are retained for methods that
 target low-cost sensor transfer.
@@ -238,8 +239,8 @@ mean ± standard deviation.
 
 **Baselines.** Baselines are task-specific. Task N is scored against six rungs, three
 constants (the training-pool mean and the global mean and median), nearest monitor,
-inverse-distance weighting and ordinary kriging, tabled at daily resolution in Technical
-Validation (`t3_06`, which also carries the `oracle_city_constant` diagnostic, flagged
+inverse-distance weighting and ordinary kriging, tabled at daily resolution in Section 4
+(`t3_06`, which also carries the `oracle_city_constant` diagnostic, flagged
 `legal = False` and not a rung). Task F has its own hourly ladder of four history rungs, persistence,
 diurnal persistence, a same-hour 7-day mean and climatology (`t3_01`), at 24, 48 and 72 h,
 which the daily, single-horizon Task F reference model is not scored against. CAMS is tabled
@@ -286,8 +287,10 @@ longer-lived feed. All of that lies beyond the test block and none of it is used
 
 ### The frozen benchmark definition
 
-These five files, under `benchmark/splits/`, are the benchmark, and nothing else in the
-archive is needed to evaluate a method on it.
+These five files, under `benchmark/splits/`, are the benchmark (Table 1), and nothing else
+in the archive is needed to evaluate a method on it.
+
+**Table 1.** The frozen benchmark definition.
 
 | File | Format | Contents |
 |---|---|---|
@@ -306,8 +309,11 @@ ineligible-city list, and a `config` block (`max_lag_hours`, `max_horizon_hours`
 
 ### Reference results
 
-Provided so that a new method can be placed on the same axes without re-running the
-reference implementation. All are CSV with a header row, under `paper/tables/`.
+Table 2 lists the reference results, provided so that a new method can be placed on the
+same axes without re-running the reference implementation. All are CSV with a header row,
+under `paper/tables/`.
+
+**Table 2.** Deposited reference result files.
 
 | File | Rows | Contents |
 |---|---:|---|
@@ -344,9 +350,9 @@ same conditions.
 
 `t6_01_predictions_task_n.csv` is the most reusable record: it permits any alternative loss,
 significance procedure or aggregation to be applied to the reference implementation without
-retraining it, and its per-seed columns make the ensemble decomposable. The archive also
-holds the per-fold, per-band and per-season error tables (`t7_01`–`t7_03`) and the
-ranking-robustness table (`t7_05`) cited in Section 4. Neither the hourly panel
+retraining it, and its per-seed columns make the ensemble decomposable. The archive also holds the per-fold, per-band and per-season error tables
+(`t7_01`–`t7_03`), discussed in Section 5, and the ranking-robustness table (`t7_05`),
+cited in Section 4. Neither the hourly panel
 nor the predictor matrix is deposited: both are rebuilt by the pipeline from the sources
 named under Predictor sources (Data availability). `panel_sources.parquet`, the per-hour
 provenance of each merge, is likewise written by the rebuild and is not in the archive.
@@ -356,9 +362,9 @@ provenance of each merge, is likewise written by the rebuild and is not in the a
 
 ### Observation quality control
 
-The reference-grade observations originate with the US EPA AirNow programme, whose
-observational data "are not fully verified or validated" and "should be considered
-preliminary". Fully validated data in EPA's Air Quality System were not used, so every result
+The reference-grade observations originate with the US EPA AirNow programme, whose *AirNow
+Data Exchange Guidelines* (August 2025) state that its observational data "are not fully
+verified or validated" and "should be considered preliminary". Fully validated data in EPA's Air Quality System were not used, so every result
 here inherits that status. Seven rules (Q1–Q7) were declared before the data were inspected
 (Section 2; `data/DECISIONS.md`), each recording its effect on *n* and its direction of bias if
 wrong. Duplicate identity and timezone verification each changed the benchmark, and Q5c was
@@ -376,9 +382,8 @@ pair, 14.4 km apart, is bit-identical on 0.3% of hours.
 
 We therefore added a value-identity rule (Q5c): flag any pair bit-identical on more than
 half of overlapping samples, regardless of separation. Independent instruments would not
-agree to floating point, and the threshold sits in the middle of a measured 36× gap between
-coincidence (2.6% for unrelated pairs, an artefact of hourly values
-reported as rounded integers) and duplication.
+agree to floating point, and the threshold sits midway in a measured 36× gap between
+coincidence (2.6% for unrelated pairs) and duplication.
 
 The Dushanbe records were merged under the precedence-and-gap-fill rule in Section 2, never
 averaging, because averaging two copies of one measurement fabricates a third value where
@@ -393,13 +398,13 @@ bias are logged as D-012 (`data/DECISIONS.md`). The benchmark holds
 1.1.0.
 
 **Timezone correctness.** Each station's diurnal composite is cross-correlated against a
-regional reference (Materials and methods, Q6). An initial implementation rejected
-both Khujand sensors for an apparent 12-hour shift, an artefact: the reference
-self-correlates at r = +0.71 under a 12-hour rotation, because Central Asian urban PM2.5 is
-bimodal with peaks roughly half a day apart. The check now reports lag identifiability and
-flags a station when the hypothesis cannot be distinguished. That change, from rejection to flagging, is logged as D-006 and recorded as a post hoc
-rule revision in D-007 (`data/DECISIONS.md`). Only Khujand holds more than one instrument, so a constant, lifelong offset at a
-single-instrument city is undetectable by any check in this suite.
+regional reference (Section 2, Q6). An initial implementation rejected both Khujand sensors
+for an apparent 12-hour shift, an artefact: the reference self-correlates at r = +0.71 under
+a 12-hour rotation, because Central Asian urban PM2.5 is bimodal with peaks roughly half a
+day apart. The check now flags a station whose lag cannot be identified. That change from
+rejection to flagging is logged as D-006 and recorded as a post hoc revision in D-007
+(`data/DECISIONS.md`). Only Khujand holds more than one instrument, so a constant, lifelong
+offset at a single-instrument city is undetectable by any check in this suite.
 
 ### Instrument grade
 
@@ -420,8 +425,8 @@ Khujand is also the zero-shot fold. Its sensors begin on 2023-11-28 and
 2023-12-06, after the training block closes, so the city contributes no row to
 the training block and none to its own fold. The 36 Khujand
 station-days inside the validation block, which ends on 2023-12-21, do enter the other five
-folds' tuning and refit pools. Inside the benchmark window the two sensors cover 1.09 y and
-1.07 y, so both meet the pre-registered 2-year span
+folds' tuning and refit pools. Inside the benchmark window the two sensors cover 1.09 and
+1.07 years, so both meet the pre-registered 2-year span
 rule only because we count their observations past the window's end. We kept them for
 coverage of a sixth city.
 
@@ -438,8 +443,11 @@ further test parses the tuning function and fails if it references the test bloc
 
 ### Reference implementation behaviour
 
-These results characterise the task and are not a claim of method performance. Scored at a
-single temporal resolution on the frozen test block, over 5 seeds:
+These results characterise the task and are not a claim of method performance. Table 3
+scores the ladder at a single temporal resolution on the frozen test block, over
+5 seeds.
+
+**Table 3.** Leave-city-out daily RMSE, reference model and baselines.
 
 | Model (leave-city-out, daily) | RMSE µg/m³ |
 |---|---:|
@@ -468,13 +476,16 @@ labels, so it is a diagnostic floor and not an admissible rung. Mean per-fold R�
 overstate what the model does.
 
 Exceedance F1 has a high floor: 4 of 6 cities clear
-the WHO 24-hour guideline on most test days (up to 88% at
-Dushanbe, as low as 24% at Bishkek), so a classifier
+the WHO 24-hour guideline on most test days, from 88% at
+Dushanbe down to 24% at Bishkek, so a classifier
 that always predicts "exceeds" scores F1 = 0.741 at a base rate of
-61.8%, and Peirce skill score is reported alongside because it is zero for that
-classifier by construction.
+61.8%. Peirce skill score is
+reported alongside because it is zero for that classifier by construction.
 
 ### Error structure across cities
+
+Figure 3 plots each held-out city's RMSE and mean bias against its observed mean
+concentration.
 
 ![Figure 3](figures/figS2_error_structure.png)
 
@@ -518,7 +529,9 @@ the unit of generalisation is the city, and aggregating to one value per city gi
 6 observations. The quantity tested is the loss differential Δ in (µg/m³)², the
 model's squared error minus that of pooled-debiased CAMS, which scores 29.77
 µg/m³ fold-mean RMSE against the model's 28.01. Negative values favour
-the model.
+the model, and Table 4 reports the primary and sensitivity tests.
+
+**Table 4.** Primary and sensitivity inference against pooled-debiased CAMS.
 
 | | Test | Unit | *n* | Δ (95% CI) | *p* |
 |---|---|---|---:|---:|---:|
@@ -590,10 +603,17 @@ and the network or this model cannot be separated by this design, and the predic
 most likely to carry a city's level, meteorology, is absent from every tier. Per-fold,
 per-band and per-season figures are in `t7_01`–`t7_03`.
 
-That bounds what the benchmark can currently settle. The following limitations bound it
-further.
+Two comparisons follow from that. Jin et al. (2022) report R² between 0.73 and 0.81 over
+Xinjiang under a split that does not separate cities, and AQ-Bench splits spatially but
+targets a time-independent metric; neither design would have exposed a level error of this
+kind, because neither withholds a city and then asks for its concentration. A reuser
+should therefore read a high pooled R² on this benchmark as a claim about between-city
+variation until the per-city figures say otherwise.
 
-- Six cities bound every inference: no procedure can attain a two-sided *p* below
+Six cities set the floor on every inference reported here, and seven further constraints
+qualify it.
+
+- With 6 clusters no procedure can attain a two-sided *p* below
   0.03125 without distributional assumptions the data do not support.
 - Two of 7 instruments are low-cost and form the zero-shot Khujand fold, whose
   results are not comparable in kind to the other five.
@@ -610,8 +630,8 @@ further.
   requires a version bump.
 - Kazakhstan contributes one city: Astana failed the completeness rule at
   42.8% against a required 60%.
-- Task F is single-horizon, predicting next-day daily means only, and is not tabled with the
-  48 h and 72 h hourly ladder in `t3_01`.
+- Task F is single-horizon, predicting next-day daily means only, so it is not scored
+  against the hourly ladder in `t3_01` at any of its 24, 48 or 72 h horizons.
 - The ground-truth panel is not redistributed, and regenerating results from raw
   observations requires rebuilding it (Data availability).
 
@@ -626,17 +646,17 @@ and a baseline ladder every submission is scored against.
 
 Under the protocol the benchmark is built around, which withholds a city entirely, a tuned
 gradient-boosting reference model reaches 28.01 µg/m³ fold-mean RMSE
-against 29.77 µg/m³ for pooled-debiased CAMS. Six cities cannot separate those
-(paired *t* *p* = 0.1392), and the interval is wide enough to contain both a
-useful improvement and a moderate degradation. Mean per-fold R² is
--0.04. The clearest result is the flatness: transferred to a city it has
-never seen, the model returns something close to a regional level and does not move it with
-the city, so its error sits mainly in that level, with the day-to-day pattern a smaller part.
+against 29.77 µg/m³ for pooled-debiased CAMS. 6 cities cannot
+separate those (paired *t* *p* = 0.1392), the interval spans both a useful
+improvement and a moderate degradation, and mean per-fold R² is
+-0.04. What the benchmark shows most clearly is where the error sits.
+It is in the held-out city's overall level, with its day-to-day pattern a smaller part.
 
-Whether that reflects the region, the network, or this model class cannot be separated by six
-cities and one test year, and the predictor family most likely to carry a city's level,
-meteorology, is absent from every tier. Those are the questions the benchmark exists to let
-the next group answer on terms that can be compared.
+Whether that reflects the region, the network, or this model class cannot be separated by
+6 cities and one test year. Two additions would settle it on these same splits:
+meteorology, the predictor family most likely to carry a city's level and absent from every
+tier here, and cities outside the diplomatic-post network, which would show whether the
+flatness is a property of the region or of the training sample.
 
 
 ## Data availability
@@ -660,16 +680,16 @@ systematic across all 33 StateAir providers and their 36 locations and that trac
 provider label. We treat the null as unassigned metadata while recording that no licence has
 been issued, and because a single deposit licence would assert a permission the evidence does
 not support for every feed, the observations are left at source. The Department of State's
-archived *Data Use Statement* asks that its data "not be altered in any way and be
-disseminated as received", which is a further reason not to redistribute a merged,
-daily-aggregated panel. We attribute the observations to the Department and carry its caveat
+archived *Data Use Statement*, recovered from a 2014-05-12 Internet Archive capture and
+quoted in full in `data/MANIFEST.md`, states that "[a]ir quality data should not be altered
+in any way and should be disseminated as received", which is a further reason not to
+redistribute a merged, daily-aggregated panel. We attribute the observations to the Department and carry its caveat
 that they "are not fully verified or validated".
 
-**Retrieval.** All ten source feeds are published in OpenAQ's open-data archive on Amazon S3
+**Retrieval.** All ten feeds are in OpenAQ's open-data archive on Amazon S3
 (`s3://openaq-data-archive/records/csv.gz/locationid={id}/`), downloadable anonymously and
-verified for each benchmark feed on 2026-08-14, and through the OpenAQ v3 API with a free
-key, the route the pipeline uses. `data/MANIFEST.md` lists every source location and its
-provenance, and `README.md` gives the commands that rebuild the panel.
+verified for each on 2026-08-14, and through the v3 API with a free key, the route the
+pipeline uses. `README.md` gives the commands that rebuild the panel.
 
 ## Code availability
 
@@ -695,31 +715,49 @@ leakage, table provenance and manuscript-number consistency.
 
 ## References
 
-1. Asmaa Alazmi and Hesham Rakha (2022). *Assessing and Validating the Ability of Machine Learning to Handle Unrefined Particle Air Pollution Mobile Monitoring Data Randomly, Spatially, and Spatiotemporally*. International Journal of Environmental Research and Public Health. https://doi.org/10.3390/ijerph191610098
-2. George I. Austin, Itsik Pe’er and Tal Korem (2025). *Distributional bias compromises leave-one-out cross-validation*. Science Advances. https://doi.org/10.1126/sciadv.adx6976
-3. Clara Betancourt et al. (2021). *AQ-Bench: a benchmark dataset for machine learning on global air quality metrics*. Earth system science data. https://doi.org/10.5194/essd-13-3013-2021
-4. A. Colin Cameron and Douglas L. Miller (2015). *A Practitioner’s Guide to Cluster-Robust Inference*. Journal of Human Resources. https://doi.org/10.3368/jhr.50.2.317
-5. Sachin Chauhan et al. (2023). *AirDelhi: Fine-Grained Spatio-Temporal Particulate Matter Dataset From Delhi For ML based Modeling*. Advances in Neural Information Processing Systems 36. https://doi.org/10.52202/075280-3298
-6. Francis X. Diebold (2015). *Comparing Predictive Accuracy, Twenty Years Later: A Personal Perspective on the Use and Abuse of Diebold–Mariano Tests*. Journal of Business and Economic Statistics. https://doi.org/10.1080/07350015.2014.983236
-7. Aaron van Donkelaar et al. (2021). *Monthly Global Estimates of Fine Particulate Matter and Their Uncertainty*. Environmental Science & Technology. https://doi.org/10.1021/acs.est.1c05309
-8. Hans Hersbach et al. (2020). *The ERA5 global reanalysis*. Quarterly Journal of the Royal Meteorological Society. https://doi.org/10.1002/qj.3803
-9. Sture Holm (1979). *A Simple Sequentially Rejective Multiple Test Procedure*. Scandinavian Journal of Statistics. https://doi.org/10.2307/4615733
-10. Xiaoye Jin et al. (2022). *Machine learning driven by environmental covariates to estimate high-resolution PM2.5 in data-poor regions*. PeerJ. https://doi.org/10.7717/peerj.13203
-11. Alexei Lyapustin et al. (2018). *MODIS Collection 6 MAIAC algorithm*. Atmospheric measurement techniques. https://doi.org/10.5194/amt-11-5741-2018
-12. Hanna Meyer et al. (2019). *Importance of spatial predictor variable selection in machine learning applications – Moving from data reproduction to spatial prediction*. Ecological Modelling. https://doi.org/10.1016/j.ecolmodel.2019.108815
-13. Hanna Meyer and Edzer Pebesma (2021). *Predicting into unknown space? Estimating the area of applicability of spatial prediction models*. Methods in Ecology and Evolution. https://doi.org/10.1111/2041-210x.13650
-14. Stefanos Papagiannis et al. (2024). *Air quality challenges in Central Asian urban areas: a PM2.5 source apportionment analysis in Dushanbe, Tajikistan*. Environmental Science and Pollution Research. https://doi.org/10.1007/s11356-024-33833-6
-15. David R. Roberts et al. (2016). *Cross‐validation strategies for data with temporal, spatial, hierarchical, or phylogenetic structure*. Ecography. https://doi.org/10.1111/ecog.02881
-16. Dié Tang, Yu Zhan and Fumo Yang (2024). *A review of machine learning for modeling air quality: Overlooked but important issues*. Atmospheric Research. https://doi.org/10.1016/j.atmosres.2024.107261
-17. Madina Tursumbayeva et al. (2023). *Cities of Central Asia: New hotspots of air pollution in the world*. Atmospheric Environment. https://doi.org/10.1016/j.atmosenv.2023.119901
-18. Kazbek Tursun et al. (2025). *Dominant sources of PM2.5 in Kazakhstan's urban cities: A PMF and HYSPLIT-based study for air quality management in Central Asia*. Urban Climate. https://doi.org/10.1016/j.uclim.2025.102706
-19. Pepijn Veefkind et al. (2012). *TROPOMI on the ESA Sentinel-5 Precursor: A GMES mission for global observations of the atmospheric composition for climate, air quality and ozone layer applications*. Remote Sensing of Environment. https://doi.org/10.1016/j.rse.2011.09.027
-20. Alexandre M.J.‐C. Wadoux et al. (2021). *Spatial cross-validation is not the right way to evaluate map accuracy*. Ecological Modelling. https://doi.org/10.1016/j.ecolmodel.2021.109692
-21. Tongshu Zheng et al. (2018). *Field evaluation of low-cost particulate matter sensors in high- and low-concentration environments*. Atmospheric measurement techniques. https://doi.org/10.5194/amt-11-4823-2018
+Asmaa Alazmi and Hesham Rakha (2022). *Assessing and Validating the Ability of Machine Learning to Handle Unrefined Particle Air Pollution Mobile Monitoring Data Randomly, Spatially, and Spatiotemporally*. International Journal of Environmental Research and Public Health. https://doi.org/10.3390/ijerph191610098
 
-### Data Citations
+George I. Austin, Itsik Pe’er and Tal Korem (2025). *Distributional bias compromises leave-one-out cross-validation*. Science Advances. https://doi.org/10.1126/sciadv.adx6976
 
-D1. OpenAQ Inc. (2025). *OpenAQ air quality data platform*, API v3. Accessed 2026-07-29. https://openaq.org
+Clara Betancourt et al. (2021). *AQ-Bench: a benchmark dataset for machine learning on global air quality metrics*. Earth system science data. https://doi.org/10.5194/essd-13-3013-2021
+
+A. Colin Cameron and Douglas L. Miller (2015). *A Practitioner’s Guide to Cluster-Robust Inference*. Journal of Human Resources. https://doi.org/10.3368/jhr.50.2.317
+
+Sachin Chauhan et al. (2023). *AirDelhi: Fine-Grained Spatio-Temporal Particulate Matter Dataset From Delhi For ML based Modeling*. Advances in Neural Information Processing Systems 36. https://doi.org/10.52202/075280-3298
+
+Francis X. Diebold (2015). *Comparing Predictive Accuracy, Twenty Years Later: A Personal Perspective on the Use and Abuse of Diebold–Mariano Tests*. Journal of Business and Economic Statistics. https://doi.org/10.1080/07350015.2014.983236
+
+Aaron van Donkelaar et al. (2021). *Monthly Global Estimates of Fine Particulate Matter and Their Uncertainty*. Environmental Science & Technology. https://doi.org/10.1021/acs.est.1c05309
+
+Hans Hersbach et al. (2020). *The ERA5 global reanalysis*. Quarterly Journal of the Royal Meteorological Society. https://doi.org/10.1002/qj.3803
+
+Sture Holm (1979). *A Simple Sequentially Rejective Multiple Test Procedure*. Scandinavian Journal of Statistics. https://doi.org/10.2307/4615733
+
+Xiaoye Jin et al. (2022). *Machine learning driven by environmental covariates to estimate high-resolution PM2.5 in data-poor regions*. PeerJ. https://doi.org/10.7717/peerj.13203
+
+Alexei Lyapustin et al. (2018). *MODIS Collection 6 MAIAC algorithm*. Atmospheric measurement techniques. https://doi.org/10.5194/amt-11-5741-2018
+
+Hanna Meyer et al. (2019). *Importance of spatial predictor variable selection in machine learning applications – Moving from data reproduction to spatial prediction*. Ecological Modelling. https://doi.org/10.1016/j.ecolmodel.2019.108815
+
+Hanna Meyer and Edzer Pebesma (2021). *Predicting into unknown space? Estimating the area of applicability of spatial prediction models*. Methods in Ecology and Evolution. https://doi.org/10.1111/2041-210x.13650
+
+OpenAQ Inc. (2025). *OpenAQ air quality data platform*, API v3. Accessed 2026-07-29. https://openaq.org
+
+Stefanos Papagiannis et al. (2024). *Air quality challenges in Central Asian urban areas: a PM2.5 source apportionment analysis in Dushanbe, Tajikistan*. Environmental Science and Pollution Research. https://doi.org/10.1007/s11356-024-33833-6
+
+David R. Roberts et al. (2016). *Cross‐validation strategies for data with temporal, spatial, hierarchical, or phylogenetic structure*. Ecography. https://doi.org/10.1111/ecog.02881
+
+Dié Tang, Yu Zhan and Fumo Yang (2024). *A review of machine learning for modeling air quality: Overlooked but important issues*. Atmospheric Research. https://doi.org/10.1016/j.atmosres.2024.107261
+
+Madina Tursumbayeva et al. (2023). *Cities of Central Asia: New hotspots of air pollution in the world*. Atmospheric Environment. https://doi.org/10.1016/j.atmosenv.2023.119901
+
+Kazbek Tursun et al. (2025). *Dominant sources of PM2.5 in Kazakhstan's urban cities: A PMF and HYSPLIT-based study for air quality management in Central Asia*. Urban Climate. https://doi.org/10.1016/j.uclim.2025.102706
+
+Pepijn Veefkind et al. (2012). *TROPOMI on the ESA Sentinel-5 Precursor: A GMES mission for global observations of the atmospheric composition for climate, air quality and ozone layer applications*. Remote Sensing of Environment. https://doi.org/10.1016/j.rse.2011.09.027
+
+Alexandre M.J.‐C. Wadoux et al. (2021). *Spatial cross-validation is not the right way to evaluate map accuracy*. Ecological Modelling. https://doi.org/10.1016/j.ecolmodel.2021.109692
+
+Tongshu Zheng et al. (2018). *Field evaluation of low-cost particulate matter sensors in high- and low-concentration environments*. Atmospheric measurement techniques. https://doi.org/10.5194/amt-11-4823-2018
 
 
 ## Author contributions
@@ -758,7 +796,7 @@ before the reported results were produced, the leave-city-out protocol, the trea
 missingness, and every retraction recorded in `data/DECISIONS.md`) were made by the authors,
 who verified every reported figure against the regenerated result tables, reviewed and edited
 all output, and take full responsibility for the content. Generative AI is not listed as an
-author and holds no accountability for this work. No reported figure is typed by hand
+author and cannot be held accountable for the work. No reported figure is typed by hand
 (Results, Reproducibility), and prose-level editing performed with AI assistance
 is recorded in the repository's commit history. The benchmark version described here is
 **1.1.0**.

@@ -13,7 +13,7 @@ from project files.
 |---|---|---|
 | Main article | `paper/sdata_descriptor.pdf` | Built, 13 pp, figures embedded. Rename before upload, e.g. `Musayev_PM25_Central_Asia.pdf` |
 | Cover letter | `paper/cover_letter.md`, pasted as text or exported to PDF | Written. **[YOU]** fill `[JOURNAL]`; keep the closing APC paragraph only if the venue charges a fee |
-| Highlights | `paper/highlights.md` | 5 bullets, each within 85 characters. Only some journals ask for it |
+| Highlights | `paper/HIGHLIGHTS.md` | 5 bullets, each within 85 characters. Only some journals ask for it |
 | Figures | Embedded in the PDF, 3 figures | In place |
 | Supplementary information | None | Not applicable |
 
@@ -29,7 +29,7 @@ and converting it is a revision-stage task.
 | Title | A quality-controlled PM2.5 dataset with frozen cross-city evaluation splits for six Central Asian cities — **104 characters** |
 | Article type | Research article |
 | Abstract | **165 words** |
-| Sections | Abstract; 1. Introduction; 2. Materials and methods; 3. The released benchmark; 4. Results; 5. Discussion; 6. Conclusions; declarations; references |
+| Sections | Abstract; 1. Introduction; 2. Materials and methods; 3. The released benchmark; 4. Results; 5. Discussion; 6. Conclusions; Data availability; Code availability; References; declarations |
 | Suggested keywords | PM2.5; air quality; Central Asia; benchmark dataset; spatial cross-validation; low-cost sensors; data quality control |
 | Suggested subject terms | Environmental sciences; Atmospheric science; Computational science |
 

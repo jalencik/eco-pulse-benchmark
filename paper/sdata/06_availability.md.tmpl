@@ -19,16 +19,16 @@ systematic across all 33 StateAir providers and their 36 locations and that trac
 provider label. We treat the null as unassigned metadata while recording that no licence has
 been issued, and because a single deposit licence would assert a permission the evidence does
 not support for every feed, the observations are left at source. The Department of State's
-archived *Data Use Statement* asks that its data "not be altered in any way and be
-disseminated as received", which is a further reason not to redistribute a merged,
-daily-aggregated panel. We attribute the observations to the Department and carry its caveat
+archived *Data Use Statement*, recovered from a 2014-05-12 Internet Archive capture and
+quoted in full in `data/MANIFEST.md`, states that "[a]ir quality data should not be altered
+in any way and should be disseminated as received", which is a further reason not to
+redistribute a merged, daily-aggregated panel. We attribute the observations to the Department and carry its caveat
 that they "are not fully verified or validated".
 
-**Retrieval.** All ten source feeds are published in OpenAQ's open-data archive on Amazon S3
+**Retrieval.** All ten feeds are in OpenAQ's open-data archive on Amazon S3
 (`s3://openaq-data-archive/records/csv.gz/locationid={id}/`), downloadable anonymously and
-verified for each benchmark feed on 2026-08-14, and through the OpenAQ v3 API with a free
-key, the route the pipeline uses. `data/MANIFEST.md` lists every source location and its
-provenance, and `README.md` gives the commands that rebuild the panel.
+verified for each on 2026-08-14, and through the v3 API with a free key, the route the
+pipeline uses. `README.md` gives the commands that rebuild the panel.
 
 ## Code availability
 

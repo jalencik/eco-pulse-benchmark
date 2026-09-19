@@ -17,8 +17,10 @@ longer-lived feed. All of that lies beyond the test block and none of it is used
 
 ### The frozen benchmark definition
 
-These five files, under `benchmark/splits/`, are the benchmark, and nothing else in the
-archive is needed to evaluate a method on it.
+These five files, under `benchmark/splits/`, are the benchmark (Table 1), and nothing else
+in the archive is needed to evaluate a method on it.
+
+**Table 1.** The frozen benchmark definition.
 
 | File | Format | Contents |
 |---|---|---|
@@ -37,8 +39,11 @@ ineligible-city list, and a `config` block (`max_lag_hours`, `max_horizon_hours`
 
 ### Reference results
 
-Provided so that a new method can be placed on the same axes without re-running the
-reference implementation. All are CSV with a header row, under `paper/tables/`.
+Table 2 lists the reference results, provided so that a new method can be placed on the
+same axes without re-running the reference implementation. All are CSV with a header row,
+under `paper/tables/`.
+
+**Table 2.** Deposited reference result files.
 
 | File | Rows | Contents |
 |---|---:|---|
@@ -75,9 +80,9 @@ same conditions.
 
 `t6_01_predictions_task_n.csv` is the most reusable record: it permits any alternative loss,
 significance procedure or aggregation to be applied to the reference implementation without
-retraining it, and its per-seed columns make the ensemble decomposable. The archive also
-holds the per-fold, per-band and per-season error tables (`t7_01`–`t7_03`) and the
-ranking-robustness table (`t7_05`) cited in Section 4. Neither the hourly panel
+retraining it, and its per-seed columns make the ensemble decomposable. The archive also holds the per-fold, per-band and per-season error tables
+(`t7_01`–`t7_03`), discussed in Section 5, and the ranking-robustness table (`t7_05`),
+cited in Section 4. Neither the hourly panel
 nor the predictor matrix is deposited: both are rebuilt by the pipeline from the sources
 named under Predictor sources (Data availability). `panel_sources.parquet`, the per-hour
 provenance of each merge, is likewise written by the rebuild and is not in the archive.

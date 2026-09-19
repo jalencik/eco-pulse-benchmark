@@ -50,9 +50,10 @@ merged instrument carrying its city name as `station_id`.
 **Q6 timezone verification.** Each station's diurnal composite is cross-correlated against a
 regional reference, and a station whose lag cannot be identified is flagged (Results).
 
-**Daily target.** The prediction target is the local-calendar daily mean, requiring at least 18
-hourly observations. Days are local-calendar because a UTC boundary splits a Central Asian
-night in half, cutting the overnight inversion peak across two days and understating both.
+**Daily target.** The prediction target is the local-calendar daily mean, requiring at least
+18 hourly observations. Days are local-calendar because a UTC boundary falls mid-night in
+Central Asia, so an overnight peak would be divided between two calendar days and would
+lower both daily means.
 
 ### Predictor sources
 
@@ -110,10 +111,10 @@ training row, for which withholding the city is the estimand itself. Meyer and P
 frame the complementary question, whether a held-out city falls inside the model's area of
 applicability.
 
-**Leave-station-out** ({{n_lso_folds}} folds). Available only where a city holds more than one
-instrument, so {{lso_ineligible}} are listed as ineligible and both remaining folds are the
-Khujand low-cost pair, the Dushanbe merge having removed the only reference-grade city with
-two devices. This protocol therefore says nothing about generalisation across the reference
+**Leave-station-out** ({{n_lso_folds}} folds). Only Khujand holds more than one instrument,
+so both folds are its low-cost pair, and the builder records the other five cities as
+ineligible in `leave_station_out.json`. The Dushanbe merge removed the only reference-grade
+city with two devices. This protocol therefore says nothing about generalisation across the reference
 network and supports no headline claim, and leave-one-out protocols carry a documented
 failure mode of their own (Austin et al., 2025). The folds are retained for methods that
 target low-cost sensor transfer.
@@ -138,8 +139,8 @@ mean ± standard deviation.
 
 **Baselines.** Baselines are task-specific. Task N is scored against six rungs, three
 constants (the training-pool mean and the global mean and median), nearest monitor,
-inverse-distance weighting and ordinary kriging, tabled at daily resolution in Technical
-Validation (`t3_06`, which also carries the `oracle_city_constant` diagnostic, flagged
+inverse-distance weighting and ordinary kriging, tabled at daily resolution in Section 4
+(`t3_06`, which also carries the `oracle_city_constant` diagnostic, flagged
 `legal = False` and not a rung). Task F has its own hourly ladder of four history rungs, persistence,
 diurnal persistence, a same-hour 7-day mean and climatology (`t3_01`), at 24, 48 and 72 h,
 which the daily, single-horizon Task F reference model is not scored against. CAMS is tabled

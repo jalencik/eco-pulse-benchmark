@@ -5,12 +5,11 @@ Run:  python scripts/check_sdata_limits.py
 The venue is not yet chosen, so these are portability floors rather than one venue's rule:
 a 170-word abstract, a 700-word introduction and a 110-character title sit inside the
 limits of every candidate, including the strictest. The editorial system queries a non-conforming manuscript rather than
-truncating it, and a query costs weeks -- which is the entire reason this venue was chosen
-over a journal with a first-review round measured in months.
+truncating it, and a query costs weeks.
 
-The abstract currently sits one word under its limit. A single added clause breaks it
-silently, exactly as a one-word edit breaks the Elsevier highlights guarded by
-`check_highlights.py`. This script exists for the same reason and is its sibling.
+The abstract sits close enough to its limit that an added clause can break it silently,
+exactly as a one-word edit breaks the highlights guarded by `check_highlights.py`. This
+script exists for the same reason and is its sibling. Run it to see the current margin.
 
 Counting is done on the *rendered* text: placeholders are substituted from numbers.json
 first, because `{{n_stations}}` is one token but the `8` it becomes is also one, while

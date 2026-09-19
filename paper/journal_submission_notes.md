@@ -14,7 +14,7 @@ made once and applied consistently.
 | Artefact | Portable? | Note |
 |---|---|---|
 | `paper/extended_technical_report.md` | Yes | Standard research-article structure. Venue-neutral throughout. |
-| `paper/sdata_descriptor.md` | Yes | **The submission manuscript.** Standard research-article order (Abstract, 1. Introduction, 2. Materials and methods, 3. The released benchmark, 4. Results, 5. Discussion, 6. Conclusions, declarations, references). Reshaped from a Data Descriptor on 2026-09-19 because the venue is unknown; the file name is a build path, not a format claim. |
+| `paper/sdata_descriptor.md` | Yes | **The submission manuscript.** Standard research-article order: Abstract; 1. Introduction; 2. Materials and methods; 3. The released benchmark; 4. Results; 5. Discussion; 6. Conclusions; Data availability; Code availability; References; declarations. Reshaped from a Data Descriptor on 2026-09-19 because the venue is unknown; the file name is a build path, not a format claim. |
 | `paper/cover_letter.md` | Yes, with two placeholders | `[JOURNAL]` and the APC paragraph, which is conditional on the venue charging a fee. |
 | `paper/HIGHLIGHTS.md` | Yes | Only some venues ask for it. The file is heading plus bullets and nothing else, because submission systems ingest it verbatim. Three to five bullets, each at most 85 characters including spaces, free of jargon, acronyms and abbreviations; 85 is the strictest known constraint, so bullets that satisfy it satisfy any looser one. `scripts/check_highlights.py` fails the build if a bullet exceeds the limit, which is easy to do while editing and which submission systems reject rather than truncate. |
 | `paper/tables/`, `paper/figures/`, `benchmark/` | Yes | Frozen artefacts. Independent of venue. |

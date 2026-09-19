@@ -8,14 +8,14 @@ and a baseline ladder every submission is scored against.
 
 Under the protocol the benchmark is built around, which withholds a city entirely, a tuned
 gradient-boosting reference model reaches {{taskn_retrospective_rmse}} µg/m³ fold-mean RMSE
-against {{taskn_cams_rmse}} µg/m³ for pooled-debiased CAMS. Six cities cannot separate those
-(paired *t* *p* = {{sig_primary_t_p}}), and the interval is wide enough to contain both a
-useful improvement and a moderate degradation. Mean per-fold R² is
-{{taskn_retrospective_r2}}. The clearest result is the flatness: transferred to a city it has
-never seen, the model returns something close to a regional level and does not move it with
-the city, so its error sits mainly in that level, with the day-to-day pattern a smaller part.
+against {{taskn_cams_rmse}} µg/m³ for pooled-debiased CAMS. {{n_cities}} cities cannot
+separate those (paired *t* *p* = {{sig_primary_t_p}}), the interval spans both a useful
+improvement and a moderate degradation, and mean per-fold R² is
+{{taskn_retrospective_r2}}. What the benchmark shows most clearly is where the error sits.
+It is in the held-out city's overall level, with its day-to-day pattern a smaller part.
 
-Whether that reflects the region, the network, or this model class cannot be separated by six
-cities and one test year, and the predictor family most likely to carry a city's level,
-meteorology, is absent from every tier. Those are the questions the benchmark exists to let
-the next group answer on terms that can be compared.
+Whether that reflects the region, the network, or this model class cannot be separated by
+{{n_cities}} cities and one test year. Two additions would settle it on these same splits:
+meteorology, the predictor family most likely to carry a city's level and absent from every
+tier here, and cities outside the diplomatic-post network, which would show whether the
+flatness is a property of the region or of the training sample.

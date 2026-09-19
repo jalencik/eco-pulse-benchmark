@@ -7,10 +7,17 @@ and the network or this model cannot be separated by this design, and the predic
 most likely to carry a city's level, meteorology, is absent from every tier. Per-fold,
 per-band and per-season figures are in `t7_01`–`t7_03`.
 
-That bounds what the benchmark can currently settle. The following limitations bound it
-further.
+Two comparisons follow from that. Jin et al. (2022) report R² between 0.73 and 0.81 over
+Xinjiang under a split that does not separate cities, and AQ-Bench splits spatially but
+targets a time-independent metric; neither design would have exposed a level error of this
+kind, because neither withholds a city and then asks for its concentration. A reuser
+should therefore read a high pooled R² on this benchmark as a claim about between-city
+variation until the per-city figures say otherwise.
 
-- Six cities bound every inference: no procedure can attain a two-sided *p* below
+Six cities set the floor on every inference reported here, and seven further constraints
+qualify it.
+
+- With {{n_cities}} clusters no procedure can attain a two-sided *p* below
   {{sig_perm_floor}} without distributional assumptions the data do not support.
 - Two of {{n_stations}} instruments are low-cost and form the zero-shot Khujand fold, whose
   results are not comparable in kind to the other five.
@@ -27,7 +34,7 @@ further.
   requires a version bump.
 - Kazakhstan contributes one city: Astana failed the completeness rule at
   {{astana_completeness_pct}}% against a required {{q7_min_completeness_pct}}%.
-- Task F is single-horizon, predicting next-day daily means only, and is not tabled with the
-  48 h and 72 h hourly ladder in `t3_01`.
+- Task F is single-horizon, predicting next-day daily means only, so it is not scored
+  against the hourly ladder in `t3_01` at any of its 24, 48 or 72 h horizons.
 - The ground-truth panel is not redistributed, and regenerating results from raw
   observations requires rebuilding it (Data availability).

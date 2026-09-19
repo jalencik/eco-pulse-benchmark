@@ -133,20 +133,23 @@ def main() -> int:
             out += f" https://doi.org/{rec['doi']}"
         return out
 
-    refs = ["## References", ""]
-    for i, rec in enumerate(
-        sorted(used, key=lambda r: (_surname(r).lower(), r.get("year") or 0)), 1
-    ):
-        refs.append(f"{i}. {_fmt(rec)}")
+    # One alphabetical sequence, unnumbered. Every in-text citation in this manuscript is
+    # author-date, so numbered entries would refer to nothing, and a repository is cited
+    # author-date like any other work. One blank-line-separated paragraph per entry, so the
+    # list can break across a page; paper/scripts/build_pdf.py tightens their spacing. Joining
+    # them with markdown hard breaks instead makes one paragraph that cannot break, which
+    # pushed the whole list to a fresh page.
+    entries = [(_surname(r).lower(), str(r.get("year") or ""), _fmt(r)) for r in used]
+    entries += [
+        (key.lower(), "", DATA_SOURCES[key])
+        for key in sorted({k for k, _ in cited} & set(DATA_SOURCES))
+    ]
 
-    # Data citations. Datasets are cited in their own right rather
-    # than mentioned in prose. These are repositories, not literature, so they resolve against
-    # DATA_SOURCES instead of sources.json.
-    data_cited = sorted({k for k, _ in cited} & set(DATA_SOURCES))
-    if data_cited:
-        refs += ["", "### Data Citations", ""]
-        for i, key in enumerate(data_cited, 1):
-            refs.append(f"D{i}. {DATA_SOURCES[key]}")
+    refs = ["## References", ""]
+    for entry in sorted(entries):
+        refs += [entry[2], ""]
+    if refs and refs[-1] == "":
+        refs.pop()
 
     unmatched = sorted(
         {(s, y) for s, y in cited if s not in DATA_SOURCES}

@@ -33,6 +33,7 @@ REQUIRED = [
     "3. The released benchmark",
     "4. Results",
     "5. Discussion",
+    "6. Conclusions",
     "Data availability",
     "Code availability",
 ]
