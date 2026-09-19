@@ -48,7 +48,7 @@ class TestExtractionChain:
     def test_every_template_resolves(self):
         """An unresolved placeholder must fail the build, not print itself.
 
-        Both template trees. The Data Descriptor's templates were outside this check while
+        Both template trees. The manuscript's templates were outside this check while
         seven of their hand-typed figures drifted from the tables, so the guarantee the paper
         credits this test with did not cover the document being submitted.
         """

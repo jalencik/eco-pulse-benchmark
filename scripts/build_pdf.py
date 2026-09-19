@@ -1,9 +1,9 @@
 """Render paper/extended_technical_report.md to a PDF technical report.
 
-The output is deliberately NOT named after the Data Descriptor. It is the longer
+The output is deliberately NOT named after the submission manuscript. It is the longer
 research-article treatment of the same benchmark, carrying the same verified numbers from the
-same numbers.json, and it exists for the preprint and fallback venues. The Data Descriptor
-submitted to Scientific Data is paper/sdata_descriptor.md. Two documents with similar names
+same numbers.json, and it is a repository document rather than a deliverable. The
+submission manuscript is paper/sdata_descriptor.md. Two documents with similar names
 inside one public deposit read as a duplicate submission, so the filename states the role.
 
 Run:  python scripts/build_pdf.py [--in PATH] [--out PATH]

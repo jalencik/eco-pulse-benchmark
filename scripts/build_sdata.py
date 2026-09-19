@@ -1,8 +1,9 @@
-"""Render and stitch the Scientific Data Data Descriptor from paper/sdata/*.md.tmpl.
+"""Render and stitch the submission manuscript from paper/sdata/*.md.tmpl.
 
 Why this is a separate document from `paper/extended_technical_report.md`
 ---------------------------------------------------------------
-Scientific Data does not accept a research-article structure. It requires Background and
+The manuscript was reshaped into a standard research article on 2026-09-19, because the
+venue is unknown and may be a local journal. It previously required Background and
 Summary, Methods, Data Records, Technical Validation, Usage Notes and Code Availability, with
 a 170-word abstract and a 700-word Background and Summary, and it has no Conclusion section.
 The research-article manuscript is retained because the preprint and the fallback venues in
@@ -26,9 +27,9 @@ SDATA = ROOT / "paper" / "sdata"
 OUT = ROOT / "paper" / "sdata_descriptor.md"
 PLACEHOLDER = re.compile(r"\{\{([a-zA-Z0-9_]+)\}\}")
 
-# Scientific Data's required order. A section present in the directory but missing here is a
+# The section order. A section present in the directory but missing here is a
 # build failure, not a silent omission -- the whole point is that the document conforms.
-# Repositories cited as data rather than as literature. Scientific Data expects datasets to
+# Repositories cited as data rather than as literature. journals expect datasets to
 # carry their own citation; a bare prose mention does not satisfy that.
 DATA_SOURCES = {
     "OpenAQ": (
@@ -56,7 +57,7 @@ def main() -> int:
 
     unknown = sorted(set(present) - set(ORDER))
     if unknown:
-        print(f"FAILED: template(s) not in the data-descriptor section order: {unknown}")
+        print(f"FAILED: template(s) not in the section order: {unknown}")
         return 1
 
     missing_sections = [s for s in ORDER if s not in present]
@@ -79,7 +80,7 @@ def main() -> int:
             print(f"  {name}: {', '.join(keys)}")
         return 1
 
-    # References. Scientific Data lists References as a required section, and this descriptor
+    # References. Every journal requires a reference list, and this manuscript
     # cites works in-text; a citing document with no reference list fails editorial
     # screening outright. Built from research/sources.json -- the same resolver-verified
     # records the research-article manuscript uses -- and restricted to works this document
@@ -138,7 +139,7 @@ def main() -> int:
     ):
         refs.append(f"{i}. {_fmt(rec)}")
 
-    # Data citations. Scientific Data requires datasets to be cited in their own right rather
+    # Data citations. Datasets are cited in their own right rather
     # than mentioned in prose. These are repositories, not literature, so they resolve against
     # DATA_SOURCES instead of sources.json.
     data_cited = sorted({k for k, _ in cited} & set(DATA_SOURCES))
@@ -154,7 +155,7 @@ def main() -> int:
     if unmatched:
         print(f"  WARNING: unmatched in-text citations: {unmatched}")
 
-    # Scientific Data's section order (submission guidelines, checked 2026-08-15) places
+    # The section order places
     # References directly after Code Availability and *before* Author Contributions, not at
     # the end of the document. Insert rather than append, so the declarations keep trailing.
     rendered = [s for s in ORDER if s in present]
@@ -173,7 +174,7 @@ def main() -> int:
     print(f"  {len(parts) - 1} of {len(ORDER)} required sections + References, {words:,} words")
 
     if missing_sections:
-        print("\n  NOT YET WRITTEN (required by the data-descriptor format):")
+        print("\n  NOT YET WRITTEN (required by the article format):")
         for s in missing_sections:
             print(f"    - {s}")
         print("\n  The document is INCOMPLETE and must not be submitted in this state.")

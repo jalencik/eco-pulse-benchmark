@@ -1,6 +1,6 @@
-"""Figures for the Data Descriptor: coverage and error structure.
+"""Figures for the submission manuscript: coverage and error structure.
 
-A Data Descriptor is read by someone deciding whether the data suit their problem. The two
+A dataset paper is read by someone deciding whether the data suit their problem. The two
 things they need to see first are *what is actually in the record* -- which stations report,
 when, and how completely -- and *where the data are hard*. Neither is answerable from prose.
 

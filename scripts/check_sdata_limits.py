@@ -1,4 +1,4 @@
-"""Guard the Scientific Data submission limits on the Data Descriptor templates.
+"""Guard the manuscript's portability limits on the templates in paper/sdata/.
 
 Run:  python scripts/check_sdata_limits.py
 
@@ -89,12 +89,12 @@ def main() -> int:
             failures.append(f"{heading} is {words} words, limit {limit}")
 
     if failures:
-        print("\nFAILED -- data-descriptor submission limits not met:", file=sys.stderr)
+        print("\nFAILED -- submission limits not met:", file=sys.stderr)
         for f in failures:
             print(f"  {f}", file=sys.stderr)
         return 1
 
-    print("\nall data-descriptor submission limits satisfied")
+    print("\nall submission limits satisfied")
     return 0
 
 

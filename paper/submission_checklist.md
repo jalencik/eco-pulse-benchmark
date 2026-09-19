@@ -1,14 +1,9 @@
-# Submission checklist — data-journal route (Data Descriptor)
+# Submission checklist
 
-> **This file is venue-specific and no venue has been selected.** It is kept as a worked
-> example of one candidate route, because the legwork behind it is real. The portable
-> material lives in [`journal_submission_notes.md`](journal_submission_notes.md); rewrite
-> this file once a venue is chosen, and treat any figure here as needing re-checking against
-> that venue's current guidelines.
-
-Prepared 2026-08-15 against that journal's then-current submission guidelines. Every value below is
-taken from the repository; nothing here is invented. Items marked **[YOU]** need Jaloliddin to
-enter or confirm them in the submission system, and they cannot be filled from project files.
+The venue is not chosen, so this checklist is written to hold for any of them. Where a
+journal's own form says otherwise, its form wins. Items marked **[YOU]** need the
+corresponding author to enter or confirm them in the submission system, and cannot be filled
+from project files.
 
 ---
 
@@ -16,35 +11,40 @@ enter or confirm them in the submission system, and they cannot be filled from p
 
 | Slot | File | Status |
 |---|---|---|
-| Main article (first round: **PDF only**) | `paper/sdata_descriptor.pdf` | Built, 14 pp, figures embedded |
-| Cover letter | `paper/cover_letter.md` → paste as text or export to PDF | Written |
-| Figures | Embedded in the PDF (2 figures, limit is 8) | In place |
+| Main article | `paper/sdata_descriptor.pdf` | Built, 13 pp, figures embedded. Rename before upload, e.g. `Musayev_PM25_Central_Asia.pdf` |
+| Cover letter | `paper/cover_letter.md`, pasted as text or exported to PDF | Written. **[YOU]** fill `[JOURNAL]`; keep the closing APC paragraph only if the venue charges a fee |
+| Highlights | `paper/highlights.md` | 5 bullets, each within 85 characters. Only some journals ask for it |
+| Figures | Embedded in the PDF, 3 figures | In place |
 | Supplementary information | None | Not applicable |
 
-At revision the journal requires `.docx` or `.tex` for the main article, **not** PDF. The
-markdown source is `paper/sdata_descriptor.md`; converting it is a revision-stage task.
+The file name says `sdata_descriptor` for build-path reasons. The document inside is a
+standard research article. Many journals want an editable format (`.docx` or `.tex`) at
+revision rather than at first submission; the markdown source is `paper/sdata_descriptor.md`,
+and converting it is a revision-stage task.
 
 ## Manuscript metadata
 
 | Field | Value |
 |---|---|
-| Title (110-char limit) | A quality-controlled PM2.5 dataset with frozen cross-city evaluation splits for six Central Asian cities — **104 chars** |
-| Article type | Data Descriptor |
-| Abstract (170-word limit) | **150 words** — as in `paper/sdata_descriptor.pdf` |
-| Subject terms | Environmental sciences; Atmospheric science; Computational science |
+| Title | A quality-controlled PM2.5 dataset with frozen cross-city evaluation splits for six Central Asian cities — **104 characters** |
+| Article type | Research article |
+| Abstract | **165 words** |
+| Sections | Abstract; 1. Introduction; 2. Materials and methods; 3. The released benchmark; 4. Results; 5. Discussion; 6. Conclusions; declarations; references |
 | Suggested keywords | PM2.5; air quality; Central Asia; benchmark dataset; spatial cross-validation; low-cost sensors; data quality control |
+| Suggested subject terms | Environmental sciences; Atmospheric science; Computational science |
 
 ## Authors, in order
 
 | # | Name | Affiliation | Role |
 |---|---|---|---|
 | 1 | Jaloliddin Musayev | International House Tashkent Academic Lyceum, Tashkent, Uzbekistan | **Corresponding**, ORCID 0009-0003-0210-3687 |
-| 2 | Asadbek Abdivayitov | First Specialized Boarding School, Karshi, Uzbekistan | Co-author |
+| 2 | Asadbek Abdivayitov | First Specialized Boarding School, Karshi, Uzbekistan | Co-author, ORCID 0009-0006-3484-3438 |
 
 Corresponding email: `jaloliddin2009applicant@gmail.com`
 
-Author ORCIDs are both recorded: Jaloliddin Musayev (0009-0003-0210-3687) and Asadbek
-Abdivayitov (0009-0006-3484-3438).
+**[YOU]** The corresponding author's ORCID record registers the surname as "Musaev" while
+every manuscript artefact uses "Musayev". Correct the ORCID record before submitting, or the
+publication will not attach to the right profile.
 
 ## Declarations (all already written into the manuscript)
 
@@ -55,37 +55,46 @@ Abdivayitov (0009-0006-3484-3438).
 | Author contributions | Per CRediT, in the manuscript |
 | Data availability | Zenodo `10.5281/zenodo.21930669`, CC BY 4.0; observations not redistributed, retrievable at source |
 | Code availability | `github.com/jalencik/eco-pulse-benchmark`, MIT, archived in the same deposit |
-| Ethics | Not applicable — no human or animal subjects |
-| Generative AI | Disclosed in the manuscript |
+| Ethics | Not applicable, no human or animal subjects |
+| Generative AI | Disclosed in the manuscript, above the reference list |
 
-## Open access / APC
+Some journals place the generative-AI statement immediately above the references and others
+in the declarations block. The manuscript satisfies both: the statement sits in the
+declarations, which follow the references.
+
+## Article-processing charges
+
+Only some venues charge one, so treat this section as conditional.
 
 | Item | Value |
 |---|---|
-| APC | £2150 / $2690 / €2390 |
-| Discount | **50%** — Uzbekistan is named on Springer Nature's lower-middle-income discount list |
-| Estimated payable | ~£1075 / ~$1345 / ~€1195 |
-| Deadline | **Request at the point of submission.** Requests made during review or after acceptance "are unable to be considered" |
-| Note | Springer Nature also runs a country-tiered APC pricing pilot that may supersede the discount; check what the form offers |
+| Whether payable | **[YOU]** Check the venue's own page. Many regional and society journals charge nothing |
+| Discount | Uzbekistan appears on most publishers' lower-middle-income waiver or discount lists |
+| Deadline | **Request at the point of submission.** Most publishers will not consider a request made during review or after acceptance |
 
-**[YOU]** Tick the waiver/discount request in the submission form. This is the one step that
-cannot be undone later.
+**[YOU]** If the venue charges a fee, tick the waiver or discount request in the form. It is
+the one step that cannot be undone later.
 
 ## [YOU] Items only you can do
 
-1. Create or sign in to the Springer Nature submission account.
-2. Request the 50% APC discount **in the form**.
-3. Confirm the manuscript is not under consideration elsewhere (the cover letter states this).
-4. Supply co-author ORCIDs if they have them.
-5. Suggested / excluded reviewers, if the form asks and you want to name any.
+1. Choose the venue and put its name in the cover letter.
+2. Create or sign in to the submission account.
+3. Request a fee waiver or discount in the form, if the venue charges one.
+4. Confirm the manuscript is not under consideration elsewhere; the cover letter states this.
+5. Suggested or excluded reviewers, if the form asks and you want to name any.
+6. Correct the ORCID surname.
 
 ## Verified before submission
 
-- 584 tests pass
-- Data Descriptor builds byte-identically across consecutive runs
-- Title 104/110 chars, abstract 150/170 words, Background & Summary 648/700 words
-- Section order matches the journal's required sequence
-- 2 figures (limit 8), 4 tables (limit 10)
-- `splits.sha256` unchanged — no scientific data altered
+- 592 tests pass; `ruff check` and `ruff format --check` clean
+- The manuscript builds byte-identically across consecutive runs
+- Title 104/110 characters, abstract 165/170 words, introduction 684/700 words
+- 3 figures, 12 result tables listed, 21 references, no unresolved placeholders
+- Every in-text citation resolves to a reference entry
+- `splits.sha256` unchanged, so no scientific data was altered
 - No secrets, credentials or local paths in tracked files
-- Zenodo v1.1.0 unchanged
+- Zenodo v1.1.0 unchanged; the manuscript discloses that two later tables post-date it
+
+The title, abstract and introduction limits above are portability floors rather than one
+venue's rule: they sit inside the limits of every candidate considered, including the
+strictest, so passing them keeps every option open.

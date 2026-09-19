@@ -119,14 +119,14 @@ TARGETS: dict[str, list[list[str]]] = {
         # editorial system rejects a non-conforming file rather than truncating it, and
         # a one-word edit breaks the limit silently.
         [PY, "scripts/check_highlights.py"],
-        # The Scientific Data Data Descriptor is built from the SAME numbers.json as the
+        # The submission manuscript is built from the SAME numbers.json as the
         # research-article manuscript, so the two documents cannot disagree about a figure.
         # build_sdata.py exits non-zero if a required section is missing or a placeholder
         # survives; check_sdata_limits.py guards the 170/700/110 submission limits.
         [PY, "scripts/build_sdata.py"],
         [PY, "scripts/check_sdata_limits.py"],
     ],
-    # Scientific Data wants a single PDF of the main article in the first review round. It is
+    # Journals want a single PDF of the main article in the first review round. It is
     # a submission deliverable rather than a number, which is why it sits outside `reproduce`
     # -- but it stays a script so the submitted artefact is never the one file in the project
     # that nothing can rebuild. Run after `paper`.

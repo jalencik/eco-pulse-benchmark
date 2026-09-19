@@ -14,11 +14,11 @@ made once and applied consistently.
 | Artefact | Portable? | Note |
 |---|---|---|
 | `paper/extended_technical_report.md` | Yes | Standard research-article structure. Venue-neutral throughout. |
-| `paper/sdata_descriptor.md` | Structurally venue-shaped | Built to the Data Descriptor section order (Background and Summary, Methods, Data Records, Technical Validation, Usage Notes, Data/Code Availability, Declarations). That order is a requirement of the Data Descriptor article type. Submitting elsewhere means re-sectioning, not rewriting: the prose and every number carry over unchanged. |
-| `paper/cover_letter.md` | Yes, with four placeholders | `[ARTICLE TYPE]`, `[JOURNAL]`, and the APC paragraph. |
+| `paper/sdata_descriptor.md` | Yes | **The submission manuscript.** Standard research-article order (Abstract, 1. Introduction, 2. Materials and methods, 3. The released benchmark, 4. Results, 5. Discussion, 6. Conclusions, declarations, references). Reshaped from a Data Descriptor on 2026-09-19 because the venue is unknown; the file name is a build path, not a format claim. |
+| `paper/cover_letter.md` | Yes, with two placeholders | `[JOURNAL]` and the APC paragraph, which is conditional on the venue charging a fee. |
 | `paper/HIGHLIGHTS.md` | Yes | Only some venues ask for it. The file is heading plus bullets and nothing else, because submission systems ingest it verbatim. Three to five bullets, each at most 85 characters including spaces, free of jargon, acronyms and abbreviations; 85 is the strictest known constraint, so bullets that satisfy it satisfy any looser one. `scripts/check_highlights.py` fails the build if a bullet exceeds the limit, which is easy to do while editing and which submission systems reject rather than truncate. |
 | `paper/tables/`, `paper/figures/`, `benchmark/` | Yes | Frozen artefacts. Independent of venue. |
-| `paper/submission_checklist.md` | No | Written against one venue's submission form. Rewrite when a venue is chosen. |
+| `paper/submission_checklist.md` | Yes | Rewritten venue-neutral on 2026-09-19. Where a journal's own form differs, its form wins. |
 
 ## Constraints currently enforced in the build
 
@@ -28,9 +28,9 @@ them keeps every option open. They are guards, not scientific claims.
 
 | Constraint | Limit enforced | Origin |
 |---|---:|---|
-| Title | 110 characters | Data Descriptor |
-| Abstract | 170 words | Data Descriptor |
-| Background and Summary | 700 words | Data Descriptor |
+| Title | 110 characters | Strictest candidate |
+| Abstract | 170 words | Strictest candidate |
+| Introduction | 700 words | Strictest candidate |
 | Highlights | 5 bullets, 85 characters each | Elsevier |
 
 If a venue is chosen whose limits are looser, the guards can be relaxed. If one is chosen

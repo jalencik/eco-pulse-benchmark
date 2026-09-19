@@ -1,12 +1,11 @@
-"""The Scientific Data Data Descriptor must stay conformant and consistent.
+"""The submission manuscript must stay conformant and consistent.
 
-Scientific Data queries a non-conforming manuscript rather than truncating it, and a query
-costs weeks — which is the reason this venue was chosen over a journal with a ~48-week first
-review round. These tests make the format constraints fail at build time instead.
+A journal queries a non-conforming manuscript instead of truncating it, and a query costs
+weeks. These tests make the format constraints fail at build time instead.
 
-They also enforce the property that matters most once two documents exist: the Data Descriptor
-and the research-article manuscript are rendered from the SAME `numbers.json`, so they cannot
-disagree about a figure. A second document is a second place for a number to go stale.
+They also enforce the property that matters most once two documents exist: the submission
+manuscript and the longer technical report are rendered from the SAME `numbers.json`, so they
+cannot disagree about a figure. A second document is a second place for a number to go stale.
 """
 
 from __future__ import annotations
@@ -26,7 +25,7 @@ PLACEHOLDER = re.compile(r"\{\{([a-zA-Z0-9_]+)\}\}")
 # Zenodo VERSION DOI for v1.1.0 (not the concept DOI). Reserved 2026-08-14.
 RESERVED_DOI = "10.5281/zenodo.21930669"
 
-# Required by the Scientific Data submission guidelines, in order.
+# The research-article section order.
 REQUIRED = [
     "Abstract",
     "1. Introduction",
@@ -48,7 +47,7 @@ def doc() -> str:
 
 def test_every_required_section_is_present(doc):
     missing = [h for h in REQUIRED if f"## {h}" not in doc]
-    assert not missing, f"Data Descriptor is missing required sections: {missing}"
+    assert not missing, f"manuscript is missing required sections: {missing}"
 
 
 def test_sections_appear_in_the_prescribed_order(doc):
@@ -135,7 +134,7 @@ def test_descriptor_and_manuscript_agree_on_shared_figures(doc):
         value = nums[key]
         if value in manuscript:
             assert value in doc, (
-                f"{key} = {value} appears in the manuscript but not in the Data Descriptor; "
+                f"{key} = {value} appears in the technical report but not in the manuscript; "
                 "the two documents would disagree"
             )
 
