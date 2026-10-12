@@ -40,14 +40,24 @@ FEATURES = [
 ]
 WORST_DECILE_Q = 0.90
 
+# The satellite grids were extracted before the D-012 Dushanbe merge, so they still carry the
+# two embassy records ('8684' AirNow, '9769' StateAir) while benchmark_panel keys that
+# instrument as 'Dushanbe'. Merged stations inherit their PRIMARY's coordinates
+# (build_benchmark_panel.py), so the primary's grid is the merged station's grid and the
+# secondary is dropped -- the same convention the CAMS re-key uses. Bishkek and Ashgabat were
+# already extracted under their merged labels.
+MERGED_PRIMARY = {"8684": "Dushanbe"}
+MERGED_SECONDARY = {"9769"}
+
 
 def daily_target() -> pd.DataFrame:
     """Local-calendar daily mean PM2.5 per station, long form.
 
     Reads benchmark_panel.parquet, not panel.parquet. The raw panel still carries the 11
     pre-merge feeds, including the duplicate embassy publications; the satellite grids key
-    on the 8 merged entities ('Bishkek', 'Ashgabat' as merged labels). Joining the raw
-    panel silently drops every Bishkek and Ashgabat day.
+    on the merged entities ('Bishkek', 'Ashgabat' as merged labels; Dushanbe via its primary
+    feed, see MERGED_PRIMARY). Joining the raw panel silently drops every Bishkek and
+    Ashgabat day.
     """
     panel = pd.read_parquet(INTERIM / "benchmark_panel.parquet")
     flat = panel.reset_index(names="datetime")
@@ -77,6 +87,8 @@ def satellite_daily(stem: str) -> pd.DataFrame:
     df = df.rename(columns={value_col: "value"})
     df["date"] = pd.to_datetime(df["date"], utc=True, errors="coerce").dt.date
     df["station_id"] = df["station_id"].astype(str)
+    df = df[~df["station_id"].isin(MERGED_SECONDARY)]
+    df["station_id"] = df["station_id"].replace(MERGED_PRIMARY)
     return df[["station_id", "date", "value"]]
 
 
@@ -91,6 +103,15 @@ def main() -> int:
         # to retrieve, does retrieval failure carry information about the target?" A
         # station-day with no ground observation cannot answer it either way.
         m = sat.merge(target, on=["station_id", "date"], how="inner")
+        # A station whose key does not match produces zero joined rows and vanishes from
+        # every statistic with no error. That is how Dushanbe was silently left out of the
+        # first version of these tables, so every benchmark station must survive the join.
+        lost = set(target.station_id) - set(m.station_id)
+        if lost:
+            raise SystemExit(
+                f"build_r7_tables: {display}: benchmark stations missing from the join: "
+                f"{sorted(lost)}. Satellite ids: {sorted(sat.station_id.unique())}."
+            )
         got = m["value"].notna()
         presence[stem] = got
 

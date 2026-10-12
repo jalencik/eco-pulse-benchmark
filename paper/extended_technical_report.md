@@ -359,17 +359,17 @@ subset on which the association can be tested at all.
 
 | Feature | Retrieval | Δ median PM2.5 on missing days | *p* | Retrieval on worst decile |
 |---|---:|---:|---:|---:|
-| Sentinel-5P SO₂ | 57.4% | **+10.3** | 1.6e-138 | **14.0%** |
-| MAIAC AOD | 62.9% | +5.6 | 1.4e-44 | 38.1% |
-| Sentinel-5P NO₂ | 70.7% | +3.3 | 1.7e-14 | 58.0% |
-| Sentinel-5P CO | 81.1% | +2.6 | 7.2e-05 | 81.9% |
-| Sentinel-5P AAI | 99.8% | +6.8 | 0.75 | 99.9% |
+| Sentinel-5P SO₂ | 58.2% | **+10.7** | 1.2e-131 | **23.4%** |
+| MAIAC AOD | 63.9% | +4.9 | 1.5e-36 | 44.1% |
+| Sentinel-5P NO₂ | 71.1% | +3.2 | 1.3e-13 | 60.0% |
+| Sentinel-5P CO | 82.0% | +1.0 | 0.25 | 84.4% |
+| Sentinel-5P AAI | 99.8% | +3.6 | 0.73 | 99.9% |
 
 **SO₂ is blind in the season it exists to observe.** It retrieves on 0.1% of December days against
-91.0% in July. Retrieval requires ultraviolet signal, and
+92.5% in July. Retrieval requires ultraviolet signal, and
 at 38–43°N in December the solar zenith angle leaves too little; this is a geometric floor,
 not a cloud accident. The direct tracer for the region's dominant winter source is
-unavailable throughout that source's season. Additionally, 29.8% of the
+unavailable throughout that source's season. Additionally, 31.7% of the
 retrievals that do occur are negative, sitting below the noise floor — clipping them at zero
 would bias the coal tracer upward across a third of its observations.
 
@@ -379,20 +379,21 @@ bright-surface retrieval matters here: much of the study region is high-albedo d
 seasonal snow, the conditions under which coarser algorithms lose the surface-aerosol
 separation.
 
-**The split between clean and contaminated features follows retrieval physics, with one
-exception the table forces.** AAI uses ultraviolet reflectance *ratios* rather than
-absorption depth (Veefkind et al., 2012), survives winter geometry and cloud, and is the only
-product whose missingness is not target-correlated (0.75). CO's 2.3 µm
-shortwave-infrared retrieval also survives winter geometry, and its December coverage is far
-higher than SO₂'s, but its missingness still carries a detectable association with the
-target (7.2e-05), so it is grouped with the contaminated products rather than with AAI.
-MAIAC (visible/near-infrared) and the ultraviolet absorption retrievals are contaminated on
-both counts.
+**The split between clean and contaminated features follows retrieval physics.** AAI uses
+ultraviolet reflectance *ratios* rather than absorption depth (Veefkind et al., 2012),
+survives winter geometry and cloud, and its missingness is not target-correlated
+(0.73). CO's 2.3 µm shortwave-infrared retrieval also survives winter geometry, its
+December coverage is far higher than SO₂'s, and its missingness is not detectably
+target-correlated either (0.25). The feature catalogue was frozen with CO among the
+contaminated products and the models were not re-run with it grouped with AAI, so that
+grouping stands in the reported results although this table no longer supports it. MAIAC
+(visible/near-infrared) and the ultraviolet absorption retrievals are contaminated on both
+counts.
 
-**The one clean feature is complementary to the contaminated ones.** AOD and AAI are both
-present on 62.8% of station-days; AAI alone covers a further 36.9%; neither
+**The clean feature, AAI, is complementary to the contaminated ones.** AOD and AAI are both
+present on 63.8% of station-days; AAI alone covers a further 36.0%; neither
 is available on 0.1%. Usable satellite coverage therefore rises from
-62.8% to 99.9%, and the coverage AAI
+63.8% to 99.9%, and the coverage AAI
 adds is concentrated precisely where MAIAC fails.
 
 Consequently missingness is **modelled, never dropped**. Valid-pixel counts are promoted to
@@ -1460,7 +1461,7 @@ qualifications apply to the current ordering.
    finding about retrieval physics.
 3. *SO₂ is structurally absent in the season it exists to observe.* Retrieval needs
    ultraviolet signal; at these latitudes in December it falls to 0.1% against
-   91.0% in July. The direct tracer for the region's dominant winter source is
+   92.5% in July. The direct tracer for the region's dominant winter source is
    unavailable throughout that source's season, so its low attribution is partly a
    measurement-geometry artefact, not evidence that SO₂ carries no information.
 
@@ -1570,7 +1571,7 @@ checks a sample of manuscript figures directly against the CSVs, bypassing the i
 The mechanism earned its place during drafting. Section 2's missingness statistics were
 originally transcribed from a console output. When they were finally banked to a table, the
 transcribed values proved wrong: SO₂ retrieval had been written as 61.5% against a
-recomputed 57.4%, and four further figures were off in the same direction.
+recomputed 58.2%, and four further figures were off in the same direction.
 The errors were small and none of them changed a conclusion, which is exactly why no reader
 would ever have caught them. Regenerating the table also exposed that the two Section 2
 tables had no producer script at all and could not be rebuilt by `make reproduce`. Both have

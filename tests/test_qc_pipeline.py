@@ -96,6 +96,21 @@ class TestNEffect:
         assert n["stations_rejected"] == 1
         assert n["observations_after"] <= n["observations_before"]
 
+    def test_observations_count_values_not_hourly_slots(self):
+        # Q1's n_total is len(series), gaps included. Summing it as "observations before"
+        # once made D-005 report a 24.5% row-level mask that was mostly never-recorded hours.
+        panel = _panel()
+        gappy = {
+            sid: s.where(pd.Series(range(len(s)), index=s.index) % 4 != 0)
+            for sid, s in panel.items()
+        }
+        out = run_qc(gappy)
+        n = out.n_effect
+        assert n["observations_before"] == sum(int(s.notna().sum()) for s in gappy.values())
+        assert n["hours_in_span"] == sum(len(s) for s in gappy.values())
+        assert n["observations_before"] < n["hours_in_span"]
+        assert n["observations_after"] <= n["observations_before"]
+
     def test_summary_is_human_readable(self):
         out = run_qc(_panel())
         assert "stations" in out.summary()

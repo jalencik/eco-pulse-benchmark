@@ -140,7 +140,7 @@ qualifications apply to the current ordering.
    finding about retrieval physics.
 3. *SO₂ is structurally absent in the season it exists to observe.* Retrieval needs
    ultraviolet signal; at these latitudes in December it falls to 0.1% against
-   91.0% in July. The direct tracer for the region's dominant winter source is
+   92.5% in July. The direct tracer for the region's dominant winter source is
    unavailable throughout that source's season, so its low attribution is partly a
    measurement-geometry artefact, not evidence that SO₂ carries no information.
 
@@ -250,7 +250,7 @@ checks a sample of manuscript figures directly against the CSVs, bypassing the i
 The mechanism earned its place during drafting. Section 2's missingness statistics were
 originally transcribed from a console output. When they were finally banked to a table, the
 transcribed values proved wrong: SO₂ retrieval had been written as 61.5% against a
-recomputed 57.4%, and four further figures were off in the same direction.
+recomputed 58.2%, and four further figures were off in the same direction.
 The errors were small and none of them changed a conclusion, which is exactly why no reader
 would ever have caught them. Regenerating the table also exposed that the two Section 2
 tables had no producer script at all and could not be rebuilt by `make reproduce`. Both have

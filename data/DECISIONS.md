@@ -154,6 +154,18 @@ forgotten. Related: `STATUS.md` risk R3.
 - **Direction of bias if wrong:** losing Astana removes the only continental-climate
   Kazakh city and the northernmost site, so the benchmark under-represents severe winter
   inversion conditions.
+- **Corrected 2026-10-12: the effect on n above is mislabelled.** 450,817 is not a count of
+  observations. It is the number of hourly slots between each feed's first and last record
+  (empty hours included) over the 10 surviving feeds, which is Q1's `n_total`. The hours that
+  actually carry a value in those feeds number **341,321** (completeness 75.7%), and after the
+  row-level rules Q1-Q3 **340,439**, so row-level masking removed **882 hours (0.26%)**, not
+  24.5%. The 24.5% is mostly hours that were never recorded. `QCOutcome.n_effect` counted the
+  span as "observations before" and now counts hours with a value (the span is reported
+  separately as `hours_in_span`). Derivation: `python scripts/reconcile_counts.py`.
+- **Corrected 2026-10-12: the row masks are not applied to the benchmark panel.**
+  `build_benchmark_panel.py` builds from the unmasked `panel.parquet` and drops only the
+  rejected stations, so all 882 masked hours (0.36% of the 247,075) are still in the frozen
+  panel. v1.1.0 is checksummed, so this is recorded here and not changed in place.
 
 ### D-006 — Q6 downgraded from reject to flag when a lag is not identifiable
 - **Date:** 2026-07-29
@@ -324,6 +336,17 @@ forgotten. Related: `STATUS.md` risk R3.
   (`stations x days`) understated the true count by ~80x and would have declared an
   over-ceiling request safe. Compositing also avoids weighting each day by how many orbits
   happened to cover it.
+- **Denominators clarified 2026-10-12.** The 34.5% is 6,148 of the 17,816 station-days in
+  the extraction grid. That grid has 8 ids because the two Dushanbe embassy records (8684,
+  9769) were extracted separately and so count twice. With Dushanbe counted once (7
+  instruments, 15,589 station-days) the null rate is **34.8%**. On the station-days that also
+  have a ground PM2.5 value (9,326), the population the missingness test runs on, it is
+  **36.1%**. An earlier build of that last figure said 37.1%; it silently dropped Dushanbe
+  (the satellite grids key it as 8684/9769, the panel as `Dushanbe`, so the join returned no
+  Dushanbe rows) and described five cities. Fixed in `scripts/build_r7_tables.py`, which now
+  fails loudly if any benchmark station is missing from the join. The corrected test still
+  rejects "missingness is unrelated to PM2.5" for MAIAC AOD (p = 1.5e-36); S5P CO no longer
+  does (p = 0.25, was 7.2e-05). Quote the rate together with its denominator.
 
 ### D-011 — Q5c: duplicate detection by value identity, not distance
 - **Date:** 2026-08-13

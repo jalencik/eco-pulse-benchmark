@@ -165,7 +165,7 @@ an automated test. Three of five initial latency estimates proved wrong when mea
 - **Satellite.** Sentinel-5P CO, NO₂, SO₂ and absorbing aerosol index (Veefkind et al.,
   2012); MODIS MAIAC AOD (Lyapustin et al., 2018). Missingness in these products is
   correlated with the target: SO₂ retrieves on 0.1% of December days against
-  91.0% in July. We attribute that floor mainly to solar geometry, with winter cloud
+  92.5% in July. We attribute that floor mainly to solar geometry, with winter cloud
   and snow cover likely contributing, and it blinds the direct winter coal tracer through the
   coal season. A retrieval-validity feature (`*_valid_px`) was therefore computed for every
   product and carried, then excluded from Task N under Freeze 2 (Results). It

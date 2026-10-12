@@ -25,7 +25,8 @@ and a baseline ladder that the next method has to beat on exactly the same rows.
 ## What this is, in one paragraph
 
 Daily PM2.5 for **7 instruments across 6 Central Asian cities** (Almaty, Ashgabat, Bishkek,
-Dushanbe, Khujand, Tashkent), 247,075 retained hourly observations, quality-controlled by
+Dushanbe, Khujand, Tashkent), 247,075 hourly observations (what that number does and does not
+include is spelled out in [Why the numbers differ](#why-the-numbers-differ)), screened by
 seven rules that were written down before anyone looked at the data. Five of the instruments
 are US diplomatic-post reference monitors and two are Clarity low-cost sensors in Khujand.
 Each station is paired with satellite retrievals, CAMS forecasts, ERA5 meteorology and
@@ -55,6 +56,55 @@ offline. A handful of tests regenerate intermediates that are derived from the l
 and are not redistributed; on a clone without that panel they skip and say why, and every
 other test runs. The count is printed by the suite itself rather than repeated here, because a
 number typed into this file went stale twice.
+
+## Why the numbers differ
+
+Older write-ups of this project quote 341,321 observations and 34.5% missing satellite data;
+this README quotes 247,075 and about 36%. None of them is a rival estimate. Each counts a
+different thing at a different stage of the pipeline, and `python scripts/reconcile_counts.py
+--check` derives every one from the stored files, so you do not have to take this table on
+trust.
+
+**Hourly observations, in pipeline order**
+
+| Figure | What it counts |
+|---|---|
+| 450,817 | Hourly *slots* between each feed's first and last record, empty hours included, over the 10 feeds that passed station-level QC. It is a span, not a count of readings. |
+| 341,321 | Hours that carry a value in those 10 feeds, before any row-level rule (75.7% of the slots). |
+| 340,439 | The same, after row-level rules Q1-Q3. They removed 882 hours, 0.26%. |
+| **247,075** | Hours that carry a value in the 7 series of the frozen panel, after the three pairs of duplicate embassy feeds (Bishkek, Ashgabat, Dushanbe) were merged into one series each. This is the figure in `splits.json`; cite this one. |
+
+Of the 247,075, 206,966 sit inside the benchmark window (train 119,574, validation 31,447,
+test 53,342, and 2,603 in the two purge gaps). The other 40,109 are in `reserved_post_test`,
+from 2025-01-01, and nothing is scored on them.
+
+Two things I got wrong, found while reconciling:
+
+- `data/DECISIONS.md` D-005 said "450,817 to 341,321, 24.5% masked". The first number is the
+  span above, not observations, so that 24.5% is mostly hours nobody recorded. Row-level QC
+  masked 0.26%. The code that wrote it (`QCOutcome.n_effect`) is fixed and D-005 carries a
+  correction note.
+- The row-level masks are computed but not applied to the benchmark panel, which is built from
+  the unmasked series. All 882 masked hours (0.36% of the panel) are still in it. "Screened by
+  seven rules" therefore means station rejection, the duplicate-feed merge and the
+  timezone and unit checks, with the row-level results reported and not applied. v1.1.0 is
+  frozen and checksummed, so I have not changed it in place; applying the masks would be a
+  new benchmark version.
+
+**Missing satellite data (MAIAC AOD)**
+
+| Figure | Denominator |
+|---|---|
+| 34.5% | All 17,816 station-days in the extraction grid. The grid has 8 ids because Dushanbe's two embassy records were extracted separately and count twice. |
+| 34.8% | The same grid with Dushanbe counted once: 7 instruments, 15,589 station-days. |
+| **36.1%** | Station-days that also have a ground PM2.5 value (9,326). This is the population the missingness test runs on, and the one the manuscript's retrieval rates use. |
+
+An earlier build of the last figure said about 37% because it quietly dropped Dushanbe (the
+satellite grids call it `8684`/`9769`, the panel calls it `Dushanbe`, and the join returned no
+Dushanbe rows). That was a calculation error and not a data-version difference. It is fixed,
+and the script now stops with an error if any benchmark station is missing from the join. The
+finding survives: AOD still goes missing on dirtier days (p = 1.5e-36). Quote a missing-data
+rate together with its denominator.
 
 ## Scoring a method on this benchmark
 

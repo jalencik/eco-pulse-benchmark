@@ -44,17 +44,28 @@ class QCOutcome:
     report: QCReport
     kept: dict[str, pd.Series] = field(default_factory=dict)
     rejected: dict[str, str] = field(default_factory=dict)
+    # Non-null hours entering the row-level stage, counted once so that "before" and "after"
+    # are the same kind of quantity.
+    n_observed_in: int = 0
 
     @property
     def n_effect(self) -> dict[str, int]:
-        """Observation counts before and after QC -- the headline number for DECISIONS.md."""
-        before = sum(f.n_total for f in self.report.findings if f.rule == "Q1")
+        """Observation counts before and after QC -- the headline number for DECISIONS.md.
+
+        "Observations" are hours that carry a value. `hours_in_span` is the other thing people
+        mean by n -- every hourly slot between a feed's first and last record, empty ones
+        included (Q1's `n_total`) -- and is reported separately. Summing it as "observations
+        before" once produced a 450,817 -> 341,321 "24.5% masked" entry in which almost all of
+        the drop was hours that were never observed (completeness), not data QC removed.
+        """
+        hours_in_span = sum(f.n_total for f in self.report.findings if f.rule == "Q1")
         after = sum(int(s.notna().sum()) for s in self.kept.values())
         return {
             "stations_in": len(self.kept) + len(self.rejected),
             "stations_kept": len(self.kept),
             "stations_rejected": len(self.rejected),
-            "observations_before": before,
+            "hours_in_span": hours_in_span,
+            "observations_before": self.n_observed_in,
             "observations_after": after,
         }
 
@@ -158,7 +169,9 @@ def run_qc(
 
     # -- stage 4: row-level masking ----------------------------------------------------
     kept: dict[str, pd.Series] = {}
+    n_observed_in = 0
     for sid, series in surviving.items():
+        n_observed_in += int(series.notna().sum())
         report.add(
             q1_physical_range(series, sid),
             q2_flatline(series, sid),
@@ -172,7 +185,7 @@ def run_qc(
         else:
             kept[sid] = masked
 
-    return QCOutcome(report=report, kept=kept, rejected=rejected)
+    return QCOutcome(report=report, kept=kept, rejected=rejected, n_observed_in=n_observed_in)
 
 
 def decisions_block(outcome: QCOutcome, title: str) -> str:
