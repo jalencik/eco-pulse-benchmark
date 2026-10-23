@@ -60,7 +60,7 @@ packaging==26.2
 pandas==2.3.3
 pathspec==1.1.1
 pdfminer.six==20260107
-pillow==12.3.0
+pillow==13.0.0
 platformdirs==4.11.0
 pluggy==1.6.0
 pre_commit==4.6.1
