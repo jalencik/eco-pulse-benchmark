@@ -20,7 +20,7 @@ cycler==0.12.1
 distlib==0.4.3
 earthengine-api==1.7.37
 ecmwf-datastores-client==0.5.1
-filelock==3.32.0
+filelock==4.2.1
 fonttools==4.63.0
 google-api-core==2.33.0
 google-api-python-client==2.198.0
