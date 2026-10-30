@@ -5,7 +5,7 @@ asn1crypto==1.5.1
 ast_serialize==0.6.0
 attrs==26.1.0
 cdsapi==0.7.7
-certifi==2026.7.22
+certifi==2026.10.18
 cffi==2.1.0
 cfgv==3.5.0
 cftime==1.6.5
