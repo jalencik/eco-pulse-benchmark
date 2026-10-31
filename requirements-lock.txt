@@ -67,7 +67,7 @@ pre_commit==4.6.1
 proto-plus==1.28.2
 protobuf==7.35.1
 pyarrow==25.0.0
-pyasn1==0.6.4
+pyasn1==0.6.5
 pyasn1_modules==0.4.2
 pycparser==3.0
 pydantic==2.13.4
