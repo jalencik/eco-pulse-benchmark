@@ -93,7 +93,7 @@ scipy==1.18.0
 shap==0.52.0
 six==1.17.0
 slicer==0.0.8
-svglib==2.0.2
+svglib==2.3.1
 tabulate==0.10.0
 tenacity==9.1.4
 threadpoolctl==3.6.0
